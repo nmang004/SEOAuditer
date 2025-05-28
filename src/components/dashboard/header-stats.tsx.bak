@@ -1,0 +1,160 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowUp, ArrowDown, Folder, Activity, Zap, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  description?: string;
+  trend?: number; // percentage change
+  icon?: React.ReactNode;
+  children?: React.ReactNode;
+  className?: string;
+}
+
+const StatCard = ({
+  title,
+  value,
+  description,
+  trend,
+  icon,
+  children,
+  className,
+}: StatCardProps) => {
+  return (
+    <Card className={cn("h-full flex flex-col", className)}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
+        {icon && <div className="h-4 w-4 text-muted-foreground">{icon}</div>}
+      </CardHeader>
+      <CardContent className="flex-1">
+        <div className="text-2xl font-bold">{value}</div>
+        {description && (
+          <p className="text-xs text-muted-foreground">{description}</p>
+        )}
+        {trend !== undefined && (
+          <div className="mt-1 flex items-center text-xs">
+            {trend >= 0 ? (
+              <ArrowUp className="h-3 w-3 text-green-500" />
+            ) : (
+              <ArrowDown className="h-3 w-3 text-red-500" />
+            )}
+            <span className={cn(
+              "ml-1",
+              trend >= 0 ? "text-green-500" : "text-red-500"
+            )}>
+              {Math.abs(trend)}%
+            </span>
+            <span className="text-muted-foreground ml-1">vs last period</span>
+          </div>
+        )}
+        {children}
+      </CardContent>
+    </Card>
+  );
+};
+
+interface SeverityBadgeProps {
+interface HeaderStatsProps {
+  stats: {
+    totalProjects: number;
+    activeAnalyses: number;
+    averageScore: number;
+    weeklyIssues: number;
+    trends?: {
+      projects: number;
+      analyses: number;
+      score: number;
+      issues: number;
+    };
+  };
+}
+
+export function HeaderStats({ stats }: HeaderStatsProps) {
+  const { totalProjects, activeAnalyses, averageScore, weeklyIssues, trends } = stats;
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <StatCard
+                title="Total Projects"
+                value={totalProjects.toString()}
+                trend={trends?.projects}
+                icon={<Folder className="h-4 w-4" />}
+                description="Across all workspaces"
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Total number of projects being tracked</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <StatCard
+                title="Active Analyses"
+                value={activeAnalyses.toString()}
+                trend={trends?.analyses}
+                icon={<Activity className="h-4 w-4" />}
+                description="Currently running"
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Number of analyses currently in progress</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <StatCard
+                title="Avg. SEO Score"
+                value={`${Math.round(averageScore)}/100`}
+                trend={trends?.score}
+                icon={<Zap className="h-4 w-4" />}
+                description="Overall account health"
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Average SEO score across all projects</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <StatCard
+                title="Weekly Issues"
+                value={weeklyIssues.toString()}
+                trend={trends?.issues}
+                icon={<AlertTriangle className="h-4 w-4" />}
+                description="New this week"
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Number of new issues detected this week</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  );
+}
