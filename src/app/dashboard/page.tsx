@@ -10,7 +10,8 @@ import {
   TrendingUp, 
   CheckCircle,
   ArrowUpRight,
-  ChevronRight
+  ChevronRight,
+  Folder
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { HeaderStats } from "@/components/dashboard/header-stats";
@@ -89,129 +90,77 @@ function getRandomStatus(): 'open' | 'in-progress' | 'resolved' {
 
 // Generate mock data for the dashboard
 const generateMockDashboardData = (): DashboardData => {
-  // Mock fetch function
-  const fetchData = async (): Promise<DashboardData> => {
-    // Simulate API call
-    return new Promise<DashboardData>((resolve) => {
-      setTimeout(() => {
-        resolve({
-          stats: {
-            totalProjects: 12,
-            activeAnalyses: 3,
-            averageScore: 78,
-            weeklyIssues: 15
-          },
-          seoScore: {
-            current: 82,
-            previous: 78,
-            categories: {
-              technical: 85,
-              content: 80,
-              onPage: 75,
-              userExperience: 88
-            },
-            previousCategories: {
-              technical: 82,
-              content: 78,
-              onPage: 72,
-              userExperience: 85
-            }
-          },
-          recentProjects: [],
-          recentIssues: [],
-          performanceData: []
-        });
-      }, 500);
-    });
-  };
-  // Generate mock category scores
-  const categoryScores = {
-    technical: randomInt(60, 95),
-    content: randomInt(60, 95),
-    onPage: randomInt(60, 95),
-    userExperience: randomInt(60, 95)
-  };
-  
-  // Calculate previous scores (slightly lower for demonstration)
-  const previousScores = {
-    technical: Math.max(0, (categoryScores.technical || 0) - 8),
-    content: Math.max(0, (categoryScores.content || 0) - 5),
-    onPage: Math.max(0, (categoryScores.onPage || 0) - 3),
-    userExperience: Math.max(0, (categoryScores.userExperience || 0) - 7)
-  };
-  
-  // Calculate overall scores
-  const overallScore = Math.round(
-    (categoryScores.technical + 
-     categoryScores.content + 
-     categoryScores.onPage + 
-     categoryScores.userExperience) / 4
-  );
-  
-  const previousOverallScore = Math.round(
-    (previousScores.technical + 
-     previousScores.content + 
-     previousScores.onPage + 
-     previousScores.userExperience) / 4
-  );
-  
-  // Generate projects and issues
-  const mockProjects = generateMockProjects(5);
-  const enhancedIssues = generateEnhancedIssues(5);
-  const performanceData = generatePerformanceTrends(30);
-  
-  // Transform enhanced issues to match the expected type
-  const transformedIssues = enhancedIssues.map(issue => ({
-    id: issue.id,
-    title: issue.title,
-    description: issue.description,
-    severity: issue.severity,
-    status: getRandomStatus(),
-    detectedDate: new Date().toISOString(),
-    type: issue.type,
-    affectedPages: issue.affectedPages,
-    estimatedImpact: issue.estimatedImpact, // Changed from issue.impact to issue.estimatedImpact
-    fixComplexity: issue.fixComplexity,
-    category: issue.category
+  const now = new Date();
+  const weekAgo = new Date(now);
+  weekAgo.setDate(now.getDate() - 7);
+
+  // Generate performance data for the last 7 days
+  const performanceData = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(weekAgo);
+    date.setDate(weekAgo.getDate() + i);
+    return {
+      date: date.toISOString().split('T')[0],
+      score: randomInt(60, 95),
+      technical: randomInt(60, 95),
+      content: randomInt(60, 95),
+      onPage: randomInt(60, 95),
+      ux: randomInt(60, 95),
+    };
+  });
+
+  // Generate recent projects
+  const recentProjects = Array.from({ length: 5 }, (_, i) => ({
+    id: `project-${i}`,
+    name: `Project ${i + 1}`,
+    url: `example${i + 1}.com`,
+    lastAnalyzed: new Date(now.getTime() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+    score: randomInt(50, 100),
+    issueCount: randomInt(0, 15),
+    trend: ['up', 'down', 'neutral'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'neutral',
+    trendPercentage: randomInt(1, 20),
   }));
-  
-  // Transform performance data to match the expected structure
-  const transformedPerformanceData = Array.isArray(performanceData?.labels) 
-    ? performanceData.labels.map((date, index) => ({
-        date: date || new Date().toISOString(),
-        score: Math.round(performanceData.datasets?.[0]?.data?.[index] || 0),
-        technical: Math.round((performanceData.datasets?.[0]?.data?.[index] || 0) * 0.9 + randomInt(-5, 5)),
-        content: Math.round((performanceData.datasets?.[0]?.data?.[index] || 0) * 0.95 + randomInt(-5, 5)),
-        onPage: Math.round((performanceData.datasets?.[0]?.data?.[index] || 0) * 0.85 + randomInt(-5, 5)),
-        ux: Math.round((performanceData.datasets?.[0]?.data?.[index] || 0) * 0.92 + randomInt(-5, 5))
-      }))
-    : []; // Return empty array if performanceData doesn't have the expected structure
-  
+
+  // Generate recent issues
+  const recentIssues = Array.from({ length: 5 }, (_, i) => ({
+    id: `issue-${i}`,
+    title: `Issue ${i + 1}: ${['Broken Link', 'Missing Alt Text', 'Slow Page Load', 'Duplicate Content', 'Mobile Usability'][i % 5]}`,
+    description: `This is a description for issue ${i + 1}`,
+    severity: ['critical', 'high', 'medium', 'low'][i % 4] as 'critical' | 'high' | 'medium' | 'low',
+    status: getRandomStatus(),
+    detectedDate: new Date(now.getTime() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+    type: ['Technical', 'Content', 'On-page', 'UX'][i % 4],
+    affectedPages: randomInt(1, 10),
+    estimatedImpact: ['High', 'Medium', 'Low'][i % 3],
+    fixComplexity: ['easy', 'medium', 'hard'][i % 3] as 'easy' | 'medium' | 'hard',
+    category: ['technical', 'content', 'onpage', 'ux'][i % 4] as 'technical' | 'content' | 'onpage' | 'ux',
+  }));
+
   return {
     stats: {
-      totalProjects: mockProjects.length,
-      activeAnalyses: 2, // Fixed number for demo
-      averageScore: overallScore,
-      weeklyIssues: enhancedIssues.length
+      totalProjects: randomInt(5, 20),
+      activeAnalyses: randomInt(1, 5),
+      averageScore: randomInt(60, 90),
+      weeklyIssues: randomInt(5, 30),
     },
     seoScore: {
-      current: overallScore,
-      previous: previousOverallScore,
-      categories: categoryScores,
-      previousCategories: previousScores
+      current: randomInt(60, 95),
+      previous: randomInt(55, 90),
+      categories: {
+        technical: randomInt(60, 95),
+        content: randomInt(60, 95),
+        onPage: randomInt(60, 95),
+        userExperience: randomInt(60, 95),
+      },
+      previousCategories: {
+        technical: randomInt(55, 90),
+        content: randomInt(55, 90),
+        onPage: randomInt(55, 90),
+        userExperience: randomInt(55, 90),
+      },
     },
-    recentProjects: mockProjects.map(project => ({
-      ...project,
-      lastAnalyzed: project.lastAnalyzed || new Date().toISOString(),
-      score: project.score || 0,
-      issueCount: randomInt(0, 15),
-      trend: ['up', 'down', 'neutral'][randomInt(0, 2)] as 'up' | 'down' | 'neutral',
-      trendPercentage: randomInt(1, 20),
-      createdAt: project.createdAt,
-      updatedAt: project.updatedAt || new Date().toISOString()
-    })),
-    recentIssues: transformedIssues,
-    performanceData: transformedPerformanceData
+    recentProjects,
+    recentIssues,
+    performanceData,
   };
 };
 
@@ -221,7 +170,7 @@ const defaultData: DashboardData = {
     totalProjects: 0,
     activeAnalyses: 0,
     averageScore: 0,
-    weeklyIssues: 0
+    weeklyIssues: 0,
   },
   seoScore: {
     current: 0,
@@ -230,164 +179,307 @@ const defaultData: DashboardData = {
       technical: 0,
       content: 0,
       onPage: 0,
-      userExperience: 0
+      userExperience: 0,
     },
     previousCategories: {
       technical: 0,
       content: 0,
       onPage: 0,
-      userExperience: 0
-    }
+      userExperience: 0,
+    },
   },
   recentProjects: [],
   recentIssues: [],
-  performanceData: []
+  performanceData: [],
 };
 
 // Helper component for trend indicators
-const TrendIndicator = ({ value, className = "" }: { value: number; className?: string }) => {
+function TrendIndicator({ value, className = "" }: { value: number; className?: string }) {
   if (value === 0) return null;
+  
   const isPositive = value > 0;
   const Icon = isPositive ? TrendingUp : TrendingUp; // Using same icon for both for now
   
   return (
-    <span className={`inline-flex items-center ${isPositive ? 'text-green-500' : 'text-red-500'} ${className}`}>
-      <Icon className="w-4 h-4 mr-1" />
+    <span className={`inline-flex items-center text-sm font-medium ${
+      isPositive ? 'text-green-600' : 'text-red-600'
+    } ${className}`}>
+      <Icon className="h-4 w-4 mr-1" />
       {Math.abs(value)}%
     </span>
   );
-};
+}
 
-const DashboardPage = () => {
-  const [data, setData] = React.useState<DashboardData>(defaultData);
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<Error | null>(null);
+// Helper component for severity badges
+function SeverityBadge({ severity }: { severity: 'critical' | 'high' | 'medium' | 'low' }) {
+  const severityClasses = {
+    critical: 'bg-red-100 text-red-800',
+    high: 'bg-orange-100 text-orange-800',
+    medium: 'bg-yellow-100 text-yellow-800',
+    low: 'bg-blue-100 text-blue-800',
+  };
 
-  // Fetch data on component mount
-  React.useEffect(() => {
-    const loadData = async () => {
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${severityClasses[severity]}`}>
+      {severity.charAt(0).toUpperCase() + severity.slice(1)}
+    </span>
+  );
+}
+
+// Main Dashboard Component
+export default function DashboardPage() {
+  const [dashboardData, setDashboardData] = useState<DashboardData>(defaultData);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch dashboard data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const mockData = generateMockDashboardData();
-        setData(mockData);
+        // In a real app, this would be an API call
+        // const response = await fetch('/api/dashboard');
+        // const data = await response.json();
+        
+        // For now, use mock data
+        const data = generateMockDashboardData();
+        setDashboardData(data);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to load data'));
+        console.error('Failed to fetch dashboard data:', err);
+        setError('Failed to load dashboard data. Please try again later.');
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadData();
+    fetchData();
   }, []);
 
-  // Filter projects based on search query
-  const filteredProjects = React.useMemo(() => {
-    if (!searchQuery) return data.recentProjects || [];
-    return (data.recentProjects || []).filter(project =>
-      project?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project?.url?.toLowerCase().includes(searchQuery.toLowerCase())
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900">Something went wrong</h3>
+          <p className="mt-1 text-sm text-gray-500">{error}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="mt-4"
+            variant="outline"
+          >
+            Try again
+          </Button>
+        </div>
+      </div>
     );
-  }, [data.recentProjects, searchQuery]);
-  
-  // Get performance data with fallback
-  const performanceData = data.performanceData || [];
-  const recentProjects = data.recentProjects || [];
-  const seoScore = data.seoScore || { current: 0, previous: 0, categories: { technical: 0, content: 0, onPage: 0, userExperience: 0 } };
+  }
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-      <div className="text-center">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-muted-foreground">Loading dashboard...</p>
-      </div>
-    </div>
-  );
-
-  if (error) return (
-    <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-      <div className="text-center text-destructive">
-        <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
-        <h3 className="text-lg font-medium">Failed to load dashboard</h3>
-        <p className="text-muted-foreground mt-2">{error.message}</p>
-        <Button className="mt-4" onClick={() => window.location.reload()}>
-          Retry
-        </Button>
-      </div>
-    </div>
-  );
+  const { stats, seoScore, recentProjects, recentIssues } = dashboardData;
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-6">
+      {/* Header with title and actions */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">
             Overview of your SEO performance
           </p>
         </div>
-        <div className="relative w-full md:w-auto">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search projects, pages, or issues..."
-            className="pl-10 w-full md:w-[300px]"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-              New Project
-            </Button>
-            <div className="space-y-2">
-              <button className="flex w-full items-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground">
-                <Zap className="h-4 w-4" />
-                Run New Analysis
-              </button>
-              <button className="flex w-full items-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground">
-                <CheckCircle className="h-4 w-4" />
-                View All Issues
-              </button>
-              <button className="flex w-full items-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground">
-                <BarChart3 className="h-4 w-4" />
-                Generate Report
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Projects & Issues */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {/* Recent Projects */}
-          <div className="lg:col-span-1">
-            <RecentProjects 
-              projects={recentProjects} 
-              isLoading={isLoading} 
+        <div className="flex items-center space-x-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              className="pl-9 w-full md:w-64"
+              placeholder="Search..."
+              type="search"
             />
           </div>
-          
-          {/* SEO Score Overview */}
-          <div className="lg:col-span-2">
-            <SEOScoreOverview 
-              score={seoScore.current} 
-              previousScore={seoScore.previous}
-              categories={seoScore.categories}
-              previousCategories={seoScore.previousCategories}
-              isLoading={isLoading}
-            />
-          </div>
-        </div>
-
-        {/* Performance Trends */}
-        <div className="mt-6">
-          <PerformanceTrends 
-            data={performanceData} 
-            isLoading={isLoading} 
-          />
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            New Project
+          </Button>
         </div>
       </div>
-    </motion.div>
-  );
-};
 
-export default DashboardPage;
+      {/* Stats Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+            <Folder className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalProjects}</div>
+            <p className="text-xs text-muted-foreground">
+              +2 from last month
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Analyses</CardTitle>
+            <Zap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.activeAnalyses}</div>
+            <p className="text-xs text-muted-foreground">
+              +1 from yesterday
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg. SEO Score</CardTitle>
+            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.averageScore}</div>
+            <div className="flex items-center">
+              <TrendIndicator value={5} className="mr-2" />
+              <span className="text-xs text-muted-foreground">
+                vs last week
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Weekly Issues</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.weeklyIssues}</div>
+            <div className="flex items-center">
+              <TrendIndicator value={-2} className="mr-2" />
+              <span className="text-xs text-muted-foreground">
+                vs last week
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        {/* SEO Score Overview */}
+        <Card className="lg:col-span-4">
+          <CardHeader>
+            <CardTitle>SEO Score Overview</CardTitle>
+          </CardHeader>
+          <CardContent className="pl-2">
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="text-5xl font-bold text-primary">
+                  {seoScore.current}
+                </div>
+                <div className="flex items-center justify-center mt-2">
+                  <TrendIndicator value={Math.round(((seoScore.current - seoScore.previous) / seoScore.previous) * 100)} />
+                  <span className="ml-2 text-sm text-muted-foreground">
+                    vs previous {seoScore.previous}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 mt-6">
+              {Object.entries(seoScore.categories).map(([key, value]) => (
+                <div key={key} className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium capitalize">{key}</span>
+                    <span className="text-sm font-medium">{value}</span>
+                  </div>
+                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-primary" 
+                      style={{ width: `${value}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Issues */}
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle>Recent Issues</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentIssues.slice(0, 5).map((issue) => (
+                <div key={issue.id} className="flex items-start space-x-3">
+                  <div className="flex-shrink-0 mt-1">
+                    <SeverityBadge severity={issue.severity} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{issue.title}</p>
+                    <div className="flex items-center text-xs text-muted-foreground mt-1">
+                      <span>{issue.type}</span>
+                      <span className="mx-1">•</span>
+                      <span>{issue.affectedPages} pages affected</span>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+          <CardFooter className="border-t">
+            <Button variant="ghost" className="w-full">
+              View all issues
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+
+      {/* Recent Projects */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Projects</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {recentProjects.map((project) => (
+              <div key={project.id} className="flex items-center p-4 border rounded-lg">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2">
+                    <h3 className="font-medium">{project.name}</h3>
+                    <span className="text-sm text-muted-foreground">{project.url}</span>
+                  </div>
+                  <div className="flex items-center mt-1 text-sm text-muted-foreground">
+                    <span>Last analyzed: {new Date(project.lastAnalyzed).toLocaleDateString()}</span>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">{project.score}</div>
+                    <div className="text-xs text-muted-foreground">Score</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">{project.issueCount}</div>
+                    <div className="text-xs text-muted-foreground">Issues</div>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    View Details
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+        <CardFooter className="border-t">
+          <Button variant="ghost" className="w-full">
+            View all projects
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}
