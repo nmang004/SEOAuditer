@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,7 @@ export function UrlInput({ onSubmit, isLoading = false, placeholder = "Enter web
   };
 
   return (
-    <motion.div 
+    <m.div 
       variants={fadeInUp}
       initial="hidden"
       animate="visible"
@@ -73,6 +73,6 @@ export function UrlInput({ onSubmit, isLoading = false, placeholder = "Enter web
           </Button>
         </div>
       </form>
-    </motion.div>
+    </m.div>
   );
 }

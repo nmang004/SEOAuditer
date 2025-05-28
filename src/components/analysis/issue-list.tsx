@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { 
   AlertTriangle, 
   AlertCircle, 
@@ -60,7 +60,7 @@ function IssueItem({ issue }: IssueItemProps) {
   };
 
   return (
-    <motion.div variants={fadeInUp}>
+    <m.div variants={fadeInUp}>
       <div className="rounded-lg border bg-card transition-all hover:bg-accent/50">
         <div 
           className="flex cursor-pointer items-center justify-between p-4"
@@ -99,7 +99,7 @@ function IssueItem({ issue }: IssueItemProps) {
           </div>
         )}
       </div>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -203,9 +203,21 @@ export function IssueList({ issues, isLoading = false }: IssueListProps) {
           </Button>
         </div>
 
-        <motion.div 
+        <m.div 
           className="space-y-3"
-          variants={staggerContainer}
+          variants={{
+            hidden: { opacity: 0, transition: { when: 'afterChildren' } },
+            visible: { 
+              opacity: 1, 
+              transition: { 
+                when: 'beforeChildren',
+                staggerChildren: 0.1,
+                delayChildren: 0,
+                staggerDirection: 1,
+                duration: 0.5
+              } 
+            }
+          }}
           initial="hidden"
           animate="visible"
         >
@@ -218,7 +230,7 @@ export function IssueList({ issues, isLoading = false }: IssueListProps) {
               No issues found with the selected filter.
             </p>
           )}
-        </motion.div>
+        </m.div>
       </CardContent>
     </Card>
   );

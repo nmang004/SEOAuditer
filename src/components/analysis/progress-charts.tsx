@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { 
   Card, 
   CardContent, 
@@ -60,7 +60,7 @@ export function ProgressCharts({ chartData, isLoading = false }: ProgressChartsP
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <motion.div variants={fadeInUp}>
+      <m.div variants={fadeInUp}>
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Score History</CardTitle>
@@ -157,9 +157,9 @@ export function ProgressCharts({ chartData, isLoading = false }: ProgressChartsP
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+      </m.div>
       
-      <motion.div variants={fadeInUp}>
+      <m.div variants={fadeInUp}>
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Category Comparison</CardTitle>
@@ -225,7 +225,7 @@ export function ProgressCharts({ chartData, isLoading = false }: ProgressChartsP
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

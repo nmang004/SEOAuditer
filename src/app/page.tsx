@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { ArrowRight, BarChart, Search, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
@@ -54,26 +54,38 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="relative overflow-hidden py-20 md:py-32">
           <div className="container relative z-10">
-            <motion.div 
+            <m.div 
               className="mx-auto max-w-3xl text-center"
               initial="hidden"
               animate="visible"
-              variants={staggerContainer}
+              variants={{
+                hidden: { opacity: 0, transition: { when: 'afterChildren' } },
+                visible: { 
+                  opacity: 1, 
+                  transition: { 
+                    when: 'beforeChildren',
+                    staggerChildren: 0.1,
+                    delayChildren: 0,
+                    staggerDirection: 1,
+                    duration: 0.5
+                  } 
+                }
+              }}
             >
-              <motion.h1 
+              <m.h1 
                 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl"
                 variants={fadeInUp}
               >
                 Outrank Your Competitors with
                 <span className="bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent"> Advanced SEO Analytics</span>
-              </motion.h1>
-              <motion.p 
+              </m.h1>
+              <m.p 
                 className="mb-10 text-lg text-muted-foreground md:text-xl"
                 variants={fadeInUp}
               >
                 Analyze your website's SEO performance, identify critical issues, and get actionable recommendations to improve your search rankings.
-              </motion.p>
-              <motion.div 
+              </m.p>
+              <m.div 
                 className="flex flex-col sm:flex-row items-center justify-center gap-4"
                 variants={fadeInUp}
               >
@@ -88,8 +100,8 @@ export default function HomePage() {
                     Learn More
                   </Button>
                 </Link>
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           </div>
           
           {/* Background gradient */}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence  } from 'framer-motion';
 import { 
   ArrowUpRight, 
   TrendingUp, 
@@ -180,7 +180,7 @@ export function SEOScoreOverview({
   };
 
   return (
-    <motion.div
+    <m.div
       variants={fadeInUp}
       className="w-full"
     >
@@ -220,7 +220,7 @@ export function SEOScoreOverview({
                       strokeWidth="8"
                     />
                     {/* Progress circle */}
-                    <motion.circle
+                    <m.circle
                       cx="50"
                       cy="50"
                       r="45"
@@ -240,18 +240,18 @@ export function SEOScoreOverview({
                     />
                     
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <motion.span 
+                      <m.span 
                         className={cn("text-5xl font-bold", getScoreColor(score))}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.3 }}
                       >
                         {isLoading ? "--" : Math.round(animatedScore)}
-                      </motion.span>
+                      </m.span>
                       <span className="text-sm text-muted-foreground mt-1">Overall Score</span>
                       
                       {previousScore > 0 && (
-                        <motion.div 
+                        <m.div 
                           className={cn(
                             "mt-2 flex items-center text-xs px-2 py-1 rounded-full",
                             isImprovement ? "text-green-500 bg-green-500/10" : "text-red-500 bg-red-500/10"
@@ -266,14 +266,14 @@ export function SEOScoreOverview({
                             <TrendingDown className="mr-1 h-3 w-3" />
                           )}
                           {differencePercentage}% {isImprovement ? 'increase' : 'decrease'}
-                        </motion.div>
+                        </m.div>
                       )}
                     </div>
                   </svg>
                 </div>
               </div>
               
-              <motion.div 
+              <m.div 
                 className={cn("text-center p-4 rounded-lg w-full", getScoreBgColor(score))}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -288,13 +288,13 @@ export function SEOScoreOverview({
                 <p className="text-sm text-muted-foreground">
                   {scoreStatus.message}
                 </p>
-              </motion.div>
+              </m.div>
             </div>
             
             {/* Category Breakdown */}
             <div className="space-y-6">
               <h3 className="text-sm font-medium">Category Breakdown</h3>
-              <motion.div 
+              <m.div 
                 className="space-y-4"
                 variants={container}
                 initial="hidden"
@@ -308,7 +308,7 @@ export function SEOScoreOverview({
                     : 0;
                   
                   return (
-                    <motion.div 
+                    <m.div 
                       key={category.name} 
                       className="space-y-2"
                       variants={item}
@@ -347,7 +347,7 @@ export function SEOScoreOverview({
                       </div>
                       
                       <div className="relative h-2 w-full rounded-full bg-muted overflow-hidden">
-                        <motion.div 
+                        <m.div 
                           className={cn("h-full rounded-full", category.color)}
                           initial={{ width: 0 }}
                           animate={{ width: `${category.score}%` }}
@@ -357,7 +357,7 @@ export function SEOScoreOverview({
                       
                       <AnimatePresence>
                         {expanded && (
-                          <motion.div 
+                          <m.div 
                             className="pl-4 pt-1 text-xs text-muted-foreground"
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
@@ -374,17 +374,17 @@ export function SEOScoreOverview({
                                 ))}
                               </ul>
                             </div>
-                          </motion.div>
+                          </m.div>
                         )}
                       </AnimatePresence>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
-              </motion.div>
+              </m.div>
             </div>
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </m.div>
   );
 }

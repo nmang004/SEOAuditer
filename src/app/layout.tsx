@@ -1,6 +1,7 @@
 import './globals.css';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import type { Metadata } from 'next';
+import ClientLayout from './client-layout';
 
 // Font configurations
 const inter = Inter({
@@ -19,6 +20,10 @@ export const metadata: Metadata = {
   title: 'Rival Outranker - Premium SEO Analysis Dashboard',
   description: 'A powerful SEO analysis tool to help you outrank your competitors',
   keywords: 'SEO, search engine optimization, competitor analysis, website ranking',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+  ],
 };
 
 export default function RootLayout({
@@ -29,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${jetBrainsMono.variable} font-sans antialiased`}>
-        {children}
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

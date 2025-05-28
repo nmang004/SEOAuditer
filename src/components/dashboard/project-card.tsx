@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { 
   ExternalLink, 
   BarChart2, 
@@ -59,7 +59,7 @@ export function ProjectCard({
   };
 
   return (
-    <motion.div
+    <m.div
       variants={fadeInUp}
       initial="hidden"
       animate="visible"
@@ -67,7 +67,7 @@ export function ProjectCard({
       whileTap="tap"
       custom={1}
     >
-      <motion.div
+      <m.div
         variants={cardVariants}
         initial="initial"
         whileHover="hover"
@@ -241,7 +241,7 @@ export function ProjectCard({
             </CardFooter>
           )}
         </Card>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }

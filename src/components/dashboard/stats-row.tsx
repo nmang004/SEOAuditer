@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence  } from 'framer-motion';
 import { 
   ArrowUp, 
   ArrowDown, 
@@ -113,7 +113,7 @@ const ProgressBar = ({
         </div>
       )}
       <div className={cn("h-2 w-full overflow-hidden rounded-full bg-muted", className)}>
-        <motion.div
+        <m.div
           className={cn(
             "h-full rounded-full",
             percentage >= 70 
@@ -179,7 +179,7 @@ const StatCard: React.FC<StatCardProps> = ({
   };
 
   return (
-    <motion.div 
+    <m.div 
       variants={fadeInUp}
       className="h-full group"
       whileHover={{ y: -2 }}
@@ -246,7 +246,7 @@ const StatCard: React.FC<StatCardProps> = ({
           </CardFooter>
         )}
       </Card>
-    </motion.div>
+    </m.div>
   );
 };
 

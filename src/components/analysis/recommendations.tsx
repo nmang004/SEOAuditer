@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { 
   Lightbulb, 
   ChevronDown, 
@@ -70,7 +70,7 @@ function RecommendationItem({ recommendation }: RecommendationItemProps) {
   };
 
   return (
-    <motion.div variants={fadeInUp}>
+    <m.div variants={fadeInUp}>
       <div className="rounded-lg border bg-card transition-all hover:bg-accent/50">
         <div 
           className="flex cursor-pointer items-center justify-between p-4"
@@ -123,7 +123,7 @@ function RecommendationItem({ recommendation }: RecommendationItemProps) {
           </div>
         )}
       </div>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -219,9 +219,21 @@ export function Recommendations({ recommendations, isLoading = false }: Recommen
           </Button>
         </div>
 
-        <motion.div 
+        <m.div 
           className="space-y-3"
-          variants={staggerContainer}
+          variants={{
+            hidden: { opacity: 0, transition: { when: 'afterChildren' } },
+            visible: { 
+              opacity: 1, 
+              transition: { 
+                when: 'beforeChildren',
+                staggerChildren: 0.1,
+                delayChildren: 0,
+                staggerDirection: 1,
+                duration: 0.5
+              } 
+            }
+          }}
           initial="hidden"
           animate="visible"
         >
@@ -234,7 +246,7 @@ export function Recommendations({ recommendations, isLoading = false }: Recommen
               No recommendations found with the selected filter.
             </p>
           )}
-        </motion.div>
+        </m.div>
       </CardContent>
     </Card>
   );

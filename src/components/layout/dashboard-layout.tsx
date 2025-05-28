@@ -1,46 +1,48 @@
-import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { Header } from "./header";
-import { Sidebar } from "./sidebar";
-import { pageTransition } from "@/lib/animations";
-import { useRouter } from "next/router";
-import { DashboardProvider } from "@/contexts/dashboard-context";
-import { ProjectEmptyState, AnalysisEmptyState, NoIssuesState, SearchEmptyState } from "@/components/empty-states";
+"use client";
 
-interface DashboardLayoutProps {
+import { useState, useEffect, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { MobileNavigation } from '@/components/navigation/mobile-navigation';
+import { navItems } from '@/components/navigation/nav-items';
+
+export interface DashboardLayoutProps {
   children: React.ReactNode;
   showBreadcrumb?: boolean;
+  className?: string;
 }
 
-// Main dashboard content with empty state handling
-function DashboardContent({ 
-  children, 
-  showBreadcrumb = true 
-}: DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const mainContentRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({
+  children,
+  showBreadcrumb = true,
+  className,
+}) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const pathname = usePathname();
+
+  // Check for mobile viewport
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   // Toggle sidebar
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(prev => !prev);
+  }, []);
 
-  // Close sidebar when route changes
+  // Close sidebar when route changes on mobile
   useEffect(() => {
-    const handleRouteChange = () => {
+    if (isMobile) {
       setSidebarOpen(false);
-      // Focus on main content on route change for better keyboard navigation
-      if (mainContentRef.current) {
-        mainContentRef.current.focus();
-      }
-    };
-
-    router.events.on('routeChangeComplete', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  }, [router.events]);
+    }
+  }, [pathname, isMobile]);
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -52,128 +54,99 @@ function DashboardContent({
       // Toggle sidebar on Ctrl+\ or Cmd+\
       if ((e.ctrlKey || e.metaKey) && e.key === '\\') {
         e.preventDefault();
-        toggleSidebar();
+        setSidebarOpen(prev => !prev);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [sidebarOpen]);
-  
-  // Set focus to main content when the component mounts
-  useEffect(() => {
-    if (mainContentRef.current) {
-      mainContentRef.current.focus();
-    }
-  }, []);
-
-  // Get dashboard state
-  const isDashboardHome = router.pathname === '/dashboard';
-  const isProjectsPage = router.pathname === '/dashboard/projects';
-  const isAnalysesPage = router.pathname === '/dashboard/analyses';
-  const isIssuesPage = router.pathname === '/dashboard/issues';
-  const isSearchPage = router.pathname === '/dashboard/search';
-
-  // Mock data - in a real app, this would come from your data fetching
-  const hasProjects = false; // Set based on your data
-  const hasAnalyses = false; // Set based on your data
-  const hasIssues = false; // Set based on your data
-  const hasSearchResults = false; // Set based on search results
-  const searchQuery = ''; // Set based on search input
-
-  // Determine if we should show an empty state
-  const showEmptyState = 
-    (isProjectsPage && !hasProjects) ||
-    (isAnalysesPage && !hasAnalyses) ||
-    (isIssuesPage && !hasIssues) ||
-    (isSearchPage && !hasSearchResults);
-
-  // Handle actions
-  const handleCreateProject = () => {
-    // Implement project creation logic
-    console.log('Create project clicked');
-  };
-
-  const handleRunAnalysis = () => {
-    // Implement analysis run logic
-    console.log('Run analysis clicked');
-  };
-
-  const handleClearSearch = () => {
-    // Implement search clear logic
-    console.log('Clear search clicked');
-  };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className={cn("flex h-screen bg-background overflow-hidden", className)}>
       {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-      {/* Main content */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {/* Header */}
-        <Header 
-          onToggleSidebar={toggleSidebar} 
-          showBreadcrumb={showBreadcrumb} 
-        />
-
-        {/* Page content */}
-        <motion.main
-          ref={mainContentRef}
-          id="main-content"
-          className="flex-1 overflow-y-auto focus:outline-none"
-          tabIndex={-1}
-          initial="initial"
-          animate="animate"
-          variants={pageTransition}
-        >
-          <div className="min-h-full">
-            {showEmptyState ? (
-              <div className="h-full flex items-center justify-center py-12 px-4">
-                {isProjectsPage && !hasProjects && (
-                  <ProjectEmptyState 
-                    onCreateProject={handleCreateProject} 
-                    className="w-full max-w-md"
-                  />
-                )}
+      <div className={cn(
+        "fixed inset-y-0 left-0 z-30 w-64 transform",
+        "transition-transform duration-300 ease-in-out",
+        "md:relative md:translate-x-0",
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <div className="h-full overflow-y-auto bg-card border-r">
+          <div className="flex h-full flex-col">
+            <div className="p-4">
+              <h2 className="text-xl font-bold">Rival Outranker</h2>
+            </div>
+            <nav className="flex-1 space-y-1 px-2 py-4">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href || 
+                  (item.exact ? pathname === item.href : pathname.startsWith(item.href));
                 
-                {isAnalysesPage && !hasAnalyses && (
-                  <AnalysisEmptyState 
-                    onRunAnalysis={handleRunAnalysis} 
-                    className="w-full max-w-md"
-                  />
-                )}
-                
-                {isIssuesPage && !hasIssues && (
-                  <NoIssuesState className="w-full max-w-md" />
-                )}
-                
-                {isSearchPage && !hasSearchResults && (
-                  <SearchEmptyState 
-                    searchQuery={searchQuery}
-                    onClearSearch={handleClearSearch}
-                    className="w-full max-w-md"
-                  />
-                )}
-              </div>
-            ) : (
-              <div className="container py-6 md:py-8">
-                {children}
-              </div>
-            )}
+                return (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      'flex items-center px-4 py-3 rounded-md text-sm font-medium',
+                      'transition-colors duration-200',
+                      isActive 
+                        ? 'bg-accent text-accent-foreground' 
+                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    )}
+                  >
+                    <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
+                    {item.label}
+                  </a>
+                );
+              })}
+            </nav>
           </div>
-        </motion.main>
+        </div>
       </div>
-      
+
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div 
-          className="md:hidden fixed inset-0 bg-black/50 z-20"
-          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          onClick={toggleSidebar}
           aria-hidden="true"
         />
       )}
-      
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-card border-b">
+          <div className="flex items-center justify-between p-4">
+            <MobileNavigation />
+            
+            {/* Add your header content here */}
+            <div className="flex-1 px-4">
+              {showBreadcrumb && (
+                <nav className="flex" aria-label="Breadcrumb">
+                  <ol className="flex items-center space-x-2 text-sm">
+                    <li>Dashboard</li>
+                    {/* Add breadcrumb items here */}
+                  </ol>
+                </nav>
+              )}
+            </div>
+            
+            {/* Add user menu, notifications, etc. */}
+          </div>
+        </header>
+
+        {/* Main content area */}
+        <main
+          className="flex-1 overflow-y-auto p-4 md:p-6 focus:outline-none"
+          tabIndex={-1}
+          id="main-content"
+        >
+          <div className="space-y-6">
+            {children}
+          </div>
+        </main>
+      </div>
+
       {/* Skip to main content link for keyboard users */}
       <a
         href="#main-content"
@@ -183,4 +156,6 @@ function DashboardContent({
       </a>
     </div>
   );
-}
+};
+
+export default DashboardLayout;

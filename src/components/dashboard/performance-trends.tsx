@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { 
   LineChart, 
   Line, 
@@ -73,7 +73,7 @@ export function PerformanceTrends({ data, isLoading = false }: PerformanceTrends
     : data;
 
   return (
-    <motion.div
+    <m.div
       variants={fadeInUp}
       initial="hidden"
       animate="visible"
@@ -204,6 +204,6 @@ export function PerformanceTrends({ data, isLoading = false }: PerformanceTrends
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </m.div>
   );
 }

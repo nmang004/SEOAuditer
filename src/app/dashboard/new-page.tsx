@@ -13,7 +13,7 @@ import {
   ChevronRight,
   Folder
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { HeaderStats } from "@/components/dashboard/header-stats";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

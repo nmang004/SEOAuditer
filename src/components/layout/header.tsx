@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { Bell, Sun, Moon, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,7 @@ export function Header({ onToggleSidebar, showBreadcrumb = true }: HeaderProps) 
 
           <div className="hidden md:flex items-center">
             <Link href="/" className="flex items-center">
-              <motion.div
+              <m.div
                 className="mr-2"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -55,7 +55,7 @@ export function Header({ onToggleSidebar, showBreadcrumb = true }: HeaderProps) 
                   <path d="m3 11 18-5v12L3 14v-3z"></path>
                   <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
                 </svg>
-              </motion.div>
+              </m.div>
               <span className="font-bold text-xl">Rival Outranker</span>
             </Link>
           </div>

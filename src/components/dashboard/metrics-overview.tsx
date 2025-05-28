@@ -1,5 +1,7 @@
+"use client";
+
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { 
   Activity, 
   Clock, 
@@ -11,6 +13,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { staggerContainer, fadeInUp } from "@/lib/animations";
+import { Badge } from "@/components/ui/badge";
 
 interface MetricCardProps {
   title: string;
@@ -57,7 +60,7 @@ function MetricCard({
   };
 
   return (
-    <motion.div variants={fadeInUp} className="w-full">
+    <m.div variants={fadeInUp} className="w-full">
       <Card glass hover className="overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
@@ -78,80 +81,71 @@ function MetricCard({
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </m.div>
   );
 }
 
-interface MetricsOverviewProps {
-  metrics: {
-    totalProjects: number;
-    activeAnalyses: number;
-    criticalIssues: number;
-    improvedPages: number;
-  };
-  isLoading?: boolean;
+interface Metric {
+  label: string;
+  value: string | number;
+  change?: number;
+  trend?: "up" | "down" | "neutral";
+  description?: string;
 }
 
-export function MetricsOverview({ metrics, isLoading = false }: MetricsOverviewProps) {
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="w-full">
-            <CardHeader className="pb-2">
-              <div className="h-5 w-24 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-            </CardHeader>
-            <CardContent>
-              <div className="h-8 w-16 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-              <div className="mt-2 h-4 w-32 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
+interface MetricsOverviewProps {
+  metrics: Metric[];
+}
 
+export function MetricsOverview({ metrics }: MetricsOverviewProps) {
   return (
-    <motion.div 
-      className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
-      variants={staggerContainer}
-      initial="hidden"
-      animate="visible"
+    <m.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <MetricCard
-        title="Total Projects"
-        value={metrics.totalProjects}
-        description="Active projects"
-        icon={<Activity className="h-4 w-4" />}
-        color="default"
-      />
-      <MetricCard
-        title="Active Analyses"
-        value={metrics.activeAnalyses}
-        description="Last 30 days"
-        icon={<Clock className="h-4 w-4" />}
-        trend="up"
-        trendValue="+12.5%"
-        color="primary"
-      />
-      <MetricCard
-        title="Critical Issues"
-        value={metrics.criticalIssues}
-        description="Require attention"
-        icon={<AlertTriangle className="h-4 w-4" />}
-        trend="down"
-        trendValue="-3"
-        color="danger"
-      />
-      <MetricCard
-        title="Improved Pages"
-        value={metrics.improvedPages}
-        description="Last 30 days"
-        icon={<CheckCircle className="h-4 w-4" />}
-        trend="up"
-        trendValue="+8"
-        color="success"
-      />
-    </motion.div>
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold mb-6">Key Metrics</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {metrics.map((metric, index) => (
+            <m.div
+              key={metric.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-muted-foreground">
+                    {metric.label}
+                  </h3>
+                  {metric.trend && (
+                    <Badge
+                      variant={
+                        metric.trend === "up"
+                          ? "success"
+                          : metric.trend === "down"
+                          ? "destructive"
+                          : "default"
+                      }
+                      className="flex items-center"
+                    >
+                      {metric.trend === "up" ? "↑" : metric.trend === "down" ? "↓" : "→"}
+                      {metric.change && ` ${Math.abs(metric.change)}%`}
+                    </Badge>
+                  )}
+                </div>
+                <div className="text-2xl font-bold">{metric.value}</div>
+                {metric.description && (
+                  <p className="text-xs text-muted-foreground">
+                    {metric.description}
+                  </p>
+                )}
+              </div>
+            </m.div>
+          ))}
+        </div>
+      </Card>
+    </m.div>
   );
 }

@@ -13,12 +13,16 @@ import {
   ChevronRight,
   Folder
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { HeaderStats } from "@/components/dashboard/header-stats";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SEOScoreCard } from "@/components/dashboard/seo-score-card";
+import { MetricsOverview } from "@/components/dashboard/metrics-overview";
+import { RecentAnalyses } from "@/components/dashboard/recent-analyses";
+import { QuickActions } from "@/components/dashboard/quick-actions";
 
 // Types
 type DashboardData = {
@@ -276,210 +280,99 @@ export default function DashboardPage() {
 
   const { stats, seoScore, recentProjects, recentIssues } = dashboardData;
 
+  // Prepare metrics for MetricsOverview
+  const metrics = [
+    {
+      label: "Total Projects",
+      value: stats.totalProjects,
+      trend: "up" as const,
+      change: 2,
+      description: "+2 from last month",
+    },
+    {
+      label: "Active Analyses",
+      value: stats.activeAnalyses,
+      trend: "up" as const,
+      change: 1,
+      description: "+1 from yesterday",
+    },
+    {
+      label: "Avg. SEO Score",
+      value: stats.averageScore,
+      trend: "up" as const,
+      change: 5,
+      description: "vs last week",
+    },
+    {
+      label: "Weekly Issues",
+      value: stats.weeklyIssues,
+      trend: "down" as const,
+      change: 2,
+      description: "vs last week",
+    },
+  ];
+
+  // Prepare analyses for RecentAnalyses
+  const analyses = recentProjects.map((project, i) => ({
+    id: project.id,
+    projectName: project.name,
+    url: project.url,
+    date: project.lastAnalyzed,
+    score: project.score,
+    status: "completed" as const,
+    issues: {
+      critical: Math.floor(Math.random() * 3),
+      warning: Math.floor(Math.random() * 5),
+      info: Math.floor(Math.random() * 2),
+    },
+  }));
+
+  // Prepare quick actions
+  const actions = [
+    {
+      title: "New Project",
+      description: "Add a new website to track and analyze.",
+      href: "/dashboard/projects/new",
+      icon: <Plus className="h-5 w-5" />,
+      color: "primary" as const,
+    },
+    {
+      title: "Run Analysis",
+      description: "Start a new SEO analysis for your site.",
+      href: "/dashboard/analyses/new",
+      icon: <BarChart3 className="h-5 w-5" />,
+      color: "success" as const,
+    },
+    {
+      title: "View Reports",
+      description: "See detailed SEO reports and trends.",
+      href: "/dashboard/analyses",
+      icon: <CheckCircle className="h-5 w-5" />,
+      color: "warning" as const,
+    },
+    {
+      title: "Export Data",
+      description: "Download your SEO data and reports.",
+      href: "/dashboard/export",
+      icon: <ArrowUpRight className="h-5 w-5" />,
+      color: "destructive" as const,
+    },
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Header with title and actions */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Overview of your SEO performance
-          </p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <Input
-              className="pl-9 w-full md:w-64"
-              placeholder="Search..."
-              type="search"
-            />
-          </div>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            New Project
-          </Button>
-        </div>
+    <div className="space-y-8">
+      <MetricsOverview metrics={metrics} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <SEOScoreCard
+          score={seoScore.current}
+          label="SEO Score"
+          description="Your current overall SEO score."
+          trend={seoScore.current - seoScore.previous}
+          category={undefined}
+        />
+        <QuickActions actions={actions} />
       </div>
-
-      {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-            <Folder className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalProjects}</div>
-            <p className="text-xs text-muted-foreground">
-              +2 from last month
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Analyses</CardTitle>
-            <Zap className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.activeAnalyses}</div>
-            <p className="text-xs text-muted-foreground">
-              +1 from yesterday
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. SEO Score</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.averageScore}</div>
-            <div className="flex items-center">
-              <TrendIndicator value={5} className="mr-2" />
-              <span className="text-xs text-muted-foreground">
-                vs last week
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Weekly Issues</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.weeklyIssues}</div>
-            <div className="flex items-center">
-              <TrendIndicator value={-2} className="mr-2" />
-              <span className="text-xs text-muted-foreground">
-                vs last week
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        {/* SEO Score Overview */}
-        <Card className="lg:col-span-4">
-          <CardHeader>
-            <CardTitle>SEO Score Overview</CardTitle>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <div className="flex items-center justify-center h-64">
-              <div className="text-center">
-                <div className="text-5xl font-bold text-primary">
-                  {seoScore.current}
-                </div>
-                <div className="flex items-center justify-center mt-2">
-                  <TrendIndicator value={Math.round(((seoScore.current - seoScore.previous) / seoScore.previous) * 100)} />
-                  <span className="ml-2 text-sm text-muted-foreground">
-                    vs previous {seoScore.previous}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 mt-6">
-              {Object.entries(seoScore.categories).map(([key, value]) => (
-                <div key={key} className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium capitalize">{key}</span>
-                    <span className="text-sm font-medium">{value}</span>
-                  </div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-primary" 
-                      style={{ width: `${value}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Recent Issues */}
-        <Card className="lg:col-span-3">
-          <CardHeader>
-            <CardTitle>Recent Issues</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentIssues.slice(0, 5).map((issue) => (
-                <div key={issue.id} className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 mt-1">
-                    <SeverityBadge severity={issue.severity} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{issue.title}</p>
-                    <div className="flex items-center text-xs text-muted-foreground mt-1">
-                      <span>{issue.type}</span>
-                      <span className="mx-1">•</span>
-                      <span>{issue.affectedPages} pages affected</span>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-          <CardFooter className="border-t">
-            <Button variant="ghost" className="w-full">
-              View all issues
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-
-      {/* Recent Projects */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Projects</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentProjects.map((project) => (
-              <div key={project.id} className="flex items-center p-4 border rounded-lg">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <h3 className="font-medium">{project.name}</h3>
-                    <span className="text-sm text-muted-foreground">{project.url}</span>
-                  </div>
-                  <div className="flex items-center mt-1 text-sm text-muted-foreground">
-                    <span>Last analyzed: {new Date(project.lastAnalyzed).toLocaleDateString()}</span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">{project.score}</div>
-                    <div className="text-xs text-muted-foreground">Score</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">{project.issueCount}</div>
-                    <div className="text-xs text-muted-foreground">Issues</div>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    View Details
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-        <CardFooter className="border-t">
-          <Button variant="ghost" className="w-full">
-            View all projects
-          </Button>
-        </CardFooter>
-      </Card>
+      <RecentAnalyses analyses={analyses} />
     </div>
   );
 }

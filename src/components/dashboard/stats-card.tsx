@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -111,7 +111,7 @@ export function StatCard({
   };
 
   return (
-    <motion.div
+    <m.div
       variants={fadeInUp}
       initial="hidden"
       animate="visible"
@@ -224,7 +224,7 @@ export function StatCard({
           )}
         </CardContent>
       </Card>
-    </motion.div>
+    </m.div>
   );
 }
 

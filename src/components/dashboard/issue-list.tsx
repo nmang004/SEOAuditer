@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence  } from 'framer-motion';
 import { 
   AlertCircle,
   Check,
@@ -506,7 +506,7 @@ export function IssueList({
   
   // Main render function
   const renderIssueList = () => (
-    <motion.div
+    <m.div
       initial="hidden"
       animate="visible"
       variants={{
@@ -735,7 +735,7 @@ export function IssueList({
                   const complexityDetails = getComplexityDetails(issue.fixComplexity);
                   
                   return (
-                    <motion.div
+                    <m.div
                       key={issue.id}
                       variants={fadeInUp}
                       className={cn(
@@ -907,7 +907,7 @@ export function IssueList({
                           </div>
                         </div>
                       )}
-                    </motion.div>
+                    </m.div>
                   );
                 })}
               </div>
@@ -921,7 +921,7 @@ export function IssueList({
           </Button>
         </CardFooter>
       </Card>
-    </motion.div>
+    </m.div>
   );
 };
 

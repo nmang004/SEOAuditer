@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { TrendingUp, TrendingDown, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -71,7 +71,7 @@ export function EnhancedSEOScore({
   const strokeDashoffset = circumference - (displayScore / 100) * circumference;
 
   return (
-    <motion.div
+    <m.div
       variants={fadeInUp}
       initial="hidden"
       animate="visible"
@@ -192,6 +192,6 @@ export function EnhancedSEOScore({
           </Button>
         </CardFooter>
       </Card>
-    </motion.div>
+    </m.div>
   );
 }

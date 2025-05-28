@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  passwordHash      String
+  name              String?
+  subscriptionTier  String    @default("free")
+  emailVerified     Boolean   @default(false)
+  verificationToken String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  lastLogin         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  projects          Project[]
+  refreshTokens     RefreshToken[]
+}
+
+model RefreshToken {
+  id          String   @id @default(uuid())
+  userId      String
+  token       String   @unique
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id              String      @id @default(uuid())
+  userId          String
+  name            String
+  url             String
+  faviconUrl      String?
+  status          String      @default("active")
+  scanFrequency   String      @default("manual")
+  currentScore    Int?        @default(0)
+  issueCount      Int         @default(0)
+  lastScanDate    DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crawlSessions   CrawlSession[]
+  analyses        SEOAnalysis[]
+  
+  @@index([userId])
+}
+
+model CrawlSession {
+  id              String      @id @default(uuid())
+  projectId       String
+  url             String
+  status          String      @default("queued")
+  startedAt       DateTime?
+  completedAt     DateTime?
+  errorMessage    String?
+  createdAt       DateTime    @default(now())
+  project         Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  analysis        SEOAnalysis?
+  
+  @@index([projectId])
+}
+
+model SEOAnalysis {
+  id              String      @id @default(uuid())
+  crawlSessionId  String      @unique
+  overallScore    Int?        @default(0)
+  technicalScore  Int?        @default(0)
+  contentScore    Int?        @default(0)
+  onpageScore     Int?        @default(0)
+  uxScore         Int?        @default(0)
+  createdAt       DateTime    @default(now())
+  crawlSession    CrawlSession @relation(fields: [crawlSessionId], references: [id], onDelete: Cascade)
+  issues          SEOIssue[]
+  metaTags        MetaTags?
+  
+  @@index([crawlSessionId])
+}
+
+model SEOIssue {
+  id              String      @id @default(uuid())
+  analysisId      String
+  type            String
+  severity        String      // critical, high, medium, low
+  title           String
+  description     String?
+  recommendation  String?
+  affectedElements Json?      // Store affected elements as JSON
+  status          String      @default("new") // new, in_progress, fixed, wont_fix, ignored
+  category        String      // technical, content, onpage, ux
+  affectedPages   Int         @default(1)
+  createdAt       DateTime    @default(now())
+  analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  
+  @@index([analysisId])
+  @@index([severity])
+  @@index([status])
+  @@index([category])
+}
+
+model MetaTags {
+  id                String      @id @default(uuid())
+  analysisId        String      @unique
+  title             String?
+  description       String?
+  keywords          String?
+  titleLength       Int?
+  descriptionLength Int?
+  canonicalUrl      String?
+  robots            String?
+  openGraph         Json?       // Store Open Graph tags as JSON
+  twitterCard       Json?       // Store Twitter Card data as JSON
+  analysis          SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+}

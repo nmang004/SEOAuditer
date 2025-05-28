@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,8 +40,8 @@ export function RecentProjects({
   });
 
   return (
-    <motion.div
-      variants={staggerContainer}
+    <m.div
+      variants={staggerContainer()}
       initial="hidden"
       animate="visible"
       className="w-full"
@@ -92,6 +92,6 @@ export function RecentProjects({
           </Button>
         </CardFooter>
       </Card>
-    </motion.div>
+    </m.div>
   );
 }

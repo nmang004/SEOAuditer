@@ -1,137 +1,120 @@
-import React from "react";
+"use client";
+
+import { m } from 'framer-motion';
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ExternalLink, ChevronRight } from "lucide-react";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn, formatDate, getSeoScoreColor } from "@/lib/utils";
-import { Analysis } from "@/lib/types";
-import { staggerContainer, fadeInUp } from "@/lib/animations";
+import { Button } from "@/components/ui/button";
 
-interface AnalysisItemProps {
-  analysis: Analysis;
-}
-
-function AnalysisItem({ analysis }: AnalysisItemProps) {
-  const scoreColor = getSeoScoreColor(analysis.score);
-  
-  return (
-    <motion.div variants={fadeInUp}>
-      <div className="flex items-center justify-between rounded-lg border p-4 transition-all hover:bg-accent/50">
-        <div className="flex flex-1 items-start space-x-4">
-          <div 
-            className={cn(
-              "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-white",
-              `bg-${scoreColor}-500`
-            )}
-          >
-            <span className="text-sm font-bold">{analysis.score}</span>
-          </div>
-          <div className="flex-1 space-y-1">
-            <p className="font-medium">{analysis.url}</p>
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(analysis.categoryScores).map(([category, score], index) => (
-                <Badge 
-                  key={index} 
-                  variant={getSeoScoreColor(score) as any}
-                  size="sm"
-                >
-                  {category}: {score}
-                </Badge>
-              )).slice(0, 3)}
-              {Object.keys(analysis.categoryScores).length > 3 && (
-                <Badge variant="secondary" size="sm">
-                  +{Object.keys(analysis.categoryScores).length - 3} more
-                </Badge>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="ml-4 flex-shrink-0 text-sm text-muted-foreground">
-          {formatDate(analysis.createdAt)}
-        </div>
-        <Link href={`/dashboard/analyses/${analysis.id}`} className="ml-4">
-          <Button variant="ghost" size="icon">
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </Link>
-      </div>
-    </motion.div>
-  );
+interface Analysis {
+  id: string;
+  projectName: string;
+  url: string;
+  date: string;
+  score: number;
+  status: "completed" | "in_progress" | "failed";
+  issues: {
+    critical: number;
+    warning: number;
+    info: number;
+  };
 }
 
 interface RecentAnalysesProps {
   analyses: Analysis[];
-  isLoading?: boolean;
 }
 
-export function RecentAnalyses({ analyses, isLoading = false }: RecentAnalysesProps) {
-  if (isLoading) {
-    return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-lg">Recent Analyses</CardTitle>
-          <CardDescription>Your latest SEO analysis results</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="flex items-center space-x-4">
-                <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-[250px]" />
-                  <Skeleton className="h-4 w-[200px]" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+export function RecentAnalyses({ analyses }: RecentAnalysesProps) {
+  const getStatusColor = (status: Analysis["status"]) => {
+    switch (status) {
+      case "completed":
+        return "success";
+      case "in_progress":
+        return "warning";
+      case "failed":
+        return "destructive";
+      default:
+        return "default";
+    }
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return "text-success-500";
+    if (score >= 70) return "text-warning-500";
+    return "text-destructive-500";
+  };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-lg">Recent Analyses</CardTitle>
-        <CardDescription>Your latest SEO analysis results</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <motion.div 
-          className="space-y-3"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
-          {analyses.length > 0 ? (
-            analyses.map((analysis) => (
-              <AnalysisItem key={analysis.id} analysis={analysis} />
-            ))
-          ) : (
-            <p className="py-4 text-center text-muted-foreground">
-              No recent analyses found. Start by analyzing a website.
-            </p>
-          )}
-        </motion.div>
-      </CardContent>
-      <CardFooter className="border-t bg-muted/50 px-6 py-4">
-        <Button variant="ghost" className="w-full" asChild>
-          <Link href="/dashboard/analyses">
-            View all analyses
-            <ExternalLink className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
-      </CardFooter>
-    </Card>
+    <m.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold">Recent Analyses</h2>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/dashboard/analyses">View All</Link>
+          </Button>
+        </div>
+
+        <div className="space-y-4">
+          {analyses.map((analysis, index) => (
+            <m.div
+              key={analysis.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Link
+                href={`/dashboard/analyses/${analysis.id}`}
+                className="block hover:bg-muted/50 rounded-lg p-4 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <h3 className="font-medium">{analysis.projectName}</h3>
+                    <p className="text-sm text-muted-foreground">{analysis.url}</p>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="text-right">
+                      <div className={`text-lg font-bold ${getScoreColor(analysis.score)}`}>
+                        {analysis.score}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {new Date(analysis.date).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <Badge variant={getStatusColor(analysis.status)}>
+                      {analysis.status.replace("_", " ")}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex items-center space-x-4 text-sm">
+                  {analysis.issues.critical > 0 && (
+                    <div className="flex items-center text-destructive-500">
+                      <span className="font-medium">{analysis.issues.critical}</span>
+                      <span className="ml-1">Critical</span>
+                    </div>
+                  )}
+                  {analysis.issues.warning > 0 && (
+                    <div className="flex items-center text-warning-500">
+                      <span className="font-medium">{analysis.issues.warning}</span>
+                      <span className="ml-1">Warnings</span>
+                    </div>
+                  )}
+                  {analysis.issues.info > 0 && (
+                    <div className="flex items-center text-muted-foreground">
+                      <span className="font-medium">{analysis.issues.info}</span>
+                      <span className="ml-1">Info</span>
+                    </div>
+                  )}
+                </div>
+              </Link>
+            </m.div>
+          ))}
+        </div>
+      </Card>
+    </m.div>
   );
 }

@@ -30,7 +30,9 @@ export function formatPercentage(value: number): string {
 /**
  * Get the SEO score color based on the score value
  */
-export function getSeoScoreColor(score: number): string {
+type ScoreColor = "success" | "warning" | "danger";
+
+export function getSeoScoreColor(score: number): ScoreColor {
   if (score >= 80) return "success";
   if (score >= 50) return "warning";
   return "danger";

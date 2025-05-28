@@ -1,6 +1,8 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from 'framer-motion';
 import { 
   Plus, 
   Search, 
@@ -18,72 +20,70 @@ import {
 import { Button } from "@/components/ui/button";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 
-interface ActionCardProps {
+interface QuickAction {
   title: string;
   description: string;
-  icon: React.ReactNode;
   href: string;
-  variant?: "default" | "secondary" | "outline" | "ghost";
+  icon: React.ReactNode;
+  color: "primary" | "success" | "warning" | "destructive";
 }
 
-function ActionCard({ title, description, icon, href, variant = "default" }: ActionCardProps) {
-  return (
-    <motion.div variants={fadeInUp}>
-      <Link href={href} className="block h-full">
-        <Card className="h-full transition-all duration-200 hover:shadow-md hover:translate-y-[-2px]">
-          <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-            <div className="mb-4 rounded-full bg-primary/10 p-3 text-primary">
-              {icon}
-            </div>
-            <CardTitle className="mb-2 text-base">{title}</CardTitle>
-            <CardDescription className="text-sm">{description}</CardDescription>
-          </CardContent>
-        </Card>
-      </Link>
-    </motion.div>
-  );
+interface QuickActionsProps {
+  actions: QuickAction[];
 }
 
-export function QuickActions() {
+export function QuickActions({ actions }: QuickActionsProps) {
+  const getButtonVariant = (color: QuickAction["color"]) => {
+    switch (color) {
+      case "success":
+        return "success";
+      case "warning":
+        return "warning";
+      case "destructive":
+        return "destructive";
+      default:
+        return "default";
+    }
+  };
+
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="text-lg">Quick Actions</CardTitle>
-        <CardDescription>Common tasks to improve your SEO</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <motion.div 
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
-          <ActionCard
-            title="New Project"
-            description="Add a website to track"
-            icon={<Plus className="h-6 w-6" />}
-            href="/dashboard/projects/new"
-          />
-          <ActionCard
-            title="Analyze URL"
-            description="Quick SEO analysis"
-            icon={<Search className="h-6 w-6" />}
-            href="/dashboard/analyses/new"
-          />
-          <ActionCard
-            title="View Reports"
-            description="SEO performance data"
-            icon={<BarChart className="h-6 w-6" />}
-            href="/dashboard/reports"
-          />
-          <ActionCard
-            title="Export Data"
-            description="Download as PDF/CSV"
-            icon={<Download className="h-6 w-6" />}
-            href="/dashboard/export"
-          />
-        </motion.div>
-      </CardContent>
-    </Card>
+    <m.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold mb-6">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {actions.map((action, index) => (
+            <m.div
+              key={action.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Link href={action.href}>
+                <Card className="p-4 hover:bg-muted/50 transition-colors">
+                  <div className="flex flex-col items-center text-center space-y-2">
+                    <div className={`text-${action.color}-500`}>{action.icon}</div>
+                    <h3 className="font-medium">{action.title}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {action.description}
+                    </p>
+                    <Button
+                      variant={getButtonVariant(action.color)}
+                      size="sm"
+                      className="mt-2"
+                    >
+                      Get Started
+                    </Button>
+                  </div>
+                </Card>
+              </Link>
+            </m.div>
+          ))}
+        </div>
+      </Card>
+    </m.div>
   );
 }

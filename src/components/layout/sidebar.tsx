@@ -2,7 +2,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence  } from 'framer-motion';
 import { 
   LayoutDashboard, 
   Folder, 
@@ -120,7 +120,7 @@ const NavItem = ({ item, isActive }: NavItemProps) => {
 
       <AnimatePresence initial={false}>
         {isExpanded && hasChildren && (
-          <motion.div
+          <m.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -141,7 +141,7 @@ const NavItem = ({ item, isActive }: NavItemProps) => {
                 {child.title}
               </Link>
             ))}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>
@@ -222,7 +222,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Backdrop */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -235,7 +235,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       </AnimatePresence>
 
       {/* Sidebar */}
-      <motion.aside
+      <m.aside
         ref={sidebarRef}
         initial={{ x: '-100%' }}
         animate={{ x: isOpen ? 0 : '-100%' }}
@@ -280,7 +280,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               
             return (
               <NavItem
-                key={item.id || index}
+                key={`${item.href || 'item'}-${index}`}
                 item={item}
                 isActive={isActive}
               />
@@ -309,7 +309,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </Button>
           </div>
         </div>
-      </motion.aside>
+      </m.aside>
     </>
   );
 }
