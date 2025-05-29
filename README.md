@@ -25,38 +25,79 @@ A premium, full-stack SEO analysis dashboard for advanced site audits, competito
 
 ---
 
-## Local Development
+## Local Development with Docker (Recommended)
 
-### 1. Clone & Install
+### 1. Prerequisites
+- Docker and Docker Compose installed
+- Node.js 18+ (for local development without Docker)
+
+### 2. Clone & Setup
 ```sh
 git clone <repo-url>
 cd rival-outranker
-npm install
+cp .env.example .env  # Update values if needed
 ```
 
-### 2. Environment Setup
-- Copy `.env.example` to `.env` and fill in required values (DB, Redis, JWT, etc).
-- For local dev, defaults are provided in `docker-compose.yml`.
-
-### 3. Start Services
+### 3. Start All Services with Docker Compose
 ```sh
-docker-compose up -d  # Start Postgres & Redis
+docker-compose up --build
 ```
 
-### 4. Run the App
-```sh
-npm run dev           # Next.js frontend
-npm run --prefix backend dev   # Backend API
-```
+This will start:
+- Frontend (Next.js) on http://localhost:3000
+- Backend API on http://localhost:4000
+- PostgreSQL database on port 5432
+- Redis on port 6379
+
+### 4. Access the Application
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:4000
+- PostgreSQL: localhost:5432 (user: postgres, password: postgres)
+- Redis: localhost:6379
 
 ### 5. Seed the Database
 ```sh
-npm run seed          # Seeds mock data (backend/scripts/seed-mock-data.ts)
+docker-compose exec backend npm run seed
 ```
 
 ### 6. Reset the Database
 ```sh
-npm run reset-db      # Drops, migrates, and seeds DB
+docker-compose exec backend npm run reset-db
+```
+
+## Development Without Docker
+
+### 1. Install Dependencies
+```sh
+npm install
+cd backend && npm install && cd ..
+```
+
+### 2. Start Services
+Start the required services using Docker:
+```sh
+docker-compose up -d postgres redis
+```
+
+### 3. Run the Applications
+In separate terminals:
+```sh
+# Terminal 1: Frontend
+npm run dev
+
+# Terminal 2: Backend
+cd backend && npm run dev
+```
+
+### 4. Database Migrations
+```sh
+cd backend
+npm run migrate:dev
+```
+
+### 5. Seed Data
+```sh
+npm run seed
 ```
 
 ---
