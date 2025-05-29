@@ -48,7 +48,7 @@ const nextConfig = {
   },
   
   // Handle trailing slashes for consistent URLs
-  trailingSlash: true,
+  trailingSlash: false,
   
   // Disable static optimization for dynamic routes
   output: 'standalone',
