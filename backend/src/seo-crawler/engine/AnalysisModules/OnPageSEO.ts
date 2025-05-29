@@ -2,20 +2,20 @@ import { PageAnalysis } from '../../types/PageAnalysis';
 
 export class OnPageSEO {
   async analyze(pageContext: any): Promise<Partial<PageAnalysis>> {
-    const { $, url, response } = pageContext;
+    const { $, url } = pageContext;
     const title = $('title').text().trim();
     const metaDescription = $('meta[name="description"]').attr('content') || '';
     const headings = {
-      h1: $('h1').map((_, el) => $(el).text().trim()).get(),
-      h2: $('h2').map((_, el) => $(el).text().trim()).get(),
-      h3: $('h3').map((_, el) => $(el).text().trim()).get(),
+      h1: $('h1').map((_: any, el: any) => $(el).text().trim()).get(),
+      h2: $('h2').map((_: any, el: any) => $(el).text().trim()).get(),
+      h3: $('h3').map((_: any, el: any) => $(el).text().trim()).get(),
     };
     // Heading structure
     const h1Count = headings.h1.length;
     const hasMultipleH1 = h1Count > 1;
     const hasNoH1 = h1Count === 0;
     // Alt text for images
-    const images = $('img').map((_, el) => ({
+    const images = $('img').map((_: any, el: any) => ({
       src: $(el).attr('src'),
       alt: $(el).attr('alt') || '',
     })).get();
@@ -41,7 +41,7 @@ export class OnPageSEO {
       external: [] as string[],
       broken: [] as string[], // TODO: Implement real check
     };
-    $('a[href]').each((_, el) => {
+    $('a[href]').each((_: any, el: any) => {
       const href = $(el).attr('href');
       if (!href) return;
       try {

@@ -9,7 +9,7 @@ export class StructuredData {
     const warnings: string[] = [];
     let hasBreadcrumb = false, hasArticle = false, hasProduct = false, hasFAQ = false;
     let richResultsEligible = false;
-    $('script[type="application/ld+json"]').each((_, el) => {
+    $('script[type="application/ld+json"]').each((_: any, el: any) => {
       try {
         const json = $(el).html();
         if (json) {
@@ -31,7 +31,7 @@ export class StructuredData {
     });
     // Microdata types
     const microdataTypes: string[] = [];
-    $('[itemscope][itemtype]').each((_, el) => {
+    $('[itemscope][itemtype]').each((_: any, el: any) => {
       const type = $(el).attr('itemtype');
       if (type) microdataTypes.push(type);
     });

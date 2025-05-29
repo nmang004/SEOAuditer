@@ -6,7 +6,7 @@ export class StorageAdapter {
   async saveResult(jobId: string, result: any) {
     // Save crawl result to DB using Prisma models
     // jobId = CrawlSession.id
-    const { projectId, userId, startedAt, completedAt, pages, issues, recommendations, score } = result;
+    const { projectId, userId: _userId, startedAt, completedAt, pages, issues, recommendations: _recommendations, score } = result;
     // Upsert CrawlSession
     await prisma.crawlSession.upsert({
       where: { id: jobId },

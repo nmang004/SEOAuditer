@@ -35,7 +35,7 @@ export class PageAnalyzer {
     const storage = new StorageAdapter();
     try {
       if (usePuppeteer) {
-        browser = await puppeteer!.launch({ headless: 'new', args: ['--remote-debugging-port=9222'] });
+        browser = await puppeteer!.launch({ headless: true, args: ['--remote-debugging-port=9222'] });
         page = await browser.newPage();
         await page.setUserAgent(this.config.crawlOptions.userAgent || 'SEO-Analyzer/1.0');
         await page.setViewport(this.config.crawlOptions.viewport || { width: 1200, height: 800 });
@@ -44,11 +44,12 @@ export class PageAnalyzer {
         response = { status: resp?.status(), headers: resp?.headers() };
         if (this.config.crawlOptions.extractOptions.screenshots) {
           screenshot = await page.screenshot({ fullPage: true });
-          screenshotPath = await storage.saveScreenshot(this.config['jobId'] || 'default', url, screenshot);
+          screenshotPath = await storage.saveScreenshot((this.config as any).jobId || 'default', url, screenshot as Buffer);
         }
         // Run Lighthouse for Core Web Vitals/performance, accessibility, best-practices if requested
         if (this.config.crawlOptions.extractOptions.performanceMetrics && lighthouse) {
-          const { lhr } = await lighthouse(url, {
+          const lighthouseFn = (lighthouse as any).default || lighthouse;
+          const { lhr } = await lighthouseFn(url, {
             port: 9222,
             output: 'json',
             onlyCategories: ['performance', 'accessibility', 'best-practices'],
@@ -75,10 +76,9 @@ export class PageAnalyzer {
             'Accept': 'text/html,application/xhtml+xml,application/xml',
           },
           timeout: this.config.crawlOptions.timeout || 30000,
-          maxRedirects: 5,
           validateStatus: (status) => status < 500,
         });
-        html = resp.data;
+        html = resp.data as string;
         response = resp;
       }
       const $ = cheerio.load(html);
@@ -117,10 +117,9 @@ export class PageAnalyzer {
               'Accept': 'text/html,application/xhtml+xml,application/xml',
             },
             timeout: this.config.crawlOptions.timeout || 30000,
-            maxRedirects: 5,
             validateStatus: (status) => status < 500,
           });
-          html = resp.data;
+          html = resp.data as string;
           response = resp;
           const $ = cheerio.load(html);
           const pageContext = { url, html, $, response, config: this.config };

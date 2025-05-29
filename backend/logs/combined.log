@@ -1,0 +1,13 @@
+2025-05-29 02:29:36.207 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-29 02:29:36.208 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-29 02:29:36.208 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-29 02:29:36.208 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-29 02:29:36.235 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}

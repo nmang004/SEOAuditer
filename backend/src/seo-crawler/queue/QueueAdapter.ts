@@ -1,16 +1,13 @@
-import { Queue, Job, QueueEvents, Worker as BullWorker } from 'bullmq';
+import { Queue } from 'bullmq';
 import { CrawlerConfig } from '../types/CrawlerConfig';
-import { CrawlJob } from '../types/CrawlJob';
 
 const connection = { host: 'localhost', port: 6379 }; // TODO: Use config/env
 
 export class QueueAdapter {
   private queue: Queue;
-  private queueEvents: QueueEvents;
 
   constructor() {
     this.queue = new Queue('seo-crawl', { connection });
-    this.queueEvents = new QueueEvents('seo-crawl', { connection });
   }
 
   async addJob(config: CrawlerConfig): Promise<string> {
@@ -18,7 +15,7 @@ export class QueueAdapter {
       removeOnComplete: true,
       removeOnFail: false,
     });
-    return job.id;
+    return job.id?.toString() || '';
   }
 
   async getJobStatus(jobId: string): Promise<string> {

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export class TechnicalSEO {
   async analyze(pageContext: any): Promise<Partial<PageAnalysis>> {
-    const { url, response, $, html } = pageContext;
+    const { url, response, $ } = pageContext;
     const headers = response?.headers || {};
     const contentType = headers['content-type'] || '';
     const hasHttps = url.startsWith('https://');
@@ -32,7 +32,7 @@ export class TechnicalSEO {
     try {
       const robotsUrl = new URL('/robots.txt', url).toString();
       const robotsResp = await axios.get(robotsUrl, { timeout: 5000 });
-      const match = robotsResp.data.match(/Sitemap:\s*(.+)/i);
+      const match = (robotsResp.data as string).match(/Sitemap:\s*(.+)/i);
       if (match) sitemapUrl = match[1].trim();
     } catch {}
     if (!sitemapUrl) {
@@ -40,7 +40,7 @@ export class TechnicalSEO {
       if (linkSitemap) sitemapUrl = linkSitemap;
     }
     // hreflang tags
-    const hreflangs = $('link[rel="alternate"][hreflang]').map((_, el) => ({
+    const hreflangs = $('link[rel="alternate"][hreflang]').map((_: any, el: any) => ({
       hreflang: $(el).attr('hreflang'),
       href: $(el).attr('href'),
     })).get();

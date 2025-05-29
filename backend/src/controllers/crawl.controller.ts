@@ -24,9 +24,10 @@ export const CrawlController = {
       const jobId = await crawlManager.startCrawl(config);
       // Optionally emit job started event
       wsGateway.emitProgress(jobId, { status: 'started' });
-      res.status(202).json({ jobId });
+      return res.status(202).json({ jobId });
     } catch (err) {
-      res.status(500).json({ error: 'Failed to start crawl', details: err?.message });
+      const error = err as Error;
+      return res.status(500).json({ error: 'Failed to start crawl', details: error.message });
     }
   },
 
@@ -34,9 +35,10 @@ export const CrawlController = {
     try {
       const { jobId } = req.params;
       const status = await crawlManager.getStatus(jobId);
-      res.json({ jobId, status });
+      return res.json({ jobId, status });
     } catch (err) {
-      res.status(500).json({ error: 'Failed to get status', details: err?.message });
+      const error = err as Error;
+      return res.status(500).json({ error: 'Failed to get status', details: error.message });
     }
   },
 
@@ -44,9 +46,10 @@ export const CrawlController = {
     try {
       const { jobId } = req.params;
       const results = await crawlManager.getResults(jobId);
-      res.json({ jobId, results });
+      return res.json({ jobId, results });
     } catch (err) {
-      res.status(500).json({ error: 'Failed to get results', details: err?.message });
+      const error = err as Error;
+      return res.status(500).json({ error: 'Failed to get results', details: error.message });
     }
   },
 
@@ -55,9 +58,10 @@ export const CrawlController = {
       const { jobId } = req.params;
       await crawlManager.cancelCrawl(jobId);
       wsGateway.emitProgress(jobId, { status: 'cancelled' });
-      res.json({ jobId, status: 'cancelled' });
+      return res.json({ jobId, status: 'cancelled' });
     } catch (err) {
-      res.status(500).json({ error: 'Failed to cancel crawl', details: err?.message });
+      const error = err as Error;
+      return res.status(500).json({ error: 'Failed to cancel crawl', details: error.message });
     }
   },
 
@@ -70,9 +74,10 @@ export const CrawlController = {
       if (!buffer) return res.status(404).json({ error: 'Screenshot not found' });
       res.setHeader('Content-Type', 'image/png');
       res.setHeader('Content-Disposition', 'inline; filename="screenshot.png"');
-      res.send(buffer);
+      return res.send(buffer);
     } catch (err) {
-      res.status(500).json({ error: 'Failed to get screenshot', details: err?.message });
+      const error = err as Error;
+      return res.status(500).json({ error: 'Failed to get screenshot', details: error.message });
     }
   },
 }; 

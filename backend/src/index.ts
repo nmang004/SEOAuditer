@@ -11,7 +11,7 @@ import { PrismaClient } from '@prisma/client';
 import { config } from './config/config';
 import { logger } from './utils/logger';
 import { errorHandler } from './middleware/error.middleware';
-import { rateLimit } from './middleware/rate-limit.middleware';
+import rateLimit from './middleware/rate-limit.middleware';
 import { authRouter } from './routes/auth.routes';
 import { dashboardRouter } from './routes/dashboard.routes';
 import { projectRouter } from './routes/project.routes';
@@ -27,7 +27,32 @@ const server = http.createServer(app);
 // Initialize Redis client
 export const redisClient = createClient({
   url: config.redis.url,
+  socket: {
+    reconnectStrategy: (retries) => {
+      if (retries > 5) {
+        console.log('Too many retries on Redis. Connection Terminated');
+        return new Error('Could not connect to Redis after 5 retries');
+      }
+      return Math.min(retries * 100, 5000);
+    },
+  },
 });
+
+// Connect to Redis
+const connectRedis = async () => {
+  try {
+    await redisClient.connect();
+    logger.info('Connected to Redis');
+  } catch (error) {
+    logger.error('Failed to connect to Redis:', error);
+    // In development, continue without Redis but log the error
+    if (process.env.NODE_ENV === 'development') {
+      logger.warn('Running without Redis. Rate limiting and caching will be disabled.');
+    } else {
+      process.exit(1);
+    }
+  }
+};
 
 // Initialize Socket.IO
 export const io = new Server(server, {
@@ -44,12 +69,17 @@ export const prisma = new PrismaClient({
   log: ['error', 'warn'],
 });
 
-// Middleware
+// Apply middleware
 app.use(helmet());
-app.use(cors({
+
+// CORS configuration
+const corsOptions = {
   origin: config.cors.origin,
   credentials: true,
-}));
+};
+app.use(cors(corsOptions));
+
+// Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -58,7 +88,7 @@ if (config.env !== 'test') {
   app.use(morgan('dev'));
 }
 
-// Rate limiting
+// Apply rate limiting
 app.use(rateLimit.api);
 
 // Health check endpoint
@@ -74,7 +104,7 @@ app.get('/health', (_req: Request, res: Response) => {
 const openApiSpec = YAML.load(__dirname + '/../docs/openapi.yaml');
 
 // Serve Swagger UI
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
+app.use('/api/docs', swaggerUi.serve as any, swaggerUi.setup(openApiSpec) as any);
 
 // API Routes
 app.use('/api/auth', authRouter);
@@ -152,13 +182,13 @@ process.on('SIGINT', shutdown);
 // Start server
 const startServer = async () => {
   try {
-    // Connect to Redis
-    await redisClient.connect();
-    logger.info('Redis client connected');
+    // Connect to Redis before starting the server
+    await connectRedis();
     
-    // Start listening
     server.listen(config.port, () => {
-      logger.info(`Server running in ${config.env} mode on port ${config.port}`);
+      logger.info(`Server is running on port ${config.port}`);
+      logger.info(`Environment: ${config.env}`);
+      logger.info(`API Documentation: http://localhost:${config.port}/api-docs`);
     });
   } catch (error) {
     logger.error('Failed to start server:', error);

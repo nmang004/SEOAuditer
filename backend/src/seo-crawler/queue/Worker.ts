@@ -24,7 +24,7 @@ export class Worker {
   private bullWorker: BullWorker;
   private wsGateway = new WebSocketGateway();
 
-  constructor(private queueAdapter: QueueAdapter) {
+  constructor(_queueAdapter: QueueAdapter) {
     this.bullWorker = new BullWorker('seo-crawl', async (job: Job) => {
       logger.info(`Starting crawl job ${job.id}`);
       metrics.jobsStarted++;
@@ -34,7 +34,7 @@ export class Worker {
       // Run crawl
       const result = await engine.crawl();
       // Save result (optional, could be handled by engine)
-      await storage.saveResult(job.id, result);
+      await storage.saveResult(job.id ?? '', result);
       return result;
     }, { connection });
   }
@@ -42,11 +42,11 @@ export class Worker {
   async start() {
     // Worker starts automatically on instantiation
     // Optionally, add event listeners for logging, errors, etc.
-    this.bullWorker.on('completed', (job) => {
+    this.bullWorker.on('completed', (job: Job) => {
       logger.info(`Job ${job.id} completed.`);
       metrics.jobsCompleted++;
     });
-    this.bullWorker.on('failed', (job, err) => {
+    this.bullWorker.on('failed', (job: Job | undefined, err: any) => {
       logger.error(`Job ${job?.id} failed: ${err?.message || err}`);
       metrics.jobsFailed++;
       metrics.lastError = err?.message || String(err);
@@ -54,7 +54,7 @@ export class Worker {
         this.wsGateway.emitError(job.id.toString(), err?.message || err);
       }
     });
-    this.bullWorker.on('removed', (job) => {
+    this.bullWorker.on('removed' as any, (job: Job) => {
       logger.warn(`Job ${job?.id} was cancelled/removed.`);
       metrics.jobsCancelled++;
       if (job?.id) {

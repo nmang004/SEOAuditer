@@ -1,63 +1,112 @@
-import { Request, Response, NextFunction } from 'express';
-// @ts-ignore - Ignore missing type declarations for rate-limiter-flexible
-import { RateLimiterRedis } from 'rate-limiter-flexible';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
+import { RateLimiterMemory, RateLimiterRedis } from 'rate-limiter-flexible';
 import { redisClient } from '../index';
 import { RateLimitError } from './error.middleware';
 import { config } from '../config/config';
 
 const isTest = process.env.NODE_ENV === 'test';
+const isDevelopment = process.env.NODE_ENV === 'development';
 
-// No-op middleware for tests
-const noop = (_req: Request, _res: Response, next: NextFunction) => next();
+type RateLimiter = RateLimiterMemory | RateLimiterRedis;
+
+// Memory-based rate limiter for when Redis is not available
+const createMemoryRateLimiter = (points: number, duration: number, blockDuration: number) => {
+  return new RateLimiterMemory({
+    points,
+    duration,
+    blockDuration,
+  });
+};
 
 // Create rate limiter for general API endpoints
-export const apiRateLimiter = !isTest ? new RateLimiterRedis({
-  storeClient: redisClient,
-  keyPrefix: 'rate_limit:api',
-  points: config.rateLimit.max, // Number of points
-  duration: config.rateLimit.windowMs / 1000, // Per second
-  blockDuration: 60 * 15, // Block for 15 minutes if rate limit is exceeded
-}) : null;
+let apiRateLimiter: RateLimiter;
+let authRateLimiter: RateLimiter;
 
-// Create rate limiter for authentication endpoints
-export const authRateLimiter = !isTest ? new RateLimiterRedis({
-  storeClient: redisClient,
-  keyPrefix: 'rate_limit:auth',
-  points: 5, // 5 login attempts
-  duration: 60 * 60, // Per hour
-  blockDuration: 60 * 60, // Block for 1 hour if rate limit is exceeded
-}) : null;
+// Initialize rate limiters
+if (isTest) {
+  // For tests, use memory limiters with high limits
+  apiRateLimiter = createMemoryRateLimiter(1000, 1, 0);
+  authRateLimiter = createMemoryRateLimiter(1000, 1, 0);
+} else if (redisClient.isReady) {
+  // Use Redis-based rate limiting if available
+  apiRateLimiter = new RateLimiterRedis({
+    storeClient: redisClient,
+    keyPrefix: 'rate_limit:api',
+    points: config.rateLimit.max,
+    duration: Math.floor(config.rateLimit.windowMs / 1000),
+    blockDuration: 60 * 15,
+  });
 
-// Middleware to handle rate limiting
-export const rateLimiter = (limiter: RateLimiterRedis | null) => 
-  isTest
-    ? noop
-    : async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          // Use IP address as the identifier
-          const ip = req.ip || 'unknown';
-          const identifier = `${ip}:${req.path}`;
-          // Consume 1 point per request
-          await limiter!.consume(identifier);
-          next();
-        } catch (rateLimiterRes) {
-          // Set rate limit headers
-          res.set({
-            'Retry-After': Math.ceil((rateLimiterRes as any).msBeforeNext / 1000).toString(),
-            'X-RateLimit-Limit': config.rateLimit.max.toString(),
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': new Date(Date.now() + (rateLimiterRes as any).msBeforeNext).toISOString(),
-          });
-          throw new RateLimitError('Too many requests, please try again later');
-        }
+  authRateLimiter = new RateLimiterRedis({
+    storeClient: redisClient,
+    keyPrefix: 'rate_limit:auth',
+    points: 5,
+    duration: 60 * 60,
+    blockDuration: 60 * 60,
+  });
+  
+  console.log('Using Redis-based rate limiting');
+} else {
+  // Fall back to memory-based rate limiting
+  if (isDevelopment) {
+    console.warn('Using in-memory rate limiting. For production, use Redis.');
+  }
+  
+  apiRateLimiter = createMemoryRateLimiter(
+    config.rateLimit.max,
+    Math.floor(config.rateLimit.windowMs / 1000),
+    60 * 15
+  );
+
+  authRateLimiter = createMemoryRateLimiter(
+    5,           // 5 login attempts
+    60 * 60,     // 1 hour
+    60 * 60      // Block for 1 hour
+  );
+}
+
+// Create rate limiter middleware
+const createRateLimiter = (limiter: RateLimiter): RequestHandler => {
+  if (isTest || !limiter) {
+    return (_req: Request, _res: Response, next: NextFunction) => next();
+  }
+
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Use IP address as the identifier
+      const ip = req.ip || 'unknown';
+      const identifier = `${ip}:${req.path}`;
+      
+      // Consume 1 point per request
+      await limiter.consume(identifier);
+      next();
+    } catch (rateLimiterRes: any) {
+      // Set rate limit headers
+      const headers = {
+        'Retry-After': Math.ceil(rateLimiterRes.msBeforeNext / 1000).toString(),
+        'X-RateLimit-Limit': config.rateLimit.max.toString(),
+        'X-RateLimit-Remaining': '0',
+        'X-RateLimit-Reset': new Date(Date.now() + rateLimiterRes.msBeforeNext).toISOString(),
       };
+      
+      Object.entries(headers).forEach(([key, value]) => {
+        res.setHeader(key, value);
+      });
+      
+      const err = new RateLimitError('Too many requests, please try again later');
+      next(err);
+    }
+  };
+};
 
-// Apply rate limiting to different routes
+// Create rate limiters
+const apiLimiter = createRateLimiter(apiRateLimiter);
+const authLimiter = createRateLimiter(authRateLimiter);
+
+// Export rate limiters
 export const rateLimit = {
-  // For general API endpoints
-  api: rateLimiter(apiRateLimiter),
-  // For authentication endpoints
-  auth: rateLimiter(authRateLimiter),
+  api: apiLimiter,
+  auth: authLimiter,
 };
 
 export default rateLimit;

@@ -2,7 +2,7 @@ import { PageAnalysis } from '../../types/PageAnalysis';
 
 export class Recommendations {
   async analyze(pageContext: any): Promise<Partial<PageAnalysis>> {
-    const { url, $, response, pageAnalysis = {} } = pageContext;
+    const { url: _url, $: _$, response: _response, pageAnalysis = {} } = pageContext;
     const recs: any[] = [];
 
     // --- Technical SEO ---
@@ -227,7 +227,7 @@ export class Recommendations {
         type: 'structured',
         priority: 'low',
         title: 'Eligible for Rich Results',
-        description: 'Your page is eligible for rich results. Test with Google's Rich Results Test.',
+        description: "Your page is eligible for rich results. Test with Google's Rich Results Test.",
         doc: 'https://search.google.com/test/rich-results',
         quickWin: true,
       });
