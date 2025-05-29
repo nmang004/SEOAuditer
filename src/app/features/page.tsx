@@ -79,7 +79,7 @@ export default function FeaturesPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-background to-muted/30">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#1A202C] to-[#23293a]">
         <div className="container relative z-10 py-24 md:py-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -87,13 +87,13 @@ export default function FeaturesPage() {
             transition={{ duration: 0.6 }}
             className="mx-auto max-w-3xl text-center"
           >
-            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl text-white">
               Powerful Features for{' '}
-              <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">
                 SEO Success
               </span>
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-indigo-200">
               Everything you need to analyze, optimize, and improve your website's search engine performance.
             </p>
           </motion.div>
