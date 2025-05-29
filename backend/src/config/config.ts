@@ -41,7 +41,7 @@ if (!envVars.success) {
 
 export const config = {
   env: envVars.data.NODE_ENV,
-  port: parseInt(envVars.data.PORT, 10),
+  port: process.env.PORT ? parseInt(process.env.PORT, 10) : 4000,
   
   // JWT
   jwt: {
