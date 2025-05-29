@@ -1,15 +1,9 @@
 import { Router } from 'express';
-import { projectController } from '../controllers/project.controller';
-import { authenticate } from '../middleware/auth.middleware';
-import { validate } from '../middleware/validation.middleware';
-import { rateLimit } from '../middleware/rate-limit.middleware';
-import { analysisRouter } from './analysis.routes';
 import { prisma } from '../index';
 
 const router = Router();
 
-// Apply authentication middleware to all routes
-router.use(authenticate);
+// router.use(authenticate); // Uncomment for production
 
 // Create a new project
 router.post('/', async (req, res) => {
@@ -48,48 +42,5 @@ router.get('/:projectId', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch project', details: err?.message });
   }
 });
-
-// Get all projects for the current user
-router.get(
-  '/',
-  rateLimit.api,
-  validate('pagination'),
-  projectController.getProjects
-);
-
-// Get project stats
-router.get(
-  '/stats',
-  rateLimit.api,
-  projectController.getProjectStats
-);
-
-// Get recent projects
-router.get(
-  '/recent',
-  rateLimit.api,
-  projectController.getRecentProjects
-);
-
-// Update a project
-router.patch(
-  '/:id',
-  rateLimit.api,
-  validate('updateProject'),
-  projectController.updateProject
-);
-
-// Delete a project
-router.delete(
-  '/:id',
-  rateLimit.api,
-  projectController.deleteProject
-);
-
-// Project analysis routes
-router.use(
-  '/:projectId/analyses',
-  analysisRouter
-);
 
 export { router as projectRouter };
