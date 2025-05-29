@@ -1,3 +1,4 @@
+// API contract and authentication updated to match backend (2024-06-01)
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -7,27 +8,54 @@ export default function ProjectsListPage() {
   const [projectName, setProjectName] = useState('');
   const [projectUrl, setProjectUrl] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/projects?userId=manual')
+    const token = localStorage.getItem('token');
+    fetch('/api/projects', {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    })
       .then(res => res.json())
-      .then(setProjects);
+      .then(result => {
+        if (result.success && Array.isArray(result.data)) {
+          setProjects(result.data);
+        } else {
+          setProjects([]);
+        }
+      });
   }, []);
 
   const handleCreateProject = async (e) => {
     e.preventDefault();
     if (!projectName.trim() || !projectUrl.trim()) return;
     setLoading(true);
-    const res = await fetch('/api/projects', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: projectName, url: projectUrl, userId: 'manual' }),
-    });
-    const newProject = await res.json();
-    setProjects([newProject, ...projects]);
-    setProjectName('');
-    setProjectUrl('');
-    setLoading(false);
+    setError('');
+    try {
+      const token = localStorage.getItem('token'); // or however you store the JWT
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ name: projectName, url: projectUrl }),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        setError(result.error || 'Failed to create project');
+        setLoading(false);
+        return;
+      }
+      setProjects([result.data, ...projects]);
+      setProjectName('');
+      setProjectUrl('');
+    } catch (err) {
+      setError('Failed to create project');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -58,13 +86,15 @@ export default function ProjectsListPage() {
           {loading ? 'Creating...' : 'Create Project'}
         </button>
       </form>
+      {error && <div className="text-red-400 mb-4">{error}</div>}
       <div className="space-y-4">
+        {projects.length === 0 && <div className="text-gray-400">No projects found.</div>}
         {projects.map((p: any) => (
           <Link key={p.id} href={`/dashboard/projects/${p.id}`} className="block p-4 bg-[#181F2A] rounded shadow hover:bg-blue-900/30 transition">
             <div className="flex justify-between items-center">
               <div>
-                <div className="font-semibold text-white">{p.name}</div>
-                <div className="text-sm text-gray-400">{p.url}</div>
+                <div className="font-semibold text-white">{p.name || 'Untitled Project'}</div>
+                <div className="text-sm text-gray-400">{p.url || ''}</div>
               </div>
               <div className="text-blue-400 font-bold">View</div>
             </div>
