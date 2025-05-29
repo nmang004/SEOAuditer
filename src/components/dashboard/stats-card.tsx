@@ -28,7 +28,11 @@ interface StatCardProps {
   hasError?: boolean;
 }
 
-export function StatCard({
+/**
+ * StatCard displays a statistic with icon, trend, and progress.
+ * @param {StatCardProps} props
+ */
+const StatCard = React.memo(function StatCard({
   title,
   value,
   previousValue,
@@ -226,7 +230,9 @@ export function StatCard({
       </Card>
     </m.div>
   );
-}
+});
+
+export { StatCard };
 
 interface StatsRowProps {
   stats: {

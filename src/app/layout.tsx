@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   title: 'Rival Outranker - Premium SEO Analysis Dashboard',
   description: 'A powerful SEO analysis tool to help you outrank your competitors',
   keywords: 'SEO, search engine optimization, competitor analysis, website ranking',
+};
+
+export const viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#0f172a' },

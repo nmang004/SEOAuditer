@@ -18,12 +18,17 @@ import { Badge } from "@/components/ui/badge";
 import { cn, getSeoScoreColor, formatDate } from "@/lib/utils";
 import { fadeInUp } from "@/lib/animations";
 import { ProjectCardProps } from "@/lib/types";
+import ReactMemo from 'react';
 
-export function ProjectCard({ 
+/**
+ * ProjectCard displays a project summary with status, score, and quick actions.
+ * @param {ProjectCardProps} props
+ */
+const ProjectCard = React.memo(({ 
   project, 
   variant = "detailed", 
   showActions = true 
-}: ProjectCardProps) {
+}: ProjectCardProps) => {
   const { 
     name, 
     url, 
@@ -244,4 +249,6 @@ export function ProjectCard({
       </m.div>
     </m.div>
   );
-}
+});
+
+export { ProjectCard };

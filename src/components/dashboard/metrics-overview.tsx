@@ -97,7 +97,11 @@ interface MetricsOverviewProps {
   metrics: Metric[];
 }
 
-export function MetricsOverview({ metrics }: MetricsOverviewProps) {
+/**
+ * MetricsOverview displays a grid of key metrics/statistics for the dashboard.
+ * @param {MetricsOverviewProps} props
+ */
+const MetricsOverview = React.memo(function MetricsOverview({ metrics }: MetricsOverviewProps) {
   return (
     <m.div
       initial={{ opacity: 0, y: 20 }}
@@ -129,6 +133,7 @@ export function MetricsOverview({ metrics }: MetricsOverviewProps) {
                           : "default"
                       }
                       className="flex items-center"
+                      aria-label={`${metric.trend === "up" ? "Increase" : metric.trend === "down" ? "Decrease" : "No Change"} by ${Math.abs(metric.change || 0)}%`}
                     >
                       {metric.trend === "up" ? "↑" : metric.trend === "down" ? "↓" : "→"}
                       {metric.change && ` ${Math.abs(metric.change)}%`}
@@ -148,4 +153,6 @@ export function MetricsOverview({ metrics }: MetricsOverviewProps) {
       </Card>
     </m.div>
   );
-}
+});
+
+export { MetricsOverview };

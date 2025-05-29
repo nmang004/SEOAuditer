@@ -53,6 +53,8 @@ export default function HomePage() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative overflow-hidden py-20 md:py-32">
+          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/90 via-primary-50/60 to-transparent" />
+          <div className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_at_top,_rgba(59,130,246,0.10)_0%,_transparent_70%)]" />
           <div className="container relative z-10">
             <m.div 
               className="mx-auto max-w-3xl text-center"
@@ -73,11 +75,11 @@ export default function HomePage() {
               }}
             >
               <m.h1 
-                className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl"
+                className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl text-foreground drop-shadow-lg"
                 variants={fadeInUp}
               >
                 Outrank Your Competitors with
-                <span className="bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent"> Advanced SEO Analytics</span>
+                <span className="block text-primary-600 font-extrabold drop-shadow-md mt-2 md:mt-0 md:inline"> Advanced SEO Analytics</span>
               </m.h1>
               <m.p 
                 className="mb-10 text-lg text-muted-foreground md:text-xl"
@@ -103,9 +105,6 @@ export default function HomePage() {
               </m.div>
             </m.div>
           </div>
-          
-          {/* Background gradient */}
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--primary-50),transparent_50%)]"></div>
         </section>
 
         {/* Features Section */}

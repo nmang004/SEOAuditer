@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { MobileNavigation } from '@/components/navigation/mobile-navigation';
 import { navItems } from '@/components/navigation/nav-items';
+import { Breadcrumb } from '@/components/navigation/breadcrumb';
+import { Search } from '@/components/navigation/search';
 
 export interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -116,22 +118,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="bg-card border-b">
-          <div className="flex items-center justify-between p-4">
+          <div className="flex items-center justify-between p-4 gap-4">
             <MobileNavigation />
-            
-            {/* Add your header content here */}
-            <div className="flex-1 px-4">
-              {showBreadcrumb && (
-                <nav className="flex" aria-label="Breadcrumb">
-                  <ol className="flex items-center space-x-2 text-sm">
-                    <li>Dashboard</li>
-                    {/* Add breadcrumb items here */}
-                  </ol>
-                </nav>
-              )}
+            {/* Breadcrumb navigation */}
+            {showBreadcrumb && (
+              <div className="flex-1 min-w-0">
+                <Breadcrumb />
+              </div>
+            )}
+            {/* Quick search modal/trigger */}
+            <div className="flex items-center gap-2">
+              <Search />
+              {/* Add user menu, notifications, etc. here if needed */}
             </div>
-            
-            {/* Add user menu, notifications, etc. */}
           </div>
         </header>
 

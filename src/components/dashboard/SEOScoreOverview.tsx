@@ -61,7 +61,11 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-export function SEOScoreOverview({
+/**
+ * SEOScoreOverview displays the overall SEO score and breakdown by category.
+ * @param {SEOScoreOverviewProps} props
+ */
+const SEOScoreOverview = React.memo(function SEOScoreOverview({
   score = 0,
   previousScore = 0,
   categories,
@@ -387,4 +391,6 @@ export function SEOScoreOverview({
       </Card>
     </m.div>
   );
-}
+});
+
+export { SEOScoreOverview };

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { Error as MongooseError } from 'mongoose';
-import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { logger } from '../utils/logger';
 
 // Custom error classes
@@ -84,18 +83,8 @@ export const errorHandler = (
     details = err.details;
     isOperational = err.isOperational;
   } 
-  // Handle Mongoose validation errors
-  else if (err instanceof MongooseError.ValidationError) {
-    statusCode = 400;
-    message = 'Validation Error';
-    details = Object.values(err.errors).map((e) => ({
-      field: e.path,
-      message: e.message,
-    }));
-    isOperational = true;
-  } 
   // Handle Prisma errors
-  else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  else if (err instanceof PrismaClientKnownRequestError) {
     // Handle known Prisma errors
     switch (err.code) {
       case 'P2002':

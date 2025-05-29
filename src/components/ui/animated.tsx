@@ -107,7 +107,8 @@ export const Animated = forwardRef<HTMLDivElement, AnimatedProps>(
 Animated.displayName = 'Animated';
 
 // Re-export motion components for convenience
-export { motion };
+import { motion as framerMotion } from 'framer-motion';
+export { framerMotion as motion };
 
 // Helper components for common animations
 export const Fade = forwardRef<HTMLDivElement, Omit<AnimatedProps, 'type'>>((props, ref) => (
