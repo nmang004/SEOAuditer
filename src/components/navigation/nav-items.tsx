@@ -21,11 +21,17 @@ export const navItems: NavItem[] = [
     href: "/dashboard/projects",
     icon: LayoutDashboard,
   },
-  {
-    label: "SEO Trend Analysis",
-    href: "/analysis/trends/demo-project-id",
-    icon: BarChart,
-  },
+  // Example: Uncomment and replace with real projectId for quick access
+  // {
+  //   label: "My Project Analyses",
+  //   href: "/dashboard/projects/my-project-id/analyses",
+  //   icon: BarChart,
+  // },
+  // {
+  //   label: "My Project Trends",
+  //   href: "/dashboard/projects/my-project-id/trends",
+  //   icon: BarChart,
+  // },
   {
     label: "Keyword Research",
     href: "/dashboard/keywords",
