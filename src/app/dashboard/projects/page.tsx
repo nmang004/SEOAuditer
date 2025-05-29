@@ -1,26 +1,33 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function ProjectsListPage() {
-  const [projects, setProjects] = useState([
-    { id: 'project-1', name: 'Acme Corp', url: 'https://acme.com' },
-    { id: 'project-2', name: 'Blue Ribbon', url: 'https://blueribbonservices.com' },
-  ]);
+  const [projects, setProjects] = useState([]);
   const [projectName, setProjectName] = useState('');
   const [projectUrl, setProjectUrl] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleCreateProject = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetch('/api/projects?userId=manual')
+      .then(res => res.json())
+      .then(setProjects);
+  }, []);
+
+  const handleCreateProject = async (e) => {
     e.preventDefault();
     if (!projectName.trim() || !projectUrl.trim()) return;
-    const newProject = {
-      id: `project-${Date.now()}`,
-      name: projectName.trim(),
-      url: projectUrl.trim(),
-    };
+    setLoading(true);
+    const res = await fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: projectName, url: projectUrl, userId: 'manual' }),
+    });
+    const newProject = await res.json();
     setProjects([newProject, ...projects]);
     setProjectName('');
     setProjectUrl('');
+    setLoading(false);
   };
 
   return (
@@ -46,12 +53,13 @@ export default function ProjectsListPage() {
         <button
           type="submit"
           className="px-6 py-3 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
+          disabled={loading}
         >
-          Create Project
+          {loading ? 'Creating...' : 'Create Project'}
         </button>
       </form>
       <div className="space-y-4">
-        {projects.map(p => (
+        {projects.map((p: any) => (
           <Link key={p.id} href={`/dashboard/projects/${p.id}`} className="block p-4 bg-[#181F2A] rounded shadow hover:bg-blue-900/30 transition">
             <div className="flex justify-between items-center">
               <div>

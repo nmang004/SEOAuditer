@@ -3,15 +3,23 @@ import { CrawlManager } from '../seo-crawler/engine/CrawlManager';
 import { QueueAdapter } from '../seo-crawler/queue/QueueAdapter';
 import { WebSocketGateway } from '../seo-crawler/ws/WebSocketGateway';
 import { StorageAdapter } from '../seo-crawler/storage/StorageAdapter';
+import { PrismaClient } from '@prisma/client';
 
 const queueAdapter = new QueueAdapter();
 const crawlManager = new CrawlManager(queueAdapter);
 const wsGateway = new WebSocketGateway();
 const storage = new StorageAdapter();
+const prisma = new PrismaClient();
 
 export const CrawlController = {
   async startCrawl(req: Request, res: Response) {
     try {
+      const { projectId } = req.body;
+      // Validate projectId
+      const project = await prisma.project.findUnique({ where: { id: projectId } });
+      if (!project) {
+        return res.status(400).json({ error: 'Invalid project ID' });
+      }
       const config = req.body;
       const jobId = await crawlManager.startCrawl(config);
       // Optionally emit job started event
