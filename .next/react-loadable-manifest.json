@@ -1,8 +1,29 @@
 {
-  "app/dashboard/layout.tsx -> @/components/layout/dashboard-layout": {
-    "id": "app/dashboard/layout.tsx -> @/components/layout/dashboard-layout",
+  "../node_modules/jspdf/dist/jspdf.es.min.js -> canvg": {
+    "id": 34137,
     "files": [
-      "static/chunks/_app-pages-browser_src_components_layout_dashboard-layout_tsx.js"
+      "static/chunks/bc98253f.06dd6805e77e797b.js",
+      "static/chunks/2121.0334f9c124269e6d.js"
+    ]
+  },
+  "../node_modules/jspdf/dist/jspdf.es.min.js -> dompurify": {
+    "id": 10822,
+    "files": [
+      "static/chunks/822.83ca34591621db62.js"
+    ]
+  },
+  "../node_modules/jspdf/dist/jspdf.es.min.js -> html2canvas": {
+    "id": 52699,
+    "files": [
+      "static/chunks/ad2866b8.0eac8b3573f42d9a.js"
+    ]
+  },
+  "app/dashboard/layout.tsx -> @/components/layout/dashboard-layout": {
+    "id": 45140,
+    "files": [
+      "static/chunks/6874-83e1b9c41b8598a5.js",
+      "static/chunks/4314.1ce96ee487c189d9.js",
+      "static/chunks/5140.4d84d23e4b535881.js"
     ]
   }
 }
