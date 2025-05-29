@@ -1,7 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { notificationService } from '../services/notification.service';
-import { logger } from '../utils/logger';
-import { BadRequestError, NotFoundError } from '../middleware/error.middleware';
+import { BadRequestError } from '../middleware/error.middleware';
+
+// Notification Controller
+// Handles user notifications, unread count, marking as read, deleting, and notification settings
+// All endpoints must use correct Prisma model accessors and field names
+// All select statements must only reference fields that exist in the Prisma schema
+// All endpoints should be protected with JWT middleware
+// TODO: Add input validation middleware (zod) for query/params
+// TODO: Add more granular error handling and logging for production
 
 export const notificationController = {
   /**
@@ -10,6 +17,9 @@ export const notificationController = {
   async getNotifications(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
       const { 
         page = '1', 
         limit = '20', 
@@ -27,7 +37,7 @@ export const notificationController = {
         }
       );
 
-      res.json({
+      return res.json({
         success: true,
         data: notifications,
         meta: {
@@ -38,7 +48,7 @@ export const notificationController = {
         },
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 
@@ -48,14 +58,17 @@ export const notificationController = {
   async getUnreadCount(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
       const count = await notificationService.getUnreadCount(userId);
 
-      res.json({
+      return res.json({
         success: true,
         data: { count },
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 
@@ -70,15 +83,18 @@ export const notificationController = {
       if (!id) {
         throw new BadRequestError('Notification ID is required');
       }
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
 
       const notification = await notificationService.markAsRead(id, userId);
 
-      res.json({
+      return res.json({
         success: true,
         data: notification,
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 
@@ -88,15 +104,18 @@ export const notificationController = {
   async markAllAsRead(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
       const { count } = await notificationService.markAllAsRead(userId);
 
-      res.json({
+      return res.json({
         success: true,
         data: { count },
         message: `Marked ${count} notifications as read`,
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 
@@ -111,15 +130,18 @@ export const notificationController = {
       if (!id) {
         throw new BadRequestError('Notification ID is required');
       }
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
 
       await notificationService.deleteNotification(id, userId);
 
-      res.json({
+      return res.json({
         success: true,
         message: 'Notification deleted successfully',
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 
@@ -130,9 +152,9 @@ export const notificationController = {
     try {
       const userId = req.user?.id;
 
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { settings: true },
+      const settings = await prisma.userSettings.findUnique({
+        where: { userId },
+        select: { notifications: true },
       });
 
       // Return default settings if not set
@@ -146,14 +168,12 @@ export const notificationController = {
         marketing: false,
       };
 
-      const settings = user?.settings?.notifications || defaultSettings;
-
       res.json({
         success: true,
-        data: settings,
+        data: settings?.notifications || defaultSettings,
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 
@@ -163,38 +183,47 @@ export const notificationController = {
   async updateNotificationSettings(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
       const updates = req.body;
 
       // Get current settings
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { settings: true },
+      const userSettings = await prisma.userSettings.findUnique({
+        where: { userId },
+        select: { notifications: true },
       });
 
-      const currentSettings = user?.settings || {};
+      const currentNotifications = (userSettings?.notifications && typeof userSettings.notifications === 'object')
+        ? userSettings.notifications
+        : {};
 
       // Merge updates with current settings
-      const updatedSettings = {
-        ...currentSettings,
-        notifications: {
-          ...(currentSettings.notifications || {}),
-          ...updates,
-        },
+      const newNotifications = {
+        ...currentNotifications,
+        ...updates,
       };
 
       // Update user settings
-      await prisma.user.update({
-        where: { id: userId },
-        data: { settings: updatedSettings },
+      await prisma.userSettings.upsert({
+        where: { userId },
+        update: { notifications: newNotifications },
+        create: {
+          userId,
+          notifications: newNotifications,
+          theme: 'system',
+          language: 'en',
+          timezone: 'UTC',
+        },
       });
 
-      res.json({
+      return res.json({
         success: true,
-        data: updatedSettings.notifications,
+        data: newNotifications,
         message: 'Notification settings updated successfully',
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 
@@ -204,6 +233,9 @@ export const notificationController = {
   async testNotification(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
       const { type = 'INFO' } = req.body;
 
       const notification = await notificationService.createNotification({
@@ -217,13 +249,13 @@ export const notificationController = {
         },
       });
 
-      res.json({
+      return res.json({
         success: true,
         data: notification,
         message: 'Test notification sent successfully',
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 };

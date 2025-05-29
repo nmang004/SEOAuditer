@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { Error as MongooseError } from 'mongoose';
 import { Prisma } from '@prisma/client';
 import { logger } from '../utils/logger';
@@ -69,8 +69,7 @@ export class InternalServerError extends ApiError {
 export const errorHandler = (
   err: Error | ApiError,
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
   // Default to 500 (Internal Server Error)
   let statusCode = 500;

@@ -2,20 +2,31 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config/config';
 import { prisma } from '..';
-import { UnauthorizedError, ForbiddenError } from './error.middleware';
-import { User } from '@prisma/client';
+import { UnauthorizedError, ForbiddenError, NotFoundError } from './error.middleware';
+
+// Define a type for the user object attached to the request (only selected fields)
+type AuthenticatedUser = {
+  id: string;
+  email: string;
+  name: string | null;
+  subscriptionTier: string;
+  emailVerified: boolean;
+  lastLogin: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 // Extend Express Request type to include user
 declare global {
   namespace Express {
     interface Request {
-      user?: User;
+      user?: AuthenticatedUser;
     }
   }
 }
 
 // JWT token verification
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = async (req: Request, _res: Response, next: NextFunction) => {
   try {
     // Get token from Authorization header
     const authHeader = req.headers.authorization;
@@ -48,7 +59,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     }
 
     // Attach user to request object
-    req.user = user;
+    req.user = user as AuthenticatedUser;
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
@@ -63,7 +74,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
 // Role-based access control middleware
 export const requireRole = (roles: string | string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, _res: Response, next: NextFunction) => {
     if (!req.user) {
       throw new UnauthorizedError('Authentication required');
     }
@@ -83,7 +94,7 @@ export const requireRole = (roles: string | string[]) => {
 
 // Check if user owns the resource
 export const checkOwnership = (model: any, paramName = 'id') => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, _res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
         throw new UnauthorizedError('Authentication required');
@@ -118,7 +129,7 @@ export const checkOwnership = (model: any, paramName = 'id') => {
 };
 
 // Middleware to check if email is verified
-export const requireVerifiedEmail = (req: Request, res: Response, next: NextFunction) => {
+export const requireVerifiedEmail = (req: Request, _res: Response, next: NextFunction) => {
   if (!req.user) {
     throw new UnauthorizedError('Authentication required');
   }

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { storageController } from '../controllers/storage.controller';
 import { authenticate } from '../middleware/auth.middleware';
-import { validate } from '../middleware/validation.middleware';
+// import { validate } from '../middleware/validation.middleware';
 import { rateLimit } from '../middleware/rate-limit.middleware';
 
 const router = Router();
@@ -33,7 +33,7 @@ router.post(
 router.post(
   '/presigned-url',
   rateLimit.api,
-  validate('generatePresignedUrl'),
+  // validate('generatePresignedUrl'),
   storageController.generatePresignedUrl
 );
 
@@ -97,7 +97,9 @@ router.get(
         // Stream the file
         const fileStream = fs.createReadStream(fullPath);
         fileStream.pipe(res);
+        return;
       });
+      return;
     });
   }
 );

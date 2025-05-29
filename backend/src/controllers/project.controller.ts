@@ -1,7 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '..';
-import { NotFoundError, BadRequestError } from '../middleware/error.middleware';
-import { logger } from '../utils/logger';
+import { NotFoundError } from '../middleware/error.middleware';
+
+// Project Controller
+// Handles project CRUD, stats, and recent projects
+// All endpoints must use correct Prisma model accessors and field names
+// All select statements must only reference fields that exist in the Prisma schema
+// All endpoints should be protected with JWT middleware
+// TODO: Add input validation middleware (zod) for query/params
+// TODO: Add more granular error handling and logging for production
 
 export const projectController = {
   // Create a new project
@@ -10,6 +17,9 @@ export const projectController = {
       const { name, url, scanFrequency = 'manual' } = req.body;
       const userId = req.user?.id;
 
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
       // Create project
       const project = await prisma.project.create({
         data: {
@@ -35,12 +45,12 @@ export const projectController = {
       // Emit project created event
       req.io.emit('project:created', { project });
 
-      res.status(201).json({
+      return res.status(201).json({
         success: true,
         data: project,
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 
@@ -234,7 +244,7 @@ export const projectController = {
             status: 'completed',
           },
         }),
-        prisma.seoIssue.count({
+        prisma.sEOIssue.count({
           where: {
             analysis: {
               crawlSession: {

@@ -2,10 +2,18 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '..';
 import { 
   NotFoundError, 
-  BadRequestError,
-  ForbiddenError 
+  BadRequestError
 } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
+
+// Analysis Controller
+// Handles starting, retrieving, listing, and cancelling analyses, as well as issue management
+// All endpoints must use correct Prisma model accessors and field names
+// All select statements must only reference fields that exist in the Prisma schema
+// All endpoints should be protected with JWT middleware
+// TODO: Add input validation middleware (zod) for query/params
+// TODO: Add more granular error handling and logging for production
+// TODO: Implement actual SEO analysis logic in runAnalysisInBackground
 
 export const analysisController = {
   // Start a new analysis for a project
@@ -13,7 +21,6 @@ export const analysisController = {
     try {
       const { projectId } = req.params;
       const userId = req.user?.id;
-      const { options } = req.body;
 
       // Check if project exists and belongs to user
       const project = await prisma.project.findFirst({
@@ -40,15 +47,14 @@ export const analysisController = {
       const crawlSession = await prisma.crawlSession.create({
         data: {
           projectId,
+          url: project.url,
           status: 'pending',
           startedAt: new Date(),
-          options: options || {},
         },
         select: {
           id: true,
           status: true,
           startedAt: true,
-          options: true,
         },
       });
 
@@ -106,8 +112,6 @@ export const analysisController = {
                   id: true,
                   type: true,
                   severity: true,
-                  message: true,
-                  url: true,
                   status: true,
                   createdAt: true,
                 },
@@ -117,9 +121,6 @@ export const analysisController = {
               metaTags: {
                 select: {
                   id: true,
-                  tagName: true,
-                  content: true,
-                  status: true,
                 },
               },
             },
@@ -176,7 +177,6 @@ export const analysisController = {
             analysis: {
               select: {
                 overallScore: true,
-                issueCount: true,
               },
             },
           },
@@ -282,16 +282,13 @@ export const analysisController = {
 
       // Get paginated issues
       const [issues, total] = await Promise.all([
-        prisma.seoIssue.findMany({
+        prisma.sEOIssue.findMany({
           where,
           select: {
             id: true,
             type: true,
             severity: true,
-            message: true,
-            url: true,
             status: true,
-            context: true,
             createdAt: true,
           },
           orderBy: [
@@ -301,7 +298,7 @@ export const analysisController = {
           take: parseInt(limit as string, 10),
           skip: parseInt(offset as string, 10),
         }),
-        prisma.seoIssue.count({ where }),
+        prisma.sEOIssue.count({ where }),
       ]);
 
       res.json({
@@ -326,7 +323,7 @@ export const analysisController = {
       const userId = req.user?.id;
 
       // Check if issue exists and belongs to user
-      const issue = await prisma.seoIssue.findFirst({
+      const issue = await prisma.sEOIssue.findFirst({
         where: {
           id: issueId,
           analysis: {
@@ -353,15 +350,13 @@ export const analysisController = {
       }
 
       // Update issue status
-      const updatedIssue = await prisma.seoIssue.update({
+      const updatedIssue = await prisma.sEOIssue.update({
         where: { id: issueId },
         data: { status },
         select: {
           id: true,
           status: true,
           severity: true,
-          message: true,
-          url: true,
         },
       });
 
@@ -383,7 +378,7 @@ export const analysisController = {
   },
 
   // Helper method to run analysis in background
-  private async runAnalysisInBackground(
+  async runAnalysisInBackground(
     crawlSessionId: string,
     project: any,
     io: any
@@ -429,15 +424,15 @@ export const analysisController = {
       }
 
       // Create analysis results (example data)
-      const analysis = await prisma.seoAnalysis.create({
+      const analysis = await prisma.sEOAnalysis.create({
         data: {
           crawlSessionId,
+          projectId: project.id,
           overallScore: 85,
           technicalScore: 90,
           contentScore: 80,
           onpageScore: 85,
           uxScore: 88,
-          issueCount: 12,
         },
       });
 
@@ -448,22 +443,24 @@ export const analysisController = {
           type: 'missing_meta_description',
           severity: 'medium',
           message: 'Missing meta description',
+          title: 'Missing Meta Description',
+          category: 'technical',
           url: project.url,
           status: 'open',
-          context: { element: 'head' },
         },
         {
           analysisId: analysis.id,
           type: 'slow_page_load',
           severity: 'high',
           message: 'Page load time is slow',
+          title: 'Slow Page Load',
+          category: 'technical',
           url: project.url,
           status: 'open',
-          context: { loadTime: '4.2s' },
         },
       ];
 
-      await prisma.seoIssue.createMany({
+      await prisma.sEOIssue.createMany({
         data: exampleIssues,
       });
 
@@ -481,7 +478,6 @@ export const analysisController = {
         where: { id: project.id },
         data: { 
           currentScore: analysis.overallScore,
-          issueCount: analysis.issueCount,
         },
       });
 
@@ -500,7 +496,7 @@ export const analysisController = {
         },
       });
 
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error in analysis background job:', error);
       
       // Update crawl session as failed
@@ -508,7 +504,7 @@ export const analysisController = {
         where: { id: crawlSessionId },
         data: { 
           status: 'failed',
-          error: error.message,
+          errorMessage: error.message,
           completedAt: new Date(),
         },
       });

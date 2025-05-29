@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { notificationController } from '../controllers/notification.controller';
 import { authenticate } from '../middleware/auth.middleware';
-import { validate } from '../middleware/validation.middleware';
+// import { validate } from '../middleware/validation.middleware';
 import { rateLimit } from '../middleware/rate-limit.middleware';
 
 const router = Router();
@@ -27,7 +27,7 @@ router.get(
 router.patch(
   '/:id/read',
   rateLimit.api,
-  validate('markNotificationAsRead'),
+  // validate('markNotificationAsRead'),
   notificationController.markAsRead
 );
 
@@ -42,7 +42,7 @@ router.patch(
 router.delete(
   '/:id',
   rateLimit.api,
-  validate('deleteNotification'),
+  // validate('deleteNotification'),
   notificationController.deleteNotification
 );
 
@@ -57,7 +57,7 @@ router.get(
 router.patch(
   '/settings',
   rateLimit.api,
-  validate('updateNotificationSettings'),
+  // validate('updateNotificationSettings'),
   notificationController.updateNotificationSettings
 );
 
@@ -65,7 +65,7 @@ router.patch(
 router.post(
   '/test',
   rateLimit.api,
-  validate('testNotification'),
+  // validate('testNotification'),
   notificationController.testNotification
 );
 

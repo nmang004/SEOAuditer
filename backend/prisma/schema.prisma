@@ -18,6 +18,7 @@ model User {
   subscriptionTier  String    @default("free")
   emailVerified     Boolean   @default(false)
   verificationToken String?
+  verificationExpires DateTime?
   resetToken        String?
   resetTokenExpiry  DateTime?
   lastLogin         DateTime?
@@ -25,6 +26,9 @@ model User {
   updatedAt         DateTime  @updatedAt
   projects          Project[]
   refreshTokens     RefreshToken[]
+  settings          UserSettings? @relation("UserToUserSettings")
+  activityLogs      ActivityLog[]
+  notifications     Notification[]
 }
 
 model RefreshToken {
@@ -74,6 +78,7 @@ model CrawlSession {
 model SEOAnalysis {
   id              String      @id @default(uuid())
   crawlSessionId  String      @unique
+  projectId       String
   overallScore    Int?        @default(0)
   technicalScore  Int?        @default(0)
   contentScore    Int?        @default(0)
@@ -81,10 +86,12 @@ model SEOAnalysis {
   uxScore         Int?        @default(0)
   createdAt       DateTime    @default(now())
   crawlSession    CrawlSession @relation(fields: [crawlSessionId], references: [id], onDelete: Cascade)
+  project         Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
   issues          SEOIssue[]
   metaTags        MetaTags?
   
   @@index([crawlSessionId])
+  @@index([projectId])
 }
 
 model SEOIssue {
@@ -121,4 +128,46 @@ model MetaTags {
   openGraph         Json?       // Store Open Graph tags as JSON
   twitterCard       Json?       // Store Twitter Card data as JSON
   analysis          SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+}
+
+model UserSettings {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  notifications Json?
+  theme        String?  @default("system")
+  language     String?  @default("en")
+  timezone     String?  @default("UTC")
+  updatedAt    DateTime @updatedAt
+  user         User     @relation("UserToUserSettings", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id         String   @id @default(uuid())
+  userId     String
+  action     String
+  entityType String?
+  entityId   String?
+  details    Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id                String   @id @default(uuid())
+  userId            String
+  title             String
+  message           String
+  type              String
+  relatedEntityType String?
+  relatedEntityId   String?
+  metadata          Json?
+  readAt            DateTime?
+  createdAt         DateTime @default(now())
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([readAt])
 }

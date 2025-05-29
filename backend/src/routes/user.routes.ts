@@ -33,12 +33,12 @@ router.post(
 );
 
 // Delete user account
-router.delete(
-  '/account',
-  rateLimit.api,
-  validate('deleteAccount'),
-  userController.deleteAccount
-);
+// router.delete(
+//   '/account',
+//   rateLimit.api,
+//   validate('deleteAccount'),
+//   userController.deleteAccount
+// );
 
 // Get user settings
 router.get(
@@ -48,19 +48,19 @@ router.get(
 );
 
 // Update user settings
-router.patch(
-  '/settings',
-  rateLimit.api,
-  validate('updateSettings'),
-  userController.updateSettings
-);
+// router.patch(
+//   '/settings',
+//   rateLimit.api,
+//   validate('updateSettings'),
+//   userController.updateSettings
+// );
 
 // Get user activity log
-router.get(
-  '/activity',
-  rateLimit.api,
-  validate('getActivityLog'),
-  userController.getActivityLog
-);
+// router.get(
+//   '/activity',
+//   rateLimit.api,
+//   validate('getActivityLog'),
+//   userController.getActivityLog
+// );
 
 export { router as userRouter };

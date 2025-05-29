@@ -3,10 +3,17 @@ import bcrypt from 'bcrypt';
 import { prisma } from '..';
 import { 
   NotFoundError, 
-  BadRequestError,
-  ForbiddenError 
+  BadRequestError
 } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
+
+// User Controller
+// Handles user profile, settings, password, and account management
+// All endpoints must use correct Prisma model accessors and field names
+// All select statements must only reference fields that exist in the Prisma schema
+// All endpoints should be protected with JWT middleware
+// TODO: Add input validation middleware (zod) for query/params
+// TODO: Add more granular error handling and logging for production
 
 export const userController = {
   // Get current user profile
@@ -160,7 +167,7 @@ export const userController = {
       // Start a transaction to delete all user data
       await prisma.$transaction([
         // Delete all user's projects and related data
-        prisma.seoIssue.deleteMany({
+        prisma.sEOIssue.deleteMany({
           where: {
             analysis: {
               crawlSession: {
@@ -178,7 +185,7 @@ export const userController = {
             },
           },
         }),
-        prisma.seoAnalysis.deleteMany({
+        prisma.sEOAnalysis.deleteMany({
           where: {
             crawlSession: {
               project: { userId },
@@ -202,13 +209,21 @@ export const userController = {
       // TODO: Send account deletion confirmation email
 
       // Clear session
-      req.logout(() => {
+      if (req.logout) {
+        req.logout(() => {
+          res.clearCookie('connect.sid');
+          res.json({
+            success: true,
+            message: 'Account deleted successfully',
+          });
+        });
+      } else {
         res.clearCookie('connect.sid');
         res.json({
           success: true,
           message: 'Account deleted successfully',
         });
-      });
+      }
     } catch (error) {
       next(error);
     }
@@ -233,6 +248,9 @@ export const userController = {
 
       // Return default settings if not set
       if (!settings) {
+        if (!userId) {
+          return res.status(401).json({ success: false, error: 'Unauthorized' });
+        }
         const defaultSettings = {
           notifications: {
             email: true,
@@ -267,12 +285,12 @@ export const userController = {
         });
       }
 
-      res.json({
+      return res.json({
         success: true,
         data: settings,
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 
@@ -282,6 +300,9 @@ export const userController = {
       const userId = req.user?.id;
       const { notifications, theme, language, timezone } = req.body;
 
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
       const updatedSettings = await prisma.userSettings.upsert({
         where: { userId },
         update: {
@@ -313,13 +334,13 @@ export const userController = {
         },
       });
 
-      res.json({
+      return res.json({
         success: true,
         data: updatedSettings,
         message: 'Settings updated successfully',
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 

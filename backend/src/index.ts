@@ -1,7 +1,7 @@
 import 'module-alias/register';
 import 'reflect-metadata';
 import http from 'http';
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express, Request, Response } from 'express';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -11,7 +11,7 @@ import { PrismaClient } from '@prisma/client';
 import { config } from './config/config';
 import { logger } from './utils/logger';
 import { errorHandler } from './middleware/error.middleware';
-import { rateLimiter } from './middleware/rate-limit.middleware';
+import { rateLimit } from './middleware/rate-limit.middleware';
 import { authRouter } from './routes/auth.routes';
 import { dashboardRouter } from './routes/dashboard.routes';
 import { projectRouter } from './routes/project.routes';
@@ -56,10 +56,10 @@ if (config.env !== 'test') {
 }
 
 // Rate limiting
-app.use(rateLimiter);
+app.use(rateLimit.api);
 
 // Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
+app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -74,7 +74,7 @@ app.use('/api/projects', projectRouter);
 app.use('/api/analyses', analysisRouter);
 
 // 404 handler
-app.use((req: Request, res: Response) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).json({
     success: false,
     error: {

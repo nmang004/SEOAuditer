@@ -119,7 +119,8 @@ export class StorageService {
     try {
       await fsUnlink(filePath);
     } catch (error) {
-      if (error.code !== 'ENOENT') { // Ignore "file not found" errors
+      const e = error as any;
+      if (e.code !== 'ENOENT') { // Ignore "file not found" errors
         logger.error('Error deleting file:', error);
         throw new InternalServerError('Failed to delete file');
       }
@@ -158,6 +159,10 @@ export class StorageService {
       await fsAccess(filePath);
       return true;
     } catch (error) {
+      const e = error as any;
+      if (e.code !== 'ENOENT') {
+        throw error;
+      }
       return false;
     }
   }

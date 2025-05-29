@@ -11,22 +11,30 @@ import {
 // Configure multer for file uploads
 const upload = multer({
   storage: multer.diskStorage({
-    destination: (req, file, cb) => {
+    destination: (_req, _file, cb) => {
       cb(null, 'uploads/temp/');
     },
-    filename: (req, file, cb) => {
+    filename: (_req, _file, cb) => {
       const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-      cb(null, `${uniqueSuffix}-${file.originalname}`);
+      cb(null, `${uniqueSuffix}-${_file.originalname}`);
     },
   }),
   limits: {
     fileSize: 50 * 1024 * 1024, // 50MB max file size
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (_req, _file, cb) => {
     // Accept all files for now, but you can add validation here
     cb(null, true);
   },
 });
+
+// Storage Controller
+// Handles file upload, download, deletion, listing, and temp file cleanup
+// All endpoints must use correct service and file system access
+// All endpoints should be protected with JWT middleware if files are user-specific
+// TODO: Add input validation middleware (zod) for query/params
+// TODO: Add more granular error handling and logging for production
+// TODO: Add virus/malware scanning for uploaded files if required
 
 export const storageController = {
   // Middleware for handling file uploads
@@ -34,7 +42,7 @@ export const storageController = {
     return (req: Request, res: Response, next: NextFunction) => {
       const uploadSingle = upload.single(fieldName);
       
-      uploadSingle(req, res, async (err: any) => {
+      uploadSingle(req as any, res as any, async (err: any) => {
         if (err) {
           if (err.code === 'LIMIT_FILE_SIZE') {
             return next(new BadRequestError('File size exceeds the limit'));

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 import { BadRequestError } from './error.middleware';
 
@@ -132,7 +132,7 @@ type ValidationSchemas = {
 
 // Middleware factory function
 export const validate = (schemaName: SchemaName) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, _res: Response, next: NextFunction) => {
     try {
       const schema = schemas[schemaName];
       
@@ -152,13 +152,16 @@ export const validate = (schemaName: SchemaName) => {
         });
       }
 
-      // Replace request properties with validated values
-      const { body, query, params, cookies } = result.data;
-      
-      if (body) req.body = body;
-      if (query) req.query = query;
-      if (params) req.params = params;
-      if (cookies) req.cookies = cookies;
+      // Replace request properties with validated values (only if present)
+      if ('body' in result.data && result.data.body) req.body = result.data.body;
+      if ('query' in result.data && result.data.query) {
+        // Convert all query values to strings for compatibility with ParsedQs
+        req.query = Object.fromEntries(
+          Object.entries(result.data.query).map(([k, v]) => [k, v !== undefined && v !== null ? String(v) : v])
+        );
+      }
+      if ('params' in result.data && result.data.params) req.params = result.data.params;
+      if ('cookies' in result.data && result.data.cookies) req.cookies = result.data.cookies;
 
       next();
     } catch (error) {

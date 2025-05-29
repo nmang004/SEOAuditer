@@ -6,13 +6,6 @@ import fs from 'fs';
 import path from 'path';
 import handlebars from 'handlebars';
 
-// Email template interface
-interface EmailTemplate {
-  subject: string;
-  html: string;
-  text: string;
-}
-
 // Email options interface
 interface SendEmailOptions {
   to: string;
@@ -27,7 +20,7 @@ interface SendEmailOptions {
 }
 
 class EmailService {
-  private transporter: Transporter;
+  private transporter!: Transporter;
   private templates: Record<string, handlebars.TemplateDelegate> = {};
   private isInitialized = false;
 

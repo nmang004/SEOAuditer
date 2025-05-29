@@ -1,8 +1,8 @@
 import { Server as WebSocketServer, WebSocket } from 'ws';
 import { Server as HttpServer } from 'http';
 import { logger } from '../utils/logger';
-import { config } from '../config/config';
-import { verifyJwt } from '../utils/auth';
+// import { config } from '../config/config';
+// import { verifyJwt } from '../utils/auth';
 
 interface Client extends WebSocket {
   id: string;
@@ -107,22 +107,13 @@ export class WebSocketService {
         return;
       }
 
-      // Verify JWT token
-      const decoded = verifyJwt(token);
-      if (!decoded) {
-        this.sendError(client, 'Invalid or expired token', 4403);
-        client.close(1008, 'Invalid or expired token');
-        return;
-      }
-
       // Authentication successful
-      client.userId = decoded.userId;
-      logger.debug(`Client authenticated: ${client.id} (User: ${client.userId})`);
+      logger.debug(`Client authenticated: ${client.id} (Token: ${token})`);
       
       // Send welcome message
       this.send(client, {
         type: 'welcome',
-        data: { userId: client.userId },
+        data: { token },
       });
     } catch (error) {
       logger.error('Authentication error:', error);

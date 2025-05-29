@@ -75,6 +75,21 @@ export const config = {
   logs: {
     level: envVars.data.LOG_LEVEL,
   },
+  // Add clientUrl for use in controllers
+  clientUrl: process.env.CLIENT_URL || envVars.data.ALLOWED_ORIGINS.split(',')[0],
+  // Add missing config properties for email and app info
+  email: {
+    host: process.env.EMAIL_HOST || 'smtp.example.com',
+    port: parseInt(process.env.EMAIL_PORT || '587', 10),
+    secure: process.env.EMAIL_SECURE === 'true',
+    user: process.env.EMAIL_USER || 'user@example.com',
+    password: process.env.EMAIL_PASSWORD || 'password',
+    fromName: process.env.EMAIL_FROM_NAME || 'Rival Outranker',
+    fromEmail: process.env.EMAIL_FROM_EMAIL || 'noreply@example.com',
+  },
+  appName: process.env.APP_NAME || 'Rival Outranker',
+  appUrl: process.env.APP_URL || 'http://localhost:3000',
+  apiUrl: process.env.API_URL || 'http://localhost:3001',
 } as const;
 
 export type Config = typeof config;

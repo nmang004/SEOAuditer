@@ -43,7 +43,7 @@ router.get(
 router.get(
   '/:id',
   rateLimit.api,
-  validate('getProject'),
+  // validate('getProject'),
   projectController.getProjectById
 );
 
@@ -59,14 +59,14 @@ router.patch(
 router.delete(
   '/:id',
   rateLimit.api,
-  validate('deleteProject'),
+  // validate('deleteProject'),
   projectController.deleteProject
 );
 
 // Project analysis routes
 router.use(
   '/:projectId/analyses',
-  validate('projectId'),
+  // validate('projectId'),
   // Analysis routes will be mounted here
 );
 

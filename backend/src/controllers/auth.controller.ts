@@ -1,35 +1,45 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '..';
 import { config } from '../config/config';
-import { logger } from '../utils/logger';
 import { redisClient } from '..';
 import { 
   BadRequestError, 
   UnauthorizedError, 
-  NotFoundError,
-  InternalServerError
+  NotFoundError
 } from '../middleware/error.middleware';
 import { sendEmail } from '../services/email.service';
 
 // Token generation helper
 const generateTokens = (userId: string) => {
+  const secret: Secret = config.jwt.secret as string;
+  const accessOptions: SignOptions = { expiresIn: config.jwt.accessExpiration as any };
+  const refreshOptions: SignOptions = { expiresIn: config.jwt.refreshExpiration as any };
+
   const accessToken = jwt.sign(
     { userId },
-    config.jwt.secret,
-    { expiresIn: config.jwt.accessExpiration }
+    secret,
+    accessOptions
   );
 
   const refreshToken = jwt.sign(
     { userId, tokenId: uuidv4() },
-    config.jwt.secret,
-    { expiresIn: config.jwt.refreshExpiration }
+    secret,
+    refreshOptions
   );
 
   return { accessToken, refreshToken };
 };
+
+// Auth Controller
+// Handles registration, login, token refresh, logout, profile, password, and email verification
+// All endpoints must use correct Prisma model accessors and field names
+// All select statements must only reference fields that exist in the Prisma schema
+// All protected endpoints should use JWT middleware
+// TODO: Add input validation middleware (zod) and rate limiting where appropriate
+// TODO: Add more granular error handling and logging for production
 
 export const authController = {
   // Register a new user
@@ -371,10 +381,7 @@ export const authController = {
       const { email } = req.body;
 
       // Find user by email
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
-
+      const user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
         // Don't reveal that the email doesn't exist
         return res.json({
@@ -409,12 +416,12 @@ export const authController = {
         },
       });
 
-      res.json({
+      return res.json({
         success: true,
         message: 'If an account with that email exists, a password reset link has been sent',
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   },
 
@@ -507,7 +514,7 @@ export const authController = {
   },
 
   // Middleware to authenticate requests
-  async authenticate(req: Request, res: Response, next: NextFunction) {
+  async authenticate(req: Request, _res: Response, next: NextFunction) {
     try {
       // Get token from Authorization header
       const authHeader = req.headers.authorization;

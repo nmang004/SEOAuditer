@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { dashboardController } from '../controllers/dashboard.controller';
 import { authenticate } from '../middleware/auth.middleware';
-import { validate } from '../middleware/validation.middleware';
+// import { validate } from '../middleware/validation.middleware';
 import { rateLimit } from '../middleware/rate-limit.middleware';
 
 const router = Router();
@@ -38,20 +38,10 @@ router.get(
 );
 
 // Legacy endpoints (kept for backward compatibility)
-router.get('/overview', rateLimit.api, dashboardController.getOverview);
-router.get(
-  '/performance-metrics',
-  rateLimit.api,
-  validate('getPerformanceMetrics'),
-  dashboardController.getPerformanceMetrics
-);
-router.get('/project-comparison', rateLimit.api, dashboardController.getProjectComparison);
-router.get(
-  '/issues-summary',
-  rateLimit.api,
-  validate('getIssuesSummary'),
-  dashboardController.getIssuesSummary
-);
-router.get('/recommendations', rateLimit.api, dashboardController.getRecommendations);
+// router.get('/overview', rateLimit.api, dashboardController.getOverview);
+// validate('getPerformanceMetrics'),
+// validate('getIssuesSummary'),
+// router.get('/project-comparison', rateLimit.api, dashboardController.getProjectComparison);
+// router.get('/recommendations', rateLimit.api, dashboardController.getRecommendations);
 
 export { router as dashboardRouter };

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+// @ts-ignore - Ignore missing type declarations for rate-limiter-flexible
 import { RateLimiterRedis } from 'rate-limiter-flexible';
 import { redisClient } from '../index';
 import { RateLimitError } from './error.middleware';
@@ -36,10 +37,10 @@ export const rateLimiter = (limiter: RateLimiterRedis) =>
     } catch (rateLimiterRes) {
       // Set rate limit headers
       res.set({
-        'Retry-After': Math.ceil(rateLimiterRes.msBeforeNext / 1000).toString(),
+        'Retry-After': Math.ceil((rateLimiterRes as any).msBeforeNext / 1000).toString(),
         'X-RateLimit-Limit': config.rateLimit.max.toString(),
         'X-RateLimit-Remaining': '0',
-        'X-RateLimit-Reset': new Date(Date.now() + rateLimiterRes.msBeforeNext).toISOString(),
+        'X-RateLimit-Reset': new Date(Date.now() + (rateLimiterRes as any).msBeforeNext).toISOString(),
       });
 
       throw new RateLimitError('Too many requests, please try again later');
