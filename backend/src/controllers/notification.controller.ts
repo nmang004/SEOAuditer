@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { notificationService } from '../services/notification.service';
-import { BadRequestError } from '../middleware/error.middleware';
 
 // Notification Controller
 // Handles user notifications, unread count, marking as read, deleting, and notification settings
@@ -14,12 +13,14 @@ export const notificationController = {
   /**
    * Get user notifications
    */
-  async getNotifications(req: Request, res: Response, next: NextFunction) {
+  getNotifications: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
       }
+      
       const { 
         page = '1', 
         limit = '20', 
@@ -37,7 +38,7 @@ export const notificationController = {
         }
       );
 
-      return res.json({
+      res.json({
         success: true,
         data: notifications,
         meta: {
@@ -48,109 +49,149 @@ export const notificationController = {
         },
       });
     } catch (error) {
-      return next(error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'An error occurred while fetching notifications',
+        });
+      }
+      next(error);
     }
   },
 
   /**
    * Get unread notification count
    */
-  async getUnreadCount(req: Request, res: Response, next: NextFunction) {
+  getUnreadCount: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
       }
       const count = await notificationService.getUnreadCount(userId);
 
-      return res.json({
+      res.json({
         success: true,
         data: { count },
       });
     } catch (error) {
-      return next(error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'An error occurred while fetching unread count',
+        });
+      }
+      next(error);
     }
   },
 
   /**
    * Mark a notification as read
    */
-  async markAsRead(req: Request, res: Response, next: NextFunction) {
+  markAsRead: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;
       const userId = req.user?.id;
 
       if (!id) {
-        throw new BadRequestError('Notification ID is required');
+        res.status(400).json({ success: false, error: 'Notification ID is required' });
+        return;
       }
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
       }
 
       const notification = await notificationService.markAsRead(id, userId);
 
-      return res.json({
+      res.json({
         success: true,
         data: notification,
       });
     } catch (error) {
-      return next(error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'An error occurred while marking notification as read',
+        });
+      }
+      next(error);
     }
   },
 
   /**
    * Mark all notifications as read
    */
-  async markAllAsRead(req: Request, res: Response, next: NextFunction) {
+  markAllAsRead: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
       }
       const { count } = await notificationService.markAllAsRead(userId);
 
-      return res.json({
+      res.json({
         success: true,
         data: { count },
         message: `Marked ${count} notifications as read`,
       });
     } catch (error) {
-      return next(error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'An error occurred while marking all notifications as read',
+        });
+      }
+      next(error);
     }
   },
 
   /**
    * Delete a notification
    */
-  async deleteNotification(req: Request, res: Response, next: NextFunction) {
+  deleteNotification: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;
       const userId = req.user?.id;
 
       if (!id) {
-        throw new BadRequestError('Notification ID is required');
+        res.status(400).json({ success: false, error: 'Notification ID is required' });
+        return;
       }
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
       }
 
       await notificationService.deleteNotification(id, userId);
 
-      return res.json({
+      res.json({
         success: true,
         message: 'Notification deleted successfully',
       });
     } catch (error) {
-      return next(error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'An error occurred while deleting the notification',
+        });
+      }
+      next(error);
     }
   },
 
   /**
    * Get notification settings
    */
-  async getNotificationSettings(req: Request, res: Response, next: NextFunction) {
+  getNotificationSettings: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
+      }
 
       const settings = await prisma.userSettings.findUnique({
         where: { userId },
@@ -173,20 +214,32 @@ export const notificationController = {
         data: settings?.notifications || defaultSettings,
       });
     } catch (error) {
-      return next(error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'An error occurred while fetching notification settings',
+        });
+      }
+      next(error);
     }
   },
 
   /**
    * Update notification settings
    */
-  async updateNotificationSettings(req: Request, res: Response, next: NextFunction) {
+  updateNotificationSettings: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
       }
+      
       const updates = req.body;
+      if (!updates || typeof updates !== 'object') {
+        res.status(400).json({ success: false, error: 'Invalid settings format' });
+        return;
+      }
 
       // Get current settings
       const userSettings = await prisma.userSettings.findUnique({
@@ -217,26 +270,43 @@ export const notificationController = {
         },
       });
 
-      return res.json({
+      res.json({
         success: true,
         data: newNotifications,
         message: 'Notification settings updated successfully',
       });
     } catch (error) {
-      return next(error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'An error occurred while updating notification settings',
+        });
+      }
+      next(error);
     }
   },
 
   /**
    * Test notification
    */
-  async testNotification(req: Request, res: Response, next: NextFunction) {
+  testNotification: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
       }
+      
       const { type = 'INFO' } = req.body;
+      const validTypes = ['INFO', 'WARNING', 'ERROR', 'SUCCESS'];
+      
+      if (!validTypes.includes(type.toUpperCase())) {
+        res.status(400).json({ 
+          success: false, 
+          error: 'Invalid notification type. Must be one of: ' + validTypes.join(', ')
+        });
+        return;
+      }
 
       const notification = await notificationService.createNotification({
         title: 'Test Notification',
@@ -249,13 +319,19 @@ export const notificationController = {
         },
       });
 
-      return res.json({
+      res.json({
         success: true,
         data: notification,
         message: 'Test notification sent successfully',
       });
     } catch (error) {
-      return next(error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'An error occurred while sending test notification',
+        });
+      }
+      next(error);
     }
   },
 };

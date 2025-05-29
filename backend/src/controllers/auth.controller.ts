@@ -376,7 +376,7 @@ export const authController = {
   },
 
   // Forgot password
-  async forgotPassword(req: Request, res: Response, next: NextFunction) {
+  forgotPassword: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { email } = req.body;
 
@@ -384,10 +384,11 @@ export const authController = {
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
         // Don't reveal that the email doesn't exist
-        return res.json({
+        res.status(200).json({
           success: true,
           message: 'If an account with that email exists, a password reset link has been sent',
         });
+        return;
       }
 
       // Generate reset token
@@ -416,17 +417,23 @@ export const authController = {
         },
       });
 
-      return res.json({
+      res.status(200).json({
         success: true,
         message: 'If an account with that email exists, a password reset link has been sent',
       });
     } catch (error) {
-      return next(error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'An error occurred while processing your request',
+        });
+      }
+      next(error);
     }
   },
 
   // Reset password
-  async resetPassword(req: Request, res: Response, next: NextFunction) {
+  resetPassword: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { token, password } = req.body;
 
@@ -441,7 +448,11 @@ export const authController = {
       });
 
       if (!user) {
-        throw new BadRequestError('Invalid or expired reset token');
+        res.status(400).json({
+          success: false,
+          message: 'Invalid or expired reset token',
+        });
+        return;
       }
 
       // Hash new password
@@ -468,11 +479,17 @@ export const authController = {
         },
       });
 
-      res.json({
+      res.status(200).json({
         success: true,
         message: 'Password has been reset successfully',
       });
     } catch (error) {
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: 'An error occurred while resetting your password',
+        });
+      }
       next(error);
     }
   },

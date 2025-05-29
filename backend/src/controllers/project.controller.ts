@@ -18,7 +18,8 @@ export const projectController = {
       const userId = req.user?.id;
 
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
       }
       // Create project
       const project = await prisma.project.create({
@@ -45,12 +46,12 @@ export const projectController = {
       // Emit project created event
       req.io.emit('project:created', { project });
 
-      return res.status(201).json({
+      res.status(201).json({
         success: true,
         data: project,
       });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   },
 

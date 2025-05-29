@@ -249,7 +249,8 @@ export const userController = {
       // Return default settings if not set
       if (!settings) {
         if (!userId) {
-          return res.status(401).json({ success: false, error: 'Unauthorized' });
+          res.status(401).json({ success: false, error: 'Unauthorized' });
+          return;
         }
         const defaultSettings = {
           notifications: {
@@ -275,7 +276,7 @@ export const userController = {
           },
         });
 
-        return res.json({
+        res.json({
           success: true,
           data: {
             ...defaultSettings,
@@ -283,14 +284,15 @@ export const userController = {
             updatedAt: createdSettings.updatedAt,
           },
         });
+        return;
       }
 
-      return res.json({
+      res.json({
         success: true,
         data: settings,
       });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   },
 
@@ -301,7 +303,8 @@ export const userController = {
       const { notifications, theme, language, timezone } = req.body;
 
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
       }
       const updatedSettings = await prisma.userSettings.upsert({
         where: { userId },
@@ -334,13 +337,13 @@ export const userController = {
         },
       });
 
-      return res.json({
+      res.json({
         success: true,
         data: updatedSettings,
         message: 'Settings updated successfully',
       });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   },
 

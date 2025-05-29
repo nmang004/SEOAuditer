@@ -3,13 +3,19 @@ const path = require('path');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  // SWC minification is always enabled in Next.js 15+
+  // swcMinify: true, // Removed as it's now default and deprecated
+  
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
+  
   images: {
     domains: ['images.unsplash.com'],
+    // Disable image optimization for static export
+    unoptimized: true,
   },
+  
   webpack: (config, { isServer }) => {
     // Add path aliases
     config.resolve.alias = {
@@ -19,22 +25,33 @@ const nextConfig = {
       '@lib': path.resolve(__dirname, 'src/lib'),
     };
 
-    // Important: return the modified config
     return config;
   },
-  // Enable TypeScript path aliases
+  
+  // TypeScript configuration
   typescript: {
-    // Set to true to ignore TypeScript errors during build
     ignoreBuildErrors: false,
   },
-  // Enable webpack 5
-  future: {
-    webpack5: true,
-  },
-  // Enable ESLint on save in development
+  
+  // ESLint configuration
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: process.env.NODE_ENV === 'development',
   },
+  
+  // Output source maps in production for better error tracking
+  productionBrowserSourceMaps: true,
+  
+  // Enable server components
+  experimental: {
+    // Enable server actions (if needed)
+    // serverActions: true,
+  },
+  
+  // Handle trailing slashes for consistent URLs
+  trailingSlash: true,
+  
+  // Disable static optimization for dynamic routes
+  output: 'standalone',
 };
 
 module.exports = nextConfig;
