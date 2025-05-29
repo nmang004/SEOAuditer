@@ -137,9 +137,13 @@ export function IssuesDashboard({
       <CardHeader className="pb-2 flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-sm font-medium">SEO Issues</CardTitle>
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={handleExportCSV} aria-label="Export issues as CSV">CSV</Button>
-            <Button size="sm" variant="outline" onClick={handleExportPDF} aria-label="Export issues as PDF">PDF</Button>
+          <div className="inline-flex rounded-md shadow-sm overflow-hidden border border-muted divide-x divide-muted bg-background">
+            <Button size="sm" variant="ghost" onClick={handleExportCSV} aria-label="Export issues as CSV" className="flex items-center gap-1 px-3">
+              <Download className="h-4 w-4" /> CSV
+            </Button>
+            <Button size="sm" variant="ghost" onClick={handleExportPDF} aria-label="Export issues as PDF" className="flex items-center gap-1 px-3">
+              <Download className="h-4 w-4" /> PDF
+            </Button>
           </div>
         </div>
         <div className="flex flex-wrap gap-2 items-center">
@@ -221,8 +225,14 @@ export function IssuesDashboard({
           />
         </div>
         <div className="flex gap-2 p-2 border-b bg-muted/10">
-          <Button size="xs" variant="outline" onClick={handleExportCSV} aria-label="Export issues as CSV">Export CSV</Button>
-          <Button size="xs" variant="outline" onClick={handleExportPDF} aria-label="Export issues as PDF">Export PDF</Button>
+          <div className="inline-flex rounded-md shadow-sm overflow-hidden border border-muted divide-x divide-muted bg-background">
+            <Button size="xs" variant="ghost" onClick={handleExportCSV} aria-label="Export issues as CSV" className="flex items-center gap-1 px-2">
+              <Download className="h-3 w-3" /> CSV
+            </Button>
+            <Button size="xs" variant="ghost" onClick={handleExportPDF} aria-label="Export issues as PDF" className="flex items-center gap-1 px-2">
+              <Download className="h-3 w-3" /> PDF
+            </Button>
+          </div>
         </div>
         {/* Virtualized List */}
         <List
@@ -248,19 +258,21 @@ export function IssuesDashboard({
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded ${statusColors[issue.status]}`}>{issue.status}</span>
                     </div>
                     <div className="font-medium text-sm truncate" title={issue.title}>{issue.title}</div>
-                    <div className="text-xs text-muted-foreground truncate" title={issue.description}>{issue.description}</div>
+                    <div className="text-xs text-muted-foreground mt-1 mb-1 max-w-2xl whitespace-pre-line break-words line-clamp-2" title={issue.description}>
+                      {issue.description}
+                    </div>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {issue.affectedElements.map((el, i) => (
                         <Badge key={i} variant="outline" className="text-xs">{el}</Badge>
                       ))}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2 items-end">
-                    <Button size="xs" variant="outline" onClick={() => onIssueAction(issue.id, 'fixed')} aria-label={`Mark ${issue.title} as fixed`}>
-                      <Check className="h-4 w-4 mr-1" /> Fixed
+                  <div className="flex flex-row gap-2 items-center mt-2 md:mt-0">
+                    <Button size="xs" variant="success" onClick={() => onIssueAction(issue.id, 'fixed')} aria-label={`Mark ${issue.title} as fixed`} className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold">
+                      <Check className="h-4 w-4" /> Fixed
                     </Button>
-                    <Button size="xs" variant="ghost" onClick={() => onIssueAction(issue.id, 'ignored')} aria-label={`Ignore ${issue.title}`}> 
-                      <X className="h-4 w-4 mr-1" /> Ignore
+                    <Button size="xs" variant="destructive" onClick={() => onIssueAction(issue.id, 'ignored')} aria-label={`Ignore ${issue.title}`} className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold">
+                      <X className="h-4 w-4" /> Ignore
                     </Button>
                   </div>
                 </div>

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { logger } from '../utils/logger';
+import { v4 as uuidv4 } from 'uuid';
 
 // Custom error classes
 export class ApiError extends Error {
@@ -132,16 +133,20 @@ export const errorHandler = (
     details = undefined;
   }
 
-  // Send error response
+  // Generate or use requestId
+  const requestId = (req as any).id || uuidv4();
+
+  // Send error response matching APIError interface
   res.status(statusCode).json({
     success: false,
     error: {
       code: statusCode,
       message,
       ...(details && { details }),
+      ...(process.env.NODE_ENV === 'test' && { stack: err.stack, raw: String(err) }),
     },
     timestamp: new Date().toISOString(),
-    path: req.originalUrl,
+    requestId,
   });
 };
 

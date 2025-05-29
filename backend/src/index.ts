@@ -16,6 +16,8 @@ import { authRouter } from './routes/auth.routes';
 import { dashboardRouter } from './routes/dashboard.routes';
 import { projectRouter } from './routes/project.routes';
 import { analysisRouter } from './routes/analysis.routes';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 
 // Initialize Express app
 const app: Express = express();
@@ -67,6 +69,12 @@ app.get('/health', (_req: Request, res: Response) => {
   });
 });
 
+// Load OpenAPI spec
+const openApiSpec = YAML.load(__dirname + '/../docs/openapi.yaml');
+
+// Serve Swagger UI
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
+
 // API Routes
 app.use('/api/auth', authRouter);
 app.use('/api/dashboard', dashboardRouter);
@@ -91,10 +99,24 @@ app.use(errorHandler);
 io.on('connection', (socket) => {
   logger.info(`Client connected: ${socket.id}`);
 
-  // Join room for specific project updates
+  /**
+   * Event: join:project
+   * Payload: projectId (string)
+   * Joins the client to a project-specific room for real-time updates.
+   */
   socket.on('join:project', (projectId: string) => {
     socket.join(`project:${projectId}`);
     logger.info(`Socket ${socket.id} joined project:${projectId}`);
+  });
+
+  /**
+   * Event: join:user
+   * Payload: userId (string)
+   * Joins the client to a user-specific room for notifications.
+   */
+  socket.on('join:user', (userId: string) => {
+    socket.join(`user:${userId}`);
+    logger.info(`Socket ${socket.id} joined user:${userId}`);
   });
 
   socket.on('disconnect', () => {

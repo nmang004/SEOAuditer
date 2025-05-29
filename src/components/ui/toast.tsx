@@ -2,6 +2,7 @@ import * as React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
+import { m, AnimatePresence } from 'framer-motion'
 
 import { cn } from "@/lib/utils"
 
@@ -44,11 +45,20 @@ const Toast = React.forwardRef<
     VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
   return (
-    <ToastPrimitives.Root
-      ref={ref}
-      className={cn(toastVariants({ variant }), className)}
-      {...props}
-    />
+    <AnimatePresence>
+      <m.div
+        initial={{ x: 300, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: 300, opacity: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      >
+        <ToastPrimitives.Root
+          ref={ref}
+          className={cn(toastVariants({ variant }), className)}
+          {...props}
+        />
+      </m.div>
+    </AnimatePresence>
   )
 })
 Toast.displayName = ToastPrimitives.Root.displayName
@@ -57,12 +67,15 @@ const ToastAction = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Action>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Action>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Action
-    ref={ref}
+  <m.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.97 }}
+    transition={{ type: 'spring', stiffness: 400, damping: 20 }}
     className={cn(
       "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
       className
     )}
+    ref={ref as any}
     {...props}
   />
 ))

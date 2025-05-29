@@ -114,14 +114,27 @@ export const RecommendationsPanel = React.memo(function RecommendationsPanel({ r
                       <Button size="xs" variant="ghost" onClick={() => move(rec.id, 1)} disabled={idx === visible.length - 1}>↓</Button>
                     </div>
                   )}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-medium">{rec.title}</h3>
+                  <div className="flex-1 flex flex-col gap-1">
+                    <div className="flex items-center gap-3 min-h-[28px]">
+                      <h3 className="font-medium text-base leading-tight">{rec.title}</h3>
                       <Badge variant="outline" className={`text-xs ${priorityColors[rec.priority]}`}>{rec.priority}</Badge>
                       {completed.has(rec.id) && <CheckCircle className="h-4 w-4 text-green-500" />}
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">{rec.description}</p>
-                    {renderMatrix(rec)}
+                    <p className="text-sm text-muted-foreground leading-snug mb-1">{rec.description}</p>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs mt-1">
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold text-muted-foreground">Impact:</span>
+                        <span className="text-foreground">{rec.estimatedImpact}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold text-muted-foreground">Time:</span>
+                        <span className="text-foreground">{rec.timeToImplement}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold text-muted-foreground">Difficulty:</span>
+                        <span className="text-foreground">{rec.difficulty}</span>
+                      </div>
+                    </div>
                   </div>
                   <Button size="xs" variant="ghost" onClick={() => toggleExpand(rec.id)}>
                     {expandedId === rec.id ? 'Hide' : 'Details'}

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '..';
 import { NotFoundError } from '../middleware/error.middleware';
+import { cache } from '../utils/cache';
 
 // Project Controller
 // Handles project CRUD, stats, and recent projects
@@ -44,13 +45,18 @@ export const projectController = {
       });
 
       // Emit project created event
-      req.io.emit('project:created', { project });
-
+      if (req.io) {
+        req.io.emit('project:created', { project });
+      }
+      // Invalidate project list cache
+      await cache.del(`projects:list:${userId}`);
       res.status(201).json({
         success: true,
         data: project,
       });
     } catch (error) {
+      // Detailed error logging for debugging
+      console.error('Error in createProject:', error);
       next(error);
     }
   },
@@ -60,6 +66,17 @@ export const projectController = {
     try {
       const userId = req.user?.id;
       const { search, status, sortBy = 'updatedAt', sortOrder = 'desc' } = req.query;
+
+      // Only cache if no filters are applied
+      const canCache = !search && !status && sortBy === 'updatedAt' && sortOrder === 'desc';
+      const cacheKey = `projects:list:${userId}`;
+      if (canCache) {
+        const cached = await cache.get<any[]>(cacheKey);
+        if (cached) {
+          res.json({ success: true, data: cached, cached: true });
+          return;
+        }
+      }
 
       // Build where clause
       const where: any = { userId };
@@ -95,11 +112,17 @@ export const projectController = {
         },
       });
 
+      if (canCache) {
+        await cache.set(cacheKey, projects, 600);
+      }
+
       res.json({
         success: true,
         data: projects,
       });
     } catch (error) {
+      // Detailed error logging for debugging
+      console.error('Error in getProjects:', error);
       next(error);
     }
   },
@@ -183,8 +206,11 @@ export const projectController = {
       });
 
       // Emit project updated event
-      req.io.emit('project:updated', { project: updatedProject });
-
+      if (req.io) {
+        req.io.emit('project:updated', { project: updatedProject });
+      }
+      // Invalidate project list cache
+      await cache.del(`projects:list:${userId}`);
       res.json({
         success: true,
         data: updatedProject,
@@ -215,8 +241,11 @@ export const projectController = {
       });
 
       // Emit project deleted event
-      req.io.emit('project:deleted', { projectId: id });
-
+      if (req.io) {
+        req.io.emit('project:deleted', { projectId: id });
+      }
+      // Invalidate project list cache
+      await cache.del(`projects:list:${userId}`);
       res.json({
         success: true,
         message: 'Project deleted successfully',

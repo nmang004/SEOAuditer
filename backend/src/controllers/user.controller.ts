@@ -6,6 +6,7 @@ import {
   BadRequestError
 } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
+import { cache } from '../utils/cache';
 
 // User Controller
 // Handles user profile, settings, password, and account management
@@ -90,6 +91,9 @@ export const userController = {
         logger.info(`Email verification required for user ${userId}`);
       }
 
+      // Invalidate user profile cache
+      await cache.del(`user:${userId}`);
+
       res.json({
         success: true,
         data: updatedUser,
@@ -133,6 +137,9 @@ export const userController = {
       });
 
       // TODO: Send password change notification email
+
+      // Invalidate user profile cache
+      await cache.del(`user:${userId}`);
 
       res.json({
         success: true,
@@ -381,6 +388,43 @@ export const userController = {
           offset: parseInt(offset as string, 10) || 0,
         },
       });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Get current user profile
+  async getCurrentUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
+      }
+      const cacheKey = `user:${userId}`;
+      const cached = await cache.get<any>(cacheKey);
+      if (cached) {
+        res.json({ success: true, data: cached, cached: true });
+        return;
+      }
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          subscriptionTier: true,
+          emailVerified: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+      if (!user) {
+        res.status(404).json({ success: false, error: 'User not found' });
+        return;
+      }
+      await cache.set(cacheKey, user, 1800);
+      res.json({ success: true, data: user });
     } catch (error) {
       next(error);
     }

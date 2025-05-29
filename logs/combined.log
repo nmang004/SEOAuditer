@@ -1,0 +1,47 @@
+2025-05-29 09:28:56.782 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:28:56.783 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:28:56.789 AM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}
+2025-05-29 09:32:19.583 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:32:19.586 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:34:26.913 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:34:26.917 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:38:27.483 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:38:27.487 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:41:02.318 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:41:02.321 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:42:44.866 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:42:44.867 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:44:03.887 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:44:36.258 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:45:24.358 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:45:24.359 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:46:42.905 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:46:42.906 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:48:03.813 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:48:03.814 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:49:01.849 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:49:01.850 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:50:00.889 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:50:00.890 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:51:50.443 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:51:50.444 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:53:43.882 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:53:43.883 AM [[32minfo[39m]: 	[32mServer running in test mode on port 4000[39m
+2025-05-29 09:53:56.198 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:54:44.866 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:55:32.226 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 09:57:21.930 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 10:47:55.949 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 10:47:56.472 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 10:47:56.912 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 10:47:57.384 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 10:47:57.841 AM [[32minfo[39m]: 	[32mRedis client connected[39m
+2025-05-29 10:47:58.119 AM [[32minfo[39m]: 	[32mRedis client connected[39m

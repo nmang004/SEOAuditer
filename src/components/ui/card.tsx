@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { Animated } from '@/components/animations/animated';
 
 const Card = React.forwardRef<
   HTMLDivElement,
@@ -8,16 +9,27 @@ const Card = React.forwardRef<
     hover?: boolean;
   }
 >(({ className, glass = false, hover = false, ...props }, ref) => (
-  <div
+  <Animated
     ref={ref}
+    type="fade"
     className={cn(
       "rounded-lg border bg-card text-card-foreground shadow-sm",
       glass && "glassmorphism border-opacity-30",
-      hover && "transition-all duration-200 hover:shadow-md hover:translate-y-[-2px]",
       className
     )}
+    style={{ willChange: 'transform, opacity' }}
     {...props}
-  />
+  >
+    <div
+      className={cn(
+        hover &&
+          "transition-all duration-200 hover:shadow-md hover:scale-[1.02] hover:-translate-y-1",
+        "h-full w-full"
+      )}
+    >
+      {props.children}
+    </div>
+  </Animated>
 ));
 Card.displayName = "Card";
 

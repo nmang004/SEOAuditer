@@ -1,65 +1,59 @@
-import { Button, ButtonProps } from '@/components/ui/button';
-import { m } from 'framer-motion';
+import * as React from 'react';
+import { m, useReducedMotion } from 'framer-motion';
+import { LoadingSpinner } from '@/components/animations/loading-states';
+import { successState } from '@/components/animations/animation-variants';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
 
-interface AnimatedButtonProps extends ButtonProps {
-  isLoading?: boolean;
-  loadingText?: string;
-  hoverScale?: number;
-  tapScale?: number;
+export interface AnimatedButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  loading?: boolean;
+  success?: boolean;
+  children: React.ReactNode;
 }
 
-export function AnimatedButton({
-  children,
-  className,
-  isLoading = false,
-  loadingText = 'Loading...',
-  hoverScale = 1.02,
-  tapScale = 0.98,
-  disabled,
-  ...props
-}: AnimatedButtonProps) {
-  return (
-    <m.div
-      whileHover={!disabled ? { scale: hoverScale } : {}}
-      whileTap={!disabled ? { scale: tapScale } : {}}
-      className="inline-block"
-      transition={{
-        type: 'spring',
-        stiffness: 400,
-        damping: 10,
-      }}
-    >
-      <Button
+export const AnimatedButton = React.forwardRef<HTMLButtonElement, AnimatedButtonProps>(
+  ({ loading = false, success = false, children, className, disabled, ...props }, ref) => {
+    const reducedMotion = useReducedMotion();
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const hoverScale = isMobile ? 1.01 : 1.02;
+    const tapScale = isMobile ? 0.99 : 0.98;
+    return (
+      <m.button
+        ref={ref}
         className={cn(
-          'relative overflow-hidden',
-          'transform transition-all duration-200',
-          'hover:shadow-lg',
-          'active:scale-95',
+          'relative inline-flex items-center justify-center rounded-md px-4 py-2 font-medium transition focus:outline-none',
           className
         )}
-        disabled={disabled || isLoading}
+        style={{ willChange: 'transform, opacity' }}
+        whileHover={(!disabled && !loading && !success && !reducedMotion) ? { scale: hoverScale, boxShadow: '0 4px 16px rgba(0,0,0,0.08)' } : {}}
+        whileTap={(!disabled && !loading && !success && !reducedMotion) ? { scale: tapScale } : {}}
+        disabled={disabled || loading}
         {...props}
       >
-        {isLoading && (
+        {/* Loading State */}
+        {loading && (
+          <span className="absolute left-3">
+            <LoadingSpinner size="sm" />
+          </span>
+        )}
+        {/* Success State */}
+        {success && (
           <m.span
-            className="absolute inset-0 flex items-center justify-center bg-inherit"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            className="absolute left-3 text-success-500"
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={successState}
+            style={{ willChange: 'transform, opacity' }}
           >
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {loadingText}
+            <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" strokeWidth="2" d="M5 10l4 4 6-8"/></svg>
           </m.span>
         )}
-        <m.span
-          animate={isLoading ? { opacity: 0, y: -10 } : { opacity: 1, y: 0 }}
-          className="flex items-center"
-        >
+        {/* Button Text */}
+        <span className={cn('transition-opacity', loading ? 'opacity-60' : 'opacity-100', success ? 'text-success-600' : '')}>
           {children}
-        </m.span>
-      </Button>
-    </m.div>
-  );
-}
+        </span>
+      </m.button>
+    );
+  }
+);
+AnimatedButton.displayName = 'AnimatedButton';

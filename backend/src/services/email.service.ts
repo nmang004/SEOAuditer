@@ -25,6 +25,11 @@ class EmailService {
   private isInitialized = false;
 
   constructor() {
+    if (process.env.NODE_ENV === 'test') {
+      // In test, skip SMTP setup and mark as initialized
+      this.isInitialized = true;
+      return;
+    }
     // Create test account if in development
     if (process.env.NODE_ENV === 'development' && !config.email.host) {
       this.setupTestAccount();
@@ -138,6 +143,10 @@ class EmailService {
   }
 
   async sendEmail(options: SendEmailOptions): Promise<boolean> {
+    if (process.env.NODE_ENV === 'test') {
+      // In test, do not send real emails
+      return true;
+    }
     if (!this.isInitialized) {
       throw new Error('Email service not initialized');
     }

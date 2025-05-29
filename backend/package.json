@@ -13,7 +13,9 @@
     "prisma:studio": "prisma studio",
     "test": "jest",
     "lint": "eslint . --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "seed": "ts-node scripts/seed-mock-data.ts",
+    "reset-db": "prisma migrate reset --force && npm run seed"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0",

@@ -10,20 +10,20 @@ const router = Router();
 router.use(authenticate);
 
 // Start a new analysis for a project
-// router.post(
-//   '/',
-//   rateLimit.api,
-//   validate('startAnalysis'),
-//   analysisController.startAnalysis
-// );
+router.post(
+  '/',
+  rateLimit.api,
+  validate('createAnalysis'),
+  analysisController.startAnalysis
+);
 
 // Get all analyses for a project
-// router.get(
-//   '/',
-//   rateLimit.api,
-//   validate('getProjectAnalyses'),
-//   analysisController.getProjectAnalyses
-// );
+router.get(
+  '/',
+  rateLimit.api,
+  validate('getProjectAnalyses'),
+  analysisController.getProjectAnalyses
+);
 
 // Get a specific analysis by ID
 router.get(
@@ -34,28 +34,28 @@ router.get(
 );
 
 // Cancel an in-progress analysis
-// router.post(
-//   '/:analysisId/cancel',
-//   rateLimit.api,
-//   validate('cancelAnalysis'),
-//   analysisController.cancelAnalysis
-// );
+router.post(
+  '/:analysisId/cancel',
+  rateLimit.api,
+  validate('cancelAnalysis'),
+  analysisController.cancelAnalysis
+);
 
 // Get issues for a specific analysis
-// router.get(
-//   '/:analysisId/issues',
-//   rateLimit.api,
-//   validate('getAnalysisIssues'),
-//   analysisController.getAnalysisIssues
-// );
+router.get(
+  '/:analysisId/issues',
+  rateLimit.api,
+  validate('getAnalysisIssues'),
+  analysisController.getAnalysisIssues
+);
 
 // Update issue status
-// router.patch(
-//   '/issues/:issueId',
-//   rateLimit.api,
-//   validate('updateIssueStatus'),
-//   analysisController.updateIssueStatus
-// );
+router.patch(
+  '/issues/:issueId',
+  rateLimit.api,
+  validate('updateIssueStatus'),
+  analysisController.updateIssueStatus
+);
 
 // Comment out the WebSocket endpoint for now to resolve type errors
 // router.ws('/updates', (ws, req) => {

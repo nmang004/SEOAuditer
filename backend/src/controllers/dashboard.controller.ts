@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { prisma } from '..';
 import { subDays } from 'date-fns';
+import { cache } from '../utils/cache';
 
 // Type for authenticated request with user information
 // TODO: Restore correct User type once Prisma types are resolved
@@ -151,6 +152,13 @@ export const dashboardController = {
         return;
       }
 
+      const cacheKey = `dashboard:stats:${userId}`;
+      const cached = await cache.get<DashboardStats>(cacheKey);
+      if (cached) {
+        res.json({ success: true, data: cached, cached: true });
+        return;
+      }
+
       // Get total projects
       const totalProjects = await prisma.project.count({
         where: { userId }
@@ -192,6 +200,8 @@ export const dashboardController = {
         averageScore: avgScore._avg.overallScore || 0,
         weeklyIssues
       };
+
+      await cache.set(cacheKey, stats, 300);
 
       res.json({ success: true, data: stats });
     } catch (error) {

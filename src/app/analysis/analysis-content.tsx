@@ -13,14 +13,12 @@ import { QuickJumpNavigation } from '@/components/navigation/quick-jump-navigati
 import { analysisNavItems } from '@/components/navigation/nav-items';
 
 // Import analysis components
-import {
-  AnalysisHeader,
-  IssuesDashboard,
-  TechnicalAnalysis,
-  ContentAnalysis,
-  RecommendationsPanel,
-  HistoricalTrends
-} from '@/components/analysis';
+import { AnalysisHeader } from '@/components/analysis/analysis-header';
+import { IssuesDashboard } from '@/components/analysis/issues-dashboard';
+import { TechnicalAnalysis } from '@/components/analysis/technical-analysis';
+import { ContentAnalysis } from '@/components/analysis/content-analysis';
+import { RecommendationsPanel } from '@/components/analysis/recommendations-panel';
+import { HistoricalTrends } from '@/components/analysis/historical-trends';
 
 const LazySEOScoreBreakdown = lazy(() => import('@/components/analysis/score-breakdown').then(m => ({ default: m.SEOScoreBreakdown })));
 const LazyHistoricalTrends = lazy(() => import('@/components/analysis/historical-trends').then(m => ({ default: m.HistoricalTrends })));

@@ -1,0 +1,753 @@
+openapi: 3.0.3
+info:
+  title: Rival Outranker API
+  version: 1.0.0
+  description: |
+    API documentation for the Rival Outranker backend.
+    
+    ## Authentication Flow
+    1. **Register**: Create a new user with `/auth/register`.
+    2. **Login**: Obtain a JWT token with `/auth/login`.
+    3. **Use JWT**: Pass the JWT as a Bearer token in the `Authorization` header for all authenticated endpoints.
+    4. **Refresh**: Use `/auth/refresh` to get a new token when the old one expires.
+    5. **Logout**: Invalidate the session with `/auth/logout`.
+
+    ### Example: Register
+    ```bash
+    curl -X POST http://localhost:4000/api/auth/register \
+      -H "Content-Type: application/json" \
+      -d '{"email": "user@example.com", "password": "StrongPassword123!", "name": "John Doe"}'
+    ```
+
+    ### Example: Login
+    ```bash
+    curl -X POST http://localhost:4000/api/auth/login \
+      -H "Content-Type: application/json" \
+      -d '{"email": "user@example.com", "password": "StrongPassword123!"}'
+    ```
+    Response will include a JWT token:
+    ```json
+    {
+      "success": true,
+      "data": {
+        "user": { "id": "user-uuid", "email": "user@example.com", "name": "John Doe" },
+        "token": "jwt.token.here"
+      }
+    }
+    ```
+
+    ### Example: Authenticated Request
+    ```bash
+    curl -X GET http://localhost:4000/api/projects \
+      -H "Authorization: Bearer jwt.token.here"
+    ```
+
+    ### Example: Refresh Token
+    ```bash
+    curl -X POST http://localhost:4000/api/auth/refresh \
+      -H "Authorization: Bearer jwt.token.here"
+    ```
+
+    ### Example: Logout
+    ```bash
+    curl -X POST http://localhost:4000/api/auth/logout \
+      -H "Authorization: Bearer jwt.token.here"
+    ```
+
+    ## Real-Time WebSocket Events
+    Connect to the backend via Socket.IO. Join rooms with:
+    - `join:project` (projectId)
+    - `join:user` (userId)
+
+    ### Event Contracts & Example Payloads
+
+    | Event                | Payload Example |
+    |----------------------|-----------------|
+    | `analysis:started`   | `{ "projectId": "project-uuid", "analysisId": "analysis-uuid" }` |
+    | `analysis:progress`  | `{ "analysisId": "analysis-uuid", "progress": 42, "stage": "crawling" }` |
+    | `analysis:completed` | `{ "analysisId": "analysis-uuid", "score": 90, "issueCount": 3 }` |
+    | `analysis:failed`    | `{ "analysisId": "analysis-uuid", "error": "Timeout" }` |
+    | `issue:new`          | `{ "projectId": "project-uuid", "issue": { /* Issue object */ } }` |
+    | `issue:resolved`     | `{ "projectId": "project-uuid", "issueId": "issue-uuid" }` |
+    | `notification:new`   | `{ "notification": { /* Notification object */ } }` |
+
+    #### Example: Listen for Events
+    ```js
+    const socket = io('http://localhost:4000', { auth: { token: 'jwt.token.here' } });
+    socket.emit('join:project', 'project-uuid');
+    socket.on('analysis:progress', (payload) => {
+      console.log('Analysis progress:', payload);
+    });
+    ```
+
+    #### Event Payload Details
+    - **Issue object**: See `Issue` schema in API docs.
+    - **Notification object**: See `Notification` schema in API docs.
+    - **All events**: Delivered as JSON objects.
+
+    #### Usage Flow
+    1. Connect to the WebSocket server with a valid JWT.
+    2. Join relevant rooms (project/user).
+    3. Listen for events as documented above.
+
+    **Event Types:**
+    - `analysis:started`: { projectId, analysisId }
+    - `analysis:progress`: { analysisId, progress, stage }
+    - `analysis:completed`: { analysisId, score, issueCount }
+    - `analysis:failed`: { analysisId, error }
+    - `issue:new`: { projectId, issue }
+    - `issue:resolved`: { projectId, issueId }
+    - `notification:new`: { notification }
+servers:
+  - url: http://localhost:4000/api
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    APIError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 4001
+            message:
+              type: string
+              example: Validation error
+            details:
+              type: object
+              nullable: true
+            field:
+              type: string
+              nullable: true
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        subscriptionTier:
+          type: string
+        emailVerified:
+          type: boolean
+        lastLogin:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        faviconUrl:
+          type: string
+          nullable: true
+        status:
+          type: string
+        scanFrequency:
+          type: string
+        currentScore:
+          type: integer
+          nullable: true
+        issueCount:
+          type: integer
+        lastScanDate:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Analysis:
+      type: object
+      properties:
+        id:
+          type: string
+        projectId:
+          type: string
+        crawlSessionId:
+          type: string
+        overallScore:
+          type: integer
+        technicalScore:
+          type: integer
+        contentScore:
+          type: integer
+        onpageScore:
+          type: integer
+        uxScore:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+    Issue:
+      type: object
+      properties:
+        id:
+          type: string
+        analysisId:
+          type: string
+        type:
+          type: string
+        severity:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        recommendation:
+          type: string
+          nullable: true
+        affectedElements:
+          type: object
+          nullable: true
+        status:
+          type: string
+        category:
+          type: string
+        affectedPages:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        title:
+          type: string
+        message:
+          type: string
+        type:
+          type: string
+        relatedEntityType:
+          type: string
+          nullable: true
+        relatedEntityId:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          nullable: true
+        readAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+            example:
+              email: user@example.com
+              password: StrongPassword123!
+              name: John Doe
+      responses:
+        '201':
+          description: User registered
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                  id: "user-uuid"
+                  email: user@example.com
+                  name: John Doe
+                  subscriptionTier: free
+                  emailVerified: false
+                  createdAt: "2024-06-01T12:00:00Z"
+                  updatedAt: "2024-06-01T12:00:00Z"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+              example:
+                success: false
+                error:
+                  code: 400
+                  message: "Validation error: Email is required"
+                timestamp: "2024-06-01T12:00:00Z"
+                requestId: "req-uuid"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+  /auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: user@example.com
+              password: StrongPassword123!
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                  user:
+                    id: "user-uuid"
+                    email: user@example.com
+                    name: John Doe
+                  token: "jwt.token.here"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+              example:
+                success: false
+                error:
+                  code: 400
+                  message: "Invalid credentials"
+                timestamp: "2024-06-01T12:00:00Z"
+                requestId: "req-uuid"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+  /auth/refresh:
+    post:
+      summary: Refresh JWT token
+      responses:
+        '200':
+          description: Token refreshed
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+  /auth/logout:
+    post:
+      summary: Logout
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logged out
+  /auth/me:
+    get:
+      summary: Get current user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: "user-uuid"
+                email: user@example.com
+                name: John Doe
+                subscriptionTier: free
+                emailVerified: true
+                createdAt: "2024-06-01T12:00:00Z"
+                updatedAt: "2024-06-01T12:00:00Z"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+  /dashboard/stats:
+    get:
+      summary: Get dashboard statistics
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dashboard stats
+  /dashboard/recent-projects:
+    get:
+      summary: Get recent projects
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Recent projects
+  /dashboard/latest-issues:
+    get:
+      summary: Get latest issues
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Latest issues
+  /dashboard/performance-trends:
+    get:
+      summary: Get performance trends
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: period
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: Performance trends
+  /projects:
+    get:
+      summary: List all projects
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+              example:
+                - id: "project-uuid"
+                  userId: "user-uuid"
+                  name: "My Website"
+                  url: "https://example.com"
+                  faviconUrl: null
+                  status: "active"
+                  scanFrequency: "manual"
+                  currentScore: 85
+                  issueCount: 3
+                  lastScanDate: "2024-06-01T12:00:00Z"
+                  createdAt: "2024-06-01T12:00:00Z"
+                  updatedAt: "2024-06-01T12:00:00Z"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+    post:
+      summary: Create a new project
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                url:
+                  type: string
+            example:
+              name: "My Website"
+              url: "https://example.com"
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+              example:
+                id: "project-uuid"
+                userId: "user-uuid"
+                name: "My Website"
+                url: "https://example.com"
+                faviconUrl: null
+                status: "active"
+                scanFrequency: "manual"
+                currentScore: 85
+                issueCount: 3
+                lastScanDate: "2024-06-01T12:00:00Z"
+                createdAt: "2024-06-01T12:00:00Z"
+                updatedAt: "2024-06-01T12:00:00Z"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+  /projects/{id}:
+    get:
+      summary: Get a project by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+              example:
+                id: "project-uuid"
+                userId: "user-uuid"
+                name: "My Website"
+                url: "https://example.com"
+                faviconUrl: null
+                status: "active"
+                scanFrequency: "manual"
+                currentScore: 85
+                issueCount: 3
+                lastScanDate: "2024-06-01T12:00:00Z"
+                createdAt: "2024-06-01T12:00:00Z"
+                updatedAt: "2024-06-01T12:00:00Z"
+    put:
+      summary: Update a project
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                url:
+                  type: string
+      responses:
+        '200':
+          description: Project updated
+    delete:
+      summary: Delete a project
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Project deleted
+  /projects/{id}/analyses:
+    get:
+      summary: Get analysis history for a project
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Analysis history
+  /analyses:
+    post:
+      summary: Start a new analysis
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectId:
+                  type: string
+            example:
+              projectId: "project-uuid"
+      responses:
+        '202':
+          description: Analysis started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Analysis'
+              example:
+                id: "analysis-uuid"
+                projectId: "project-uuid"
+                crawlSessionId: "crawl-uuid"
+                overallScore: 90
+                technicalScore: 95
+                contentScore: 85
+                onpageScore: 88
+                uxScore: 92
+                createdAt: "2024-06-01T12:00:00Z"
+  /analyses/{id}:
+    get:
+      summary: Get analysis results
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Analysis results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Analysis'
+              example:
+                id: "analysis-uuid"
+                projectId: "project-uuid"
+                crawlSessionId: "crawl-uuid"
+                overallScore: 90
+                technicalScore: 95
+                contentScore: 85
+                onpageScore: 88
+                uxScore: 92
+                createdAt: "2024-06-01T12:00:00Z"
+  /analyses/{id}/issues:
+    get:
+      summary: Get all issues for an analysis
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of issues
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Issue'
+  /analyses/{id}/issues/{issueId}:
+    put:
+      summary: Update issue status
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: issueId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [new, in_progress, fixed, wont_fix, ignored]
+      responses:
+        '200':
+          description: Issue updated 

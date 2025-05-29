@@ -1,0 +1,9 @@
+2025-05-29 09:28:56.789 AM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}

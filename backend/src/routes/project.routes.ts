@@ -3,6 +3,7 @@ import { projectController } from '../controllers/project.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { validate } from '../middleware/validation.middleware';
 import { rateLimit } from '../middleware/rate-limit.middleware';
+import { analysisRouter } from './analysis.routes';
 
 const router = Router();
 
@@ -66,8 +67,7 @@ router.delete(
 // Project analysis routes
 router.use(
   '/:projectId/analyses',
-  // validate('projectId'),
-  // Analysis routes will be mounted here
+  analysisRouter
 );
 
 export { router as projectRouter };

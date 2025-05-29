@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { notificationService } from '../services/notification.service';
+import { io } from '../index';
 
 // Notification Controller
 // Handles user notifications, unread count, marking as read, deleting, and notification settings
@@ -333,6 +334,17 @@ export const notificationController = {
       }
       next(error);
     }
+  },
+
+  /**
+   * Create a new notification (utility for other controllers/services)
+   */
+  async createNotification(userId: string, notificationData: any) {
+    // Create notification in DB (assume notificationService.createNotification exists)
+    const notification = await notificationService.createNotification({ userId, ...notificationData });
+    // Emit real-time notification event to the user room
+    io.to(`user:${userId}`).emit('notification:new', { notification });
+    return notification;
   },
 };
 

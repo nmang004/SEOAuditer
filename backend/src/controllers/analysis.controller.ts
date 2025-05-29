@@ -5,6 +5,7 @@ import {
   BadRequestError
 } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
+import { cache } from '../utils/cache';
 
 // Analysis Controller
 // Handles starting, retrieving, listing, and cancelling analyses, as well as issue management
@@ -65,7 +66,7 @@ export const analysisController = {
       });
 
       // Emit analysis started event
-      req.io.emit('analysis:started', { 
+      req.io.to(`project:${projectId}`).emit('analysis:started', { 
         projectId,
         analysis: crawlSession 
       });
@@ -92,6 +93,13 @@ export const analysisController = {
     try {
       const { analysisId } = req.params;
       const userId = req.user?.id;
+
+      const cacheKey = `analysis:${analysisId}`;
+      const cached = await cache.get<any>(cacheKey);
+      if (cached) {
+        res.json({ success: true, data: cached, cached: true });
+        return;
+      }
 
       const analysis = await prisma.crawlSession.findFirst({
         where: {
@@ -131,6 +139,8 @@ export const analysisController = {
       if (!analysis) {
         throw new NotFoundError('Analysis not found');
       }
+
+      await cache.set(cacheKey, analysis, 3600);
 
       res.json({
         success: true,
@@ -236,7 +246,7 @@ export const analysisController = {
       });
 
       // Emit analysis cancelled event
-      req.io.emit('analysis:cancelled', { 
+      req.io.to(`project:${analysis.projectId}`).emit('analysis:cancelled', { 
         projectId: analysis.projectId,
         analysis: updatedAnalysis 
       });
@@ -361,11 +371,14 @@ export const analysisController = {
       });
 
       // Emit issue updated event
-      req.io.emit('issue:updated', { 
+      req.io.to(`project:${issue.analysis.crawlSession.projectId}`).emit('issue:updated', { 
         projectId: issue.analysis.crawlSession.projectId,
         analysisId: issue.analysisId,
         issue: updatedIssue,
       });
+
+      // Invalidate analysis cache
+      await cache.del(`analysis:${issue.analysisId}`);
 
       res.json({
         success: true,
@@ -391,7 +404,7 @@ export const analysisController = {
       });
 
       // Emit analysis progress update
-      io.emit('analysis:progress', {
+      io.to(`project:${project.id}`).emit('analysis:progress', {
         projectId: project.id,
         analysisId: crawlSessionId,
         status: 'in_progress',
@@ -414,7 +427,14 @@ export const analysisController = {
       for (const step of steps) {
         await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate work
         
-        io.emit('analysis:progress', {
+        io.to(`project:${project.id}`).emit('analysis:progress', {
+          projectId: project.id,
+          analysisId: crawlSessionId,
+          status: 'in_progress',
+          progress: step.progress,
+          message: step.message,
+        });
+        io.to(`project:${project.id}`).emit('analysis:progress', {
           projectId: project.id,
           analysisId: crawlSessionId,
           status: 'in_progress',
@@ -482,7 +502,7 @@ export const analysisController = {
       });
 
       // Emit analysis completed event
-      io.emit('analysis:completed', {
+      io.to(`project:${project.id}`).emit('analysis:completed', {
         projectId: project.id,
         analysis: {
           id: crawlSessionId,
@@ -510,7 +530,7 @@ export const analysisController = {
       });
 
       // Emit analysis failed event
-      io.emit('analysis:failed', {
+      io.to(`project:${project.id}`).emit('analysis:failed', {
         projectId: project.id,
         analysisId: crawlSessionId,
         error: 'Analysis failed to complete',

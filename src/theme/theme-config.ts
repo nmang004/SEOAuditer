@@ -62,3 +62,51 @@ export const themeConfig = {
 } as const;
 
 export type ThemeConfig = typeof themeConfig;
+
+// Theme palettes
+export const themes = {
+  light: {
+    background: '#ffffff',
+    foreground: '#0f172a',
+    primary: '#2563eb',
+    secondary: '#64748b',
+    accent: '#fbbf24',
+    error: '#ef4444',
+    success: '#22c55e',
+    warning: '#f59e42',
+    info: '#0ea5e9',
+  },
+  dark: {
+    background: '#0f172a',
+    foreground: '#f1f5f9',
+    primary: '#60a5fa',
+    secondary: '#94a3b8',
+    accent: '#fbbf24',
+    error: '#f87171',
+    success: '#4ade80',
+    warning: '#fbbf24',
+    info: '#38bdf8',
+  },
+  highContrast: {
+    background: '#000000',
+    foreground: '#ffffff',
+    primary: '#ffff00',
+    secondary: '#00ffff',
+    accent: '#ff00ff',
+    error: '#ff0000',
+    success: '#00ff00',
+    warning: '#ff9900',
+    info: '#00ffea',
+  },
+  colorblindFriendly: {
+    background: '#f5f5f2',
+    foreground: '#222222',
+    primary: '#0072b2',
+    secondary: '#009e73',
+    accent: '#f0e442',
+    error: '#d55e00',
+    success: '#009e73',
+    warning: '#e69f00',
+    info: '#56b4e9',
+  },
+};

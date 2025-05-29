@@ -110,6 +110,44 @@ const schemas = {
     }),
   }),
 
+  getProjectAnalyses: z.object({
+    params: z.object({
+      projectId: z.string().uuid('Invalid project ID'),
+    }),
+    query: z.object({
+      status: z.string().optional(),
+      limit: z.preprocess(Number, z.number().int().positive().max(100).default(10)).optional(),
+      offset: z.preprocess(Number, z.number().int().nonnegative().default(0)).optional(),
+    }),
+  }),
+
+  cancelAnalysis: z.object({
+    params: z.object({
+      analysisId: z.string().uuid('Invalid analysis ID'),
+    }),
+  }),
+
+  getAnalysisIssues: z.object({
+    params: z.object({
+      analysisId: z.string().uuid('Invalid analysis ID'),
+    }),
+    query: z.object({
+      severity: z.string().optional(),
+      status: z.string().optional(),
+      limit: z.preprocess(Number, z.number().int().positive().max(100).default(50)).optional(),
+      offset: z.preprocess(Number, z.number().int().nonnegative().default(0)).optional(),
+    }),
+  }),
+
+  updateIssueStatus: z.object({
+    params: z.object({
+      issueId: z.string().uuid('Invalid issue ID'),
+    }),
+    body: z.object({
+      status: z.enum(['new', 'in_progress', 'fixed', 'wont_fix', 'ignored']),
+    }),
+  }),
+
   // Pagination and filtering
   pagination: z.object({
     query: z.object({
@@ -155,10 +193,8 @@ export const validate = (schemaName: SchemaName) => {
       // Replace request properties with validated values (only if present)
       if ('body' in result.data && result.data.body) req.body = result.data.body;
       if ('query' in result.data && result.data.query) {
-        // Convert all query values to strings for compatibility with ParsedQs
-        req.query = Object.fromEntries(
-          Object.entries(result.data.query).map(([k, v]) => [k, v !== undefined && v !== null ? String(v) : v])
-        );
+        // Mutate req.query in place to avoid Express getter-only error
+        Object.assign(req.query, result.data.query);
       }
       if ('params' in result.data && result.data.params) req.params = result.data.params;
       if ('cookies' in result.data && result.data.cookies) req.cookies = result.data.cookies;

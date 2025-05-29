@@ -19,6 +19,7 @@ import { Download, Plus, LineChart as LineChartIcon, BarChart as BarChartIcon } 
 import { generateMockAnalysisData } from '@/lib/mock-data-analysis';
 import jsPDF from 'jspdf';
 import Papa from 'papaparse';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface HistoricalTrendsProps {
   timeRange: '1m' | '3m' | '6m' | '1y';

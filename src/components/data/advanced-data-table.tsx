@@ -37,6 +37,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { m, AnimatePresence } from 'framer-motion';
+import { staggerContainer, staggerItem, pageTransitions } from '@/components/animations/animation-variants';
 
 export interface AdvancedDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -147,52 +149,63 @@ export function AdvancedDataTable<TData, TValue>({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <m.tr key={headerGroup.id} variants={staggerContainer}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <m.th key={header.id} variants={staggerItem} className="relative">
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
+                      : <div className="flex items-center">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {/* Animated sort indicator */}
+                          {header.column.getCanSort() && (
+                            <m.span
+                              animate={{ rotate: header.column.getIsSorted() === 'desc' ? 180 : 0, opacity: header.column.getIsSorted() ? 1 : 0.3 }}
+                              transition={{ duration: 0.2 }}
+                              className="ml-1"
+                            >
+                              <ArrowUpDown className="h-4 w-4" />
+                            </m.span>
+                          )}
+                        </div>
+                    }
+                  </m.th>
                 ))}
-              </TableRow>
+              </m.tr>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className={cn(
-                    'cursor-pointer transition-colors hover:bg-muted/50',
-                    onRowClick && 'hover:bg-muted/50 cursor-pointer'
-                  )}
-                  onClick={() => onRowClick?.(row.original)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
+            <AnimatePresence initial={false}>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <m.tr
+                    key={row.id}
+                    layout
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={pageTransitions}
+                    className={cn(
+                      'cursor-pointer transition-colors',
+                      row.getIsSelected() ? 'bg-primary/10' : 'hover:bg-muted/50',
+                      onRowClick && 'hover:bg-muted/50 cursor-pointer'
+                    )}
+                    onClick={() => onRowClick?.(row.original)}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <m.td key={cell.id} variants={staggerItem}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </m.td>
+                    ))}
+                  </m.tr>
+                ))
+              ) : (
+                <m.tr>
+                  <m.td colSpan={columns.length} className="h-24 text-center">
+                    No results.
+                  </m.td>
+                </m.tr>
+              )}
+            </AnimatePresence>
           </TableBody>
         </Table>
       </div>

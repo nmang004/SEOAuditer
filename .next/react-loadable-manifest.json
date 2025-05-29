@@ -20,19 +20,23 @@
   },
   "app/analysis/analysis-content.tsx -> @/components/analysis/historical-trends": {
     "id": 65170,
-    "files": []
+    "files": [
+      "static/chunks/197.329f9f04a0d5ff4d.js",
+      "static/chunks/170.8844aae8a7751e13.js"
+    ]
   },
   "app/analysis/analysis-content.tsx -> @/components/analysis/score-breakdown": {
-    "id": 61031,
-    "files": []
+    "id": 48747,
+    "files": [
+      "static/chunks/747.a40f834bac769256.js"
+    ]
   },
   "app/dashboard/layout.tsx -> @/components/layout/dashboard-layout": {
     "id": 80045,
     "files": [
-      "static/chunks/874-b58c193c3ea66973.js",
-      "static/chunks/471-d320b14675d3339d.js",
-      "static/chunks/702.4c93b1994e147916.js",
-      "static/chunks/45.d6cf064d23ad6b0f.js"
+      "static/chunks/411-6b13d96fac23adb9.js",
+      "static/chunks/391-88a2bed6a5285344.js",
+      "static/chunks/985.119a9793049fb1dc.js"
     ]
   },
   "components/analysis/historical-trends.tsx -> html-to-image": {
