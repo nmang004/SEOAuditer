@@ -65,39 +65,19 @@ export const navItems: NavItem[] = [
 
 export const analysisNavItems: NavItem[] = [
   {
-    label: 'Score Overview',
-    href: '/analysis#score',
+    label: 'Project Analyses',
+    href: '/dashboard/projects/demo-project-id/analyses',
     icon: BarChart,
-  },
-  {
-    label: 'Issues',
-    href: '/analysis#issues',
-    icon: AlertTriangle,
-  },
-  {
-    label: 'Technical',
-    href: '/analysis#technical',
-    icon: Zap,
-  },
-  {
-    label: 'Content',
-    href: '/analysis#content',
-    icon: FileText,
-  },
-  {
-    label: 'Recommendations',
-    href: '/analysis#recommendations',
-    icon: Sparkles,
   },
   {
     label: 'Trends',
-    href: '/analysis/trends/demo-project-id',
+    href: '/dashboard/projects/demo-project-id/trends',
     icon: BarChart,
   },
   {
-    label: 'Crawl Results',
-    href: '/analysis/results/demo-job-id',
-    icon: FileText,
+    label: 'Start New Analysis',
+    href: '/dashboard/projects/demo-project-id/analyses/new',
+    icon: Zap,
   },
 ];
 

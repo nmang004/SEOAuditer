@@ -5,7 +5,8 @@ export class CrawlManager {
   constructor(private queueAdapter: QueueAdapter) {}
 
   async startCrawl(config: CrawlerConfig) {
-    // Add job to queue, return job ID
+    // TODO: Implement real logic
+    return 'mock-job-id-' + Date.now();
   }
 
   async getStatus(jobId: string) {
