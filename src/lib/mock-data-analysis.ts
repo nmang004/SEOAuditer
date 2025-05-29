@@ -370,3 +370,5 @@ export const generateMockAnalysisData = (): AnalysisData => {
 
 // Export a default instance of the mock data
 export const mockAnalysisData = generateMockAnalysisData();
+
+export { generateIssues, generateTechnicalAnalysis, generateContentAnalysis, generateRecommendations };

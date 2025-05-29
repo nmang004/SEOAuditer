@@ -4,6 +4,9 @@ import { Suspense } from 'react';
 import { AnalysisContent } from './analysis-content';
 import { AnimateFadeIn, AnimateStagger, AnimateStaggerItem } from '@/components/animations';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Breadcrumb } from '@/components/navigation/breadcrumb';
+import { MobileNavigation } from '@/components/navigation/mobile-navigation';
+import { analysisNavItems } from '@/components/navigation/nav-items';
 
 function LoadingSkeleton() {
   return (
@@ -29,14 +32,20 @@ function LoadingSkeleton() {
 
 export default function AnalysisPage() {
   return (
-    <AnimateStagger className="space-y-8">
-      <AnimateStaggerItem>
-        <AnimateFadeIn>
-          <Suspense fallback={<LoadingSkeleton />}>
-            <AnalysisContent />
-          </Suspense>
-        </AnimateFadeIn>
-      </AnimateStaggerItem>
-    </AnimateStagger>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-2">
+        <Breadcrumb />
+        <MobileNavigation navItems={analysisNavItems} />
+      </div>
+      <AnimateStagger className="space-y-8">
+        <AnimateStaggerItem>
+          <AnimateFadeIn>
+            <Suspense fallback={<LoadingSkeleton />}>
+              <AnalysisContent />
+            </Suspense>
+          </AnimateFadeIn>
+        </AnimateStaggerItem>
+      </AnimateStagger>
+    </div>
   );
 }

@@ -1,235 +1,160 @@
 "use client";
 
-import { m } from 'framer-motion';
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { CheckCircle2, AlertCircle, Info } from "lucide-react";
+import { useState } from 'react';
+import { m, AnimatePresence } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { CheckCircle2, AlertCircle, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { ContentAnalysisData } from '@/lib/analysis-types';
+import { cn } from '@/lib/utils';
 
-interface ContentMetric {
-  id: string;
-  name: string;
-  score: number;
-  description: string;
-  recommendation?: string;
-}
-
-interface ContentAnalysisProps {
-  metrics: ContentMetric[];
-  readabilityScore: number;
-  wordCount: number;
-  keywordDensity: number;
-  headings: {
-    h1: number;
-    h2: number;
-    h3: number;
-    h4: number;
-  };
-  images: {
-    total: number;
-    withAlt: number;
-    withoutAlt: number;
-  };
-  links: {
-    total: number;
-    internal: number;
-    external: number;
-    broken: number;
-  };
+function getScoreColor(score: number) {
+  if (score >= 80) return 'bg-green-500';
+  if (score >= 60) return 'bg-yellow-500';
+  if (score >= 30) return 'bg-orange-500';
+  return 'bg-red-500';
 }
 
 export function ContentAnalysis({
-  metrics,
-  readabilityScore,
-  wordCount,
-  keywordDensity,
-  headings,
-  images,
-  links,
-}: ContentAnalysisProps) {
-  const getScoreColor = (score: number): "success" | "warning" | "default" | "danger" => {
-    if (score >= 90) return "success";
-    if (score >= 70) return "warning";
-    if (score >= 50) return "default";
-    return "danger";
+  contentAnalysis
+}: {
+  contentAnalysis: ContentAnalysisData;
+}) {
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  // Tree view for headings
+  const renderHeadingTree = () => {
+    const { h1Count, missingLevels, hierarchyValid } = contentAnalysis.headingStructure;
+    return (
+      <div className="pl-2">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold">H1</span>
+          <Badge variant={h1Count === 1 ? 'success' : 'danger'}>{h1Count}</Badge>
+        </div>
+        <div className="flex items-center gap-2 mt-1">
+          <span className="font-semibold">Missing Levels:</span>
+          {missingLevels.length === 0 ? <span>None</span> : missingLevels.join(', ')}
+        </div>
+        <div className="flex items-center gap-2 mt-1">
+          <span className="font-semibold">Hierarchy Valid:</span>
+          <Badge variant={hierarchyValid ? 'success' : 'danger'}>{hierarchyValid ? 'Yes' : 'No'}</Badge>
+        </div>
+      </div>
+    );
   };
 
-  const getScoreIcon = (score: number) => {
-    if (score >= 90) return <CheckCircle2 className="h-4 w-4" />;
-    if (score >= 70) return <Info className="h-4 w-4" />;
-    return <AlertCircle className="h-4 w-4" />;
-  };
+  // Keyword density chart (simple bar)
+  const renderKeywordDensity = () => (
+    <div className="flex items-center gap-2">
+      <span className="font-semibold">Keyword Density:</span>
+      <div className="w-32 h-3 bg-muted rounded-full overflow-hidden">
+        <div className="h-full bg-primary" style={{ width: `${contentAnalysis.contentQuality.keywordDensity * 30}%` }} />
+      </div>
+      <span className="ml-2">{contentAnalysis.contentQuality.keywordDensity}%</span>
+    </div>
+  );
+
+  // Reading level visualization (simple bar)
+  const renderReadingLevel = () => (
+    <div className="flex items-center gap-2">
+      <span className="font-semibold">Readability Score:</span>
+      <div className="w-32 h-3 bg-muted rounded-full overflow-hidden">
+        <div className="h-full bg-green-500" style={{ width: `${contentAnalysis.contentQuality.readabilityScore}%` }} />
+      </div>
+      <span className="ml-2">{contentAnalysis.contentQuality.readabilityScore}</span>
+    </div>
+  );
+
+  // Image optimization stats
+  const renderImageStats = () => (
+    <div className="space-y-1">
+      <div>Images: {contentAnalysis.images.total}</div>
+      <div>With Alt Text: {contentAnalysis.images.withAltText}</div>
+      <div>Oversized: {contentAnalysis.images.oversized}</div>
+      <div>Modern Formats: {contentAnalysis.images.modernFormats}</div>
+    </div>
+  );
 
   return (
-    <m.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold">Content Analysis</h3>
-          <Badge variant="outline">{wordCount} words</Badge>
+    <Card id="content" className="p-6">
+      <CardHeader>
+        <CardTitle className="text-lg font-semibold">Content Analysis</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Meta Tags */}
+        <div className="border rounded-lg p-4">
+          <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpanded(expanded === 'meta' ? null : 'meta')}>
+            <span className="font-medium">Meta Tags</span>
+            <Button size="icon" variant="ghost">
+              {expanded === 'meta' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </div>
+          <AnimatePresence>
+            {expanded === 'meta' && (
+              <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="pt-4 space-y-2">
+                <div>Title: <Badge variant={contentAnalysis.metaTags.title.optimized ? 'success' : 'warning'}>{contentAnalysis.metaTags.title.length} chars</Badge></div>
+                <div>Description: <Badge variant={contentAnalysis.metaTags.description.optimized ? 'success' : 'warning'}>{contentAnalysis.metaTags.description.length} chars</Badge></div>
+                <div>Keywords: <Badge variant={contentAnalysis.metaTags.keywords.relevant ? 'success' : 'warning'}>{contentAnalysis.metaTags.keywords.present ? 'Present' : 'Missing'}</Badge></div>
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <Card className="p-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Readability Score</span>
-                <span>{readabilityScore}</span>
-              </div>
-              <Progress
-                value={readabilityScore}
-                className="h-2"
-                variant={getScoreColor(readabilityScore)}
-              />
-            </div>
-          </Card>
-
-          <Card className="p-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Keyword Density</span>
-                <span>{keywordDensity.toFixed(1)}%</span>
-              </div>
-              <Progress
-                value={keywordDensity}
-                className="h-2"
-                variant={getScoreColor(keywordDensity * 10)}
-              />
-            </div>
-          </Card>
-
-          <Card className="p-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Content Quality</span>
-                <span>
-                  {Math.round(
-                    metrics.reduce((acc, metric) => acc + metric.score, 0) /
-                      metrics.length
-                  )}
-                </span>
-              </div>
-              <Progress
-                value={
-                  metrics.reduce((acc, metric) => acc + metric.score, 0) /
-                  metrics.length
-                }
-                className="h-2"
-                variant={getScoreColor(
-                  metrics.reduce((acc, metric) => acc + metric.score, 0) /
-                    metrics.length
-                )}
-              />
-            </div>
-          </Card>
+        {/* Headings Structure */}
+        <div className="border rounded-lg p-4">
+          <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpanded(expanded === 'headings' ? null : 'headings')}>
+            <span className="font-medium">Heading Structure</span>
+            <Button size="icon" variant="ghost">
+              {expanded === 'headings' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </div>
+          <AnimatePresence>
+            {expanded === 'headings' && (
+              <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="pt-4">
+                {renderHeadingTree()}
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <Card className="p-4">
-            <h4 className="font-medium mb-4">Headings Structure</h4>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">H1 Tags</span>
-                <Badge
-                  variant={headings.h1 === 1 ? "success" : "danger"}
-                  className="flex items-center gap-1"
-                >
-                  {headings.h1}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">H2 Tags</span>
-                <Badge variant="outline">{headings.h2}</Badge>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">H3 Tags</span>
-                <Badge variant="outline">{headings.h3}</Badge>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">H4 Tags</span>
-                <Badge variant="outline">{headings.h4}</Badge>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-4">
-            <h4 className="font-medium mb-4">Images & Links</h4>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Images with Alt Text</span>
-                <Badge
-                  variant={
-                    images.withAlt === images.total ? "success" : "warning"
-                  }
-                  className="flex items-center gap-1"
-                >
-                  {images.withAlt}/{images.total}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Internal Links</span>
-                <Badge variant="outline">{links.internal}</Badge>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">External Links</span>
-                <Badge variant="outline">{links.external}</Badge>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Broken Links</span>
-                <Badge
-                  variant={links.broken === 0 ? "success" : "danger"}
-                  className="flex items-center gap-1"
-                >
-                  {links.broken}
-                </Badge>
-              </div>
-            </div>
-          </Card>
+        {/* Content Quality */}
+        <div className="border rounded-lg p-4">
+          <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpanded(expanded === 'quality' ? null : 'quality')}>
+            <span className="font-medium">Content Quality</span>
+            <Button size="icon" variant="ghost">
+              {expanded === 'quality' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </div>
+          <AnimatePresence>
+            {expanded === 'quality' && (
+              <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="pt-4 space-y-2">
+                <div>Word Count: <Badge>{contentAnalysis.contentQuality.wordCount}</Badge></div>
+                {renderReadingLevel()}
+                {renderKeywordDensity()}
+                <div>Duplicate Content: <Badge variant={contentAnalysis.contentQuality.duplicateContent ? 'danger' : 'success'}>{contentAnalysis.contentQuality.duplicateContent ? 'Yes' : 'No'}</Badge></div>
+                <div>Internal Links: <Badge>{contentAnalysis.contentQuality.internalLinks}</Badge></div>
+                <div>External Links: <Badge>{contentAnalysis.contentQuality.externalLinks}</Badge></div>
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        <div className="space-y-4">
-          {metrics.map((metric, index) => (
-            <m.div
-              key={metric.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-            >
-              <Card className="p-4">
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          variant={getScoreColor(metric.score)}
-                          className="flex items-center gap-1"
-                        >
-                          {getScoreIcon(metric.score)}
-                          {metric.score}
-                        </Badge>
-                        <h4 className="font-medium">{metric.name}</h4>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {metric.description}
-                      </p>
-                      {metric.recommendation && (
-                        <p className="text-sm text-muted-foreground mt-2">
-                          <span className="font-medium">Recommendation:</span>{" "}
-                          {metric.recommendation}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </m.div>
-          ))}
+        {/* Images */}
+        <div className="border rounded-lg p-4">
+          <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpanded(expanded === 'images' ? null : 'images')}>
+            <span className="font-medium">Images</span>
+            <Button size="icon" variant="ghost">
+              {expanded === 'images' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </div>
+          <AnimatePresence>
+            {expanded === 'images' && (
+              <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="pt-4">
+                {renderImageStats()}
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
-      </Card>
-    </m.div>
+      </CardContent>
+    </Card>
   );
 } 

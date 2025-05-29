@@ -1,4 +1,4 @@
-import { LayoutDashboard, Search, Settings, BarChart, FileText, Users, Zap, Sparkles } from "lucide-react";
+import { LayoutDashboard, Search, Settings, BarChart, FileText, Users, Zap, Sparkles, AlertTriangle } from "lucide-react";
 
 // Define the NavItem type
 export interface NavItem {
@@ -50,6 +50,39 @@ export const navItems: NavItem[] = [
     label: "Settings",
     href: "/dashboard/settings",
     icon: Settings,
+  },
+];
+
+export const analysisNavItems: NavItem[] = [
+  {
+    label: 'Score Overview',
+    href: '/analysis#score',
+    icon: BarChart,
+  },
+  {
+    label: 'Issues',
+    href: '/analysis#issues',
+    icon: AlertTriangle,
+  },
+  {
+    label: 'Technical',
+    href: '/analysis#technical',
+    icon: Zap,
+  },
+  {
+    label: 'Content',
+    href: '/analysis#content',
+    icon: FileText,
+  },
+  {
+    label: 'Recommendations',
+    href: '/analysis#recommendations',
+    icon: Sparkles,
+  },
+  {
+    label: 'Trends',
+    href: '/analysis#trends',
+    icon: BarChart,
   },
 ];
 

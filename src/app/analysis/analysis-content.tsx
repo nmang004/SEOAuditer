@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,8 @@ import { m, AnimatePresence } from 'framer-motion';
 import { AnimateFadeIn, AnimateStagger, AnimateStaggerItem } from '@/components/animations';
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
+import { QuickJumpNavigation } from '@/components/navigation/quick-jump-navigation';
+import { analysisNavItems } from '@/components/navigation/nav-items';
 
 // Import analysis components
 import {
@@ -19,6 +21,12 @@ import {
   RecommendationsPanel,
   HistoricalTrends
 } from '@/components/analysis';
+
+const LazySEOScoreBreakdown = lazy(() => import('@/components/analysis/score-breakdown').then(m => ({ default: m.SEOScoreBreakdown })));
+const LazyHistoricalTrends = lazy(() => import('@/components/analysis/historical-trends').then(m => ({ default: m.HistoricalTrends })));
+import { SEOScoreBreakdownProps } from '@/lib/analysis-types';
+import { generateIssues, generateTechnicalAnalysis, generateContentAnalysis, generateRecommendations } from '@/lib/mock-data-analysis';
+import { SEOIssue, FilterState } from '@/lib/analysis-types';
 
 // Types
 type AnalysisData = {
@@ -97,6 +105,10 @@ export function AnalysisContent() {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   
+  // Add state for issues and filters
+  const [issues, setIssues] = useState<SEOIssue[]>(() => generateIssues(50));
+  const [issueFilters, setIssueFilters] = useState<FilterState>({ severity: [], category: [], status: [] });
+  
   // Simulate data loading
   useEffect(() => {
     const loadData = async () => {
@@ -142,6 +154,19 @@ export function AnalysisContent() {
     }, 1500);
   };
 
+  const handleIssueAction = (issueId: string, action: string) => {
+    setIssues(prev => prev.map(issue =>
+      issue.id === issueId
+        ? { ...issue, status: action === 'fixed' ? 'fixed' : action === 'ignored' ? 'ignored' : issue.status }
+        : issue
+    ));
+  };
+
+  const [technicalAnalysis] = useState(() => generateTechnicalAnalysis());
+  const previousTechnicalAnalysis = undefined; // For now, can be set to another mock for before/after
+  const [contentAnalysis] = useState(() => generateContentAnalysis());
+  const [recommendations] = useState(() => generateRecommendations(6));
+
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-center p-6">
@@ -162,30 +187,35 @@ export function AnalysisContent() {
           previousScore={analysisData.previousScore}
         />
 
-        <AnimateStagger className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mt-8">
-          {Object.entries(analysisData.categories).map(([key, value]) => (
-            <AnimateStaggerItem key={key}>
-              <Card className="hover:shadow-lg transition-shadow h-full">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                    {key.replace(/([A-Z])/g, ' $1').trim()}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{value}</div>
-                  <div className="h-2 w-full bg-muted rounded-full mt-2 overflow-hidden">
-                    <m.div 
-                      className="h-full bg-primary rounded-full" 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${value}%` }}
-                      transition={{ duration: 0.8, ease: 'easeOut' }}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </AnimateStaggerItem>
-          ))}
-        </AnimateStagger>
+        <div className="mb-4">
+          <QuickJumpNavigation sections={analysisNavItems.map(({ label, href }) => ({ label, href }))} />
+        </div>
+
+        {/* Advanced SEO Score Breakdown */}
+        <div className="mb-8" id="score">
+          <Suspense fallback={<div className="h-40 flex items-center justify-center"><span>Loading score breakdown...</span></div>}>
+            <LazySEOScoreBreakdown
+              overallScore={analysisData.overallScore}
+              categories={{
+                technical: { score: analysisData.categories.technical, issues: 3, improvements: 5 },
+                content: { score: analysisData.categories.content, issues: 4, improvements: 4 },
+                onPage: { score: analysisData.categories.onPage, issues: 6, improvements: 3 },
+                userExperience: { score: analysisData.categories.ux, issues: 2, improvements: 2 },
+              }}
+              showComparison={{
+                previousScore: analysisData.previousScore,
+                previousCategories: {
+                  technical: { score: 70, issues: 5, improvements: 6 },
+                  content: { score: 60, issues: 6, improvements: 5 },
+                  onPage: { score: 55, issues: 8, improvements: 4 },
+                  userExperience: { score: 80, issues: 3, improvements: 3 },
+                },
+                scanDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30),
+              }}
+            />
+          </Suspense>
+        </div>
+        {/* End SEO Score Breakdown */}
       </AnimateFadeIn>
 
       <AnimateFadeIn delay={0.2}>
@@ -200,6 +230,7 @@ export function AnalysisContent() {
               <TabsTrigger value="technical">Technical</TabsTrigger>
               <TabsTrigger value="content">Content</TabsTrigger>
               <TabsTrigger value="trends">Trends</TabsTrigger>
+              <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
             </TabsList>
             
             <Button 
@@ -228,18 +259,22 @@ export function AnalysisContent() {
               transition={{ duration: 0.3 }}
             >
               <TabsContent value="issues" className="mt-6">
-                <div className="grid gap-6 md:grid-cols-2">
-                  <IssuesDashboard issues={analysisData.issues} />
-                  <RecommendationsPanel count={analysisData.recommendations} />
+                <div className="grid gap-6">
+                  <IssuesDashboard
+                    issues={issues}
+                    filters={issueFilters}
+                    onFilterChange={setIssueFilters}
+                    onIssueAction={handleIssueAction}
+                  />
                 </div>
               </TabsContent>
 
               <TabsContent value="technical" className="mt-6">
-                <TechnicalAnalysis />
+                <TechnicalAnalysis technicalAnalysis={technicalAnalysis} previousAnalysis={previousTechnicalAnalysis} />
               </TabsContent>
 
               <TabsContent value="content" className="mt-6">
-                <ContentAnalysis />
+                <ContentAnalysis contentAnalysis={contentAnalysis} />
               </TabsContent>
 
               <TabsContent value="trends" className="mt-6">
@@ -257,8 +292,14 @@ export function AnalysisContent() {
                       </Button>
                     ))}
                   </div>
-                  <HistoricalTrends timeRange={timeRange} />
+                  <Suspense fallback={<div className="h-80 flex items-center justify-center"><span>Loading trends chart...</span></div>}>
+                    <LazyHistoricalTrends timeRange={timeRange} />
+                  </Suspense>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="recommendations" className="mt-6">
+                <RecommendationsPanel recommendations={recommendations} maxVisible={6} allowCustomOrder showProgress />
               </TabsContent>
             </m.div>
           </AnimatePresence>

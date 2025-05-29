@@ -1,19 +1,18 @@
-import { useCallback, useRef, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, Info, HelpCircle } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { m, AnimatePresence, useReducedMotion, useInView } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useRafState } from 'react-use';
-import { useDebounce } from 'use-debounce';
-
-const severityIcons = {
-  critical: AlertTriangle,
-  high: AlertTriangle,
-  medium: Info,
-  low: Info,
-} as const;
+import { Download, Search, Check, X, AlertTriangle, Info, Filter } from 'lucide-react';
+import { m, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { SEOIssue, FilterState, IssuesDashboardProps } from '@/lib/analysis-types';
+import { FixedSizeList as List } from 'react-window';
+import React from 'react';
+import debounce from 'lodash/debounce';
+import jsPDF from 'jspdf';
+import Papa from 'papaparse';
 
 const severityColors = {
   critical: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
@@ -22,233 +21,253 @@ const severityColors = {
   low: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
 } as const;
 
-const severityDescriptions = {
-  critical: 'Critical issues require immediate attention as they significantly impact your SEO performance.',
-  high: 'High priority issues should be addressed soon as they affect your search rankings.',
-  medium: 'Medium priority issues should be reviewed and fixed when possible.',
-  low: 'Low priority issues have minimal impact but should be monitored.'
+const statusColors = {
+  'new': 'bg-blue-100 text-blue-800',
+  'in-progress': 'bg-yellow-100 text-yellow-800',
+  'fixed': 'bg-green-100 text-green-800',
+  'ignored': 'bg-gray-100 text-gray-800',
 } as const;
 
-interface IssuesDashboardProps {
-  issues: {
-    critical: number;
-    high: number;
-    medium: number;
-    low: number;
-  };
-  isLoading?: boolean;
-  className?: string;
-}
+const allSeverities = ['critical', 'high', 'medium', 'low'];
+const allCategories = ['technical', 'content', 'onpage', 'ux'];
+const allStatuses = ['new', 'in-progress', 'fixed', 'ignored'];
 
-const loadingIssues = {
-  critical: 8,
-  high: 12,
-  medium: 20,
-  low: 15
-};
-
-// Lazy loaded animation variants
-const lazyVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.3,
-      ease: [0.16, 1, 0.3, 1],
-    },
-  }),
-};
-
-// Performance optimized progress bar
-const OptimizedProgressBar = ({ 
-  percentage, 
-  severity 
-}: { 
-  percentage: number; 
-  severity: string;
-}) => {
-  const [width, setWidth] = useRafState(0);
-  const [debouncedPercentage] = useDebounce(percentage, 50);
-  const animationRef = useRef<number>();
-  const reducedMotion = useReducedMotion();
-  const prefersReducedMotion = reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const animate = useCallback(() => {
-    if (prefersReducedMotion) {
-      setWidth(debouncedPercentage);
-      return;
-    }
-
-    const duration = 800;
-    const start = performance.now();
-    
-    const step = (timestamp: number) => {
-      const progress = Math.min((timestamp - start) / duration, 1);
-      setWidth(width + (debouncedPercentage - width) * progress);
-      
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(step);
-      }
-    };
-    
-    animationRef.current = requestAnimationFrame(step);
-    
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [debouncedPercentage, prefersReducedMotion, setWidth, width]);
-
-  useEffect(() => {
-    const cleanup = animate();
-    return () => {
-      if (cleanup) cleanup();
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [animate]);
-
-  return (
-    <div className="relative h-2 overflow-hidden rounded-full bg-muted">
-      <div
-        className={cn('h-full', {
-          'bg-red-500': severity === 'critical',
-          'bg-orange-500': severity === 'high',
-          'bg-yellow-500': severity === 'medium',
-          'bg-blue-500': severity === 'low',
-        })}
-        style={{
-          width: `${prefersReducedMotion ? debouncedPercentage : width}%`,
-          transition: prefersReducedMotion ? 'width 0.3s ease' : 'none',
-        }}
-        aria-valuenow={Math.round(debouncedPercentage)}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        role="progressbar"
-      />
-    </div>
-  );
-};
-
-export function IssuesDashboard({ 
-  issues, 
-  isLoading = false, 
-  className 
+export function IssuesDashboard({
+  issues,
+  filters,
+  onFilterChange,
+  onIssueAction,
 }: IssuesDashboardProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '100px' });
-  const reducedMotion = useReducedMotion();
-  const prefersReducedMotion = reducedMotion || typeof window !== 'undefined' 
-    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches 
-    : false;
+  const [search, setSearch] = useState('');
+  const debouncedSetSearch = React.useMemo(() => debounce(setSearch, 200), []);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [sortBy, setSortBy] = useState<'severity' | 'status' | 'detectedDate'>('severity');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
-  const displayedIssues = isLoading ? loadingIssues : issues;
-  const totalIssues = Object.values(displayedIssues).reduce((sum, count) => sum + count, 0);
-  const getSeverityPercentage = (count: number) => 
-    totalIssues > 0 ? (count / totalIssues) * 100 : 0;
-  
-  const severityEntries = Object.entries(displayedIssues) as [
-    'critical' | 'high' | 'medium' | 'low', 
-    number
-  ][];
-  
-  // Only animate if in view and not reduced motion
-  const shouldAnimate = isInView && !prefersReducedMotion;
+  // Filtering
+  const filteredIssues = useMemo(() => {
+    let filtered = issues;
+    if (filters.severity.length)
+      filtered = filtered.filter(i => filters.severity.includes(i.severity));
+    if (filters.category.length)
+      filtered = filtered.filter(i => filters.category.includes(i.category));
+    if (filters.status.length)
+      filtered = filtered.filter(i => filters.status.includes(i.status));
+    if (search)
+      filtered = filtered.filter(i =>
+        i.title.toLowerCase().includes(search.toLowerCase()) ||
+        i.description.toLowerCase().includes(search.toLowerCase())
+      );
+    return filtered;
+  }, [issues, filters, search]);
+
+  // Sorting
+  const sortedIssues = useMemo(() => {
+    return [...filteredIssues].sort((a, b) => {
+      if (sortBy === 'severity') {
+        const sevOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+        return (sevOrder[a.severity] - sevOrder[b.severity]) * (sortDir === 'asc' ? 1 : -1);
+      }
+      if (sortBy === 'status') {
+        return (a.status.localeCompare(b.status)) * (sortDir === 'asc' ? 1 : -1);
+      }
+      if (sortBy === 'detectedDate') {
+        return (new Date(a.detectedDate).getTime() - new Date(b.detectedDate).getTime()) * (sortDir === 'asc' ? 1 : -1);
+      }
+      return 0;
+    });
+  }, [filteredIssues, sortBy, sortDir]);
+
+  // Batch selection
+  const toggleSelect = (id: string) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+  const selectAll = () => setSelected(new Set(sortedIssues.map(i => i.id)));
+  const clearSelection = () => setSelected(new Set());
+
+  // Batch actions
+  const handleBatchAction = (action: string) => {
+    selected.forEach(id => onIssueAction(id, action));
+    clearSelection();
+  };
+
+  // Export (mock)
+  const handleExport = (type: 'csv' | 'pdf') => {
+    // TODO: Implement real export
+    alert(`Exporting ${sortedIssues.length} issues as ${type.toUpperCase()}`);
+  };
+
+  // Filter controls
+  const handleFilter = (type: keyof FilterState, value: string) => {
+    const arr = filters[type];
+    if (arr.includes(value)) {
+      onFilterChange({ ...filters, [type]: arr.filter(v => v !== value) });
+    } else {
+      onFilterChange({ ...filters, [type]: [...arr, value] });
+    }
+  };
+
+  // Add export handlers
+  const handleExportCSV = () => {
+    const csv = Papa.unparse(filteredIssues);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'seo-issues.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text('SEO Issues Report', 10, 10);
+    filteredIssues.slice(0, 40).forEach((issue, i) => {
+      doc.text(`${i + 1}. ${issue.title} [${issue.severity}]`, 10, 20 + i * 7);
+    });
+    doc.save('seo-issues.pdf');
+  };
 
   return (
-    <Card className={cn('h-full overflow-hidden', className)}>
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium">Issues Overview</CardTitle>
+    <Card className="h-full overflow-visible">
+      <CardHeader className="pb-2 flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-sm font-medium">SEO Issues</CardTitle>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={handleExportCSV} aria-label="Export issues as CSV">CSV</Button>
+            <Button size="sm" variant="outline" onClick={handleExportPDF} aria-label="Export issues as PDF">PDF</Button>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2 items-center">
+          <Input
+            value={search}
+            onChange={e => debouncedSetSearch(e.target.value)}
+            placeholder="Search issues..."
+            className="w-48"
+            prefix={<Search className="h-4 w-4 text-muted-foreground" />}
+          />
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button className="text-muted-foreground hover:text-foreground transition-colors">
-                  <HelpCircle className="h-4 w-4" />
-                  <span className="sr-only">More information</span>
-                </button>
+                <Button size="sm" variant="ghost"><Filter className="h-4 w-4" /></Button>
               </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[250px] text-sm">
-                <p>This dashboard shows the distribution of SEO issues by severity level.</p>
+              <TooltipContent>
+                <div className="space-y-2">
+                  <div>
+                    <div className="font-semibold mb-1">Severity</div>
+                    <div className="flex gap-1 flex-wrap">
+                      {allSeverities.map(sev => (
+                        <Button
+                          key={sev}
+                          size="xs"
+                          variant={filters.severity.includes(sev) ? 'default' : 'outline'}
+                          onClick={() => handleFilter('severity', sev)}
+                        >
+                          {sev}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-semibold mb-1">Category</div>
+                    <div className="flex gap-1 flex-wrap">
+                      {allCategories.map(cat => (
+                        <Button
+                          key={cat}
+                          size="xs"
+                          variant={filters.category.includes(cat) ? 'default' : 'outline'}
+                          onClick={() => handleFilter('category', cat)}
+                        >
+                          {cat}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-semibold mb-1">Status</div>
+                    <div className="flex gap-1 flex-wrap">
+                      {allStatuses.map(stat => (
+                        <Button
+                          key={stat}
+                          size="xs"
+                          variant={filters.status.includes(stat) ? 'default' : 'outline'}
+                          onClick={() => handleFilter('status', stat)}
+                        >
+                          {stat}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-3">
-          <AnimatePresence>
-            {severityEntries.map(([severity, count]) => {
-              const Icon = severityIcons[severity];
-              const color = severityColors[severity];
-              const percentage = getSeverityPercentage(count);
-              const description = severityDescriptions[severity];
-              
-              return (
-                <m.div 
-                  key={severity} 
-                  className="space-y-1"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="flex items-center justify-between text-sm">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="flex items-center gap-2 group">
-                            <Icon className={`h-4 w-4 ${color} transition-transform group-hover:scale-110`} />
-                            <span className="capitalize font-medium">{severity}</span>
-                            <span className="text-muted-foreground">({count})</span>
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="max-w-[250px] text-sm">
-                          <p>{description}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <span className="font-medium">{Math.round(percentage)}%</span>
-                  </div>
-                  <div className="relative h-2 overflow-hidden rounded-full bg-muted">
-                    <m.div
-                      className={cn('h-full', {
-                        'bg-red-500': severity === 'critical',
-                        'bg-orange-500': severity === 'high',
-                        'bg-yellow-500': severity === 'medium',
-                        'bg-blue-500': severity === 'low',
-                      })}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${percentage}%` }}
-                      transition={{ 
-                        duration: 0.8, 
-                        ease: [0.16, 1, 0.3, 1],
-                        delay: 0.1
-                      }}
-                    />
-                  </div>
-                </m.div>
-              );
-            })}
-          </AnimatePresence>
+      <CardContent className="p-0" role="region" aria-label="SEO Issues List">
+        <div className="border-b">
+          <Input
+            type="search"
+            placeholder="Search issues..."
+            value={search}
+            onChange={e => debouncedSetSearch(e.target.value)}
+            className="w-full rounded-none border-0 border-b bg-background px-4 py-3 text-sm focus:ring-0"
+            aria-label="Search issues"
+            role="searchbox"
+          />
         </div>
-        <m.div 
-          className="pt-2 text-sm text-muted-foreground text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
+        <div className="flex gap-2 p-2 border-b bg-muted/10">
+          <Button size="xs" variant="outline" onClick={handleExportCSV} aria-label="Export issues as CSV">Export CSV</Button>
+          <Button size="xs" variant="outline" onClick={handleExportPDF} aria-label="Export issues as PDF">Export PDF</Button>
+        </div>
+        {/* Virtualized List */}
+        <List
+          height={500}
+          itemCount={filteredIssues.length}
+          itemSize={120}
+          width="100%"
+          className="w-full"
+          outerElementType="div"
+          innerElementType="ul"
+          role="listbox"
+          aria-label="SEO Issues Virtual List"
         >
-          {isLoading ? (
-            <span className="inline-block h-4 w-40 bg-muted rounded animate-pulse"></span>
-          ) : (
-            <>
-              <span className="font-medium">{totalIssues}</span> total issues found across all categories
-            </>
-          )}
-        </m.div>
+          {({ index, style }) => {
+            const issue = filteredIssues[index];
+            return (
+              <li style={style} key={issue.id} role="option" aria-label={issue.title} tabIndex={0} className="border-b last:border-b-0 bg-background/80 hover:bg-accent/30 transition-colors">
+                <div className="flex flex-col md:flex-row md:items-center gap-2 p-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded ${severityColors[issue.severity]}`}>{issue.severity}</span>
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-muted/50 text-muted-foreground">{issue.category}</span>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded ${statusColors[issue.status]}`}>{issue.status}</span>
+                    </div>
+                    <div className="font-medium text-sm truncate" title={issue.title}>{issue.title}</div>
+                    <div className="text-xs text-muted-foreground truncate" title={issue.description}>{issue.description}</div>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {issue.affectedElements.map((el, i) => (
+                        <Badge key={i} variant="outline" className="text-xs">{el}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 items-end">
+                    <Button size="xs" variant="outline" onClick={() => onIssueAction(issue.id, 'fixed')} aria-label={`Mark ${issue.title} as fixed`}>
+                      <Check className="h-4 w-4 mr-1" /> Fixed
+                    </Button>
+                    <Button size="xs" variant="ghost" onClick={() => onIssueAction(issue.id, 'ignored')} aria-label={`Ignore ${issue.title}`}> 
+                      <X className="h-4 w-4 mr-1" /> Ignore
+                    </Button>
+                  </div>
+                </div>
+              </li>
+            );
+          }}
+        </List>
       </CardContent>
     </Card>
   );

@@ -6,14 +6,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import type { NavItem } from "@/components/navigation/nav-items";
 import { navItems } from "@/components/navigation/nav-items";
+import { analysisNavItems } from "@/components/navigation/nav-items";
 
 type MobileNavigationProps = {
   className?: string;
+  navItems?: NavItem[];
 };
 
-export function MobileNavigation({ className }: MobileNavigationProps) {
+export function MobileNavigation({ className, navItems: customNavItems }: MobileNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const items = customNavItems || navItems;
 
   // Close menu when route changes
   useEffect(() => {
@@ -66,7 +69,7 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
           
           <ScrollArea className="flex-1">
             <nav className="space-y-1 p-4">
-              {navItems.map((item: NavItem) => {
+              {items.map((item: NavItem) => {
                 const isActive = pathname === item.href;
                 const Icon = item.icon;
                 

@@ -1,9 +1,44 @@
 {
-  "app/dashboard/layout.tsx -> @/components/layout/dashboard-layout": {
-    "id": 1711,
+  "../node_modules/jspdf/dist/jspdf.es.min.js -> canvg": {
+    "id": 34137,
     "files": [
-      "static/chunks/927.620be7a9e489f79d.js",
-      "static/chunks/711.6f2f3e9b4f5ae9ec.js"
+      "static/chunks/bc98253f.06dd6805e77e797b.js",
+      "static/chunks/121.5dcd4eb6836ae7fd.js"
+    ]
+  },
+  "../node_modules/jspdf/dist/jspdf.es.min.js -> dompurify": {
+    "id": 10822,
+    "files": [
+      "static/chunks/822.83ca34591621db62.js"
+    ]
+  },
+  "../node_modules/jspdf/dist/jspdf.es.min.js -> html2canvas": {
+    "id": 52699,
+    "files": [
+      "static/chunks/ad2866b8.83107ecabebc1dd7.js"
+    ]
+  },
+  "app/analysis/analysis-content.tsx -> @/components/analysis/historical-trends": {
+    "id": 65170,
+    "files": []
+  },
+  "app/analysis/analysis-content.tsx -> @/components/analysis/score-breakdown": {
+    "id": 61031,
+    "files": []
+  },
+  "app/dashboard/layout.tsx -> @/components/layout/dashboard-layout": {
+    "id": 80045,
+    "files": [
+      "static/chunks/874-b58c193c3ea66973.js",
+      "static/chunks/471-d320b14675d3339d.js",
+      "static/chunks/702.4c93b1994e147916.js",
+      "static/chunks/45.d6cf064d23ad6b0f.js"
+    ]
+  },
+  "components/analysis/historical-trends.tsx -> html-to-image": {
+    "id": 78064,
+    "files": [
+      "static/chunks/64.5ac91a44c0f04a51.js"
     ]
   }
 }
