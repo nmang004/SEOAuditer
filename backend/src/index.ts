@@ -16,6 +16,7 @@ import { authRouter } from './routes/auth.routes';
 import { dashboardRouter } from './routes/dashboard.routes';
 import { projectRouter } from './routes/project.routes';
 import { analysisRouter } from './routes/analysis.routes';
+import crawlRouter from './routes/crawl.routes';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 
@@ -80,6 +81,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/analyses', analysisRouter);
+app.use('/api/crawl', crawlRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

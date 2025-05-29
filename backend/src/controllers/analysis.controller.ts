@@ -118,13 +118,7 @@ export const analysisController = {
               issues: {
                 select: {
                   id: true,
-                  type: true,
-                  severity: true,
-                  status: true,
-                  createdAt: true,
                 },
-                orderBy: { severity: 'desc' },
-                take: 50,
               },
               metaTags: {
                 select: {
@@ -535,6 +529,64 @@ export const analysisController = {
         analysisId: crawlSessionId,
         error: 'Analysis failed to complete',
       });
+    }
+  },
+
+  // Get trend data for a project (score and issue count over time)
+  async getProjectTrends(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { projectId } = req.params;
+      const userId = req.user?.id;
+      // Check if project exists and belongs to user
+      const project = await prisma.project.findFirst({
+        where: { id: projectId, userId },
+      });
+      if (!project) {
+        throw new NotFoundError('Project not found');
+      }
+      // Get all crawl sessions with analysis and issues
+      const sessions = await prisma.crawlSession.findMany({
+        where: { projectId },
+        orderBy: { startedAt: 'asc' },
+        include: {
+          analysis: {
+            select: {
+              overallScore: true,
+              technicalScore: true,
+              contentScore: true,
+              onpageScore: true,
+              uxScore: true,
+              issues: {
+                select: { id: true, type: true, severity: true },
+              },
+            },
+          },
+        },
+      });
+      const trends = sessions.map((s: any) => {
+        // Issue breakdowns
+        const issues = s.analysis?.issues || [];
+        const issueTypeCounts: Record<string, number> = {};
+        const issueSeverityCounts: Record<string, number> = {};
+        for (const issue of issues) {
+          issueTypeCounts[issue.type] = (issueTypeCounts[issue.type] || 0) + 1;
+          issueSeverityCounts[issue.severity] = (issueSeverityCounts[issue.severity] || 0) + 1;
+        }
+        return {
+          date: s.startedAt.toISOString().slice(0, 10),
+          score: s.analysis?.overallScore ?? null,
+          technicalScore: s.analysis?.technicalScore ?? null,
+          contentScore: s.analysis?.contentScore ?? null,
+          onpageScore: s.analysis?.onpageScore ?? null,
+          uxScore: s.analysis?.uxScore ?? null,
+          issueCount: issues.length,
+          issueTypeCounts,
+          issueSeverityCounts,
+        };
+      });
+      res.json({ trends });
+    } catch (error) {
+      next(error);
     }
   },
 };

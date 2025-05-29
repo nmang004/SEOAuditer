@@ -17,6 +17,16 @@ export const navItems: NavItem[] = [
     exact: true,
   },
   {
+    label: "Projects",
+    href: "/dashboard/projects",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "SEO Trend Analysis",
+    href: "/analysis/trends/demo-project-id",
+    icon: BarChart,
+  },
+  {
     label: "Keyword Research",
     href: "/dashboard/keywords",
     icon: Search,
@@ -81,8 +91,13 @@ export const analysisNavItems: NavItem[] = [
   },
   {
     label: 'Trends',
-    href: '/analysis#trends',
+    href: '/analysis/trends/demo-project-id',
     icon: BarChart,
+  },
+  {
+    label: 'Crawl Results',
+    href: '/analysis/results/demo-job-id',
+    icon: FileText,
   },
 ];
 

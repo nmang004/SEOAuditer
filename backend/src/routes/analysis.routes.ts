@@ -57,6 +57,13 @@ router.patch(
   analysisController.updateIssueStatus
 );
 
+// Get trend data for a project
+router.get(
+  '/trends/:projectId',
+  rateLimit.api,
+  analysisController.getProjectTrends
+);
+
 // Comment out the WebSocket endpoint for now to resolve type errors
 // router.ws('/updates', (ws, req) => {
 //   const { projectId, analysisId } = req.query;

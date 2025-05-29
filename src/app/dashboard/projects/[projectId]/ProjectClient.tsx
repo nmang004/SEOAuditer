@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 
 // Mock data - replace with actual data fetching
 const mockProject = {
@@ -55,7 +56,14 @@ export function ProjectClient({ params }: { params: { projectId: string } }) {
             <h1 className="text-3xl font-bold mb-2">{mockProject.name}</h1>
             <p className="text-muted-foreground">{mockProject.url}</p>
           </div>
-          <Button>Run New Analysis</Button>
+          <div className="flex gap-2">
+            <Button>Run New Analysis</Button>
+            <Link href={`/analysis/trends/${params.projectId}`} passHref legacyBehavior>
+              <Button variant="outline" asChild>
+                <a>View Trend Analysis</a>
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
