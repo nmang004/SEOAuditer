@@ -1,6 +1,19 @@
 {
-  "/page": "app/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/auth/register/page": "app/auth/register/page.js",
+  "/animations-demo/page": "app/animations-demo/page.js",
+  "/components-demo/page": "app/components-demo/page.js",
   "/auth/login/page": "app/auth/login/page.js",
+  "/test/page": "app/test/page.js",
+  "/testpage/page": "app/testpage/page.js",
+  "/page": "app/page.js",
+  "/dashboard/projects/[projectId]/analyses/new/page": "app/dashboard/projects/[projectId]/analyses/new/page.js",
+  "/dashboard/empty-states/page": "app/dashboard/empty-states/page.js",
+  "/dashboard/projects/[projectId]/analyses/page": "app/dashboard/projects/[projectId]/analyses/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/projects/[projectId]/page": "app/dashboard/projects/[projectId]/page.js",
+  "/interactive-demo/page": "app/interactive-demo/page.js",
+  "/analysis/results/[jobId]/page": "app/analysis/results/[jobId]/page.js",
   "/analysis/page": "app/analysis/page.js",
-  "/dashboard/page": "app/dashboard/page.js"
+  "/analysis/trends/[projectId]/page": "app/analysis/trends/[projectId]/page.js"
 }
