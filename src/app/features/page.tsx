@@ -1,3 +1,6 @@
+'use client';
+
+import React from 'react';
 import { ArrowRight, BarChart3, Bot, CheckCircle, Code, Cpu, FileText, Globe, LayoutDashboard, Lightbulb, Link2, ListChecks, Lock, Monitor, Search, Shield, TrendingUp, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';

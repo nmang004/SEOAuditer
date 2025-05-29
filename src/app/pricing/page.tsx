@@ -1,3 +1,6 @@
+'use client';
+
+import React from 'react';
 import { ArrowRight, Check, CheckCircle, Clock, Code, Cpu, Database, FileText, Globe, HelpCircle, Link2, Mail, Server, Shield, Star, TrendingUp, Users, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
