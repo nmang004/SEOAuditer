@@ -23,20 +23,45 @@ class EmailService {
   private transporter!: Transporter;
   private templates: Record<string, handlebars.TemplateDelegate> = {};
   private isInitialized = false;
+  private initializationPromise: Promise<void> | null = null;
 
   constructor() {
+    // Don't initialize during construction - use lazy initialization
+  }
+
+  private async ensureInitialized(): Promise<void> {
+    if (this.isInitialized) {
+      return;
+    }
+    
+    if (this.initializationPromise) {
+      return this.initializationPromise;
+    }
+    
+    this.initializationPromise = this.initializeAsync();
+    return this.initializationPromise;
+  }
+
+  private async initializeAsync(): Promise<void> {
     if (process.env.NODE_ENV === 'test') {
       // In test, skip SMTP setup and mark as initialized
       this.isInitialized = true;
       return;
     }
-    // Create test account if in development
-    if (process.env.NODE_ENV === 'development' && !config.email.host) {
-      this.setupTestAccount();
-      return;
-    }
+    
+    try {
+      // Create test account if in development
+      if (process.env.NODE_ENV === 'development' && !config.email.host) {
+        await this.setupTestAccount();
+        return;
+      }
 
-    this.initialize();
+      await this.initialize();
+    } catch (error) {
+      logger.error('Failed to initialize email service:', error);
+      // Don't throw error during initialization - handle gracefully
+      logger.warn('Email service will be disabled');
+    }
   }
 
   private async setupTestAccount() {
@@ -54,14 +79,14 @@ class EmailService {
       });
 
       logger.info(`Ethereal test account created: ${testAccount.user}`);
-      this.initialize();
+      await this.initialize();
     } catch (error) {
       logger.error('Failed to create test email account:', error);
       throw new Error('Failed to initialize email service');
     }
   }
 
-  private initialize() {
+  private async initialize(): Promise<void> {
     if (this.transporter) {
       this.isInitialized = true;
       this.loadTemplates();
@@ -82,15 +107,19 @@ class EmailService {
       },
     });
 
-    // Verify connection configuration
-    this.transporter.verify((error) => {
-      if (error) {
-        logger.error('Error verifying email transporter:', error);
-        throw new Error('Failed to initialize email service');
-      }
-      logger.info('Email service is ready to send emails');
-      this.isInitialized = true;
-      this.loadTemplates();
+    // Verify connection configuration asynchronously
+    return new Promise((resolve, reject) => {
+      this.transporter.verify((error) => {
+        if (error) {
+          logger.error('Error verifying email transporter:', error);
+          reject(new Error('Failed to initialize email service'));
+        } else {
+          logger.info('Email service is ready to send emails');
+          this.isInitialized = true;
+          this.loadTemplates();
+          resolve();
+        }
+      });
     });
   }
 
@@ -147,8 +176,13 @@ class EmailService {
       // In test, do not send real emails
       return true;
     }
+    
+    // Ensure service is initialized before sending
+    await this.ensureInitialized();
+    
     if (!this.isInitialized) {
-      throw new Error('Email service not initialized');
+      logger.warn('Email service is not available, skipping email send');
+      return false;
     }
 
     try {

@@ -11,3 +11,48 @@
   "command": "CONN",
   "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
 }
+2025-05-29 05:00:33.745 PM [[31merror[39m]: 	[31mFailed to connect to Redis:[39m
+{
+  "code": "ECONNREFUSED",
+  "stack": "AggregateError: \n    at internalConnectMultiple (node:net:1139:18)\n    at afterConnectMultiple (node:net:1714:7)"
+}
+2025-05-29 05:00:33.746 PM [[33mwarn[39m]: 	[33mRunning without Redis. Rate limiting and caching will be disabled.[39m
+2025-05-29 05:00:33.746 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-29 05:00:33.746 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-29 05:00:33.747 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-29 05:00:33.840 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}
+2025-05-29 05:17:04.243 PM [[31merror[39m]: 	[31mFailed to connect to Redis:[39m
+{
+  "code": "ECONNREFUSED",
+  "stack": "AggregateError: \n    at internalConnectMultiple (node:net:1139:18)\n    at afterConnectMultiple (node:net:1714:7)"
+}
+2025-05-29 05:17:04.244 PM [[33mwarn[39m]: 	[33mRunning without Redis. Rate limiting and caching will be disabled.[39m
+2025-05-29 05:17:04.244 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-29 05:17:04.244 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-29 05:17:04.244 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-29 05:17:04.289 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}
+2025-05-29 06:54:19.685 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}

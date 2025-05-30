@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { prisma } from '../../../src/index';
+import { prisma } from '@/index';
 
 export class StorageAdapter {
   async saveResult(jobId: string, result: any) {

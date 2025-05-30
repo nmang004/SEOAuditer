@@ -1,7 +1,11 @@
 import { Queue } from 'bullmq';
 import { CrawlerConfig } from '../types/CrawlerConfig';
 
-const connection = { host: 'localhost', port: 6379 }; // TODO: Use config/env
+// Use Docker service name 'redis' in production, localhost in development
+const connection = { 
+  host: process.env.NODE_ENV === 'production' ? 'redis' : 'localhost', 
+  port: 6379 
+};
 
 export class QueueAdapter {
   private queue: Queue;

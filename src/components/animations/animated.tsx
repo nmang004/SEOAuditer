@@ -86,4 +86,6 @@ export const Animated = forwardRef<HTMLDivElement, AnimatedProps>(
       </m.div>
     );
   }
-); 
+);
+
+Animated.displayName = 'Animated'; 

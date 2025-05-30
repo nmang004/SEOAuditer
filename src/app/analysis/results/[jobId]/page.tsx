@@ -13,6 +13,11 @@ export default function CrawlResultsPage() {
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  // Minimal filter state for IssuesDashboard - moved to top
+  const [filters, setFilters] = useState({ severity: [], category: [], status: [] });
+
+  const handleFilterChange = (f: any) => setFilters(f);
+  const handleIssueAction = () => {};
 
   useEffect(() => {
     if (!jobId) return;
@@ -45,10 +50,6 @@ export default function CrawlResultsPage() {
     onPage: { score: page.onpageScore ?? 0, issues: 0, improvements: 0 },
     userExperience: { score: page.uxScore ?? 0, issues: 0, improvements: 0 },
   };
-  // Minimal filter state for IssuesDashboard
-  const [filters, setFilters] = useState({ severity: [], category: [], status: [] });
-  const handleFilterChange = (f: any) => setFilters(f);
-  const handleIssueAction = () => {};
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded shadow space-y-8">

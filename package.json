@@ -9,7 +9,6 @@
     "lint": "eslint . --ext .js,.ts,.tsx",
     "perf:test": "node backend/scripts/perf-test.js",
     "format": "prettier --write .",
-    "prepare": "husky install",
     "seed": "npm run --prefix backend seed",
     "reset-db": "npm run --prefix backend reset-db"
   },
@@ -97,6 +96,8 @@
     "@types/supertest": "^6.0.3",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/yamljs": "^0.2.34",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "autocannon": "^8.0.0",
     "autoprefixer": "^10.4.16",
     "dotenv-cli": "^8.0.0",

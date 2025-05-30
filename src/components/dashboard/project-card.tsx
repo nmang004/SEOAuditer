@@ -251,4 +251,6 @@ const ProjectCard = React.memo(({
   );
 });
 
+ProjectCard.displayName = 'ProjectCard';
+
 export { ProjectCard };

@@ -36,7 +36,7 @@ const chartColors = {
 export const HistoricalTrends = React.memo(function HistoricalTrends({ timeRange }: HistoricalTrendsProps) {
   // Use mock data from the generator
   const mock = generateMockAnalysisData();
-  let data = mock.historicalData.map(d => ({ ...d, date: d.date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }) }));
+  const data = mock.historicalData.map(d => ({ ...d, date: d.date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }) }));
 
   // Filter data based on selected time range
   let filteredData = data;

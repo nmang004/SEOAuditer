@@ -6,7 +6,7 @@ const srcDir = path.join(__dirname, 'src');
 // Function to process a single file
 function processFile(filePath) {
   try {
-    let content = fs.readFileSync(filePath, 'utf8');
+    const content = fs.readFileSync(filePath, 'utf8');
     
     // Replace motion import and usages
     const updatedContent = content

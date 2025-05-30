@@ -99,11 +99,13 @@ export const authController = {
       const { accessToken, refreshToken } = generateTokens(user.id);
 
       // Store refresh token in Redis
-      await redisClient.setEx(
-        `refresh_token:${user.id}`,
-        parseInt(config.jwt.refreshExpiration, 10),
-        refreshToken
-      );
+      if (redisClient) {
+        await redisClient.setEx(
+          `refresh_token:${user.id}`,
+          parseInt(config.jwt.refreshExpiration, 10),
+          refreshToken
+        );
+      }
 
       // Set refresh token as HTTP-only cookie
       res.cookie('refreshToken', refreshToken, {
@@ -149,11 +151,13 @@ export const authController = {
       const { accessToken, refreshToken } = generateTokens(user.id);
 
       // Store refresh token in Redis
-      await redisClient.setEx(
-        `refresh_token:${user.id}`,
-        parseInt(config.jwt.refreshExpiration, 10),
-        refreshToken
-      );
+      if (redisClient) {
+        await redisClient.setEx(
+          `refresh_token:${user.id}`,
+          parseInt(config.jwt.refreshExpiration, 10),
+          refreshToken
+        );
+      }
 
       // Update last login
       await prisma.user.update({
@@ -200,7 +204,7 @@ export const authController = {
       };
 
       // Get stored refresh token from Redis
-      const storedToken = await redisClient.get(`refresh_token:${decoded.userId}`);
+      const storedToken = redisClient ? await redisClient.get(`refresh_token:${decoded.userId}`) : null;
 
       if (!storedToken || storedToken !== refreshToken) {
         throw new UnauthorizedError('Invalid refresh token');
@@ -211,11 +215,13 @@ export const authController = {
         generateTokens(decoded.userId);
 
       // Update refresh token in Redis
-      await redisClient.setEx(
-        `refresh_token:${decoded.userId}`,
-        parseInt(config.jwt.refreshExpiration, 10),
-        newRefreshToken
-      );
+      if (redisClient) {
+        await redisClient.setEx(
+          `refresh_token:${decoded.userId}`,
+          parseInt(config.jwt.refreshExpiration, 10),
+          newRefreshToken
+        );
+      }
 
       // Set new refresh token as HTTP-only cookie
       res.cookie('refreshToken', newRefreshToken, {
@@ -253,7 +259,9 @@ export const authController = {
             userId: string;
           };
           // Delete refresh token from Redis
-          await redisClient.del(`refresh_token:${decoded.userId}`);
+          if (redisClient) {
+            await redisClient.del(`refresh_token:${decoded.userId}`);
+          }
         } catch (error) {
           // Token is invalid or expired, nothing to do
         }

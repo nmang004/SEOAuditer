@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { z } from 'zod';
 
+console.log('--- Loading config.ts ---');
+
 // Load environment variables from .env file
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
@@ -19,7 +21,7 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRATION: z.string().default('7d'),
   
   // Redis
-  REDIS_URL: z.string().default('redis://localhost:6379'),
+  REDIS_URL: z.string().default('redis://redis:6379'),
   
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.string().default('900000'), // 15 minutes
@@ -32,16 +34,23 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'http', 'debug']).default('info'),
 });
 
-// Validate environment variables
-const envVars = envSchema.safeParse(process.env);
-
-if (!envVars.success) {
-  throw new Error(`Config validation error: ${envVars.error.message}`);
+let envVars;
+try {
+  console.log('--- Validating environment variables ---');
+  envVars = envSchema.safeParse(process.env);
+  if (!envVars.success) {
+    console.error('Config validation error:', envVars.error.message);
+    throw new Error(`Config validation error: ${envVars.error.message}`);
+  }
+  console.log('--- Environment variables validated successfully ---');
+} catch (err) {
+  console.error('FATAL ERROR in config.ts:', err);
+  throw err;
 }
 
 export const config = {
   env: envVars.data.NODE_ENV,
-  port: process.env.PORT ? parseInt(process.env.PORT, 10) : 4000,
+  port: process.env.PORT ? parseInt(process.env.PORT, 10) : 8080,
   
   // JWT
   jwt: {
@@ -57,7 +66,7 @@ export const config = {
   
   // Redis
   redis: {
-    url: envVars.data.REDIS_URL,
+    url: process.env.REDIS_URL || 'redis://redis:6379',
   },
   
   // Rate Limiting
@@ -93,3 +102,12 @@ export const config = {
 } as const;
 
 export type Config = typeof config;
+
+// Example for Postgres:
+export const postgresConfig = {
+  url: process.env.DATABASE_URL || 'postgresql://postgres:postgres@postgres:5432/rival_outranker?schema=public',
+};
+
+export const redisConfig = {
+  url: process.env.REDIS_URL || 'redis://redis:6379',
+};
