@@ -22,7 +22,6 @@ import { DashboardStats } from "@/hooks/useDashboardData";
 import { useDashboardData } from "@/hooks/useDashboardData";
 
 interface EnhancedStatsOverviewProps {
-  stats: DashboardStats;
   loading?: boolean;
   cached?: boolean;
   lastUpdated?: Date | null;
@@ -185,7 +184,6 @@ const StatCard: React.FC<StatCardProps> = ({
 };
 
 export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
-  stats,
   loading = false,
   cached = false,
   lastUpdated
@@ -214,7 +212,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
       { date: '2025-05-26', overallScore: 74, technicalScore: 70, contentScore: 76, onPageScore: 81, uxScore: 72 },
       { date: '2025-05-27', overallScore: 73, technicalScore: 69, contentScore: 77, onPageScore: 79, uxScore: 71 },
       { date: '2025-05-28', overallScore: 75, technicalScore: 71, contentScore: 78, onPageScore: 82, uxScore: 73 },
-      { date: '2025-05-29', overallScore: 78, technicalScore: 72, contentScore: 79, onPageScore: 83, uxScore: 74 },
+      { date: '2025-05-29', overallScore: 76, technicalScore: 72, contentScore: 79, onPageScore: 83, uxScore: 74 },
     ],
     topProjects: [
       { id: '1', name: 'Main Website', score: 85, improvement: 7 },
@@ -227,7 +225,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
     ]
   };
 
-  const stats = dashboardData || fallbackData;
+  const statsData = dashboardData || fallbackData;
 
   const getScoreColor = (score: number): 'success' | 'warning' | 'danger' => {
     if (score >= 80) return 'success';
@@ -269,7 +267,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Projects"
-          value={stats.totalProjects}
+          value={statsData.totalProjects}
           icon={Target}
           color="primary"
           loading={loading}
@@ -278,7 +276,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
         
         <StatCard
           title="Active Analyses"
-          value={stats.activeAnalyses}
+          value={statsData.activeAnalyses}
           icon={Activity}
           color="info"
           loading={loading}
@@ -287,25 +285,25 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
         
         <StatCard
           title="Average SEO Score"
-          value={stats.averageScore}
+          value={statsData.averageScore}
           trend={{
-            direction: getTrendDirection(stats.scoreImprovement),
-            percentage: Math.abs(stats.scoreImprovement),
+            direction: getTrendDirection(statsData.scoreImprovement),
+            percentage: Math.abs(statsData.scoreImprovement),
             period: '30d'
           }}
           icon={BarChart3}
-          color={getScoreColor(stats.averageScore)}
+          color={getScoreColor(statsData.averageScore)}
           loading={loading}
           subtitle="Across all projects"
           showProgress
-          progressValue={stats.averageScore}
+          progressValue={statsData.averageScore}
         />
         
         <StatCard
           title="Critical Issues"
-          value={stats.criticalIssues}
+          value={statsData.criticalIssues}
           icon={AlertTriangle}
-          color={stats.criticalIssues > 0 ? 'danger' : 'success'}
+          color={statsData.criticalIssues > 0 ? 'danger' : 'success'}
           loading={loading}
           subtitle="Requiring immediate attention"
         />
@@ -315,7 +313,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
           title="Weekly Issues Found"
-          value={stats.weeklyIssues}
+          value={statsData.weeklyIssues}
           icon={Zap}
           color="warning"
           loading={loading}
@@ -324,7 +322,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
         
         <StatCard
           title="Issues Resolved"
-          value={stats.resolvedIssues}
+          value={statsData.resolvedIssues}
           icon={CheckCircle}
           color="success"
           loading={loading}
@@ -333,7 +331,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
         
         <StatCard
           title="Completed Analyses"
-          value={stats.completedAnalyses}
+          value={statsData.completedAnalyses}
           icon={Users}
           color="info"
           loading={loading}
@@ -353,14 +351,14 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center space-y-2">
               <div className="text-2xl font-bold text-green-600">
-                {stats.scoreDistribution.excellent}
+                {statsData.scoreDistribution.excellent}
               </div>
               <div className="text-sm text-gray-600">Excellent (80-100)</div>
               <div className="h-2 bg-green-100 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-green-500 transition-all duration-500"
                   style={{ 
-                    width: `${(stats.scoreDistribution.excellent / stats.totalProjects) * 100}%` 
+                    width: `${(statsData.scoreDistribution.excellent / statsData.totalProjects) * 100}%` 
                   }}
                 />
               </div>
@@ -368,14 +366,14 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
             
             <div className="text-center space-y-2">
               <div className="text-2xl font-bold text-yellow-600">
-                {stats.scoreDistribution.good}
+                {statsData.scoreDistribution.good}
               </div>
               <div className="text-sm text-gray-600">Good (60-79)</div>
               <div className="h-2 bg-yellow-100 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-yellow-500 transition-all duration-500"
                   style={{ 
-                    width: `${(stats.scoreDistribution.good / stats.totalProjects) * 100}%` 
+                    width: `${(statsData.scoreDistribution.good / statsData.totalProjects) * 100}%` 
                   }}
                 />
               </div>
@@ -383,14 +381,14 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
             
             <div className="text-center space-y-2">
               <div className="text-2xl font-bold text-orange-600">
-                {stats.scoreDistribution.needsWork}
+                {statsData.scoreDistribution.needsWork}
               </div>
               <div className="text-sm text-gray-600">Needs Work (40-59)</div>
               <div className="h-2 bg-orange-100 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-orange-500 transition-all duration-500"
                   style={{ 
-                    width: `${(stats.scoreDistribution.needsWork / stats.totalProjects) * 100}%` 
+                    width: `${(statsData.scoreDistribution.needsWork / statsData.totalProjects) * 100}%` 
                   }}
                 />
               </div>
@@ -398,14 +396,14 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
             
             <div className="text-center space-y-2">
               <div className="text-2xl font-bold text-red-600">
-                {stats.scoreDistribution.poor}
+                {statsData.scoreDistribution.poor}
               </div>
               <div className="text-sm text-gray-600">Poor (0-39)</div>
               <div className="h-2 bg-red-100 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-red-500 transition-all duration-500"
                   style={{ 
-                    width: `${(stats.scoreDistribution.poor / stats.totalProjects) * 100}%` 
+                    width: `${(statsData.scoreDistribution.poor / statsData.totalProjects) * 100}%` 
                   }}
                 />
               </div>
