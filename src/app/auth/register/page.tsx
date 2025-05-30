@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { m } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,12 +10,66 @@ import Link from "next/link";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const router = useRouter();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (error) setError(""); // Clear error when user types
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // TODO: Implement registration logic
-    setTimeout(() => setIsLoading(false), 1000);
+    setError("");
+
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || data.error || 'Registration failed');
+      }
+
+      if (data.success && data.data.token) {
+        // Store token in localStorage
+        localStorage.setItem('token', data.data.token);
+        
+        // Redirect to dashboard
+        router.push('/dashboard/projects');
+      } else {
+        throw new Error('Registration failed - no token received');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Registration failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -33,6 +88,12 @@ export default function RegisterPage() {
             </p>
           </div>
 
+          {error && (
+            <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
@@ -40,8 +101,11 @@ export default function RegisterPage() {
               </label>
               <Input
                 id="name"
+                name="name"
                 type="text"
                 placeholder="Enter your full name"
+                value={formData.name}
+                onChange={handleInputChange}
                 required
                 className="w-full"
               />
@@ -53,8 +117,11 @@ export default function RegisterPage() {
               </label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleInputChange}
                 required
                 className="w-full"
               />
@@ -66,8 +133,11 @@ export default function RegisterPage() {
               </label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 placeholder="Create a password"
+                value={formData.password}
+                onChange={handleInputChange}
                 required
                 className="w-full"
               />
@@ -79,8 +149,11 @@ export default function RegisterPage() {
               </label>
               <Input
                 id="confirmPassword"
+                name="confirmPassword"
                 type="password"
                 placeholder="Confirm your password"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
                 required
                 className="w-full"
               />
