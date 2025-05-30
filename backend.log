@@ -1,0 +1,17 @@
+
+> rival-outranker@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, using available port 3006 instead.
+   ▲ Next.js 15.3.2
+   - Local:        http://localhost:3006
+   - Network:      http://192.168.0.112:3006
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1429ms
+ ○ Compiling /test-trend-analysis ...
+ ✓ Compiled /test-trend-analysis in 3.5s (1456 modules)
+ GET /test-trend-analysis 200 in 3954ms
+ ✓ Compiled in 892ms (680 modules)
+[?25h

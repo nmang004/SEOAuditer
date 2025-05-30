@@ -411,7 +411,9 @@ export class AnalysisCacheService {
   async getStats(): Promise<CacheStats> {
     try {
       const totalEntries = await this.prisma.analysisCache.count();
-      const totalSizeResult = await this.prisma.analysisCache.aggregate({
+      
+      // Get total size using aggregation
+      const sizeAggregation = await this.prisma.analysisCache.aggregate({
         _sum: {
           size: true
         }
@@ -425,6 +427,7 @@ export class AnalysisCacheService {
         }
       });
 
+      // Get popular keys with correct field selection
       const popularKeys = await this.prisma.analysisCache.findMany({
         orderBy: {
           accessCount: 'desc'
@@ -447,7 +450,7 @@ export class AnalysisCacheService {
 
       return {
         totalEntries,
-        totalSize: totalSizeResult._sum.size || 0,
+        totalSize: sizeAggregation._sum.size || 0,
         hitRate: Math.round(hitRate * 100) / 100,
         avgResponseTime: Math.round(avgResponseTime * 100) / 100,
         expiredEntries: expiredCount,

@@ -6,6 +6,16 @@ import {
 } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
 import { cache } from '../utils/cache';
+import { PrismaClient } from '@prisma/client';
+import { AuthenticatedRequest } from '../types/auth';
+import { analysisCacheService } from '../services/AnalysisCacheService';
+
+// Import our enhanced analysis system
+import { EnhancedPageAnalyzer, EnhancedAnalysisResult } from '../seo-crawler/engine/AnalysisModules/EnhancedPageAnalyzer';
+import { PageAnalyzer } from '../seo-crawler/engine/PageAnalyzer';
+import { CrawlerConfig } from '../seo-crawler/types/CrawlerConfig';
+import { Server } from 'socket.io';
+import { createHash } from 'crypto';
 
 // Analysis Controller
 // Handles starting, retrieving, listing, and cancelling analyses, as well as issue management
@@ -16,7 +26,7 @@ import { cache } from '../utils/cache';
 // TODO: Add more granular error handling and logging for production
 // TODO: Implement actual SEO analysis logic in runAnalysisInBackground
 
-export const analysisController = {
+export class AnalysisController {
   // Start a new analysis for a project
   async startAnalysis(req: Request, res: Response, next: NextFunction) {
     try {
@@ -86,7 +96,7 @@ export const analysisController = {
     } catch (error) {
       next(error);
     }
-  },
+  }
 
   // Get analysis by ID
   async getAnalysis(req: Request, res: Response, next: NextFunction) {
@@ -143,7 +153,7 @@ export const analysisController = {
     } catch (error) {
       next(error);
     }
-  },
+  }
 
   // Get all analyses for a project
   async getProjectAnalyses(req: Request, res: Response, next: NextFunction) {
@@ -203,7 +213,7 @@ export const analysisController = {
     } catch (error) {
       next(error);
     }
-  },
+  }
 
   // Cancel an in-progress analysis
   async cancelAnalysis(req: Request, res: Response, next: NextFunction) {
@@ -253,7 +263,7 @@ export const analysisController = {
     } catch (error) {
       next(error);
     }
-  },
+  }
 
   // Get analysis issues
   async getAnalysisIssues(req: Request, res: Response, next: NextFunction) {
@@ -317,7 +327,7 @@ export const analysisController = {
     } catch (error) {
       next(error);
     }
-  },
+  }
 
   // Update issue status
   async updateIssueStatus(req: Request, res: Response, next: NextFunction) {
@@ -382,155 +392,122 @@ export const analysisController = {
     } catch (error) {
       next(error);
     }
-  },
+  }
 
   // Helper method to run analysis in background
   async runAnalysisInBackground(
     crawlSessionId: string,
     project: any,
-    io: any
+    io: Server,
+    useEnhanced: boolean = true
   ) {
     try {
-      // Update status to in_progress
+      console.log(`[Analysis Controller] Starting ${useEnhanced ? 'enhanced' : 'standard'} analysis for session: ${crawlSessionId}`);
+      
+      // Update session status
       await prisma.crawlSession.update({
         where: { id: crawlSessionId },
-        data: { status: 'in_progress' },
+        data: {
+          status: 'running',
+          startedAt: new Date()
+        }
       });
 
-      // Emit analysis progress update
-      io.to(`project:${project.id}`).emit('analysis:progress', {
+      // Emit progress update
+      io.emit('analysis:started', { 
+        sessionId: crawlSessionId, 
         projectId: project.id,
-        analysisId: crawlSessionId,
-        status: 'in_progress',
-        progress: 0,
-        message: 'Starting analysis...',
+        enhanced: useEnhanced 
       });
 
-      // TODO: Implement actual SEO analysis logic here
-      // This is a placeholder for the analysis process
+      // Prepare page context for analysis
+      const pageContext = {
+        url: project.url,
+        projectId: project.id,
+        sessionId: crawlSessionId,
+        config: {
+          crawlOptions: {
+            extractOptions: {
+              screenshots: true,
+              performanceMetrics: useEnhanced,
+              extendedAnalysis: useEnhanced
+            },
+            userAgent: 'SEO-Analyzer/2.0',
+            timeout: 30000,
+            viewport: { width: 1200, height: 800 }
+          }
+        }
+      };
 
-      // Simulate analysis progress
-      const steps = [
-        { progress: 10, message: 'Crawling website...' },
-        { progress: 30, message: 'Analyzing technical SEO...' },
-        { progress: 50, message: 'Checking content quality...' },
-        { progress: 70, message: 'Analyzing on-page elements...' },
-        { progress: 90, message: 'Generating report...' },
-      ];
-
-      for (const step of steps) {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate work
-        
-        io.to(`project:${project.id}`).emit('analysis:progress', {
-          projectId: project.id,
-          analysisId: crawlSessionId,
-          status: 'in_progress',
-          progress: step.progress,
-          message: step.message,
-        });
-        io.to(`project:${project.id}`).emit('analysis:progress', {
-          projectId: project.id,
-          analysisId: crawlSessionId,
-          status: 'in_progress',
-          progress: step.progress,
-          message: step.message,
-        });
+      // Run analysis
+      let analysisResult;
+      if (useEnhanced) {
+        console.log('[Analysis Controller] Running enhanced analysis...');
+        analysisResult = await this.enhancedAnalyzer.analyze(pageContext);
+      } else {
+        console.log('[Analysis Controller] Running standard analysis...');
+        analysisResult = await this.standardAnalyzer.analyzePage(project.url);
       }
 
-      // Create analysis results (example data)
-      const analysis = await prisma.sEOAnalysis.create({
+      // Emit progress update
+      io.emit('analysis:progress', { 
+        sessionId: crawlSessionId, 
+        stage: 'processing_results',
+        progress: 80 
+      });
+
+      // Store results in database
+      await this.storeAnalysisResults(crawlSessionId, project.id, analysisResult, useEnhanced);
+
+      // Update session status
+      await prisma.crawlSession.update({
+        where: { id: crawlSessionId },
         data: {
-          crawlSessionId,
-          projectId: project.id,
-          overallScore: 85,
-          technicalScore: 90,
-          contentScore: 80,
-          onpageScore: 85,
-          uxScore: 88,
-        },
-      });
-
-      // Create example issues
-      const exampleIssues = [
-        {
-          analysisId: analysis.id,
-          type: 'missing_meta_description',
-          severity: 'medium',
-          message: 'Missing meta description',
-          title: 'Missing Meta Description',
-          category: 'technical',
-          url: project.url,
-          status: 'open',
-        },
-        {
-          analysisId: analysis.id,
-          type: 'slow_page_load',
-          severity: 'high',
-          message: 'Page load time is slow',
-          title: 'Slow Page Load',
-          category: 'technical',
-          url: project.url,
-          status: 'open',
-        },
-      ];
-
-      await prisma.sEOIssue.createMany({
-        data: exampleIssues,
-      });
-
-      // Update crawl session as completed
-      await prisma.crawlSession.update({
-        where: { id: crawlSessionId },
-        data: { 
           status: 'completed',
-          completedAt: new Date(),
-        },
+          completedAt: new Date()
+        }
       });
 
-      // Update project stats
-      await prisma.project.update({
-        where: { id: project.id },
-        data: { 
-          currentScore: analysis.overallScore,
-        },
-      });
+      // Update project statistics
+      await this.updateProjectStatistics(project.id, analysisResult);
 
-      // Emit analysis completed event
-      io.to(`project:${project.id}`).emit('analysis:completed', {
+      // Create trend record
+      await this.createTrendRecord(project.id, analysisResult);
+
+      // Emit completion
+      io.emit('analysis:completed', { 
+        sessionId: crawlSessionId,
         projectId: project.id,
-        analysis: {
-          id: crawlSessionId,
-          status: 'completed',
-          startedAt: new Date(),
-          completedAt: new Date(),
-          analysis: {
-            ...analysis,
-            issues: exampleIssues,
-          },
-        },
+        results: {
+          overallScore: analysisResult.score,
+          enhanced: useEnhanced,
+          issuesFound: analysisResult.enhancedIssues?.issues?.length || analysisResult.issues?.length || 0,
+          recommendations: analysisResult.enhancedRecommendations?.length || analysisResult.recommendations?.length || 0
+        }
       });
 
-    } catch (error: any) {
-      logger.error('Error in analysis background job:', error);
+      console.log(`[Analysis Controller] Analysis completed for session: ${crawlSessionId}`);
+
+    } catch (error) {
+      console.error(`[Analysis Controller] Analysis failed for session ${crawlSessionId}:`, error);
       
-      // Update crawl session as failed
+      // Update session with error
       await prisma.crawlSession.update({
         where: { id: crawlSessionId },
-        data: { 
+        data: {
           status: 'failed',
-          errorMessage: error.message,
           completedAt: new Date(),
-        },
+          errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        }
       });
 
-      // Emit analysis failed event
-      io.to(`project:${project.id}`).emit('analysis:failed', {
-        projectId: project.id,
-        analysisId: crawlSessionId,
-        error: 'Analysis failed to complete',
+      // Emit error
+      io.emit('analysis:failed', { 
+        sessionId: crawlSessionId,
+        error: error instanceof Error ? error.message : 'Analysis failed'
       });
     }
-  },
+  }
 
   // Get trend data for a project (score and issue count over time)
   async getProjectTrends(req: Request, res: Response, next: NextFunction) {
@@ -588,5 +565,17 @@ export const analysisController = {
     } catch (error) {
       next(error);
     }
-  },
-};
+  }
+
+  private calculateVolatility(values: number[]): number {
+    if (values.length < 2) return 0;
+    
+    const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+    
+    return Math.round(Math.sqrt(variance));
+  }
+}
+
+// Export instance of the controller
+export const analysisController = new AnalysisController();
