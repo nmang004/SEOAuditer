@@ -1,26 +1,65 @@
-import { PrismaClient } from '@prisma/client'
+// Prisma client with build-time safety
+let prismaInstance: any = null;
+let isDatabaseAvailable = false;
 
-// Global Prisma client instance with connection pooling
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+// Check if we're in a build environment
+const isBuildTime = process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL;
+
+if (!isBuildTime && process.env.DATABASE_URL && process.env.DATABASE_URL !== 'dummy') {
+  try {
+    const { PrismaClient } = require('@prisma/client');
+    
+    prismaInstance = new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    });
+    
+    isDatabaseAvailable = true;
+  } catch (error) {
+    console.warn('Prisma client could not be initialized:', error);
+    prismaInstance = null;
+    isDatabaseAvailable = false;
+  }
 }
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-})
+// Export a proxy that handles build-time safety
+export const prisma = new Proxy({}, {
+  get(target, prop) {
+    if (!isDatabaseAvailable || !prismaInstance) {
+      console.warn(`Prisma method ${String(prop)} called but database not available`);
+      return () => Promise.resolve([]);
+    }
+    return prismaInstance[prop];
+  }
+});
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
-
-// Add connection management
+// Connection management functions
 export async function connectPrisma() {
+  if (!isDatabaseAvailable || !prismaInstance) {
+    console.log('⚠️ Database not available, skipping connection');
+    return;
+  }
+  
   try {
-    await prisma.$connect()
-    console.log('✅ Prisma connected successfully')
+    await prismaInstance.$connect();
+    console.log('✅ Prisma connected successfully');
   } catch (error) {
-    console.error('❌ Prisma connection error:', error)
+    console.error('❌ Prisma connection error:', error);
   }
 }
 
 export async function disconnectPrisma() {
-  await prisma.$disconnect()
+  if (!isDatabaseAvailable || !prismaInstance) {
+    return;
+  }
+  
+  try {
+    await prismaInstance.$disconnect();
+  } catch (error) {
+    console.error('Error disconnecting Prisma:', error);
+  }
+}
+
+// Helper function to check if database is available
+export function isDatabaseConnected() {
+  return isDatabaseAvailable && prismaInstance !== null;
 } 

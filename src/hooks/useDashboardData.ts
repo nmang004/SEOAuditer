@@ -55,6 +55,16 @@ export interface RecentProject {
   status: 'completed' | 'analyzing' | 'queued' | 'error';
   criticalIssues: number;
   progress?: number;
+  createdAt: string;
+  updatedAt: string;
+  trend: 'up' | 'down' | 'stable';
+  lastAnalysis?: {
+    overallScore: number;
+    technicalScore: number;
+    contentScore: number;
+    onPageScore: number;
+    uxScore: number;
+  };
 }
 
 export interface PriorityIssue {
@@ -96,10 +106,10 @@ interface UseDashboardDataReturn {
 const getApiBaseUrl = () => {
   if (typeof window !== 'undefined') {
     // Client-side: use backend API directly
-    return process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080/api';
+    return process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000/api';
   }
   // Server-side fallback
-  return process.env.BACKEND_URL || 'http://localhost:8080/api';
+  return process.env.BACKEND_URL || 'http://localhost:4000/api';
 };
 
 // Mock data for development/fallback
@@ -156,7 +166,6 @@ export const useDashboardData = (autoRefreshInterval: number = 30000): UseDashbo
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer demo-token', // Replace with real auth
           },
         });
 
@@ -207,6 +216,137 @@ export const useDashboardData = (autoRefreshInterval: number = 30000): UseDashbo
     isLoading,
     error,
     refetch: fetchDashboardData,
+    lastUpdated
+  };
+};
+
+// Hook for recent projects
+export const useRecentProjects = (limit: number = 5) => {
+  const [data, setData] = useState<RecentProject[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  const fetchRecentProjects = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const apiUrl = getApiBaseUrl();
+      const response = await fetch(`${apiUrl}/dashboard/recent-projects?limit=${limit}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          // Transform backend data to match RecentProject interface
+          const transformedData: RecentProject[] = result.data.map((project: any) => ({
+            id: project.id,
+            name: project.name,
+            url: project.url,
+            favicon: `https://www.google.com/s2/favicons?domain=${new URL(project.url).hostname}`,
+            currentScore: project.currentScore || project.lastAnalysis?.overallScore || 0,
+            previousScore: project.lastAnalysis?.previousScore || 0,
+            lastScanDate: new Date(project.updatedAt || project.createdAt),
+            status: 'completed' as const, // Will be updated based on actual status
+            criticalIssues: project.lastAnalysis?.criticalIssues || 0,
+            progress: undefined,
+            createdAt: project.createdAt,
+            updatedAt: project.updatedAt,
+            trend: project.trend,
+            lastAnalysis: project.lastAnalysis
+          }));
+          
+          setData(transformedData);
+          setLastUpdated(new Date());
+          console.log('✅ Recent projects loaded from backend API');
+        }
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch recent projects';
+      setError(errorMessage);
+      console.error('❌ Recent projects fetch error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [limit]);
+
+  useEffect(() => {
+    fetchRecentProjects();
+  }, [fetchRecentProjects]);
+
+  return {
+    data,
+    isLoading,
+    error,
+    refetch: fetchRecentProjects,
+    lastUpdated
+  };
+};
+
+// Hook for priority issues
+export const usePriorityIssues = (limit: number = 10) => {
+  const [data, setData] = useState<PriorityIssue[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  const fetchPriorityIssues = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const apiUrl = getApiBaseUrl();
+      const response = await fetch(`${apiUrl}/dashboard/latest-issues?limit=${limit}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          // Transform backend data to match PriorityIssue interface
+          const transformedData: PriorityIssue[] = result.data.map((issue: any) => ({
+            id: issue.id,
+            projectId: issue.projectId,
+            projectName: issue.projectName,
+            type: issue.type,
+            severity: issue.severity,
+            title: issue.title,
+            affectedPages: issue.affectedPages,
+            estimatedImpact: issue.estimatedImpact,
+            quickFix: issue.quickFix || false
+          }));
+          
+          setData(transformedData);
+          setLastUpdated(new Date());
+          console.log('✅ Priority issues loaded from backend API');
+        }
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch priority issues';
+      setError(errorMessage);
+      console.error('❌ Priority issues fetch error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [limit]);
+
+  useEffect(() => {
+    fetchPriorityIssues();
+  }, [fetchPriorityIssues]);
+
+  return {
+    data,
+    isLoading,
+    error,
+    refetch: fetchPriorityIssues,
     lastUpdated
   };
 }; 

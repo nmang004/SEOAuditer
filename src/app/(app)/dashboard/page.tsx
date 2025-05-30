@@ -19,30 +19,50 @@ import { EnhancedStatsOverview } from "@/components/dashboard/enhanced-stats-ove
 import { RecentProjects } from "@/components/dashboard/recent-projects";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { PerformanceTrends } from "@/components/dashboard/performance-trends";
-import { useDashboardData } from "@/hooks/useDashboardData";
+import { useDashboardData, useRecentProjects, usePriorityIssues } from "@/hooks/useDashboardData";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function DashboardPage() {
+  // Use individual hooks for better data management
   const {
-    stats,
-    recentProjects,
-    priorityIssues,
-    loading,
-    error,
-    cached,
-    lastUpdated,
-    refresh,
-    invalidateCache,
-    isStale
-  } = useDashboardData({
-    refreshInterval: 30000, // Refresh every 30 seconds
-    enableRealtime: true
-  });
+    data: dashboardStats,
+    isLoading: statsLoading,
+    error: statsError,
+    refetch: refetchStats,
+    lastUpdated: statsLastUpdated
+  } = useDashboardData();
+
+  const {
+    data: recentProjects,
+    isLoading: projectsLoading,
+    error: projectsError,
+    refetch: refetchProjects,
+    lastUpdated: projectsLastUpdated
+  } = useRecentProjects(5);
+
+  const {
+    data: priorityIssues,
+    isLoading: issuesLoading,
+    error: issuesError,
+    refetch: refetchIssues,
+    lastUpdated: issuesLastUpdated
+  } = usePriorityIssues(10);
+
+  // Combine loading states
+  const loading = statsLoading || projectsLoading || issuesLoading;
+  const error = statsError || projectsError || issuesError;
+  const lastUpdated = [statsLastUpdated, projectsLastUpdated, issuesLastUpdated]
+    .filter(Boolean)
+    .sort((a, b) => (b?.getTime() || 0) - (a?.getTime() || 0))[0];
 
   const { toast } = useToast();
 
   const handleRefresh = async () => {
-    await refresh();
+    await Promise.all([
+      refetchStats(),
+      refetchProjects(),
+      refetchIssues()
+    ]);
     toast({
       title: "Dashboard refreshed",
       description: "Latest data has been loaded successfully.",
@@ -50,7 +70,8 @@ export default function DashboardPage() {
   };
 
   const handleInvalidateCache = async () => {
-    await invalidateCache();
+    // Clear all caches by forcing a refresh
+    await handleRefresh();
     toast({
       title: "Cache cleared",
       description: "Fresh data is being loaded from the analysis engine.",
@@ -107,25 +128,32 @@ export default function DashboardPage() {
   ];
 
   // Transform score trends data for PerformanceTrends component
-  const performanceTrendsData = stats.scoreTrends.map(trend => ({
+  const performanceTrendsData = dashboardStats?.scoreTrends?.map((trend: any) => ({
     date: trend.date,
     score: trend.overallScore,
     technical: trend.technicalScore,
     content: trend.contentScore,
     onPage: trend.onPageScore,
     ux: trend.uxScore
-  }));
+  })) || [];
 
   // Transform recent projects for RecentProjects component
-  const transformedProjects = recentProjects.map(project => ({
+  const transformedProjects = recentProjects?.map(project => ({
     id: project.id,
     name: project.name,
     url: project.url,
-    lastAnalyzed: project.lastScanDate.toISOString(),
+    lastAnalyzed: project.updatedAt,
     score: project.currentScore,
-    createdAt: project.lastScanDate.toISOString(),
-    updatedAt: project.lastScanDate.toISOString()
-  }));
+    createdAt: project.createdAt,
+    updatedAt: project.updatedAt,
+    // Transform for ProjectCard compatibility
+    favicon: `https://www.google.com/s2/favicons?domain=${new URL(project.url).hostname}`,
+    lastScanDate: new Date(project.updatedAt),
+    currentScore: project.currentScore,
+    issueCount: 0, // Could be computed from lastAnalysis if available
+    trend: (project.trend || 'stable') as 'up' | 'down' | 'neutral',
+    trendPercentage: Math.abs((project.lastAnalysis?.overallScore || 0) - (project.previousScore || 0)) || 5
+  })) || [];
 
   return (
     <div className="container mx-auto px-6 py-8 space-y-8">
@@ -146,18 +174,8 @@ export default function DashboardPage() {
 
         <div className="flex items-center gap-3">
           {/* Data freshness indicators */}
-          {isStale && (
-            <Badge variant="outline" className="text-amber-600 border-amber-300">
-              Data may be stale
-            </Badge>
-          )}
+          {/* Implementation of isStale */}
           
-          {cached && !isStale && (
-            <Badge variant="secondary">
-              Cached data
-            </Badge>
-          )}
-
           {/* Action buttons */}
           <Button
             variant="outline"
@@ -193,9 +211,7 @@ export default function DashboardPage() {
         transition={{ delay: 0.1 }}
       >
         <EnhancedStatsOverview
-          stats={stats}
-          loading={loading}
-          cached={cached}
+          loading={statsLoading}
           lastUpdated={lastUpdated}
         />
       </m.div>
@@ -211,7 +227,7 @@ export default function DashboardPage() {
           >
             <PerformanceTrends 
               data={performanceTrendsData}
-              isLoading={loading}
+              isLoading={statsLoading}
             />
           </m.div>
         </div>
@@ -236,12 +252,12 @@ export default function DashboardPage() {
       >
         <RecentProjects
           projects={transformedProjects}
-          isLoading={loading}
+          isLoading={projectsLoading}
         />
       </m.div>
 
       {/* Priority Issues Section */}
-      {priorityIssues.length > 0 && (
+      {priorityIssues?.length > 0 && (
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -16,37 +16,156 @@ export const navigationItems: NavItem[] = [
     title: "Projects",
     href: "/dashboard/projects",
     icon: "folder",
-    description: "Manage your SEO projects"
+    description: "Manage your SEO projects",
+    children: [
+      {
+        id: "projects-list",
+        title: "All Projects",
+        href: "/dashboard/projects",
+        icon: "folder",
+        description: "View all projects"
+      },
+      {
+        id: "projects-new",
+        title: "New Project",
+        href: "/dashboard/projects/new",
+        icon: "plus",
+        description: "Create a new project"
+      }
+    ]
   },
   {
     id: "analyses",
     title: "Analyses",
-    href: "/dashboard/analyses",
+    href: "/analyses",
     icon: "bar-chart",
-    description: "View and manage your SEO analyses"
+    description: "View and manage your SEO analyses",
+    children: [
+      {
+        id: "analyses-all",
+        title: "All Analyses",
+        href: "/analyses",
+        icon: "bar-chart",
+        description: "View all analyses"
+      },
+      {
+        id: "analyses-new",
+        title: "New Analysis",
+        href: "/analyses/new",
+        icon: "plus",
+        description: "Start a new analysis"
+      }
+    ]
   },
   {
-    id: "competitors",
-    title: "Competitors",
-    href: "/dashboard/competitors",
-    icon: "users",
-    description: "Analyze and track your competitors"
+    id: "issues",
+    title: "Issues",
+    href: "/issues",
+    icon: "alert-triangle",
+    description: "Track and manage SEO issues",
+    children: [
+      {
+        id: "issues-all",
+        title: "All Issues",
+        href: "/issues",
+        icon: "alert-triangle",
+        description: "View all issues"
+      },
+      {
+        id: "issues-critical",
+        title: "Critical Issues",
+        href: "/issues/critical",
+        icon: "alert-circle",
+        description: "View critical issues"
+      },
+      {
+        id: "issues-resolved",
+        title: "Resolved Issues",
+        href: "/issues/resolved",
+        icon: "check-circle",
+        description: "View resolved issues"
+      }
+    ]
   },
   {
-    id: "keywords",
-    title: "Keywords",
-    href: "/dashboard/keywords",
-    icon: "key",
-    description: "Manage and track your keyword rankings"
+    id: "search",
+    title: "Search",
+    href: "/search",
+    icon: "search",
+    description: "Search across projects and analyses"
   },
   {
     id: "settings",
     title: "Settings",
     href: "/dashboard/settings",
     icon: "settings",
-    description: "Configure your account and preferences"
-  },
+    description: "Configure your account and preferences",
+    children: [
+      {
+        id: "settings-profile",
+        title: "Profile",
+        href: "/dashboard/settings/profile",
+        icon: "user",
+        description: "Manage your profile"
+      },
+      {
+        id: "settings-billing",
+        title: "Billing",
+        href: "/dashboard/settings/billing",
+        icon: "credit-card",
+        description: "Manage billing and subscription"
+      }
+    ]
+  }
 ];
+
+/**
+ * Analysis navigation tabs
+ */
+export const analysisNavTabs = [
+  { id: 'overview', label: 'Overview', icon: 'eye' },
+  { id: 'technical', label: 'Technical SEO', icon: 'settings' },
+  { id: 'content', label: 'Content', icon: 'file-text' },
+  { id: 'onpage', label: 'On-Page SEO', icon: 'layout' },
+  { id: 'performance', label: 'Performance', icon: 'zap' },
+  { id: 'issues', label: 'Issues', icon: 'alert-triangle' },
+  { id: 'recommendations', label: 'Recommendations', icon: 'lightbulb' },
+  { id: 'history', label: 'History', icon: 'clock' },
+  { id: 'export', label: 'Export', icon: 'download' }
+];
+
+/**
+ * URL generation helpers
+ */
+export const urlHelpers = {
+  // Generate analysis URL with optional tab and project context
+  analysis: (analysisId: string, tab?: string, projectId?: string): string => {
+    const basePath = projectId 
+      ? `/projects/${projectId}/analyses/${analysisId}`
+      : `/analyses/${analysisId}`;
+    
+    return tab ? `${basePath}/${tab}` : `${basePath}/overview`;
+  },
+
+  // Generate issue URL with context
+  issue: (issueId: string, context?: { projectId?: string; analysisId?: string }): string => {
+    if (context?.analysisId) {
+      return context.projectId
+        ? `/projects/${context.projectId}/analyses/${context.analysisId}/issues/${issueId}`
+        : `/analyses/${context.analysisId}/issues/${issueId}`;
+    } else if (context?.projectId) {
+      return `/projects/${context.projectId}/issues/${issueId}`;
+    } else {
+      return `/issues/${issueId}`;
+    }
+  },
+
+  // Generate project URL
+  project: (projectId: string, section?: string): string => {
+    const basePath = `/projects/${projectId}`;
+    return section ? `${basePath}/${section}` : basePath;
+  }
+};
 
 /**
  * SEO score categories

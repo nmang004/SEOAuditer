@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { analysisCacheService } from '../../../../../backend/src/services/AnalysisCacheService';
+import { getDatabase } from '@/lib/database';
 
 export async function GET(request: NextRequest) {
   try {
+    // Get database instance (will be mock during build time)
+    const db = await getDatabase();
+
     // Get user from auth (implement your auth logic here)
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
@@ -13,15 +15,8 @@ export async function GET(request: NextRequest) {
     // Extract user ID from token (implement your JWT decode logic)
     const userId = 'user-id'; // Replace with actual user ID from token
 
-    // Check cache first
-    const cacheKey = `recent-projects:${userId}`;
-    const cached = await analysisCacheService.get<any[]>(cacheKey);
-    if (cached) {
-      return NextResponse.json({ success: true, data: cached, cached: true });
-    }
-
     // Get user's recent projects with latest analysis data
-    const projects = await prisma.project.findMany({
+    const projects = await db.project.findMany({
       where: { userId },
       include: {
         crawlSessions: {
@@ -44,7 +39,7 @@ export async function GET(request: NextRequest) {
       take: 10
     });
 
-    const recentProjects = projects.map(project => {
+    const recentProjects = projects.map((project: any) => {
       const latestSession = project.crawlSessions[0];
       const analysis = latestSession?.analysis;
       
@@ -54,7 +49,7 @@ export async function GET(request: NextRequest) {
         url: project.url,
         favicon: `https://www.google.com/s2/favicons?domain=${new URL(project.url).hostname}`,
         currentScore: analysis?.overallScore || 0,
-        previousScore: (analysis as any)?.previousScore || 0, // Type assertion for now
+        previousScore: (analysis as any)?.previousScore || 0,
         lastScanDate: project.lastScanDate || new Date(),
         status: latestSession?.status === 'completed' ? 'completed' as const :
                 latestSession?.status === 'in_progress' ? 'analyzing' as const :
@@ -63,9 +58,6 @@ export async function GET(request: NextRequest) {
         progress: latestSession?.status === 'in_progress' ? Math.floor(Math.random() * 80) + 10 : undefined
       };
     });
-
-    // Cache for 2 minutes
-    await analysisCacheService.set(cacheKey, recentProjects, { ttl: 120 });
 
     return NextResponse.json({
       success: true,
