@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { MobileNavigation } from '@/components/navigation/mobile-navigation';
 import { navItems } from '@/components/navigation/nav-items';
 import { Breadcrumb } from '@/components/navigation/breadcrumb';
 import { Search } from '@/components/navigation/search';
+import { User, LogOut } from 'lucide-react';
 
 export interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -21,7 +22,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const pathname = usePathname();
+  const router = useRouter();
 
   // Check for mobile viewport
   useEffect(() => {
@@ -33,6 +37,27 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     window.addEventListener('resize', checkIfMobile);
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
+
+  // Load user data
+  useEffect(() => {
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        setUserName(user.name || '');
+        setUserEmail(user.email || '');
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
+    }
+  }, []);
+
+  // Logout handler
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userData');
+    router.push('/auth/login');
+  }, [router]);
 
   // Toggle sidebar
   const toggleSidebar = useCallback(() => {
@@ -78,6 +103,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <div className="p-4">
               <h2 className="text-xl font-bold">Rival Outranker</h2>
             </div>
+            
+            {/* Main Navigation */}
             <nav className="flex-1 space-y-1 px-2 py-4">
               {navItems.map((item) => {
                 const isActive = pathname === item.href || 
@@ -101,6 +128,40 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 );
               })}
             </nav>
+
+            {/* Bottom Section - Profile and Logout */}
+            <div className="border-t p-2 space-y-1">
+              <button
+                onClick={() => router.push('/profile')}
+                className={cn(
+                  'w-full flex items-center px-4 py-3 rounded-md text-sm font-medium',
+                  'transition-colors duration-200',
+                  'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                )}
+              >
+                <User className="mr-3 h-5 w-5 flex-shrink-0" />
+                <div className="flex-1 text-left">
+                  <div className="font-medium">{userName || 'Profile'}</div>
+                  {userEmail && (
+                    <div className="text-xs text-muted-foreground truncate">
+                      {userEmail}
+                    </div>
+                  )}
+                </div>
+              </button>
+              
+              <button
+                onClick={handleLogout}
+                className={cn(
+                  'w-full flex items-center px-4 py-3 rounded-md text-sm font-medium',
+                  'transition-colors duration-200',
+                  'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                )}
+              >
+                <LogOut className="mr-3 h-5 w-5 flex-shrink-0" />
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>

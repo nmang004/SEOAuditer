@@ -1,111 +1,181 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { m } from 'framer-motion';
-import { Bell, Sun, Moon, Menu } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Search, MobileNavigation, Breadcrumb } from "@/components/navigation";
+import { User, Menu, X } from "lucide-react";
 
-interface HeaderProps {
-  onToggleSidebar: () => void;
-  showBreadcrumb?: boolean;
-}
+export function Header() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
-export function Header({ onToggleSidebar, showBreadcrumb = true }: HeaderProps) {
-  const [mounted, setMounted] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  // Hydration fix
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('userData');
+    
+    if (token && userData) {
+      setIsLoggedIn(true);
+      try {
+        const user = JSON.parse(userData);
+        setUserName(user.name || user.email);
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
+    } else {
+      setIsLoggedIn(false);
+      setUserName("");
+    }
+  }, [pathname]); // Re-check when route changes
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    // In a real app, we'd toggle the dark mode class on the document
-    document.documentElement.classList.toggle('dark');
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userData');
+    setIsLoggedIn(false);
+    setUserName("");
+    router.push('/');
   };
 
+  // Don't show header on auth pages or dashboard pages
+  if (pathname?.startsWith('/auth/') || pathname?.startsWith('/dashboard')) {
+    return null;
+  }
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex flex-col">
-        {/* Top Bar */}
-        <div className="flex h-16 items-center px-4 md:px-6">
-          <div className="flex items-center md:hidden">
-            <MobileNavigation />
-          </div>
-
-          <div className="hidden md:flex items-center">
-            <Link href="/" className="flex items-center">
-              <m.div
-                className="mr-2"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-6 w-6 text-primary"
-                >
-                  <path d="m3 11 18-5v12L3 14v-3z"></path>
-                  <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
-                </svg>
-              </m.div>
-              <span className="font-bold text-xl">Rival Outranker</span>
-            </Link>
-          </div>
-
-          <div className="flex-1 flex items-center justify-center px-2 md:px-4">
-            <div className="w-full max-w-2xl">
-              <Search />
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-danger-500"></span>
-              <span className="sr-only">Notifications</span>
-            </Button>
-
-            {mounted && (
-              <Button variant="ghost" size="icon" onClick={toggleTheme}>
-                {isDarkMode ? (
-                  <Sun className="h-5 w-5" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
-                <span className="sr-only">Toggle theme</span>
-              </Button>
-            )}
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full border border-border"
+    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center">
+        <div className="mr-4 hidden md:flex">
+          <Link href="/" className="mr-6 flex items-center space-x-2">
+            <span className="hidden font-bold sm:inline-block">
+              Rival Outranker
+            </span>
+          </Link>
+          <nav className="flex items-center space-x-6 text-sm font-medium">
+            <Link
+              href="/features"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
-              <span className="sr-only">User profile</span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground font-medium">
-                JD
-              </span>
-            </Button>
-          </div>
+              Features
+            </Link>
+            <Link
+              href="/pricing"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/how-it-works"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              How it Works
+            </Link>
+          </nav>
         </div>
 
-        {/* Breadcrumb */}
-        {showBreadcrumb && (
-          <div className="border-t px-4 py-2 bg-muted/10">
-            <div className="max-w-7xl mx-auto">
-              <Breadcrumb />
-            </div>
+        <Button
+          className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-accent-foreground h-9 py-2 mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+          type="button"
+          aria-expanded="false"
+          aria-label="Main menu"
+          data-state="closed"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          <span className="sr-only">Toggle Menu</span>
+        </Button>
+
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+          <div className="w-full flex-1 md:w-auto md:flex-none">
+            <Link href="/" className="mr-6 flex items-center space-x-2 md:hidden">
+              <span className="font-bold">Rival Outranker</span>
+            </Link>
           </div>
-        )}
+          <nav className="flex items-center space-x-2">
+            {isLoggedIn ? (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/dashboard/projects">
+                    Dashboard
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/profile" className="flex items-center space-x-1">
+                    <User className="h-4 w-4" />
+                    <span className="hidden sm:inline">{userName}</span>
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/auth/login">
+                    Login
+                  </Link>
+                </Button>
+                <Button size="sm" asChild>
+                  <Link href="/auth/register">
+                    Sign Up
+                  </Link>
+                </Button>
+              </>
+            )}
+          </nav>
+        </div>
       </div>
+
+      {/* Mobile menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden">
+          <div className="border-t px-4 py-4 space-y-3">
+            <Link
+              href="/features"
+              className="block py-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Features
+            </Link>
+            <Link
+              href="/pricing"
+              className="block py-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/how-it-works"
+              className="block py-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              How it Works
+            </Link>
+            {isLoggedIn && (
+              <>
+                <Link
+                  href="/dashboard/projects"
+                  className="block py-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/profile"
+                  className="block py-2 text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }
