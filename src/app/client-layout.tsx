@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Providers } from '@/components/providers';
 import { PageTransition } from '@/components/animations/page-transition';
+import { Header } from '@/components/layout/header';
 
 export default function ClientLayout({
   children,
@@ -38,6 +39,7 @@ export default function ClientLayout({
 
   return (
     <Providers>
+      <Header />
       <PageTransition>
         {children}
       </PageTransition>

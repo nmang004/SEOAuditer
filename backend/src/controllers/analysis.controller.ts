@@ -20,7 +20,7 @@ export const analysisController = {
   // Start a new analysis for a project
   async startAnalysis(req: Request, res: Response, next: NextFunction) {
     try {
-      const { projectId } = req.params;
+      const { projectId } = req.body;
       const userId = req.user?.id;
 
       // Check if project exists and belongs to user

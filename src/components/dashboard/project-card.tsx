@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { m } from 'framer-motion';
 import { 
   ExternalLink, 
@@ -88,10 +89,12 @@ const ProjectCard = React.memo(({
               {/* Project favicon */}
               {favicon && variant !== "compact" && (
                 <div className="flex-shrink-0 w-10 h-10 overflow-hidden rounded-md bg-background/50">
-                  <img 
+                  <Image 
                     src={favicon} 
                     alt={`${name} favicon`} 
                     className="object-cover w-full h-full"
+                    width={40}
+                    height={40}
                     onError={(e) => {
                       // Fallback for missing favicon
                       (e.target as HTMLImageElement).src = "/favicon.ico";

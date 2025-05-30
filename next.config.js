@@ -53,14 +53,7 @@ const nextConfig = {
   // Disable static optimization for dynamic routes
   output: 'standalone',
 
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:4000/api/:path*',
-      },
-    ];
-  },
+  // Removed rewrites configuration - using API routes instead
 };
 
 module.exports = nextConfig;

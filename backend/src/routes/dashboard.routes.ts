@@ -30,6 +30,13 @@ router.get(
   dashboardController.getLatestIssues
 );
 
+// Recent activity
+router.get(
+  '/recent-activity',
+  rateLimit.api,
+  dashboardController.getRecentActivity
+);
+
 // Performance trends over time
 router.get(
   '/performance-trends',

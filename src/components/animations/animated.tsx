@@ -1,4 +1,6 @@
-import { forwardRef, ReactNode, useState } from 'react';
+"use client";
+
+import { forwardRef, ReactNode, useState, useEffect } from 'react';
 import { m, MotionProps, useReducedMotion, Variants  } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { fadeIn, slideUp, scaleIn } from '@/lib/animations/animations';
@@ -31,7 +33,11 @@ export const Animated = forwardRef<HTMLDivElement, AnimatedProps>(
   }, ref) => {
     const reducedMotion = useReducedMotion();
     const [isInView, setIsInView] = useState(disabled || reducedMotion);
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+      setIsMobile(window.innerWidth < 768);
+    }, []);
 
     // Animation variant selection
     let variants: Variants;

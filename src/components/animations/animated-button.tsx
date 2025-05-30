@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from 'react';
 import { m, useReducedMotion } from 'framer-motion';
 import { LoadingSpinner } from '@/components/animations/loading-states';
@@ -13,7 +15,12 @@ export interface AnimatedButtonProps extends React.ButtonHTMLAttributes<HTMLButt
 export const AnimatedButton = React.forwardRef<HTMLButtonElement, AnimatedButtonProps>(
   ({ loading = false, success = false, children, className, disabled, ...props }, ref) => {
     const reducedMotion = useReducedMotion();
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const [isMobile, setIsMobile] = React.useState(false);
+
+    React.useEffect(() => {
+      setIsMobile(window.innerWidth < 768);
+    }, []);
+
     const hoverScale = isMobile ? 1.01 : 1.02;
     const tapScale = isMobile ? 0.99 : 0.98;
     return (

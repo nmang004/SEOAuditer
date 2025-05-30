@@ -101,7 +101,7 @@ const SEOScoreOverview = React.memo(function SEOScoreOverview({
       
       return () => clearInterval(timer);
     }
-  }, [score, isLoading]);
+  }, [score, isLoading, animatedScore]);
 
   const scoreDifference = score - (previousScore || 0);
   const isImprovement = scoreDifference >= 0;

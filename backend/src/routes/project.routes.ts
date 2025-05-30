@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { projectController } from '../controllers/project.controller';
+import { analysisController } from '../controllers/analysis.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { validate } from '../middleware/validation.middleware';
+import { rateLimit } from '../middleware/rate-limit.middleware';
 
 const router = Router();
 
@@ -28,7 +30,7 @@ router.get(
 );
 
 // Update a project
-router.patch(
+router.put(
   '/:id',
   validate('updateProject'),
   projectController.updateProject
@@ -38,6 +40,14 @@ router.patch(
 router.delete(
   '/:id',
   projectController.deleteProject
+);
+
+// Get analyses for a project
+router.get(
+  '/:projectId/analyses',
+  rateLimit.api,
+  validate('getProjectAnalyses'),
+  analysisController.getProjectAnalyses
 );
 
 export { router as projectRouter };

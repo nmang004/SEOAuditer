@@ -95,10 +95,8 @@ const schemas = {
 
   // Analysis schemas
   createAnalysis: z.object({
-    params: z.object({
-      projectId: z.string().uuid('Invalid project ID'),
-    }),
     body: z.object({
+      projectId: z.string().uuid('Invalid project ID'),
       url: z.string().url('Invalid URL').trim().optional(),
       options: z.record(z.any()).optional(),
     }),

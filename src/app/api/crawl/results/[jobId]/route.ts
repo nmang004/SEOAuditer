@@ -2,21 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://backend:8080';
 
-export async function POST(request: NextRequest) {
-  console.log('POST /api/auth/register called');
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { jobId: string } }
+) {
+  console.log('GET /api/crawl/results/[jobId] called');
   console.log('BACKEND_URL:', BACKEND_URL);
   
   try {
-    const body = await request.json();
-    console.log('Request body:', body);
+    const authHeader = request.headers.get('authorization');
+    const { jobId } = params;
 
-    console.log('Attempting to fetch:', `${BACKEND_URL}/api/auth/register`);
-    const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
-      method: 'POST',
+    console.log('Attempting to fetch:', `${BACKEND_URL}/api/crawl/results/${jobId}`);
+    const response = await fetch(`${BACKEND_URL}/api/crawl/results/${jobId}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        ...(authHeader && { Authorization: authHeader }),
       },
-      body: JSON.stringify(body),
     });
 
     console.log('Backend response status:', response.status);
@@ -25,7 +28,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('POST /api/auth/register error:', error);
+    console.error('GET /api/crawl/results/[jobId] error:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }
