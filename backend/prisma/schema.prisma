@@ -84,14 +84,71 @@ model SEOAnalysis {
   contentScore    Int?        @default(0)
   onpageScore     Int?        @default(0)
   uxScore         Int?        @default(0)
+  previousScore   Int?
+  scoreChange     Int?
   createdAt       DateTime    @default(now())
   crawlSession    CrawlSession @relation(fields: [crawlSessionId], references: [id], onDelete: Cascade)
   project         Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
   issues          SEOIssue[]
+  recommendations SEORecommendation[]
   metaTags        MetaTags?
+  scoreBreakdown  SEOScoreBreakdown?
+  contentAnalysis ContentAnalysis?
+  performanceMetrics PerformanceMetrics?
   
   @@index([crawlSessionId])
   @@index([projectId])
+  @@index([overallScore])
+  @@index([createdAt])
+}
+
+model SEOScoreBreakdown {
+  id              String      @id @default(uuid())
+  analysisId      String      @unique
+  technicalBreakdown Json     // TechnicalScoreBreakdown
+  contentBreakdown Json       // ContentScoreBreakdown
+  onPageBreakdown Json        // OnPageScoreBreakdown
+  uxBreakdown     Json        // UXScoreBreakdown
+  weights         Json        // Category weights used
+  trends          Json?       // Score trends data
+  benchmarks      Json?       // Industry benchmarks
+  createdAt       DateTime    @default(now())
+  analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+}
+
+model ContentAnalysis {
+  id              String      @id @default(uuid())
+  analysisId      String      @unique
+  wordCount       Int
+  readingTime     Int
+  paragraphCount  Int
+  sentenceCount   Int
+  averageSentenceLength Float
+  topicCoverage   Float
+  contentStructure Json       // Content structure analysis
+  readabilityMetrics Json     // All readability scores
+  keywordAnalysis Json        // Keyword analysis data
+  freshnessData   Json        // Content freshness analysis
+  qualityMetrics  Json        // Content quality scores
+  overallScore    Int
+  recommendations String[]
+  createdAt       DateTime    @default(now())
+  analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+}
+
+model PerformanceMetrics {
+  id              String      @id @default(uuid())
+  analysisId      String      @unique
+  coreWebVitals   Json        // LCP, FID, CLS, FCP, TTFB
+  loadTime        Int?
+  pageSize        Int?
+  requestCount    Int?
+  performanceScore Int
+  mobilePerfScore Int?
+  optimizationOpportunities Json
+  lighthouseData  Json?       // Full Lighthouse report data
+  createdAt       DateTime    @default(now())
+  analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
 }
 
 model SEOIssue {
@@ -106,13 +163,60 @@ model SEOIssue {
   status          String      @default("new") // new, in_progress, fixed, wont_fix, ignored
   category        String      // technical, content, onpage, ux
   affectedPages   Int         @default(1)
+  fixComplexity   String?     // easy, medium, hard
+  estimatedTime   String?
+  businessImpact  String?     // high, medium, low
+  implementationSteps String[]
+  validationCriteria String[]
+  blockingIndexing Boolean?   @default(false)
+  securityConcern Boolean?    @default(false)
+  rankingImpact   String?     // major, moderate, minor
+  enhancementType String?     // usability, accessibility, performance
+  compoundIssue   Boolean?    @default(false)
+  affectedCategories String[] // For cross-category issues
   createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
   analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  recommendations SEORecommendation[]
   
   @@index([analysisId])
   @@index([severity])
   @@index([status])
   @@index([category])
+  @@index([fixComplexity])
+}
+
+model SEORecommendation {
+  id              String      @id @default(uuid())
+  analysisId      String
+  issueId         String?
+  priority        String      // immediate, high, medium, low
+  category        String      // technical, content, onpage, ux
+  title           String
+  description     String
+  implementationSteps Json    // Detailed implementation steps
+  codeExamples    Json?       // Code examples for fixes
+  tools           String[]    // Recommended tools
+  resources       String[]    // Educational resources
+  expectedResults Json        // Expected SEO, user, business impact
+  validation      Json        // Success criteria and testing methods
+  effortLevel     String      // easy, medium, hard
+  timeEstimate    String
+  businessValue   String      // high, medium, low
+  quickWin        Boolean     @default(false)
+  status          String      @default("pending") // pending, in_progress, completed, dismissed
+  completedAt     DateTime?
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  issue           SEOIssue?   @relation(fields: [issueId], references: [id], onDelete: SetNull)
+  
+  @@index([analysisId])
+  @@index([priority])
+  @@index([category])
+  @@index([status])
+  @@index([quickWin])
 }
 
 model MetaTags {
@@ -127,7 +231,81 @@ model MetaTags {
   robots            String?
   openGraph         Json?       // Store Open Graph tags as JSON
   twitterCard       Json?       // Store Twitter Card data as JSON
+  structuredData    Json?       // Schema.org structured data
+  socialOptimization Json?      // Social media optimization data
   analysis          SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+}
+
+model TechnicalAnalysis {
+  id              String      @id @default(uuid())
+  analysisId      String      @unique
+  securityData    Json        // SSL, HSTS, CSP, security headers
+  crawlabilityData Json       // robots.txt, sitemap, canonical, redirects
+  mobileData      Json        // Responsive design, mobile performance
+  structureData   Json        // HTML validity, semantic markup, schema
+  indexabilityData Json       // Meta robots, canonical, indexing directives
+  performanceData Json        // Core technical performance metrics
+  serverData      Json?       // Server response, headers, caching
+  createdAt       DateTime    @default(now())
+}
+
+model ProjectTrends {
+  id              String      @id @default(uuid())
+  projectId       String
+  date            DateTime
+  overallScore    Int
+  technicalScore  Int
+  contentScore    Int
+  onPageScore     Int
+  uxScore         Int
+  totalIssues     Int
+  criticalIssues  Int
+  highIssues      Int
+  mediumIssues    Int
+  lowIssues       Int
+  performanceScore Int?
+  accessibilityScore Int?
+  crawlabilityScore Int?
+  createdAt       DateTime    @default(now())
+  
+  @@index([projectId])
+  @@index([date])
+  @@unique([projectId, date])
+}
+
+model IssueTrends {
+  id              String      @id @default(uuid())
+  projectId       String
+  issueType       String
+  issueSeverity   String
+  issueCategory   String
+  count           Int
+  date            DateTime
+  createdAt       DateTime    @default(now())
+  
+  @@index([projectId])
+  @@index([date])
+  @@index([issueType])
+  @@unique([projectId, issueType, date])
+}
+
+model CompetitorAnalysis {
+  id              String      @id @default(uuid())
+  projectId       String
+  competitorUrl   String
+  competitorName  String?
+  overallScore    Int
+  technicalScore  Int
+  contentScore    Int
+  onPageScore     Int
+  uxScore         Int
+  keyStrengths    String[]
+  opportunities   String[]
+  analysisDate    DateTime
+  createdAt       DateTime    @default(now())
+  
+  @@index([projectId])
+  @@index([analysisDate])
 }
 
 model UserSettings {
@@ -137,6 +315,8 @@ model UserSettings {
   theme        String?  @default("system")
   language     String?  @default("en")
   timezone     String?  @default("UTC")
+  emailAlerts  Boolean  @default(true)
+  weeklyReports Boolean @default(true)
   updatedAt    DateTime @updatedAt
   user         User     @relation("UserToUserSettings", fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -152,6 +332,10 @@ model ActivityLog {
   userAgent  String?
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
 }
 
 model Notification {
@@ -170,4 +354,45 @@ model Notification {
   @@index([userId])
   @@index([type])
   @@index([readAt])
+  @@index([createdAt])
+}
+
+model AnalysisCache {
+  id              String      @id @default(uuid())
+  key             String      @unique // Cache key for lookups  
+  url             String
+  urlHash         String      @unique // MD5 hash of URL for faster lookups
+  data            Json        // Cache data (renamed from analysisData)
+  analysisData    Json        // Cached analysis results (keep for backward compatibility)
+  expiresAt       DateTime
+  createdAt       DateTime    @default(now())
+  tags            String[]    @default([]) // For cache invalidation
+  size            Int         @default(0) // Data size in bytes
+  accessCount     Int         @default(0) // Number of times accessed
+  lastAccessed    DateTime    @default(now()) // Last access timestamp
+  version         String      @default("1.0") // Cache version
+  
+  @@index([key])
+  @@index([urlHash])
+  @@index([expiresAt])
+  @@index([tags])
+}
+
+model ReportExport {
+  id              String      @id @default(uuid())
+  projectId       String
+  analysisId      String?
+  exportType      String      // pdf, csv, json
+  fileName        String
+  fileSize        Int?
+  downloadUrl     String?
+  status          String      @default("processing") // processing, completed, failed
+  requestedBy     String      // User ID
+  metadata        Json?       // Export configuration and options
+  createdAt       DateTime    @default(now())
+  completedAt     DateTime?
+  
+  @@index([projectId])
+  @@index([status])
+  @@index([createdAt])
 }
