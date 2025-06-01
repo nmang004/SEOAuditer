@@ -11,6 +11,7 @@ if (!isBuildTime && process.env.DATABASE_URL && process.env.DATABASE_URL !== 'du
     
     prismaInstance = new PrismaClient({
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+      enableTracing: false,
     });
     
     isDatabaseAvailable = true;
