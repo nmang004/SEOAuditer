@@ -150,7 +150,7 @@ class ComprehensiveDatabaseSetup {
         AND table_type = 'BASE TABLE'
       `;
 
-      const tableNames = existingTables.map(t => t.table_name);
+      const tableNames = existingTables.map((t: { table_name: string }) => t.table_name);
       const missingTables = requiredTables.filter(table => !tableNames.includes(table));
 
       if (missingTables.length > 0) {
