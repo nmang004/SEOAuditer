@@ -142,6 +142,18 @@ export default function RootLayout({
         <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
+        {/* Preload critical styles for LCP */}
+        <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
+        <link rel="preload" href="/_next/static/css/app/globals.css" as="style" />
+        
+        {/* Preload critical JavaScript chunks */}
+        <link rel="modulepreload" href="/_next/static/chunks/main-app.js" />
+        <link rel="modulepreload" href="/_next/static/chunks/polyfills.js" />
+        
+        {/* Resource hints */}
+        <link rel="dns-prefetch" href="//localhost:4000" />
+        <link rel="preconnect" href="http://localhost:4000" crossOrigin="anonymous" />
 
         {/* Security Headers */}
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />

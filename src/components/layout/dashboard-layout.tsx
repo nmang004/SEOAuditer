@@ -1,13 +1,23 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { cn } from '@/lib/utils';
 import { navItems } from '@/components/navigation/nav-items';
-import { Breadcrumb } from '@/components/navigation/breadcrumb';
-import { Search } from '@/components/navigation/search';
 import { User, LogOut, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+// Dynamically import heavy components
+const Breadcrumb = dynamic(() => import('@/components/navigation/breadcrumb').then(mod => ({ default: mod.Breadcrumb })), {
+  loading: () => <div className="h-6 bg-muted animate-pulse rounded" />,
+  ssr: false,
+});
+
+const Search = dynamic(() => import('@/components/navigation/search').then(mod => ({ default: mod.Search })), {
+  loading: () => <div className="h-9 w-64 bg-muted animate-pulse rounded" />,
+  ssr: false,
+});
 
 export interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -199,12 +209,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             {/* Breadcrumb navigation */}
             {showBreadcrumb && (
               <div className="flex-1 min-w-0">
-                <Breadcrumb />
+                <Suspense fallback={<div className="h-6 bg-muted animate-pulse rounded" />}>
+                  <Breadcrumb />
+                </Suspense>
               </div>
             )}
             {/* Quick search modal/trigger */}
             <div className="flex items-center gap-2">
-              <Search />
+              <Suspense fallback={<div className="h-9 w-64 bg-muted animate-pulse rounded" />}>
+                <Search />
+              </Suspense>
               {/* Add user menu, notifications, etc. here if needed */}
             </div>
           </div>

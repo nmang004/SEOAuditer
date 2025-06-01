@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { 
   ArrowRight, 
@@ -23,7 +23,9 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-// Animation variants
+// Use static components for now to ensure compilation
+
+// Animation variants (kept for potential future use)
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -165,38 +167,19 @@ export default function HomePage() {
         </div>
         <div className="container relative z-10 py-20 md:py-28">
           <div className="mx-auto max-w-4xl text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center rounded-full bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary-700 mb-4"
-            >
+            {/* Static content for faster LCP */}
+            <div className="inline-flex items-center rounded-full bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary-700 mb-4">
               <Zap className="mr-2 h-4 w-4" />
               The most advanced SEO platform
-            </motion.div>
-            <motion.h1 
-              className="mt-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
+            </div>
+            <h1 className="mt-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
               Grow Your Business with
               <span className="text-primary-600"> Data-Driven SEO</span>
-            </motion.h1>
-            <motion.p 
-              className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-600"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-600">
               Get actionable insights to improve your search rankings, analyze competitors, and grow your organic traffic with our powerful SEO platform.
-            </motion.p>
-            <motion.div 
-              className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
+            </p>
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button 
                 size="lg" 
                 className="group h-14 text-base px-8 bg-primary-600 hover:bg-primary-700" 
@@ -218,15 +201,10 @@ export default function HomePage() {
                   Watch Demo
                 </Link>
               </Button>
-            </motion.div>
+            </div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-16 md:mt-24"
-          >
+          <div className="mt-16 md:mt-24">
             <div className="relative mx-auto max-w-6xl rounded-2xl border border-gray-200 bg-white p-1 shadow-lg">
               <div className="absolute -inset-4 bg-gradient-to-r from-primary-50 via-white to-primary-50 rounded-3xl opacity-60 blur-2xl" />
               <div className="relative overflow-hidden rounded-xl bg-white">
@@ -245,7 +223,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -253,46 +231,21 @@ export default function HomePage() {
       <section className="py-24 bg-white">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center mb-16">
-            <motion.span 
-              className="inline-block rounded-full bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary-700 mb-4"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
+            <span className="inline-block rounded-full bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary-700 mb-4">
               Features
-            </motion.span>
-            <motion.h2 
-              className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-            >
+            </span>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-6">
               Everything you need to <span className="text-primary-600">succeed in SEO</span>
-            </motion.h2>
-            <motion.p 
-              className="text-lg text-gray-600"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
+            </h2>
+            <p className="text-lg text-gray-600">
               Powerful tools and insights to help you improve your search rankings and grow your online presence.
-            </motion.p>
+            </p>
           </div>
 
-          <motion.div 
-            className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-100px" }}
-          >
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, index) => (
-              <motion.div
+              <div
                 key={index}
-                variants={fadeInUp}
-                custom={index * 0.1}
                 className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm transition-all hover:shadow-md border border-gray-100"
               >
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
@@ -301,9 +254,9 @@ export default function HomePage() {
                 <h3 className="mb-2 text-lg font-semibold text-gray-900">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
                 <div className="absolute -right-8 -bottom-8 h-16 w-16 rounded-full bg-primary-100 opacity-0 transition-all duration-300 group-hover:opacity-100" />
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -311,33 +264,18 @@ export default function HomePage() {
       <section className="py-24 bg-gray-50">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center mb-16">
-            <motion.span 
-              className="inline-block rounded-full bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary-700 mb-4"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
+            <span className="inline-block rounded-full bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary-700 mb-4">
               Testimonials
-            </motion.span>
-            <motion.h2 
-              className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-            >
+            </span>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-6">
               Trusted by <span className="text-primary-600">marketing teams</span> worldwide
-            </motion.h2>
+            </h2>
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
             {testimonials.map((testimonial, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
                 className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100"
               >
                 <div className="flex items-center mb-4">
@@ -358,7 +296,7 @@ export default function HomePage() {
                     <p className="text-sm text-gray-500">{testimonial.role}</p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -368,30 +306,13 @@ export default function HomePage() {
       <section className="py-24 bg-primary-600">
         <div className="container">
           <div className="mx-auto max-w-4xl text-center">
-            <motion.h2 
-              className="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
+            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-6">
               Ready to transform your SEO strategy?
-            </motion.h2>
-            <motion.p 
-              className="text-xl text-primary-100 mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-            >
+            </h2>
+            <p className="text-xl text-primary-100 mb-8">
               Join thousands of businesses that trust Rival Outranker for their SEO success.
-            </motion.p>
-            <motion.div
-              className="flex flex-col sm:flex-row justify-center gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button 
                 size="lg" 
                 className="bg-white text-primary-700 hover:bg-gray-100 h-14 text-base px-8"
@@ -413,7 +334,7 @@ export default function HomePage() {
                   Watch Demo
                 </Link>
               </Button>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>

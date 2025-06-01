@@ -10,6 +10,18 @@ const nextConfig = {
   // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
+    reactRemoveProperties: process.env.NODE_ENV === 'production' && {
+      properties: ['^data-testid$', '^data-test$'],
+    },
+  },
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
+      skipDefaultConversion: true,
+    },
+    '@tanstack/react-query': {
+      transform: '@tanstack/react-query/{{member}}',
+    },
   },
   
   sassOptions: {
@@ -55,6 +67,63 @@ const nextConfig = {
       };
     }
 
+    // Production optimizations
+    if (!dev) {
+      // Tree shake unused exports
+      config.optimization.usedExports = true;
+      config.optimization.sideEffects = false;
+      
+      // Exclude dev tools from production bundles
+      config.externals = config.externals || [];
+      if (!isServer) {
+        config.externals.push({
+          '@tanstack/react-query-devtools': 'false',
+        });
+      }
+
+      // Optimize chunks
+      config.optimization.splitChunks = {
+        ...config.optimization.splitChunks,
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          // Framework chunk
+          framework: {
+            chunks: 'all',
+            name: 'framework',
+            test: /(?<!node_modules.*)[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-subscription)[\\/]/,
+            priority: 40,
+            enforce: true,
+          },
+          // React Query chunk
+          reactQuery: {
+            chunks: 'all',
+            name: 'react-query',
+            test: /[\\/]node_modules[\\/]@tanstack[\\/]/,
+            priority: 30,
+            enforce: true,
+          },
+          // Commons chunk for shared components
+          commons: {
+            name: 'commons',
+            chunks: 'all',
+            minChunks: 2,
+            priority: 20,
+            reuseExistingChunk: true,
+          },
+          // Lib chunk for utilities
+          lib: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'lib',
+            chunks: 'all',
+            priority: 10,
+            reuseExistingChunk: true,
+          },
+        },
+      };
+    }
+
     return config;
   },
   
@@ -71,10 +140,22 @@ const nextConfig = {
   // Enable source maps only in development
   productionBrowserSourceMaps: false,
   
-  // Simplified experimental features
+  // Experimental features for performance
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
+    optimizePackageImports: ['lucide-react', '@tanstack/react-query'],
+    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB'],
+  },
+  
+  // Turbopack configuration
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
   },
   
   // Simplified headers - remove problematic API caching
