@@ -221,8 +221,8 @@ class DatabaseHealthMonitor {
         LIMIT 10
       `;
 
-      const totalSize = sizeInfo.reduce((sum, table) => sum + Number(table.size_bytes), 0);
-      const totalRows = sizeInfo.reduce((sum, table) => sum + Number(table.row_count), 0);
+      const totalSize = sizeInfo.reduce((sum: number, table) => sum + Number(table.size_bytes), 0);
+      const totalRows = sizeInfo.reduce((sum: number, table) => sum + Number(table.row_count), 0);
       
       const sizeInMB = totalSize / (1024 * 1024);
       const sizeInGB = sizeInMB / 1024;
