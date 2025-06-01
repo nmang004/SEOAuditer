@@ -258,7 +258,7 @@ class ComprehensiveDatabaseSetup {
 
       const indexNames = criticalIndexes.map((i: { indexname: string }) => i.indexname);
       const missingEssentialIndexes = essentialIndexPatterns.filter(pattern => 
-        !indexNames.some(name => name.includes(pattern))
+        !indexNames.some((name: string) => name.includes(pattern))
       );
 
       if (missingEssentialIndexes.length > 0) {
