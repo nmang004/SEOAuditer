@@ -1,12 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import { prisma } from '..';
+import { PrismaClient } from '@prisma/client';
 import { 
   NotFoundError, 
   BadRequestError
 } from '../middleware/error.middleware';
 import { logger } from '../utils/logger';
 import { cache } from '../utils/cache';
+
+// Create a separate Prisma instance to avoid circular dependency
+const prisma = new PrismaClient();
 
 // User Controller
 // Handles user profile, settings, password, and account management

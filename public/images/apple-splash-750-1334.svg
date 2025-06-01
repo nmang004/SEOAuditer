@@ -1,0 +1,30 @@
+<svg width="750" height="1334" viewBox="0 0 750 1334" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="750" height="1334" fill="url(#bgGrad)"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="750" height="133.4" fill="#0ea5e9"/>
+  <text x="20" y="80.03999999999999" fill="white" font-family="Arial, sans-serif" font-size="40.019999999999996" font-weight="bold">Rival Outranker</text>
+  
+  <!-- Content area -->
+  <rect x="37.5" y="200.1" width="675" height="266.8" fill="#1e293b" rx="8"/>
+  <text x="75" y="293.48" fill="#0ea5e9" font-family="Arial, sans-serif" font-size="26.68" font-weight="bold">SEO Analysis Dashboard</text>
+  <text x="75" y="360.18" fill="#94a3b8" font-family="Arial, sans-serif" font-size="20.009999999999998">Comprehensive SEO analysis and competitor insights</text>
+  
+  <!-- Stats cards -->
+  <rect x="37.5" y="533.6" width="300" height="200.1" fill="#1e293b" rx="8"/>
+  <text x="187.5" y="600.3000000000001" text-anchor="middle" fill="#10b981" font-family="Arial, sans-serif" font-size="40.019999999999996" font-weight="bold">85</text>
+  <text x="187.5" y="667" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="20.009999999999998">SEO Score</text>
+  
+  <rect x="412.50000000000006" y="533.6" width="300" height="200.1" fill="#1e293b" rx="8"/>
+  <text x="562.5" y="600.3000000000001" text-anchor="middle" fill="#f59e0b" font-family="Arial, sans-serif" font-size="40.019999999999996" font-weight="bold">12</text>
+  <text x="562.5" y="667" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="20.009999999999998">Issues Found</text>
+  
+  <!-- Footer note -->
+  <text x="375" y="1200.6000000000001" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="26.68">Apple Splash Screen</text>
+</svg>

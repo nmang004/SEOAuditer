@@ -1,4 +1,4 @@
-import { LighthouseService, PerformanceMetrics, CoreWebVitals } from './LighthouseService';
+import { LighthouseService, CoreWebVitals } from './LighthouseService';
 import { PrismaClient } from '@prisma/client';
 
 export interface CoreWebVitalsAnalysis {

@@ -79,7 +79,7 @@ export interface FreshnessAnalysis {
 
 export class EnhancedContentAnalyzer {
   async analyze(pageContext: any): Promise<Partial<PageAnalysis> & { contentAnalysis: ContentAnalysis }> {
-    const { $, html } = pageContext;
+    const { $ /* , html */ } = pageContext; // html variable commented out as it's not used
     const text = this.extractMainContent($);
     
     const depth = await this.analyzeContentDepth(text, $);
@@ -291,9 +291,8 @@ export class EnhancedContentAnalyzer {
     const publishDate = this.extractPublishDate($);
     const lastModified = this.extractLastModified($);
     
-    const now = new Date();
-    const contentAge = publishDate ? this.calculateAge(publishDate, now) : null;
-    const lastUpdateAge = lastModified ? this.calculateAge(lastModified, now) : null;
+    const contentAge = lastModified ? Math.floor((Date.now() - lastModified.getTime()) / (1000 * 60 * 60 * 24)) : undefined;
+    const lastUpdateAge = publishDate ? Math.floor((Date.now() - publishDate.getTime()) / (1000 * 60 * 60 * 24)) : undefined;
 
     const score = this.calculateFreshnessScore(contentAge, lastUpdateAge);
     const needsUpdate = this.determineUpdateNeed(contentAge, lastUpdateAge);
@@ -355,7 +354,7 @@ export class EnhancedContentAnalyzer {
   }
 
   private calculateTopicCoverage(content: string, $: any): number {
-    const headings = $('h1, h2, h3, h4, h5, h6').map((_, el) => $(el).text()).get();
+    const headings = $('h1, h2, h3, h4, h5, h6').map((_: number, el: any) => $(el).text()).get();
     const topicKeywords = this.extractTopicKeywords(content, headings);
     
     // Simple topic coverage based on semantic diversity
@@ -368,9 +367,10 @@ export class EnhancedContentAnalyzer {
   }
 
   private analyzeContentStructure(content: string, $: any) {
-    const headings = $('h1, h2, h3, h4, h5, h6').map((_, el) => ({
-      level: parseInt(el.tagName.substr(1)),
-      text: $(el).text()
+    const headings = $('h1, h2, h3, h4, h5, h6').map((_: number, el: any) => ({
+      level: parseInt(el.tagName.slice(1)),
+      text: $(el).text(),
+      length: $(el).text().length
     })).get();
 
     const wellOrganized = this.checkOrganization(headings);
@@ -683,7 +683,7 @@ export class EnhancedContentAnalyzer {
     return Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
   }
 
-  private calculateFreshnessScore(contentAge: number | null, lastUpdateAge: number | null): number {
+  private calculateFreshnessScore(contentAge: number | undefined, lastUpdateAge: number | undefined): number {
     const relevantAge = lastUpdateAge || contentAge;
     
     if (!relevantAge) return 70; // Default if no date info
@@ -695,7 +695,7 @@ export class EnhancedContentAnalyzer {
     return 20;
   }
 
-  private determineUpdateNeed(contentAge: number | null, lastUpdateAge: number | null): boolean {
+  private determineUpdateNeed(contentAge: number | undefined, lastUpdateAge: number | undefined): boolean {
     const relevantAge = lastUpdateAge || contentAge;
     return relevantAge ? relevantAge > 180 : false; // Needs update if older than 6 months
   }
@@ -705,7 +705,6 @@ export class EnhancedContentAnalyzer {
     
     const now = new Date();
     const ageInDays = this.calculateAge(publishDate, now);
-    const updateCount = lastModified ? 2 : 1; // Simplified
     
     if (ageInDays < 30) return 'Weekly';
     if (ageInDays < 90) return 'Monthly';

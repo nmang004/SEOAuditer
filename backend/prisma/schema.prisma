@@ -1,324 +1,434 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres", "multiSchema", "postgresqlExtensions", "views"]
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id                String    @id @default(uuid())
-  email             String    @unique
-  passwordHash      String
-  name              String?
-  subscriptionTier  String    @default("free")
-  emailVerified     Boolean   @default(false)
-  verificationToken String?
+  id                  String         @id @default(uuid())
+  email               String         @unique
+  passwordHash        String
+  name                String?
+  subscriptionTier    String         @default("free")
+  emailVerified       Boolean        @default(false)
+  verificationToken   String?
   verificationExpires DateTime?
-  resetToken        String?
-  resetTokenExpiry  DateTime?
-  lastLogin         DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  projects          Project[]
-  refreshTokens     RefreshToken[]
-  settings          UserSettings? @relation("UserToUserSettings")
-  activityLogs      ActivityLog[]
-  notifications     Notification[]
+  resetToken          String?
+  resetTokenExpiry    DateTime?
+  accountLocked       Boolean        @default(false)
+  lockoutExpires      DateTime?
+  lastLogin           DateTime?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  activityLogs        ActivityLog[]
+  notifications       Notification[]
+  projects            Project[]
+  refreshTokens       RefreshToken[]
+  settings            UserSettings?  @relation("UserToUserSettings")
+
+  @@index([email], map: "idx_users_email")
+  @@index([subscriptionTier, emailVerified], map: "idx_users_subscription_verified")
+  @@index([createdAt], map: "idx_users_created_at")
+  @@index([lastLogin], map: "idx_users_last_login")
+  @@index([verificationToken], map: "idx_users_verification_token")
+  @@index([resetToken], map: "idx_users_reset_token")
+  @@index([accountLocked], map: "idx_users_account_locked")
+  @@map("users")
 }
 
 model RefreshToken {
-  id          String   @id @default(uuid())
-  userId      String
-  token       String   @unique
-  expiresAt   DateTime
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_refresh_tokens_user_id")
+  @@index([expiresAt], map: "idx_refresh_tokens_expires_at")
+  @@index([token], map: "idx_refresh_tokens_token")
+  @@index([userId, expiresAt], map: "idx_refresh_tokens_user_expires")
+  @@index([createdAt], map: "idx_refresh_tokens_created_at")
+  @@map("refresh_tokens")
 }
 
 model Project {
-  id              String      @id @default(uuid())
-  userId          String
-  name            String
-  url             String
-  faviconUrl      String?
-  status          String      @default("active")
-  scanFrequency   String      @default("manual")
-  currentScore    Int?        @default(0)
-  issueCount      Int         @default(0)
-  lastScanDate    DateTime?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  crawlSessions   CrawlSession[]
-  analyses        SEOAnalysis[]
-  
-  @@index([userId])
+  id            String         @id @default(uuid())
+  userId        String
+  name          String
+  url           String
+  faviconUrl    String?
+  status        String         @default("active")
+  scanFrequency String         @default("manual")
+  currentScore  Int?           @default(0)
+  issueCount    Int            @default(0)
+  lastScanDate  DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  crawlSessions CrawlSession[]
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analyses      SEOAnalysis[]
+
+  @@unique([userId, url], name: "unique_user_project_url")
+  @@index([userId], map: "idx_projects_user_id")
+  @@index([status], map: "idx_projects_status")
+  @@index([lastScanDate], map: "idx_projects_last_scan")
+  @@index([currentScore], map: "idx_projects_current_score")
+  @@index([createdAt], map: "idx_projects_created_at")
+  @@index([userId, status], map: "idx_projects_user_status")
+  @@index([userId, lastScanDate], map: "idx_projects_user_last_scan")
+  @@index([userId, currentScore], map: "idx_projects_user_score")
+  @@index([userId, createdAt], map: "idx_projects_user_created")
+  @@index([url], map: "idx_projects_url")
+  @@index([url], map: "idx_projects_url_hash", type: Hash)
+  @@map("projects")
 }
 
 model CrawlSession {
-  id              String      @id @default(uuid())
-  projectId       String
-  url             String
-  status          String      @default("queued")
-  startedAt       DateTime?
-  completedAt     DateTime?
-  errorMessage    String?
-  createdAt       DateTime    @default(now())
-  project         Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  analysis        SEOAnalysis?
-  
-  @@index([projectId])
+  id           String       @id @default(uuid())
+  projectId    String
+  url          String
+  status       String       @default("queued")
+  startedAt    DateTime?
+  completedAt  DateTime?
+  errorMessage String?
+  createdAt    DateTime     @default(now())
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  analysis     SEOAnalysis?
+
+  @@index([projectId], map: "idx_crawl_sessions_project_id")
+  @@index([status], map: "idx_crawl_sessions_status")
+  @@index([createdAt], map: "idx_crawl_sessions_created_at")
+  @@index([projectId, status], map: "idx_crawl_sessions_project_status")
+  @@index([projectId, createdAt], map: "idx_crawl_sessions_project_history")
+  @@index([status, startedAt], map: "idx_crawl_sessions_status_started")
+  @@index([status, createdAt], map: "idx_crawl_sessions_queue_order")
+  @@index([completedAt], map: "idx_crawl_sessions_completed")
+  @@map("crawl_sessions")
 }
 
 model SEOAnalysis {
-  id              String      @id @default(uuid())
-  crawlSessionId  String      @unique
-  projectId       String
-  overallScore    Int?        @default(0)
-  technicalScore  Int?        @default(0)
-  contentScore    Int?        @default(0)
-  onpageScore     Int?        @default(0)
-  uxScore         Int?        @default(0)
-  previousScore   Int?
-  scoreChange     Int?
-  createdAt       DateTime    @default(now())
-  crawlSession    CrawlSession @relation(fields: [crawlSessionId], references: [id], onDelete: Cascade)
-  project         Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  issues          SEOIssue[]
-  recommendations SEORecommendation[]
-  metaTags        MetaTags?
-  scoreBreakdown  SEOScoreBreakdown?
-  contentAnalysis ContentAnalysis?
+  id                 String              @id @default(uuid())
+  crawlSessionId     String              @unique
+  projectId          String
+  overallScore       Int?                @default(0)
+  technicalScore     Int?                @default(0)
+  contentScore       Int?                @default(0)
+  onpageScore        Int?                @default(0)
+  uxScore            Int?                @default(0)
+  previousScore      Int?
+  scoreChange        Int?
+  createdAt          DateTime            @default(now())
+  contentAnalysis    ContentAnalysis?
+  metaTags           MetaTags?
   performanceMetrics PerformanceMetrics?
-  
-  @@index([crawlSessionId])
-  @@index([projectId])
-  @@index([overallScore])
-  @@index([createdAt])
+  crawlSession       CrawlSession        @relation(fields: [crawlSessionId], references: [id], onDelete: Cascade)
+  project            Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  issues             SEOIssue[]
+  recommendations    SEORecommendation[]
+  scoreBreakdown     SEOScoreBreakdown?
+
+  @@index([crawlSessionId], map: "idx_seo_analyses_crawl_session")
+  @@index([projectId], map: "idx_seo_analyses_project_id")
+  @@index([overallScore], map: "idx_seo_analyses_overall_score")
+  @@index([createdAt], map: "idx_seo_analyses_created_at")
+  @@index([projectId, createdAt], map: "idx_seo_analyses_project_history")
+  @@index([projectId, overallScore], map: "idx_seo_analyses_project_score")
+  @@index([overallScore, createdAt], map: "idx_seo_analyses_score_time")
+  @@index([projectId, overallScore, createdAt], map: "idx_seo_analyses_project_trend")
+  @@index([technicalScore, contentScore, onpageScore, uxScore], map: "idx_seo_analyses_all_scores")
+  @@map("seo_analyses")
 }
 
 model SEOScoreBreakdown {
-  id              String      @id @default(uuid())
-  analysisId      String      @unique
-  technicalBreakdown Json     // TechnicalScoreBreakdown
-  contentBreakdown Json       // ContentScoreBreakdown
-  onPageBreakdown Json        // OnPageScoreBreakdown
-  uxBreakdown     Json        // UXScoreBreakdown
-  weights         Json        // Category weights used
-  trends          Json?       // Score trends data
-  benchmarks      Json?       // Industry benchmarks
-  createdAt       DateTime    @default(now())
-  analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  id                 String      @id @default(uuid())
+  analysisId         String      @unique
+  technicalBreakdown Json
+  contentBreakdown   Json
+  onPageBreakdown    Json
+  uxBreakdown        Json
+  weights            Json
+  trends             Json?
+  benchmarks         Json?
+  createdAt          DateTime    @default(now())
+  analysis           SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@index([analysisId], map: "idx_score_breakdown_analysis")
+  @@index([createdAt], map: "idx_score_breakdown_created_at")
+  @@map("seo_score_breakdowns")
 }
 
 model ContentAnalysis {
-  id              String      @id @default(uuid())
-  analysisId      String      @unique
-  wordCount       Int
-  readingTime     Int
-  paragraphCount  Int
-  sentenceCount   Int
+  id                    String      @id @default(uuid())
+  analysisId            String      @unique
+  wordCount             Int
+  readingTime           Int
+  paragraphCount        Int
+  sentenceCount         Int
   averageSentenceLength Float
-  topicCoverage   Float
-  contentStructure Json       // Content structure analysis
-  readabilityMetrics Json     // All readability scores
-  keywordAnalysis Json        // Keyword analysis data
-  freshnessData   Json        // Content freshness analysis
-  qualityMetrics  Json        // Content quality scores
-  overallScore    Int
-  recommendations String[]
-  createdAt       DateTime    @default(now())
-  analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  topicCoverage         Float
+  contentStructure      Json
+  readabilityMetrics    Json
+  keywordAnalysis       Json
+  freshnessData         Json
+  qualityMetrics        Json
+  overallScore          Int
+  recommendations       String[]
+  createdAt             DateTime    @default(now())
+  analysis              SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@index([analysisId], map: "idx_content_analysis_analysis")
+  @@index([overallScore], map: "idx_content_analysis_score")
+  @@index([wordCount], map: "idx_content_analysis_word_count")
+  @@index([readingTime], map: "idx_content_analysis_reading_time")
+  @@index([createdAt], map: "idx_content_analysis_created_at")
+  @@map("content_analyses")
 }
 
 model PerformanceMetrics {
-  id              String      @id @default(uuid())
-  analysisId      String      @unique
-  coreWebVitals   Json        // LCP, FID, CLS, FCP, TTFB
-  loadTime        Int?
-  pageSize        Int?
-  requestCount    Int?
-  performanceScore Int
-  mobilePerfScore Int?
+  id                        String      @id @default(uuid())
+  analysisId                String      @unique
+  coreWebVitals             Json
+  loadTime                  Int?
+  pageSize                  Int?
+  requestCount              Int?
+  performanceScore          Int
+  mobilePerfScore           Int?
   optimizationOpportunities Json
-  lighthouseData  Json?       // Full Lighthouse report data
-  createdAt       DateTime    @default(now())
-  analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  lighthouseData            Json?
+  createdAt                 DateTime    @default(now())
+  analysis                  SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@index([analysisId], map: "idx_performance_metrics_analysis")
+  @@index([performanceScore], map: "idx_performance_metrics_score")
+  @@index([loadTime], map: "idx_performance_metrics_load_time")
+  @@index([pageSize], map: "idx_performance_metrics_page_size")
+  @@index([createdAt], map: "idx_performance_metrics_created_at")
+  @@map("performance_metrics")
 }
 
 model SEOIssue {
-  id              String      @id @default(uuid())
-  analysisId      String
-  type            String
-  severity        String      // critical, high, medium, low
-  title           String
-  description     String?
-  recommendation  String?
-  affectedElements Json?      // Store affected elements as JSON
-  status          String      @default("new") // new, in_progress, fixed, wont_fix, ignored
-  category        String      // technical, content, onpage, ux
-  affectedPages   Int         @default(1)
-  fixComplexity   String?     // easy, medium, hard
-  estimatedTime   String?
-  businessImpact  String?     // high, medium, low
+  id                  String              @id @default(uuid())
+  analysisId          String
+  type                String
+  severity            String
+  title               String
+  description         String?
+  recommendation      String?
+  affectedElements    Json?
+  status              String              @default("new")
+  category            String
+  affectedPages       Int                 @default(1)
+  fixComplexity       String?
+  estimatedTime       String?
+  businessImpact      String?
   implementationSteps String[]
-  validationCriteria String[]
-  blockingIndexing Boolean?   @default(false)
-  securityConcern Boolean?    @default(false)
-  rankingImpact   String?     // major, moderate, minor
-  enhancementType String?     // usability, accessibility, performance
-  compoundIssue   Boolean?    @default(false)
-  affectedCategories String[] // For cross-category issues
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
-  recommendations SEORecommendation[]
-  
-  @@index([analysisId])
-  @@index([severity])
-  @@index([status])
-  @@index([category])
-  @@index([fixComplexity])
+  validationCriteria  String[]
+  blockingIndexing    Boolean?            @default(false)
+  securityConcern     Boolean?            @default(false)
+  rankingImpact       String?
+  enhancementType     String?
+  compoundIssue       Boolean?            @default(false)
+  affectedCategories  String[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  analysis            SEOAnalysis         @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  recommendations     SEORecommendation[]
+
+  @@index([analysisId], map: "idx_seo_issues_analysis")
+  @@index([severity], map: "idx_seo_issues_severity")
+  @@index([status], map: "idx_seo_issues_status")
+  @@index([category], map: "idx_seo_issues_category")
+  @@index([fixComplexity], map: "idx_seo_issues_complexity")
+  @@index([type], map: "idx_seo_issues_type")
+  @@index([businessImpact], map: "idx_seo_issues_business_impact")
+  @@index([analysisId, severity], map: "idx_seo_issues_analysis_severity")
+  @@index([analysisId, status], map: "idx_seo_issues_analysis_status")
+  @@index([analysisId, category], map: "idx_seo_issues_analysis_category")
+  @@index([severity, status], map: "idx_seo_issues_severity_status")
+  @@index([createdAt], map: "idx_seo_issues_created_at")
+  @@index([blockingIndexing], map: "idx_seo_issues_blocking")
+  @@index([securityConcern], map: "idx_seo_issues_security")
+  @@index([analysisId, severity, businessImpact], map: "idx_seo_issues_priority")
+  @@map("seo_issues")
 }
 
 model SEORecommendation {
-  id              String      @id @default(uuid())
-  analysisId      String
-  issueId         String?
-  priority        String      // immediate, high, medium, low
-  category        String      // technical, content, onpage, ux
-  title           String
-  description     String
-  implementationSteps Json    // Detailed implementation steps
-  codeExamples    Json?       // Code examples for fixes
-  tools           String[]    // Recommended tools
-  resources       String[]    // Educational resources
-  expectedResults Json        // Expected SEO, user, business impact
-  validation      Json        // Success criteria and testing methods
-  effortLevel     String      // easy, medium, hard
-  timeEstimate    String
-  businessValue   String      // high, medium, low
-  quickWin        Boolean     @default(false)
-  status          String      @default("pending") // pending, in_progress, completed, dismissed
-  completedAt     DateTime?
-  notes           String?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  analysis        SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
-  issue           SEOIssue?   @relation(fields: [issueId], references: [id], onDelete: SetNull)
-  
-  @@index([analysisId])
-  @@index([priority])
-  @@index([category])
-  @@index([status])
-  @@index([quickWin])
+  id                  String      @id @default(uuid())
+  analysisId          String
+  issueId             String?
+  priority            String
+  category            String
+  title               String
+  description         String
+  implementationSteps Json
+  codeExamples        Json?
+  tools               String[]
+  resources           String[]
+  expectedResults     Json
+  validation          Json
+  effortLevel         String
+  timeEstimate        String
+  businessValue       String
+  quickWin            Boolean     @default(false)
+  status              String      @default("pending")
+  completedAt         DateTime?
+  notes               String?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  analysis            SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  issue               SEOIssue?   @relation(fields: [issueId], references: [id])
+
+  @@index([analysisId], map: "idx_seo_recommendations_analysis")
+  @@index([priority], map: "idx_seo_recommendations_priority")
+  @@index([category], map: "idx_seo_recommendations_category")
+  @@index([status], map: "idx_seo_recommendations_status")
+  @@index([quickWin], map: "idx_seo_recommendations_quick_win")
+  @@index([businessValue], map: "idx_seo_recommendations_business_value")
+  @@index([analysisId, priority], map: "idx_seo_recommendations_analysis_priority")
+  @@index([analysisId, status], map: "idx_seo_recommendations_analysis_status")
+  @@index([priority, status], map: "idx_seo_recommendations_priority_status")
+  @@index([createdAt], map: "idx_seo_recommendations_created_at")
+  @@index([effortLevel, businessValue], map: "idx_seo_recommendations_effort_value")
+  @@index([quickWin, businessValue, priority], map: "idx_seo_recommendations_optimization")
+  @@map("seo_recommendations")
 }
 
 model MetaTags {
-  id                String      @id @default(uuid())
-  analysisId        String      @unique
-  title             String?
-  description       String?
-  keywords          String?
-  titleLength       Int?
-  descriptionLength Int?
-  canonicalUrl      String?
-  robots            String?
-  openGraph         Json?       // Store Open Graph tags as JSON
-  twitterCard       Json?       // Store Twitter Card data as JSON
-  structuredData    Json?       // Schema.org structured data
-  socialOptimization Json?      // Social media optimization data
-  analysis          SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  id                 String      @id @default(uuid())
+  analysisId         String      @unique
+  title              String?
+  description        String?
+  keywords           String?
+  titleLength        Int?
+  descriptionLength  Int?
+  canonicalUrl       String?
+  robots             String?
+  openGraph          Json?
+  twitterCard        Json?
+  structuredData     Json?
+  socialOptimization Json?
+  analysis           SEOAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@index([analysisId], map: "idx_meta_tags_analysis")
+  @@index([titleLength], map: "idx_meta_tags_title_length")
+  @@index([descriptionLength], map: "idx_meta_tags_desc_length")
+  @@map("meta_tags")
 }
 
 model TechnicalAnalysis {
-  id              String      @id @default(uuid())
-  analysisId      String      @unique
-  securityData    Json        // SSL, HSTS, CSP, security headers
-  crawlabilityData Json       // robots.txt, sitemap, canonical, redirects
-  mobileData      Json        // Responsive design, mobile performance
-  structureData   Json        // HTML validity, semantic markup, schema
-  indexabilityData Json       // Meta robots, canonical, indexing directives
-  performanceData Json        // Core technical performance metrics
-  serverData      Json?       // Server response, headers, caching
-  createdAt       DateTime    @default(now())
+  id               String   @id @default(uuid())
+  analysisId       String   @unique
+  securityData     Json
+  crawlabilityData Json
+  mobileData       Json
+  structureData    Json
+  indexabilityData Json
+  performanceData  Json
+  serverData       Json?
+  createdAt        DateTime @default(now())
+
+  @@index([analysisId], map: "idx_technical_analysis_analysis")
+  @@index([createdAt], map: "idx_technical_analysis_created_at")
+  @@map("technical_analyses")
 }
 
 model ProjectTrends {
-  id              String      @id @default(uuid())
-  projectId       String
-  date            DateTime
-  overallScore    Int
-  technicalScore  Int
-  contentScore    Int
-  onPageScore     Int
-  uxScore         Int
-  totalIssues     Int
-  criticalIssues  Int
-  highIssues      Int
-  mediumIssues    Int
-  lowIssues       Int
-  performanceScore Int?
+  id                 String   @id @default(uuid())
+  projectId          String
+  date               DateTime
+  overallScore       Int
+  technicalScore     Int
+  contentScore       Int
+  onPageScore        Int
+  uxScore            Int
+  totalIssues        Int
+  criticalIssues     Int
+  highIssues         Int
+  mediumIssues       Int
+  lowIssues          Int
+  performanceScore   Int?
   accessibilityScore Int?
-  crawlabilityScore Int?
-  createdAt       DateTime    @default(now())
-  
-  @@index([projectId])
-  @@index([date])
-  @@unique([projectId, date])
+  crawlabilityScore  Int?
+  createdAt          DateTime @default(now())
+
+  @@unique([projectId, date], name: "unique_project_date_trend")
+  @@index([projectId], map: "idx_project_trends_project_id")
+  @@index([date], map: "idx_project_trends_date")
+  @@index([projectId, date], map: "idx_project_trends_project_date")
+  @@index([overallScore], map: "idx_project_trends_overall_score")
+  @@index([date, overallScore], map: "idx_project_trends_date_score")
+  @@index([projectId, overallScore, date], map: "idx_project_trends_project_score_time")
+  @@index([projectId, criticalIssues, date], map: "idx_project_trends_critical_issues")
+  @@index([performanceScore, date], map: "idx_project_trends_performance")
+  @@map("project_trends")
 }
 
 model IssueTrends {
-  id              String      @id @default(uuid())
-  projectId       String
-  issueType       String
-  issueSeverity   String
-  issueCategory   String
-  count           Int
-  date            DateTime
-  createdAt       DateTime    @default(now())
-  
-  @@index([projectId])
-  @@index([date])
-  @@index([issueType])
-  @@unique([projectId, issueType, date])
+  id            String   @id @default(uuid())
+  projectId     String
+  issueType     String
+  issueSeverity String
+  issueCategory String
+  count         Int
+  date          DateTime
+  createdAt     DateTime @default(now())
+
+  @@unique([projectId, issueType, date], name: "unique_project_issue_date")
+  @@index([projectId], map: "idx_issue_trends_project_id")
+  @@index([date], map: "idx_issue_trends_date")
+  @@index([issueType], map: "idx_issue_trends_issue_type")
+  @@index([issueSeverity], map: "idx_issue_trends_severity")
+  @@index([projectId, date], map: "idx_issue_trends_project_date")
+  @@index([projectId, issueType], map: "idx_issue_trends_project_type")
+  @@index([date, issueSeverity], map: "idx_issue_trends_date_severity")
+  @@index([projectId, issueSeverity, date], map: "idx_issue_trends_project_severity_time")
+  @@map("issue_trends")
 }
 
 model CompetitorAnalysis {
-  id              String      @id @default(uuid())
-  projectId       String
-  competitorUrl   String
-  competitorName  String?
-  overallScore    Int
-  technicalScore  Int
-  contentScore    Int
-  onPageScore     Int
-  uxScore         Int
-  keyStrengths    String[]
-  opportunities   String[]
-  analysisDate    DateTime
-  createdAt       DateTime    @default(now())
-  
-  @@index([projectId])
-  @@index([analysisDate])
+  id             String   @id @default(uuid())
+  projectId      String
+  competitorUrl  String
+  competitorName String?
+  overallScore   Int
+  technicalScore Int
+  contentScore   Int
+  onPageScore    Int
+  uxScore        Int
+  keyStrengths   String[]
+  opportunities  String[]
+  analysisDate   DateTime
+  createdAt      DateTime @default(now())
+
+  @@index([projectId], map: "idx_competitor_analysis_project")
+  @@index([analysisDate], map: "idx_competitor_analysis_date")
+  @@index([overallScore], map: "idx_competitor_analysis_score")
+  @@index([projectId, analysisDate], map: "idx_competitor_analysis_project_date")
+  @@index([competitorUrl], map: "idx_competitor_analysis_url")
+  @@map("competitor_analyses")
 }
 
 model UserSettings {
-  id           String   @id @default(uuid())
-  userId       String   @unique
+  id            String   @id @default(uuid())
+  userId        String   @unique
   notifications Json?
-  theme        String?  @default("system")
-  language     String?  @default("en")
-  timezone     String?  @default("UTC")
-  emailAlerts  Boolean  @default(true)
-  weeklyReports Boolean @default(true)
-  updatedAt    DateTime @updatedAt
-  user         User     @relation("UserToUserSettings", fields: [userId], references: [id], onDelete: Cascade)
+  theme         String?  @default("system")
+  language      String?  @default("en")
+  timezone      String?  @default("UTC")
+  emailAlerts   Boolean  @default(true)
+  weeklyReports Boolean  @default(true)
+  updatedAt     DateTime @updatedAt
+  user          User     @relation("UserToUserSettings", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_user_settings_user_id")
+  @@map("user_settings")
 }
 
 model ActivityLog {
@@ -332,14 +442,19 @@ model ActivityLog {
   userAgent  String?
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([userId])
-  @@index([action])
-  @@index([createdAt])
+
+  @@index([userId], map: "idx_activity_logs_user_id")
+  @@index([action], map: "idx_activity_logs_action")
+  @@index([createdAt], map: "idx_activity_logs_created_at")
+  @@index([userId, createdAt], map: "idx_activity_logs_user_time")
+  @@index([action, createdAt], map: "idx_activity_logs_action_time")
+  @@index([entityType, entityId], map: "idx_activity_logs_entity")
+  @@index([userId, action, createdAt], map: "idx_activity_logs_user_action_time")
+  @@map("activity_logs")
 }
 
 model Notification {
-  id                String   @id @default(uuid())
+  id                String    @id @default(uuid())
   userId            String
   title             String
   message           String
@@ -348,51 +463,129 @@ model Notification {
   relatedEntityId   String?
   metadata          Json?
   readAt            DateTime?
-  createdAt         DateTime @default(now())
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime  @default(now())
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
-  @@index([type])
-  @@index([readAt])
-  @@index([createdAt])
+  @@index([userId], map: "idx_notifications_user_id")
+  @@index([type], map: "idx_notifications_type")
+  @@index([readAt], map: "idx_notifications_read_at")
+  @@index([createdAt], map: "idx_notifications_created_at")
+  @@index([userId, readAt], map: "idx_notifications_user_read")
+  @@index([userId, type], map: "idx_notifications_user_type")
+  @@index([userId, createdAt], map: "idx_notifications_user_time")
+  @@index([relatedEntityType, relatedEntityId], map: "idx_notifications_entity")
+  @@index([userId, readAt, createdAt], map: "idx_notifications_user_status_time")
+  @@map("notifications")
 }
 
 model AnalysisCache {
-  id              String      @id @default(uuid())
-  key             String      @unique // Cache key for lookups  
-  url             String
-  urlHash         String      @unique // MD5 hash of URL for faster lookups
-  data            Json        // Cache data (renamed from analysisData)
-  analysisData    Json        // Cached analysis results (keep for backward compatibility)
-  expiresAt       DateTime
-  createdAt       DateTime    @default(now())
-  tags            String[]    @default([]) // For cache invalidation
-  size            Int         @default(0) // Data size in bytes
-  accessCount     Int         @default(0) // Number of times accessed
-  lastAccessed    DateTime    @default(now()) // Last access timestamp
-  version         String      @default("1.0") // Cache version
-  
-  @@index([key])
-  @@index([urlHash])
-  @@index([expiresAt])
-  @@index([tags])
+  id           String   @id @default(uuid())
+  key          String   @unique
+  url          String
+  urlHash      String   @unique
+  data         Json
+  analysisData Json
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  tags         String[] @default([])
+  size         Int      @default(0)
+  accessCount  Int      @default(0)
+  lastAccessed DateTime @default(now())
+  version      String   @default("1.0")
+
+  @@index([key], map: "idx_analysis_cache_key")
+  @@index([urlHash], map: "idx_analysis_cache_url_hash")
+  @@index([expiresAt], map: "idx_analysis_cache_expires")
+  @@index([tags], map: "idx_analysis_cache_tags")
+  @@index([lastAccessed], map: "idx_analysis_cache_last_accessed")
+  @@index([size], map: "idx_analysis_cache_size")
+  @@index([createdAt], map: "idx_analysis_cache_created_at")
+  @@index([accessCount, lastAccessed], map: "idx_analysis_cache_usage")
+  @@index([version, expiresAt], map: "idx_analysis_cache_version_expires")
+  @@index([url, expiresAt], map: "idx_analysis_cache_url_expires")
+  @@map("analysis_cache")
 }
 
 model ReportExport {
-  id              String      @id @default(uuid())
-  projectId       String
-  analysisId      String?
-  exportType      String      // pdf, csv, json
-  fileName        String
-  fileSize        Int?
-  downloadUrl     String?
-  status          String      @default("processing") // processing, completed, failed
-  requestedBy     String      // User ID
-  metadata        Json?       // Export configuration and options
-  createdAt       DateTime    @default(now())
-  completedAt     DateTime?
-  
-  @@index([projectId])
-  @@index([status])
-  @@index([createdAt])
+  id           String    @id @default(uuid())
+  projectId    String
+  analysisId   String?
+  exportType   String
+  fileName     String
+  fileSize     Int?
+  downloadUrl  String?
+  status       String    @default("processing")
+  requestedBy  String
+  metadata     Json?
+  createdAt    DateTime  @default(now())
+  completedAt  DateTime?
+  errorMessage String?
+
+  @@index([projectId], map: "idx_report_exports_project")
+  @@index([status], map: "idx_report_exports_status")
+  @@index([createdAt], map: "idx_report_exports_created_at")
+  @@index([requestedBy], map: "idx_report_exports_requested_by")
+  @@index([exportType], map: "idx_report_exports_type")
+  @@index([projectId, status], map: "idx_report_exports_project_status")
+  @@index([requestedBy, createdAt], map: "idx_report_exports_user_time")
+  @@index([status, createdAt], map: "idx_report_exports_status_time")
+  @@index([completedAt], map: "idx_report_exports_completed")
+  @@map("report_exports")
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view pg_stat_statements_info {
+  dealloc     BigInt?
+  stats_reset DateTime? @db.Timestamptz(6)
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view pg_stat_statements {
+  userid                 Int?     @db.Oid
+  dbid                   Int?     @db.Oid
+  toplevel               Boolean?
+  queryid                BigInt?
+  query                  String?
+  plans                  BigInt?
+  total_plan_time        Float?
+  min_plan_time          Float?
+  max_plan_time          Float?
+  mean_plan_time         Float?
+  stddev_plan_time       Float?
+  calls                  BigInt?
+  total_exec_time        Float?
+  min_exec_time          Float?
+  max_exec_time          Float?
+  mean_exec_time         Float?
+  stddev_exec_time       Float?
+  rows                   BigInt?
+  shared_blks_hit        BigInt?
+  shared_blks_read       BigInt?
+  shared_blks_dirtied    BigInt?
+  shared_blks_written    BigInt?
+  local_blks_hit         BigInt?
+  local_blks_read        BigInt?
+  local_blks_dirtied     BigInt?
+  local_blks_written     BigInt?
+  temp_blks_read         BigInt?
+  temp_blks_written      BigInt?
+  blk_read_time          Float?
+  blk_write_time         Float?
+  temp_blk_read_time     Float?
+  temp_blk_write_time    Float?
+  wal_records            BigInt?
+  wal_fpi                BigInt?
+  wal_bytes              Decimal? @db.Decimal
+  jit_functions          BigInt?
+  jit_generation_time    Float?
+  jit_inlining_count     BigInt?
+  jit_inlining_time      Float?
+  jit_optimization_count BigInt?
+  jit_optimization_time  Float?
+  jit_emission_count     BigInt?
+  jit_emission_time      Float?
+
+  @@ignore
 }

@@ -64,7 +64,7 @@ export class EnhancedRecommendationEngine {
     const { pageAnalysis = {} } = pageContext;
     
     // Get detected issues
-    const issueResults = await this.issueDetection.detectIssues(pageContext);
+    const issueResults = await this.issueDetection.analyze(pageContext);
     const issues = issueResults.issues || [];
 
     // Generate smart recommendations from issues
@@ -106,14 +106,19 @@ export class EnhancedRecommendationEngine {
     const baseRecommendation = {
       id: `rec_${issue.id}`,
       category: issue.category,
-      priority: issue.priority,
+      priority: issue.severity as IssuePriority,
       title: issue.title,
       description: issue.description,
-      businessImpact: issue.businessImpact,
-      timeline: this.mapPriorityToTimeline(issue.priority),
-      quickWin: issue.fixComplexity === 'low' && issue.businessImpact.severity !== 'low',
+      businessImpact: {
+        category: 'technical' as const,
+        severity: issue.businessImpact as 'low' | 'medium' | 'high' | 'critical',
+        description: issue.impact,
+        estimatedImpact: this.estimateBusinessImpact(issue.businessImpact, issue.category)
+      },
+      timeline: this.mapPriorityToTimeline(issue.severity as IssuePriority),
+      quickWin: issue.fixComplexity === 'easy' && issue.businessImpact !== 'low',
       strategicValue: this.calculateStrategicValue(issue),
-      relatedIssues: issue.relatedIssues || []
+      relatedIssues: []
     };
 
     // Generate specific implementation guidance based on issue type
@@ -124,19 +129,36 @@ export class EnhancedRecommendationEngine {
         return this.generateContentRecommendation(baseRecommendation, issue, pageAnalysis);
       case 'onpage':
         return this.generateOnPageRecommendation(baseRecommendation, issue, pageAnalysis);
-      case 'performance':
-        return this.generatePerformanceRecommendation(baseRecommendation, issue, pageAnalysis);
-      case 'accessibility':
-        return this.generateAccessibilityRecommendation(baseRecommendation, issue, pageAnalysis);
-      case 'mobile':
-        return this.generateMobileRecommendation(baseRecommendation, issue, pageAnalysis);
-      case 'security':
-        return this.generateSecurityRecommendation(baseRecommendation, issue, pageAnalysis);
-      case 'structured-data':
-        return this.generateStructuredDataRecommendation(baseRecommendation, issue, pageAnalysis);
+      case 'ux':
+        return this.generateGenericRecommendation(baseRecommendation, issue);
       default:
         return this.generateGenericRecommendation(baseRecommendation, issue);
     }
+  }
+
+  private estimateBusinessImpact(severity: string, category: string): string {
+    const impactMap = {
+      high: {
+        technical: '25-40% improvement in search visibility',
+        content: '15-30% increase in organic traffic',
+        onpage: '20-35% improvement in click-through rates',
+        ux: '10-25% improvement in conversion rates'
+      },
+      medium: {
+        technical: '10-20% improvement in search visibility',
+        content: '5-15% increase in organic traffic',
+        onpage: '8-20% improvement in click-through rates',
+        ux: '5-15% improvement in conversion rates'
+      },
+      low: {
+        technical: '2-8% improvement in search visibility',
+        content: '1-5% increase in organic traffic',
+        onpage: '2-8% improvement in click-through rates',
+        ux: '1-5% improvement in conversion rates'
+      }
+    };
+
+    return impactMap[severity as keyof typeof impactMap]?.[category as keyof typeof impactMap.high] || 'Minor improvement expected';
   }
 
   private generateTechnicalRecommendation(
@@ -474,166 +496,6 @@ Include:
     } as SmartRecommendation;
   }
 
-  private generatePerformanceRecommendation(
-    base: Partial<SmartRecommendation>, 
-    issue: SEOIssue, 
-    pageAnalysis: any
-  ): SmartRecommendation {
-    // Implementation for performance recommendations
-    return {
-      ...base,
-      implementation: {
-        difficulty: 'intermediate' as const,
-        estimatedTime: '2-4 hours',
-        requiredSkills: ['web performance', 'technical SEO'],
-        steps: [
-          {
-            step: 1,
-            title: 'Performance Audit',
-            description: 'Conduct comprehensive performance analysis.'
-          }
-        ]
-      },
-      validation: {
-        testingSteps: ['Test Core Web Vitals'],
-        successMetrics: ['Improved performance scores'],
-        monitoringRecommendations: ['Monitor performance metrics']
-      },
-      resources: {
-        documentation: ['https://web.dev/vitals/'],
-        tools: ['PageSpeed Insights', 'Lighthouse']
-      }
-    } as SmartRecommendation;
-  }
-
-  private generateAccessibilityRecommendation(
-    base: Partial<SmartRecommendation>, 
-    issue: SEOIssue, 
-    pageAnalysis: any
-  ): SmartRecommendation {
-    // Implementation for accessibility recommendations
-    return {
-      ...base,
-      implementation: {
-        difficulty: 'beginner' as const,
-        estimatedTime: '1-2 hours',
-        requiredSkills: ['HTML', 'accessibility basics'],
-        steps: [
-          {
-            step: 1,
-            title: 'Accessibility Audit',
-            description: 'Identify accessibility issues using automated tools.'
-          }
-        ]
-      },
-      validation: {
-        testingSteps: ['Run accessibility tests'],
-        successMetrics: ['Improved accessibility scores'],
-        monitoringRecommendations: ['Regular accessibility audits']
-      },
-      resources: {
-        documentation: ['https://www.w3.org/WAI/WCAG21/quickref/'],
-        tools: ['axe DevTools', 'WAVE', 'Lighthouse']
-      }
-    } as SmartRecommendation;
-  }
-
-  private generateMobileRecommendation(
-    base: Partial<SmartRecommendation>, 
-    issue: SEOIssue, 
-    pageAnalysis: any
-  ): SmartRecommendation {
-    // Implementation for mobile recommendations
-    return {
-      ...base,
-      implementation: {
-        difficulty: 'intermediate' as const,
-        estimatedTime: '2-6 hours',
-        requiredSkills: ['responsive design', 'CSS', 'mobile optimization'],
-        steps: [
-          {
-            step: 1,
-            title: 'Mobile Audit',
-            description: 'Test mobile usability and responsiveness.'
-          }
-        ]
-      },
-      validation: {
-        testingSteps: ['Test on multiple devices'],
-        successMetrics: ['Improved mobile usability'],
-        monitoringRecommendations: ['Monitor mobile performance']
-      },
-      resources: {
-        documentation: ['https://developers.google.com/search/mobile-sites/'],
-        tools: ['Mobile-Friendly Test', 'BrowserStack']
-      }
-    } as SmartRecommendation;
-  }
-
-  private generateSecurityRecommendation(
-    base: Partial<SmartRecommendation>, 
-    issue: SEOIssue, 
-    pageAnalysis: any
-  ): SmartRecommendation {
-    // Implementation for security recommendations
-    return {
-      ...base,
-      implementation: {
-        difficulty: 'advanced' as const,
-        estimatedTime: '2-4 hours',
-        requiredSkills: ['web security', 'server administration'],
-        steps: [
-          {
-            step: 1,
-            title: 'Security Audit',
-            description: 'Assess current security measures and vulnerabilities.'
-          }
-        ]
-      },
-      validation: {
-        testingSteps: ['Run security scans'],
-        successMetrics: ['Improved security scores'],
-        monitoringRecommendations: ['Regular security monitoring']
-      },
-      resources: {
-        documentation: ['https://owasp.org/www-project-top-ten/'],
-        tools: ['Mozilla Observatory', 'SecurityHeaders.com']
-      }
-    } as SmartRecommendation;
-  }
-
-  private generateStructuredDataRecommendation(
-    base: Partial<SmartRecommendation>, 
-    issue: SEOIssue, 
-    pageAnalysis: any
-  ): SmartRecommendation {
-    // Implementation for structured data recommendations
-    return {
-      ...base,
-      implementation: {
-        difficulty: 'intermediate' as const,
-        estimatedTime: '1-3 hours',
-        requiredSkills: ['JSON-LD', 'schema.org', 'structured data'],
-        steps: [
-          {
-            step: 1,
-            title: 'Schema Planning',
-            description: 'Determine appropriate schema types for your content.'
-          }
-        ]
-      },
-      validation: {
-        testingSteps: ['Test with Rich Results Test'],
-        successMetrics: ['Valid structured data'],
-        monitoringRecommendations: ['Monitor rich results eligibility']
-      },
-      resources: {
-        documentation: ['https://schema.org/', 'https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data'],
-        tools: ['Rich Results Test', 'Schema Markup Validator']
-      }
-    } as SmartRecommendation;
-  }
-
   private generateGenericRecommendation(
     base: Partial<SmartRecommendation>, 
     issue: SEOIssue
@@ -852,20 +714,20 @@ Include:
   private calculateStrategicValue(issue: SEOIssue): number {
     let value = 5; // Base value
 
-    // Adjust based on business impact
-    switch (issue.businessImpact.severity) {
-      case 'critical': value += 3; break;
+    // Adjust based on business impact (string in SEOIssue)
+    switch (issue.businessImpact) {
       case 'high': value += 2; break;
       case 'medium': value += 1; break;
+      case 'low': break;
       default: break;
     }
 
     // Adjust based on fix complexity (easier fixes get higher strategic value)
     switch (issue.fixComplexity) {
-      case 'low': value += 2; break;
+      case 'easy': value += 2; break;
       case 'medium': value += 1; break;
-      case 'high': value -= 1; break;
-      case 'very-high': value -= 2; break;
+      case 'hard': value -= 1; break;
+      default: break;
     }
 
     return Math.max(1, Math.min(10, value));

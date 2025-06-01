@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { dashboardController } from '../controllers/dashboard.controller';
 // import { authenticate } from '../middleware/auth.middleware';
 // import { validate } from '../middleware/validation.middleware';
-import { rateLimit } from '../middleware/rate-limit.middleware';
+import { generalRateLimit } from '../middleware/rate-limit.middleware';
 
 const router = Router();
 
@@ -12,7 +12,7 @@ const router = Router();
 // Dashboard statistics
 router.get(
   '/stats',
-  rateLimit.api,
+  generalRateLimit,
   dashboardController.getStats
 );
 
@@ -28,36 +28,36 @@ router.get('/test', (req, res) => {
 // Recent projects with scores and trends
 router.get(
   '/recent-projects',
-  rateLimit.api,
+  generalRateLimit,
   dashboardController.getRecentProjects
 );
 
 // Latest priority issues
 router.get(
   '/latest-issues',
-  rateLimit.api,
+  generalRateLimit,
   dashboardController.getLatestIssues
 );
 
 // Recent activity
 router.get(
   '/recent-activity',
-  rateLimit.api,
+  generalRateLimit,
   dashboardController.getRecentActivity
 );
 
 // Performance trends over time
 router.get(
   '/performance-trends',
-  rateLimit.api,
+  generalRateLimit,
   dashboardController.getPerformanceTrends
 );
 
 // Legacy endpoints (kept for backward compatibility)
-// router.get('/overview', rateLimit.api, dashboardController.getOverview);
+// router.get('/overview', generalRateLimit, dashboardController.getOverview);
 // validate('getPerformanceMetrics'),
 // validate('getIssuesSummary'),
-// router.get('/project-comparison', rateLimit.api, dashboardController.getProjectComparison);
-// router.get('/recommendations', rateLimit.api, dashboardController.getRecommendations);
+// router.get('/project-comparison', generalRateLimit, dashboardController.getProjectComparison);
+// router.get('/recommendations', generalRateLimit, dashboardController.getRecommendations);
 
-export { router as dashboardRouter };
+export default router;

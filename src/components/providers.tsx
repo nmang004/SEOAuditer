@@ -2,11 +2,7 @@
 
 import { ReactNode, useEffect } from 'react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import { AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 import { TooltipProvider } from '@/components/ui/tooltip';
-
-// Import types
-// import { ThemeProvider } from '@/theme';
 
 type ProvidersProps = {
   children: ReactNode;
@@ -18,7 +14,7 @@ type ProvidersProps = {
 export function Providers({ 
   children, 
   defaultTheme = 'system',
-  enablePerformanceMonitoring = false
+  enablePerformanceMonitoring = process.env.NODE_ENV === 'development'
 }: ProvidersProps) {
   // Add performance class to document element for global styling
   useEffect(() => {
@@ -33,13 +29,6 @@ export function Providers({
     }
   }, []);
 
-  // Debug: Check if providers are undefined
-  if (typeof window !== 'undefined') {
-    // Only log in browser
-    // eslint-disable-next-line no-console
-    console.log('NextThemesProvider:', NextThemesProvider);
-  }
-
   return (
     <NextThemesProvider
       attribute="class"
@@ -48,11 +37,7 @@ export function Providers({
       disableTransitionOnChange
     >
       <TooltipProvider>
-        <LazyMotion features={domAnimation} strict>
-          <AnimatePresence mode="wait" initial={false}>
-            {children}
-          </AnimatePresence>
-        </LazyMotion>
+        {children}
       </TooltipProvider>
     </NextThemesProvider>
   );

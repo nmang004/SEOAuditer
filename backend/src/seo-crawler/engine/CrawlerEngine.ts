@@ -44,7 +44,7 @@ export class CrawlerEngine {
         // Aggregate issues if present
         if (pageResult.seoIssues) this.issues.push(...(pageResult.seoIssues as any[]));
         // Emit page complete only if analysis succeeded
-        this.wsGateway.emitPageComplete(jobId, pageResult);
+        this.wsGateway.emitCompleted(jobId, pageResult);
         // Extract and enqueue internal links (BFS)
         if (pageResult.links && pageResult.links.internal) {
           for (const link of pageResult.links.internal) {
@@ -61,10 +61,9 @@ export class CrawlerEngine {
 
       // Emit progress
       this.wsGateway.emitProgress(jobId, {
-        progress: pageCount / maxPages,
-        currentUrl,
-        pageCount,
-        total: maxPages,
+        percentage: (pageCount / maxPages) * 100,
+        stage: 'crawling',
+        details: `Analyzing page ${pageCount}/${maxPages}: ${currentUrl}`,
       });
 
       // Respect crawl delay
@@ -75,7 +74,7 @@ export class CrawlerEngine {
 
     logger.info(`Crawl complete for job ${jobId} (project: ${projectId}). Pages: ${this.results.length}, Issues: ${this.issues.length}`);
     // Emit completion
-    this.wsGateway.emitComplete(jobId, {
+    this.wsGateway.emitCompleted(jobId, {
       pages: this.results,
       issues: this.issues,
     });

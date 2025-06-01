@@ -155,7 +155,8 @@ export class EnhancedPageAnalyzer {
         issueResults,
         recommendationResults,
         coreWebVitalsResults,
-        metrics
+        metrics,
+        pageContext
       );
 
       console.log(`[Enhanced Page Analyzer] Analysis completed in ${metrics.totalTime}ms`);
@@ -327,7 +328,8 @@ export class EnhancedPageAnalyzer {
     issueResults: any,
     recommendationResults: any,
     coreWebVitalsResults: any,
-    metrics: AnalysisPerformanceMetrics
+    metrics: AnalysisPerformanceMetrics,
+    pageContext: any
   ): EnhancedAnalysisResult {
     const confidence = this.calculateConfidenceScore(basicAnalysis, issueResults, scoringResults);
 
@@ -398,7 +400,65 @@ export class EnhancedPageAnalyzer {
       recommendations: recommendationResults.recommendations || [],
 
       // Core Web Vitals
-      coreWebVitals: coreWebVitalsResults?.coreWebVitals || {},
+      coreWebVitals: coreWebVitalsResults || {
+        url: pageContext.url,
+        timestamp: new Date(),
+        deviceType: 'desktop',
+        coreWebVitals: {
+          LCP: 0,
+          FID: 0,
+          CLS: 0,
+          FCP: 0,
+          TTFB: 0,
+          SI: 0,
+          TTI: 0
+        },
+        performanceScore: 0,
+        grade: 'C' as const,
+        insights: {
+          lcpAnalysis: {
+            value: 0,
+            status: 'poor' as const,
+            target: 1200,
+            percentile: '50th',
+            issues: [],
+            opportunities: []
+          },
+          fidAnalysis: {
+            value: 0,
+            status: 'poor' as const,
+            target: 100,
+            percentile: '50th',
+            issues: [],
+            opportunities: []
+          },
+          clsAnalysis: {
+            value: 0,
+            status: 'poor' as const,
+            target: 0.1,
+            percentile: '50th',
+            issues: [],
+            opportunities: []
+          },
+          fcpAnalysis: {
+            value: 0,
+            status: 'poor' as const,
+            target: 1000,
+            percentile: '50th',
+            issues: [],
+            opportunities: []
+          },
+          ttfbAnalysis: {
+            value: 0,
+            status: 'poor' as const,
+            target: 200,
+            percentile: '50th',
+            issues: [],
+            opportunities: []
+          }
+        },
+        recommendations: []
+      },
 
       // Analysis metadata
       analysisMetadata: {
@@ -446,7 +506,65 @@ export class EnhancedPageAnalyzer {
         prioritized: []
       },
 
-      coreWebVitals: {},
+      coreWebVitals: {
+        url: pageContext.url,
+        timestamp: new Date(),
+        deviceType: 'desktop',
+        coreWebVitals: {
+          LCP: 0,
+          FID: 0,
+          CLS: 0,
+          FCP: 0,
+          TTFB: 0,
+          SI: 0,
+          TTI: 0
+        },
+        performanceScore: 0,
+        grade: 'C' as const,
+        insights: {
+          lcpAnalysis: {
+            value: 0,
+            status: 'poor' as const,
+            target: 1200,
+            percentile: '50th',
+            issues: [],
+            opportunities: []
+          },
+          fidAnalysis: {
+            value: 0,
+            status: 'poor' as const,
+            target: 100,
+            percentile: '50th',
+            issues: [],
+            opportunities: []
+          },
+          clsAnalysis: {
+            value: 0,
+            status: 'poor' as const,
+            target: 0.1,
+            percentile: '50th',
+            issues: [],
+            opportunities: []
+          },
+          fcpAnalysis: {
+            value: 0,
+            status: 'poor' as const,
+            target: 1000,
+            percentile: '50th',
+            issues: [],
+            opportunities: []
+          },
+          ttfbAnalysis: {
+            value: 0,
+            status: 'poor' as const,
+            target: 200,
+            percentile: '50th',
+            issues: [],
+            opportunities: []
+          }
+        },
+        recommendations: []
+      },
 
       analysisMetadata: {
         timestamp: new Date().toISOString(),
@@ -475,10 +593,11 @@ export class EnhancedPageAnalyzer {
     if (!results.analysisMetadata?.timestamp) return false;
     
     // Check if essential data is present
-    const hasEssentialData = 
+    const hasEssentialData = Boolean(
       results.enhancedScoring &&
       results.enhancedContent &&
-      results.enhancedIssues;
+      results.enhancedIssues
+    );
 
     return hasEssentialData;
   }

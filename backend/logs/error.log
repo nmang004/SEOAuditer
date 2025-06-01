@@ -44,3 +44,437 @@
   "command": "CONN",
   "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
 }
+2025-05-30 01:11:08.601 PM [[31merror[39m]: 	[31mPort 4000 is already in use[39m
+2025-05-30 01:11:08.602 PM [[31merror[39m]: 	[31mPort 4000 is already in use[39m
+2025-05-30 01:15:16.652 PM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-30 01:15:18.323 PM [[31merror[39m]: 	[31mPort 4000 is already in use[39m
+2025-05-30 01:15:18.323 PM [[31merror[39m]: 	[31mPort 4000 is already in use[39m
+2025-05-30 01:15:47.174 PM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-30 01:15:51.243 PM [[31merror[39m]: 	[31mPort 4000 is already in use[39m
+2025-05-30 01:15:51.243 PM [[31merror[39m]: 	[31mPort 4000 is already in use[39m
+2025-05-30 03:25:40.161 PM [[31merror[39m]: 	[31mUnhandled Rejection at: The client is closed[39m
+{
+  "stack": "Error: The client is closed\n    at RedisSocket.quit (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@redis/client/dist/lib/client/socket.js:70:19)\n    at Commander.QUIT (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@redis/client/dist/lib/client/index.js:260:71)\n    at /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/index.ts:310:25\n    at Server.close (node:net:2358:9)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-30 03:25:40.162 PM [[31merror[39m]: 	[31mUnhandled Rejection: The client is closed[39m
+2025-05-30 03:25:40.169 PM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-30 03:35:10.368 PM [[31merror[39m]: 	[31mUnhandled Rejection at: The client is closed[39m
+{
+  "stack": "Error: The client is closed\n    at RedisSocket.quit (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@redis/client/dist/lib/client/socket.js:70:19)\n    at Commander.QUIT (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@redis/client/dist/lib/client/index.js:260:71)\n    at /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/index.ts:310:25\n    at Server.close (node:net:2358:9)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-30 03:35:10.369 PM [[31merror[39m]: 	[31mUnhandled Rejection: The client is closed[39m
+2025-05-30 03:35:10.378 PM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-30 03:36:47.204 PM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-30 05:16:45.025 PM [[31merror[39m]: 	[31mDatabase error detected [39m
+[31m[31mInvalid [1m`prisma.$queryRaw()`[22m invocation:[31m[39m
+
+
+[31mRaw query failed. Code: `42P01`. Message: `relation "analysis_cache" does not exist`[39m
+{
+  "target": "$queryRaw"
+}
+2025-05-30 05:16:45.029 PM [[31merror[39m]: 	[31mFailed to get cache stats: [39m
+[31m[31mInvalid [1m`prisma.$queryRaw()`[22m invocation:[31m[39m
+
+
+[31mRaw query failed. Code: `42P01`. Message: `relation "analysis_cache" does not exist`[39m
+{
+  "name": "PrismaClientKnownRequestError",
+  "code": "P2010",
+  "clientVersion": "5.22.0",
+  "meta": {
+    "code": "42P01",
+    "message": "relation \"analysis_cache\" does not exist"
+  },
+  "stack": "PrismaClientKnownRequestError: \n\u001b[31mInvalid \u001b[1m`prisma.$queryRaw()`\u001b[22m invocation:\u001b[39m\n\n\nRaw query failed. Code: `42P01`. Message: `relation \"analysis_cache\" does not exist`\n    at $n.handleRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:7315)\n    at $n.handleAndLogRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6623)\n    at $n.request (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6307)\n    at async l (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:130:9633)\n    at async Promise.all (index 2)\n    at async DatabaseService.getCacheStats (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/DatabaseService.ts:1359:11)\n    at async DatabaseVerification.testCaching (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/verify-database-integration.ts:311:26)\n    at async DatabaseVerification.run (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/verify-database-integration.ts:68:7)\n    at async main (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/verify-database-integration.ts:425:21)"
+}
+2025-05-30 05:16:45.031 PM [[31merror[39m]: 	[31mDatabase error detected [39m
+[31m[31mInvalid [1m`prisma.$queryRaw()`[22m invocation:[31m[39m
+
+
+[31mRaw query failed. Code: `42P01`. Message: `relation "analysis_cache" does not exist`[39m
+{
+  "target": "$queryRaw"
+}
+2025-05-30 05:16:45.036 PM [[31merror[39m]: 	[31mDatabase error detected [39m
+[31m[31mInvalid [1m`prisma.$queryRaw()`[22m invocation:[31m[39m
+
+
+[31mRaw query failed. Code: `42P01`. Message: `relation "analysis_cache" does not exist`[39m
+{
+  "target": "$queryRaw"
+}
+2025-05-30 05:32:43.181 PM [[31merror[39m]: 	[31m[39m
+[31m❌ Failed Tests:[39m
+2025-05-30 05:32:43.181 PM [[31merror[39m]: 	[31m  - Schema Integrity: Schema validation failed: Error: Missing required tables: users, projects, crawl_sessions, seo_analyses, seo_issues, seo_recommendations, meta_tags, analysis_cache, content_analyses, performance_metrics[39m
+2025-05-30 06:53:14.028 PM [[31merror[39m]: 	[31mUncaught Exception: write EPIPE[39m
+2025-05-30 06:55:30.849 PM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-30 06:56:35.916 PM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-30 06:56:48.299 PM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-30 06:56:54.759 PM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-30 06:57:25.450 PM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-30 06:57:33.172 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}
+2025-05-30 06:57:33.178 PM [[31merror[39m]: 	[31mFailed to initialize email service: Failed to initialize email service[39m
+{
+  "stack": "Error: Failed to initialize email service\n    at /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/email.service.ts:116:18\n    at SMTPConnection.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-transport/index.js:347:24)\n    at Object.onceWrapper (node:events:633:26)\n    at SMTPConnection.emit (node:events:518:28)\n    at SMTPConnection._onError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:799:14)\n    at Immediate.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:344:52)\n    at processImmediate (node:internal/timers:485:21)"
+}
+2025-05-31 09:08:59.941 AM [[31merror[39m]: 	[31m❌ Failed to create view v_project_dashboard_stats: [39m
+[31mInvalid `prisma.$executeRawUnsafe()` invocation:[39m
+
+
+[31mRaw query failed. Code: `42703`. Message: `column "overall_score" does not exist`[39m
+{
+  "name": "PrismaClientKnownRequestError",
+  "code": "P2010",
+  "clientVersion": "5.22.0",
+  "meta": {
+    "code": "42703",
+    "message": "column \"overall_score\" does not exist"
+  },
+  "stack": "PrismaClientKnownRequestError: \nInvalid `prisma.$executeRawUnsafe()` invocation:\n\n\nRaw query failed. Code: `42703`. Message: `column \"overall_score\" does not exist`\n    at $n.handleRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:7315)\n    at $n.handleAndLogRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6623)\n    at $n.request (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6307)\n    at async l (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:130:9633)\n    at async DatabaseOptimizer.setupAnalyticsViews (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:338:9)\n    at async DatabaseOptimizer.optimizeDatabase (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:22:7)\n    at async main (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:563:5)"
+}
+2025-05-31 09:08:59.943 AM [[31merror[39m]: 	[31m❌ Failed to create view v_user_analytics_summary: [39m
+[31mInvalid `prisma.$executeRawUnsafe()` invocation:[39m
+
+
+[31mRaw query failed. Code: `42703`. Message: `column p.user_id does not exist`[39m
+{
+  "name": "PrismaClientKnownRequestError",
+  "code": "P2010",
+  "clientVersion": "5.22.0",
+  "meta": {
+    "code": "42703",
+    "message": "column p.user_id does not exist"
+  },
+  "stack": "PrismaClientKnownRequestError: \nInvalid `prisma.$executeRawUnsafe()` invocation:\n\n\nRaw query failed. Code: `42703`. Message: `column p.user_id does not exist`\n    at $n.handleRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:7315)\n    at $n.handleAndLogRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6623)\n    at $n.request (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6307)\n    at async l (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:130:9633)\n    at async DatabaseOptimizer.setupAnalyticsViews (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:338:9)\n    at async DatabaseOptimizer.optimizeDatabase (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:22:7)\n    at async main (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:563:5)"
+}
+2025-05-31 09:08:59.949 AM [[31merror[39m]: 	[31m❌ Failed to create view v_issue_trend_analytics: [39m
+[31mInvalid `prisma.$executeRawUnsafe()` invocation:[39m
+
+
+[31mRaw query failed. Code: `42703`. Message: `column sa.project_id does not exist`[39m
+{
+  "name": "PrismaClientKnownRequestError",
+  "code": "P2010",
+  "clientVersion": "5.22.0",
+  "meta": {
+    "code": "42703",
+    "message": "column sa.project_id does not exist"
+  },
+  "stack": "PrismaClientKnownRequestError: \nInvalid `prisma.$executeRawUnsafe()` invocation:\n\n\nRaw query failed. Code: `42703`. Message: `column sa.project_id does not exist`\n    at $n.handleRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:7315)\n    at $n.handleAndLogRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6623)\n    at $n.request (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6307)\n    at async l (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:130:9633)\n    at async DatabaseOptimizer.setupAnalyticsViews (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:338:9)\n    at async DatabaseOptimizer.optimizeDatabase (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:22:7)\n    at async main (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:563:5)"
+}
+2025-05-31 09:08:59.950 AM [[31merror[39m]: 	[31m❌ Failed to run check Orphaned analyses check: [39m
+[31mInvalid `prisma.$queryRawUnsafe()` invocation:[39m
+
+
+[31mRaw query failed. Code: `42703`. Message: `column sa.project_id does not exist`[39m
+{
+  "name": "PrismaClientKnownRequestError",
+  "code": "P2010",
+  "clientVersion": "5.22.0",
+  "meta": {
+    "code": "42703",
+    "message": "column sa.project_id does not exist"
+  },
+  "stack": "PrismaClientKnownRequestError: \nInvalid `prisma.$queryRawUnsafe()` invocation:\n\n\nRaw query failed. Code: `42703`. Message: `column sa.project_id does not exist`\n    at $n.handleRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:7315)\n    at $n.handleAndLogRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6623)\n    at $n.request (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6307)\n    at async l (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:130:9633)\n    at async DatabaseOptimizer.validateDataIntegrity (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:394:24)\n    at async DatabaseOptimizer.optimizeDatabase (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:23:7)\n    at async main (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:563:5)"
+}
+2025-05-31 09:08:59.951 AM [[31merror[39m]: 	[31m❌ Failed to run check Invalid score ranges check: [39m
+[31mInvalid `prisma.$queryRawUnsafe()` invocation:[39m
+
+
+[31mRaw query failed. Code: `42703`. Message: `column "overall_score" does not exist`[39m
+{
+  "name": "PrismaClientKnownRequestError",
+  "code": "P2010",
+  "clientVersion": "5.22.0",
+  "meta": {
+    "code": "42703",
+    "message": "column \"overall_score\" does not exist"
+  },
+  "stack": "PrismaClientKnownRequestError: \nInvalid `prisma.$queryRawUnsafe()` invocation:\n\n\nRaw query failed. Code: `42703`. Message: `column \"overall_score\" does not exist`\n    at $n.handleRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:7315)\n    at $n.handleAndLogRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6623)\n    at $n.request (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6307)\n    at async l (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:130:9633)\n    at async DatabaseOptimizer.validateDataIntegrity (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:394:24)\n    at async DatabaseOptimizer.optimizeDatabase (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:23:7)\n    at async main (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:563:5)"
+}
+2025-05-31 09:08:59.953 AM [[31merror[39m]: 	[31m❌ Failed to run check Orphaned issues check: [39m
+[31mInvalid `prisma.$queryRawUnsafe()` invocation:[39m
+
+
+[31mRaw query failed. Code: `42703`. Message: `column si.analysis_id does not exist`[39m
+{
+  "name": "PrismaClientKnownRequestError",
+  "code": "P2010",
+  "clientVersion": "5.22.0",
+  "meta": {
+    "code": "42703",
+    "message": "column si.analysis_id does not exist"
+  },
+  "stack": "PrismaClientKnownRequestError: \nInvalid `prisma.$queryRawUnsafe()` invocation:\n\n\nRaw query failed. Code: `42703`. Message: `column si.analysis_id does not exist`\n    at $n.handleRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:7315)\n    at $n.handleAndLogRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6623)\n    at $n.request (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6307)\n    at async l (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:130:9633)\n    at async DatabaseOptimizer.validateDataIntegrity (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:394:24)\n    at async DatabaseOptimizer.optimizeDatabase (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:23:7)\n    at async main (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/optimize-database.ts:563:5)"
+}
+2025-05-31 09:52:44.070 AM [[31merror[39m]: 	[31mFailed to initialize Enhanced Analysis System: this.queueAdapter.healthCheck is not a function[39m
+{
+  "stack": "TypeError: this.queueAdapter.healthCheck is not a function\n    at EnhancedAnalysisSystem.initializeQueue (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:66:29)\n    at EnhancedAnalysisSystem.initialize (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:43:18)\n    at initializeAnalysisSystem (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:293:24)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/index.ts:268:35)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:52:44.071 AM [[31merror[39m]: 	[31mFailed to initialize Enhanced Analysis System: Analysis system initialization failed: TypeError: this.queueAdapter.healthCheck is not a function[39m
+{
+  "stack": "Error: Analysis system initialization failed: TypeError: this.queueAdapter.healthCheck is not a function\n    at EnhancedAnalysisSystem.initialize (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:57:13)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at initializeAnalysisSystem (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:293:3)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/index.ts:268:11)"
+}
+2025-05-31 09:52:48.836 AM [[31merror[39m]: 	[31mUncaught Exception: listen EADDRINUSE: address already in use :::4000[39m
+2025-05-31 09:52:52.719 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:52:54.060 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:02.728 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:04.062 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:12.736 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:14.063 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:22.722 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:24.083 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:32.735 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:34.071 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:42.727 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:44.071 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:52.745 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:53:54.073 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:54:02.754 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:54:04.074 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:54:12.735 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:54:14.075 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:54:22.743 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:54:24.081 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:54:32.736 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:54:34.079 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:55:17.565 AM [[31merror[39m]: 	[31mFailed to initialize Enhanced Analysis System: this.queueAdapter.healthCheck is not a function[39m
+{
+  "stack": "TypeError: this.queueAdapter.healthCheck is not a function\n    at EnhancedAnalysisSystem.initializeQueue (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:66:29)\n    at EnhancedAnalysisSystem.initialize (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:43:18)\n    at initializeAnalysisSystem (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:293:24)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/index.ts:268:35)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:55:17.565 AM [[31merror[39m]: 	[31mFailed to initialize Enhanced Analysis System: Analysis system initialization failed: TypeError: this.queueAdapter.healthCheck is not a function[39m
+{
+  "stack": "Error: Analysis system initialization failed: TypeError: this.queueAdapter.healthCheck is not a function\n    at EnhancedAnalysisSystem.initialize (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:57:13)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at initializeAnalysisSystem (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:293:3)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/index.ts:268:11)"
+}
+2025-05-31 09:55:26.298 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:55:27.544 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:55:36.288 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:55:37.546 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:55:46.304 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:55:47.547 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:55:56.294 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:55:57.547 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:56:06.291 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:56:07.549 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:56:16.295 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:56:17.549 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:56:26.297 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:56:27.549 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 09:56:29.843 AM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-31 10:06:26.039 AM [[31merror[39m]: 	[31mFailed to initialize Enhanced Analysis System: this.queueAdapter.healthCheck is not a function[39m
+{
+  "stack": "TypeError: this.queueAdapter.healthCheck is not a function\n    at EnhancedAnalysisSystem.initializeQueue (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:66:29)\n    at EnhancedAnalysisSystem.initialize (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:43:18)\n    at initializeAnalysisSystem (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:293:24)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/index.ts:268:35)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 10:06:26.040 AM [[31merror[39m]: 	[31mFailed to initialize Enhanced Analysis System: Analysis system initialization failed: TypeError: this.queueAdapter.healthCheck is not a function[39m
+{
+  "stack": "Error: Analysis system initialization failed: TypeError: this.queueAdapter.healthCheck is not a function\n    at EnhancedAnalysisSystem.initialize (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:57:13)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at initializeAnalysisSystem (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:293:3)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/index.ts:268:11)"
+}
+2025-05-31 10:06:34.769 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 10:06:36.029 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 10:06:44.769 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 10:06:46.029 AM [[31merror[39m]: 	[31mError getting queue metrics: this.queue.getPaused is not a function[39m
+{
+  "stack": "TypeError: this.queue.getPaused is not a function\n    at EnhancedQueueAdapter.getQueueMetrics (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:304:20)\n    at Timeout._onTimeout (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/queue/EnhancedQueueAdapter.ts:154:36)\n    at listOnTimeout (node:internal/timers:588:17)\n    at processTimers (node:internal/timers:523:7)"
+}
+2025-05-31 10:06:52.728 AM [[31merror[39m]: 	[31mProcess exiting with code: 0[39m
+2025-05-31 10:41:44.829 AM [[31merror[39m]: 	[31mDatabase error detected [39m
+[31m[31mInvalid [1m`this.prisma.user.create()`[22m invocation in[31m[39m
+[31m[4m/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/DatabaseService.ts:594:37[24m[39m
+
+[31m  [2m[90m591[31m [36mconst[31m validatedData = schemas[34m.[31muser[34m.[31mcreate[34m.[31m[36mparse[31m[34m([31mdata[34m)[31m[34m;[31m[22m[39m
+[31m  [2m[90m592[31m [22m[39m
+[31m  [2m[90m593[31m [36mreturn[31m [36mawait[31m databaseManager[34m.[31m[36mexecuteWithRetry[31m[34m([31m[36masync[31m [34m([31m[34m)[31m => [34m{[31m[22m[39m
+[31m[1m[31m→[31m[22m [2m[90m594[31m   [36mreturn[31m [36mawait[31m [36mthis[31m[34m.[31mprisma[34m.[31muser[34m.[31m[36mcreate[31m[34m([31m[22m[39m
+[31mThe column `twoFactorEnabled` does not exist in the current database.[39m
+{
+  "target": "user.create"
+}
+2025-05-31 10:41:46.163 AM [[31merror[39m]: 	[31mDatabase error detected [39m
+[31m[31mInvalid [1m`this.prisma.user.create()`[22m invocation in[31m[39m
+[31m[4m/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/DatabaseService.ts:594:37[24m[39m
+
+[31m  [2m[90m591[31m [36mconst[31m validatedData = schemas[34m.[31muser[34m.[31mcreate[34m.[31m[36mparse[31m[34m([31mdata[34m)[31m[34m;[31m[22m[39m
+[31m  [2m[90m592[31m [22m[39m
+[31m  [2m[90m593[31m [36mreturn[31m [36mawait[31m databaseManager[34m.[31m[36mexecuteWithRetry[31m[34m([31m[36masync[31m [34m([31m[34m)[31m => [34m{[31m[22m[39m
+[31m[1m[31m→[31m[22m [2m[90m594[31m   [36mreturn[31m [36mawait[31m [36mthis[31m[34m.[31mprisma[34m.[31muser[34m.[31m[36mcreate[31m[34m([31m[22m[39m
+[31mThe column `twoFactorEnabled` does not exist in the current database.[39m
+{
+  "target": "user.create"
+}
+2025-05-31 10:41:48.602 AM [[31merror[39m]: 	[31mDatabase error detected [39m
+[31m[31mInvalid [1m`this.prisma.user.create()`[22m invocation in[31m[39m
+[31m[4m/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/DatabaseService.ts:594:37[24m[39m
+
+[31m  [2m[90m591[31m [36mconst[31m validatedData = schemas[34m.[31muser[34m.[31mcreate[34m.[31m[36mparse[31m[34m([31mdata[34m)[31m[34m;[31m[22m[39m
+[31m  [2m[90m592[31m [22m[39m
+[31m  [2m[90m593[31m [36mreturn[31m [36mawait[31m databaseManager[34m.[31m[36mexecuteWithRetry[31m[34m([31m[36masync[31m [34m([31m[34m)[31m => [34m{[31m[22m[39m
+[31m[1m[31m→[31m[22m [2m[90m594[31m   [36mreturn[31m [36mawait[31m [36mthis[31m[34m.[31mprisma[34m.[31muser[34m.[31m[36mcreate[31m[34m([31m[22m[39m
+[31mThe column `twoFactorEnabled` does not exist in the current database.[39m
+{
+  "target": "user.create"
+}
+2025-05-31 10:41:48.604 AM [[31merror[39m]: 	[31mDatabase seeding failed: [39m
+[31m[31mInvalid [1m`this.prisma.user.create()`[22m invocation in[31m[39m
+[31m[4m/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/DatabaseService.ts:594:37[24m[39m
+
+[31m  [2m[90m591[31m [36mconst[31m validatedData = schemas[34m.[31muser[34m.[31mcreate[34m.[31m[36mparse[31m[34m([31mdata[34m)[31m[34m;[31m[22m[39m
+[31m  [2m[90m592[31m [22m[39m
+[31m  [2m[90m593[31m [36mreturn[31m [36mawait[31m databaseManager[34m.[31m[36mexecuteWithRetry[31m[34m([31m[36masync[31m [34m([31m[34m)[31m => [34m{[31m[22m[39m
+[31m[1m[31m→[31m[22m [2m[90m594[31m   [36mreturn[31m [36mawait[31m [36mthis[31m[34m.[31mprisma[34m.[31muser[34m.[31m[36mcreate[31m[34m([31m[22m[39m
+[31mThe column `twoFactorEnabled` does not exist in the current database.[39m
+{
+  "name": "PrismaClientKnownRequestError",
+  "code": "P2022",
+  "clientVersion": "5.22.0",
+  "meta": {
+    "modelName": "User",
+    "column": "twoFactorEnabled"
+  },
+  "stack": "PrismaClientKnownRequestError: \n\u001b[31mInvalid \u001b[1m`this.prisma.user.create()`\u001b[22m invocation in\u001b[39m\n\u001b[4m/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/DatabaseService.ts:594:37\u001b[24m\n\n  \u001b[2m\u001b[90m591\u001b[39m \u001b[36mconst\u001b[39m validatedData = schemas\u001b[34m.\u001b[39muser\u001b[34m.\u001b[39mcreate\u001b[34m.\u001b[39m\u001b[36mparse\u001b[39m\u001b[34m(\u001b[39mdata\u001b[34m)\u001b[39m\u001b[34m;\u001b[39m\u001b[22m\n  \u001b[2m\u001b[90m592\u001b[39m \u001b[22m\n  \u001b[2m\u001b[90m593\u001b[39m \u001b[36mreturn\u001b[39m \u001b[36mawait\u001b[39m databaseManager\u001b[34m.\u001b[39m\u001b[36mexecuteWithRetry\u001b[39m\u001b[34m(\u001b[39m\u001b[36masync\u001b[39m \u001b[34m(\u001b[39m\u001b[34m)\u001b[39m => \u001b[34m{\u001b[39m\u001b[22m\n\u001b[1m\u001b[31m→\u001b[39m\u001b[22m \u001b[2m\u001b[90m594\u001b[39m   \u001b[36mreturn\u001b[39m \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[34m.\u001b[39mprisma\u001b[34m.\u001b[39muser\u001b[34m.\u001b[39m\u001b[36mcreate\u001b[39m\u001b[34m(\u001b[39m\u001b[22m\nThe column `twoFactorEnabled` does not exist in the current database.\n    at $n.handleRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:7315)\n    at $n.handleAndLogRequestError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6623)\n    at $n.request (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:121:6307)\n    at async l (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/@prisma/client/runtime/library.js:130:9633)\n    at async /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/DatabaseService.ts:594:14\n    at async DatabaseManager.executeWithRetry (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/config/database.ts:538:24)\n    at async DatabaseService.createUser (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/DatabaseService.ts:593:12)\n    at async createTestUser (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/seed-enhanced.ts:100:10)\n    at async seedDatabase (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/scripts/seed-enhanced.ts:23:22)"
+}
+2025-05-31 08:36:21.157 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 08:37:00.277 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 10:04:01.929 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 10:04:07.786 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}

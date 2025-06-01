@@ -1,0 +1,60 @@
+
+> seo-audit-backend@1.0.0 dev
+> ts-node-dev --respawn --transpile-only src/index.ts
+
+[INFO] 15:36:42 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.8.3)
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- PrismaClient imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+--- rateLimit imported ---
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Prisma client ---
+--- Prisma client initialized ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-05-30 03:36:44.329 PM"}
+--- Attempting database connection (attempt 1/5) ---
+--- Database connected successfully ---
+--- Testing database with query ---
+--- Database test query successful ---
+--- startServer: END (server.listen called) ---
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-05-30 03:36:44.381 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-05-30 03:36:44.381 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-05-30 03:36:44.381 PM"}
+✅ Server started successfully on port 4000
+[0mGET /health [32m200[0m 2.410 ms - 74[0m
+[0mGET /api/projects [33m401[0m 4.112 ms - 1641[0m
+UnauthorizedError: No token provided
+    at authenticate (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/middleware/auth.middleware.ts:39:13)
+    at Layer.handle [as handle_request] (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/express/lib/router/index.js:328:13)
+    at /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/express/lib/router/index.js:175:3)
+    at router (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/express/lib/router/index.js:47:12)
+    at Layer.handle [as handle_request] (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/express/lib/router/index.js:328:13)
+[32m[32minfo[32m[39m: 	[32mShutting down server...[39m {"timestamp":"2025-05-30 03:36:47.193 PM"}
+[32m[32minfo[32m[39m: 	[32mHTTP server closed[39m {"timestamp":"2025-05-30 03:36:47.194 PM"}
+[32m[32minfo[32m[39m: 	[32mRedis client disconnected[39m {"timestamp":"2025-05-30 03:36:47.197 PM"}
+[32m[32minfo[32m[39m: 	[32mPrisma client disconnected[39m {"timestamp":"2025-05-30 03:36:47.203 PM"}
+Process exiting with code: 0
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 0[39m {"timestamp":"2025-05-30 03:36:47.204 PM"}

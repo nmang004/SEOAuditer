@@ -1,7 +1,10 @@
+import { PrismaClient } from '@prisma/client';
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '..';
 import { NotFoundError } from '../middleware/error.middleware';
 import { cache } from '../utils/cache';
+
+// Create a separate Prisma instance to avoid circular dependency
+const prisma = new PrismaClient();
 
 // Project Controller
 // Handles project CRUD, stats, and recent projects

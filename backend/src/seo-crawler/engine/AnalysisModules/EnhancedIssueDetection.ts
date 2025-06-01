@@ -1,5 +1,10 @@
 import { PageAnalysis } from '../../types/PageAnalysis';
 
+// Export missing types that are referenced in other modules
+export type IssueCategory = 'technical' | 'content' | 'onpage' | 'ux' | 'performance' | 'accessibility' | 'mobile' | 'security' | 'structured-data';
+
+export type IssuePriority = 'critical' | 'high' | 'medium' | 'low';
+
 export interface CategorizedIssues {
   critical: CriticalIssue[];
   high: HighPriorityIssue[];
@@ -20,7 +25,7 @@ export interface SEOIssue {
   fixComplexity: 'easy' | 'medium' | 'hard';
   affectedElements: string[];
   recommendation: string;
-  category: 'technical' | 'content' | 'onpage' | 'ux';
+  category: IssueCategory;
   estimatedTime: string;
   businessImpact: 'high' | 'medium' | 'low';
   implementationSteps: string[];

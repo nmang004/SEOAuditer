@@ -16,22 +16,21 @@ import morgan from 'morgan';
 console.log('--- morgan imported ---');
 import { createClient } from 'redis';
 console.log('--- redis imported ---');
-import { PrismaClient } from '@prisma/client';
-console.log('--- PrismaClient imported ---');
+import { databaseManager } from './config/database';
 import { logger } from './utils/logger';
 console.log('--- logger imported ---');
 import { errorHandler } from './middleware/error.middleware';
 console.log('--- errorHandler imported ---');
-import rateLimit from './middleware/rate-limit.middleware';
-console.log('--- rateLimit imported ---');
-import { authRouter } from './routes/auth.routes';
-import { dashboardRouter } from './routes/dashboard.routes';
-import { projectRouter } from './routes/project.routes';
-import { analysisRouter } from './routes/analysis.routes';
+import authRouter from './routes/auth.routes';
+import dashboardRouter from './routes/dashboard.routes';
+import projectRouter from './routes/project.routes';
+import analysisRouter from './routes/analysis.routes';
 import crawlRouter from './routes/crawl.routes';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import { enhancedAnalysisRouter } from './routes/enhanced-analysis.routes';
+import enhancedAnalysisRoutes from './routes/enhanced-analysis.routes';
+import healthRouter from './routes/health.router';
+import authRS256Router from './routes/auth-rs256.routes';
 
 let config, redisConfig;
 try {
@@ -68,6 +67,9 @@ redisClient.on('error', (err) => {
 });
 console.log('--- Redis client initialized ---');
 
+// Remove the old prisma client initialization and replace with database manager
+console.log('--- Initializing Database Manager ---');
+
 const connectRedis = async (): Promise<void> => {
   const REDIS_TIMEOUT = 10000; // 10 seconds
   try {
@@ -97,97 +99,47 @@ const connectRedis = async (): Promise<void> => {
   }
 };
 
-console.log('--- Initializing Prisma client ---');
-export const prisma = new PrismaClient({ 
-  log: ['error', 'warn']
-});
-console.log('--- Prisma client initialized ---');
-
 // Database initialization function with proper timeout and error handling
 const initializeDatabase = async (): Promise<void> => {
-  const MAX_RETRIES = 5;
-  const RETRY_DELAY = 5000; // 5 seconds
-  const CONNECTION_TIMEOUT = 30000; // 30 seconds
-  
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      console.log(`--- Attempting database connection (attempt ${attempt}/${MAX_RETRIES}) ---`);
-      
-      // Add connection timeout wrapper
-      const connectionPromise = prisma.$connect();
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Database connection timeout')), CONNECTION_TIMEOUT);
-      });
-      
-      await Promise.race([connectionPromise, timeoutPromise]);
-      console.log('--- Database connected successfully ---');
-      
-      // Test database with a simple query with timeout
-      console.log('--- Testing database with query ---');
-      const testQueryPromise = prisma.$queryRaw`SELECT 1 as test`;
-      const testTimeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Database test query timeout')), 10000);
-      });
-      
-      await Promise.race([testQueryPromise, testTimeoutPromise]);
-      console.log('--- Database test query successful ---');
-      
-      // Run migrations if in production
-      if (config.env === 'production') {
-        console.log('--- Running Prisma migrations ---');
+  try {
+    console.log('--- Attempting database connection via Database Manager ---');
+    await databaseManager.connect();
+    console.log('--- Database Manager connected successfully ---');
+    
+    // Run migrations if in production
+    if (config.env === 'production') {
+      console.log('--- Running Prisma migrations ---');
+      try {
+        const { execSync } = await import('child_process');
+        execSync('npx prisma migrate deploy', { 
+          stdio: 'inherit',
+          timeout: 60000, // 60 seconds timeout
+          env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL }
+        });
+        console.log('--- Prisma migrations completed ---');
+      } catch (migrationError) {
+        console.error('Migration failed:', migrationError);
+        logger.error('Migration failed:', migrationError);
+        
+        // Check if it's just because migrations are already applied
         try {
-          const { execSync } = await import('child_process');
-          execSync('npx prisma migrate deploy', { 
-            stdio: 'inherit',
-            timeout: 60000, // 60 seconds timeout
-            env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL }
-          });
-          console.log('--- Prisma migrations completed ---');
-        } catch (migrationError) {
-          console.error('Migration failed:', migrationError);
-          logger.error('Migration failed:', migrationError);
-          
-          // Check if it's just because migrations are already applied
-          try {
-            await prisma.$queryRaw`SELECT 1`;
-            console.log('--- Database is accessible, continuing without migrations ---');
-          } catch (dbError) {
-            throw new Error(`Database migration and connection both failed: ${migrationError}`);
-          }
+          await databaseManager.getPrisma().$queryRaw`SELECT 1`;
+          console.log('--- Database is accessible, continuing without migrations ---');
+        } catch (dbError) {
+          throw new Error(`Database migration and connection both failed: ${migrationError}`);
         }
       }
-      
-      // If we get here, connection is successful
-      return;
-      
-    } catch (error) {
-      console.error(`Database connection attempt ${attempt} failed:`, error);
-      logger.error(`Database connection attempt ${attempt} failed:`, error);
-      
-      if (attempt === MAX_RETRIES) {
-        // Last attempt failed
-        console.error('All database connection attempts failed');
-        
-        // Try to disconnect cleanly
-        try {
-          await prisma.$disconnect();
-        } catch (disconnectError) {
-          console.error('Failed to disconnect from database:', disconnectError);
-        }
-        
-        // Don't exit in development, but do in production
-        if (config.env === 'production') {
-          console.error('Exiting due to database connection failure in production');
-          process.exit(1);
-        } else {
-          console.warn('Continuing without database in development mode');
-          return;
-        }
-      } else {
-        // Wait before retrying
-        console.log(`--- Waiting ${RETRY_DELAY}ms before retry ---`);
-        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-      }
+    }
+  } catch (error) {
+    console.error('Database initialization failed:', error);
+    logger.error('Database initialization failed:', error);
+    
+    // Don't exit in development, but do in production
+    if (config.env === 'production') {
+      console.error('Exiting due to database connection failure in production');
+      process.exit(1);
+    } else {
+      console.warn('Continuing without database in development mode');
     }
   }
 };
@@ -221,9 +173,6 @@ if (config.env !== 'test') {
   app.use(morgan('dev'));
 }
 
-// Apply rate limiting
-app.use(rateLimit.api);
-
 // Health check endpoint
 app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({
@@ -248,11 +197,13 @@ app.use('/api-docs', swaggerUi.serve as any, swaggerUi.setup(openApiSpec) as any
 
 // API Routes
 app.use('/api/auth', authRouter);
+app.use('/api/auth-rs256', authRS256Router);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/analyses', analysisRouter);
 app.use('/api/crawl', crawlRouter);
-app.use('/api/enhanced-analysis', enhancedAnalysisRouter);
+app.use('/api/enhanced-analysis', enhancedAnalysisRoutes);
+app.use('/api/health', healthRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
@@ -268,61 +219,7 @@ app.use((_req: Request, res: Response) => {
 // Error handling middleware
 app.use(errorHandler);
 
-// Socket.IO connection handling
-io.on('connection', (socket) => {
-  logger.info(`Client connected: ${socket.id}`);
-
-  /**
-   * Event: join:project
-   * Payload: projectId (string)
-   * Joins the client to a project-specific room for real-time updates.
-   */
-  socket.on('join:project', (projectId: string) => {
-    socket.join(`project:${projectId}`);
-    logger.info(`Socket ${socket.id} joined project:${projectId}`);
-  });
-
-  /**
-   * Event: join:user
-   * Payload: userId (string)
-   * Joins the client to a user-specific room for notifications.
-   */
-  socket.on('join:user', (userId: string) => {
-    socket.join(`user:${userId}`);
-    logger.info(`Socket ${socket.id} joined user:${userId}`);
-  });
-
-  socket.on('disconnect', () => {
-    logger.info(`Client disconnected: ${socket.id}`);
-  });
-});
-
-// Graceful shutdown
-const shutdown = async () => {
-  logger.info('Shutting down server...');
-  
-  // Close HTTP server
-  server.close(async () => {
-    logger.info('HTTP server closed');
-    
-    // Close Redis connection
-    if (redisClient) {
-      await redisClient.quit();
-      logger.info('Redis client disconnected');
-    }
-    
-    // Close Prisma connection
-    await prisma.$disconnect();
-    logger.info('Prisma client disconnected');
-    
-    process.exit(0);
-  });
-};
-
-process.on('SIGTERM', shutdown);
-process.on('SIGINT', shutdown);
-
-// Start server with proper error handling
+// Enhanced startServer with analysis system initialization
 const startServer = async () => {
   console.log('--- startServer: BEGIN ---');
   try {
@@ -349,48 +246,106 @@ const startServer = async () => {
       }
     }
     
+    // Initialize Analysis System 
+    // const { initializeAnalysisSystem } = require(analysisSystemPath);
+    const analysisSystemPath = './seo-crawler/enhanced-analysis-system';
+    const analysisSystemModule = require(analysisSystemPath);
+    if (analysisSystemModule.initializeAnalysisSystem) {
+      await analysisSystemModule.initializeAnalysisSystem(server);
+      logger.info('Analysis system initialized successfully');
+    }
+    
     server.listen(config.port, () => {
       logger.info(`Server is running on port ${config.port}`);
       logger.info(`Environment: ${config.env}`);
       logger.info(`API Documentation: http://localhost:${config.port}/api-docs`);
+      
+      // Initialize the enhanced analysis system with the HTTP server after server starts
+      setTimeout(async () => {
+        try {
+          const analysisSystemModule = require('./seo-crawler/enhanced-analysis-system');
+          if (analysisSystemModule.initializeAnalysisSystem) {
+            await analysisSystemModule.initializeAnalysisSystem(server);
+            logger.info('Enhanced Analysis System initialized successfully');
+            console.log('✅ Enhanced Analysis System ready for processing jobs');
+          }
+        } catch (error) {
+          logger.error('Failed to initialize Enhanced Analysis System:', error);
+          console.error('❌ Enhanced Analysis System initialization failed:', error);
+        }
+      }, 1000); // Small delay to ensure server is fully started
+      
       console.log(`✅ Server started successfully on port ${config.port}`);
     });
-    
-    server.on('error', (error: any) => {
-      if (error.syscall !== 'listen') {
-        throw error;
+
+    // Graceful shutdown handlers
+    const gracefulShutdown = async (signal: string) => {
+      console.log(`\n--- Received ${signal}, starting graceful shutdown ---`);
+      logger.info(`Received ${signal}, starting graceful shutdown`);
+      
+      try {
+        // Shutdown enhanced analysis system first
+        const analysisSystemModule = require('./seo-crawler/enhanced-analysis-system');
+        let analysisSystem = null;
+        if (analysisSystemModule.getAnalysisSystem) {
+          analysisSystem = analysisSystemModule.getAnalysisSystem();
+        }
+        if (analysisSystem && analysisSystem.isReady && analysisSystem.isReady()) {
+          logger.info('Shutting down Enhanced Analysis System...');
+          await analysisSystem.shutdown();
+          logger.info('Enhanced Analysis System shutdown completed');
+        }
+      } catch (error) {
+        logger.error('Error shutting down Enhanced Analysis System:', error);
       }
 
-      const bind = typeof config.port === 'string'
-        ? 'Pipe ' + config.port
-        : 'Port ' + config.port;
+      // Close HTTP server
+      server.close((err) => {
+        if (err) {
+          logger.error('Error closing HTTP server:', err);
+          process.exit(1);
+        }
+        
+        logger.info('HTTP server closed');
+        console.log('✅ Server shutdown completed');
+        process.exit(0);
+      });
 
-      // Handle specific listen errors with friendly messages
-      switch (error.code) {
-        case 'EACCES':
-          logger.error(`${bind} requires elevated privileges`);
-          console.error(`${bind} requires elevated privileges`);
-          process.exit(1);
-          break;
-        case 'EADDRINUSE':
-          logger.error(`${bind} is already in use`);
-          console.error(`${bind} is already in use`);
-          process.exit(1);
-          break;
-        default:
-          logger.error('Server error:', error);
-          console.error('Server error:', error);
-          throw error;
-      }
+      // Force shutdown after timeout
+      setTimeout(() => {
+        logger.error('Forceful shutdown due to timeout');
+        console.error('❌ Forceful shutdown due to timeout');
+        process.exit(1);
+      }, 10000); // 10 second timeout
+    };
+
+    // Handle shutdown signals
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+    // Handle uncaught exceptions
+    process.on('uncaughtException', async (error) => {
+      logger.error('Uncaught exception:', error);
+      console.error('❌ Uncaught exception:', error);
+      await gracefulShutdown('UNCAUGHT_EXCEPTION');
+    });
+
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', async (reason, promise) => {
+      logger.error('Unhandled rejection at:', promise, 'reason:', reason);
+      console.error('❌ Unhandled rejection:', reason);
+      await gracefulShutdown('UNHANDLED_REJECTION');
     });
     
-    console.log('--- startServer: END (server.listen called) ---');
   } catch (error) {
-    console.error('FATAL ERROR in startServer:', error);
-    logger.error('FATAL ERROR in startServer:', error);
+    console.error('--- startServer: FATAL ERROR ---', error);
+    logger.error('Fatal error during server startup:', error);
     process.exit(1);
   }
 };
+
+// Call the enhanced analysis system initialization (using the function)
+// initializeEnhancedAnalysisSystem().catch(console.error);
 
 // Wrap startServer call in try-catch
 (async () => {

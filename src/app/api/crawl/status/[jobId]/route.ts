@@ -4,14 +4,14 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://backend:8080';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { jobId: string } }
+  context: { params: Promise<{ jobId: string }> }
 ) {
   console.log('GET /api/crawl/status/[jobId] called');
   console.log('BACKEND_URL:', BACKEND_URL);
   
   try {
     const authHeader = request.headers.get('authorization');
-    const { jobId } = params;
+    const { jobId } = await context.params;
 
     console.log('Attempting to fetch:', `${BACKEND_URL}/api/crawl/status/${jobId}`);
     const response = await fetch(`${BACKEND_URL}/api/crawl/status/${jobId}`, {

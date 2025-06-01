@@ -1,482 +1,643 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
+import { EnhancedQueueAdapter } from '../seo-crawler/queue/EnhancedQueueAdapter';
+import { EnhancedWorker } from '../seo-crawler/queue/EnhancedWorker';
+import { WebSocketGateway } from '../seo-crawler/ws/WebSocketGateway';
 import { PrismaClient } from '@prisma/client';
-import { AuthenticatedRequest } from '../types/auth';
-import { CoreWebVitalsAnalyzer } from '../services/CoreWebVitalsAnalyzer';
-import { analysisCacheService } from '../services/AnalysisCacheService';
+import { logger } from '../utils/logger';
+import { z } from 'zod';
 
-const prisma = new PrismaClient();
+// Validation schemas
+const StartAnalysisSchema = z.object({
+  projectId: z.string().uuid(),
+  priority: z.number().min(0).max(10).optional().default(5),
+  timeout: z.number().min(30000).max(600000).optional().default(600000), // 30s to 10min
+  extractOptions: z.object({
+    screenshots: z.boolean().optional().default(true),
+    performanceMetrics: z.boolean().optional().default(true),
+    fullPageScreenshot: z.boolean().optional().default(false),
+  }).optional().default({}),
+});
+
+const BulkAnalysisSchema = z.object({
+  projectIds: z.array(z.string().uuid()).min(1).max(10),
+  priority: z.number().min(0).max(10).optional().default(5),
+  timeout: z.number().min(30000).max(600000).optional().default(600000),
+  extractOptions: z.object({
+    screenshots: z.boolean().optional().default(true),
+    performanceMetrics: z.boolean().optional().default(true),
+  }).optional().default({}),
+});
 
 export class EnhancedAnalysisController {
-  private coreWebVitalsAnalyzer: CoreWebVitalsAnalyzer;
+  private queueAdapter: EnhancedQueueAdapter;
+  private worker: EnhancedWorker;
+  private wsGateway: WebSocketGateway;
+  private prisma: PrismaClient;
 
   constructor() {
-    this.coreWebVitalsAnalyzer = new CoreWebVitalsAnalyzer();
+    this.queueAdapter = new EnhancedQueueAdapter();
+    this.worker = new EnhancedWorker(this.queueAdapter);
+    this.wsGateway = new WebSocketGateway();
+    this.prisma = new PrismaClient();
+    
+    // Start the worker
+    this.worker.start().catch(error => {
+      logger.error('Failed to start enhanced worker:', error);
+    });
   }
 
-  // GET /api/enhanced-analysis/:id/detailed - Complete analysis results
-  async getDetailedAnalysis(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  /**
+   * Start a new SEO analysis for a project
+   */
+  async startAnalysis(req: Request, res: Response): Promise<void> {
     try {
-      const { id: analysisId } = req.params;
-      const userId = req.user?.id;
-
+      const userId = (req as any).user?.id;
       if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
       }
 
-      // Check cache first
-      const cacheKey = `detailed-analysis:${analysisId}`;
-      const cached = await analysisCacheService.get(cacheKey);
-      if (cached) {
-        return res.json({ success: true, data: cached, cached: true });
+      // Validate request body
+      const validatedData = StartAnalysisSchema.parse(req.body);
+      const { projectId, priority, timeout } = validatedData;
+
+      // Verify project ownership
+      const project = await this.prisma.project.findFirst({
+        where: { id: projectId, userId },
+        include: { user: true },
+      });
+
+      if (!project) {
+        res.status(404).json({ error: 'Project not found or access denied' });
+        return;
       }
 
-      // Get analysis with all related data
-      const analysis = await prisma.sEOAnalysis.findFirst({
+      // Check for existing active analysis
+      const existingAnalysis = await this.prisma.crawlSession.findFirst({
         where: {
-          id: analysisId,
-          crawlSession: {
-            project: { userId }
-          }
+          projectId,
+          status: { in: ['queued', 'running'] },
         },
-        include: {
-          crawlSession: {
-            include: {
-              project: {
-                select: { id: true, name: true, url: true }
-              }
-            }
-          },
-          issues: {
-            orderBy: [
-              { severity: 'desc' },
-              { createdAt: 'desc' }
-            ]
-          },
-          recommendations: {
-            orderBy: [
-              { priority: 'desc' },
-              { quickWin: 'desc' },
-              { createdAt: 'desc' }
-            ]
-          },
-          metaTags: true,
-          scoreBreakdown: true,
-          contentAnalysis: true,
-          performanceMetrics: true
-        }
+        orderBy: { createdAt: 'desc' },
       });
 
-      if (!analysis) {
-        return res.status(404).json({ success: false, error: 'Analysis not found' });
+      if (existingAnalysis) {
+        res.status(409).json({
+          error: 'Analysis already in progress',
+          existingJobId: existingAnalysis.id,
+        });
+        return;
       }
 
-      // Transform the data for the frontend
-      const detailedAnalysis = {
-        id: analysis.id,
-        url: analysis.crawlSession.url,
-        project: analysis.crawlSession.project,
-        overallScore: analysis.overallScore,
-        categoryScores: {
-          technical: analysis.technicalScore,
-          content: analysis.contentScore,
-          onPage: analysis.onpageScore,
-          ux: analysis.uxScore
-        },
-        scoreBreakdown: analysis.scoreBreakdown?.technicalBreakdown ? {
-          technical: analysis.scoreBreakdown.technicalBreakdown,
-          content: analysis.scoreBreakdown.contentBreakdown,
-          onPage: analysis.scoreBreakdown.onPageBreakdown,
-          ux: analysis.scoreBreakdown.uxBreakdown,
-          weights: analysis.scoreBreakdown.weights
-        } : null,
-        issues: {
-          critical: analysis.issues.filter(issue => issue.severity === 'critical'),
-          high: analysis.issues.filter(issue => issue.severity === 'high'),
-          medium: analysis.issues.filter(issue => issue.severity === 'medium'),
-          low: analysis.issues.filter(issue => issue.severity === 'low'),
-          total: analysis.issues.length
-        },
-        recommendations: analysis.recommendations.map(rec => ({
-          id: rec.id,
-          title: rec.title,
-          description: rec.description,
-          priority: rec.priority,
-          category: rec.category,
-          quickWin: rec.quickWin,
-          effortLevel: rec.effortLevel,
-          timeEstimate: rec.timeEstimate,
-          businessValue: rec.businessValue,
-          implementationSteps: rec.implementationSteps,
-          codeExamples: rec.codeExamples,
-          expectedResults: rec.expectedResults
-        })),
-        content: analysis.contentAnalysis ? {
-          wordCount: analysis.contentAnalysis.wordCount,
-          readingTime: analysis.contentAnalysis.readingTime,
-          readabilityMetrics: analysis.contentAnalysis.readabilityMetrics,
-          keywordAnalysis: analysis.contentAnalysis.keywordAnalysis,
-          overallScore: analysis.contentAnalysis.overallScore
-        } : null,
-        performance: analysis.performanceMetrics ? {
-          coreWebVitals: analysis.performanceMetrics.coreWebVitals,
-          performanceScore: analysis.performanceMetrics.performanceScore,
-          loadTime: analysis.performanceMetrics.loadTime,
-          pageSize: analysis.performanceMetrics.pageSize,
-          optimizationOpportunities: analysis.performanceMetrics.optimizationOpportunities
-        } : null,
-        metaTags: analysis.metaTags,
-        lastAnalyzed: analysis.createdAt,
-        confidence: 85 // You can calculate this based on data completeness
-      };
-
-      // Cache the result for 1 hour
-      await analysisCacheService.set(cacheKey, detailedAnalysis, { ttl: 3600 });
-
-      return res.json({ success: true, data: detailedAnalysis });
-
-    } catch (error) {
-      console.error('Error in getDetailedAnalysis:', error);
-      return next(error);
-    }
-  }
-
-  // GET /api/enhanced-analysis/:id/score-breakdown - Detailed scoring breakdown
-  async getScoreBreakdown(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-    try {
-      const { id: analysisId } = req.params;
-      const userId = req.user?.id;
-
-      if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
-      }
-
-      const analysis = await prisma.sEOAnalysis.findFirst({
-        where: {
-          id: analysisId,
-          crawlSession: {
-            project: { userId }
-          }
-        },
-        include: {
-          scoreBreakdown: true,
-          performanceMetrics: true
-        }
-      });
-
-      if (!analysis) {
-        return res.status(404).json({ success: false, error: 'Analysis not found' });
-      }
-
-      const breakdown = {
-        overall: analysis.overallScore,
-        categories: {
-          technical: {
-            score: analysis.technicalScore,
-            weight: 0.3,
-            breakdown: analysis.scoreBreakdown?.technicalBreakdown || {}
-          },
-          content: {
-            score: analysis.contentScore,
-            weight: 0.25,
-            breakdown: analysis.scoreBreakdown?.contentBreakdown || {}
-          },
-          onPage: {
-            score: analysis.onpageScore,
-            weight: 0.25,
-            breakdown: analysis.scoreBreakdown?.onPageBreakdown || {}
-          },
-          ux: {
-            score: analysis.uxScore,
-            weight: 0.2,
-            breakdown: analysis.scoreBreakdown?.uxBreakdown || {}
-          }
-        },
-        coreWebVitals: analysis.performanceMetrics?.coreWebVitals || null,
-        trends: analysis.scoreBreakdown?.trends || null,
-        benchmarks: analysis.scoreBreakdown?.benchmarks || null
-      };
-
-      return res.json({ success: true, data: breakdown });
-
-    } catch (error) {
-      console.error('Error in getScoreBreakdown:', error);
-      return next(error);
-    }
-  }
-
-  // GET /api/enhanced-analysis/:id/recommendations - Prioritized recommendations
-  async getRecommendations(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-    try {
-      const { id: analysisId } = req.params;
-      const userId = req.user?.id;
-      const { priority, category, quickWins } = req.query;
-
-      if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
-      }
-
-      // Build where clause for filtering
-      const where: any = {
-        analysisId,
-        analysis: {
-          crawlSession: {
-            project: { userId }
-          }
-        }
-      };
-
-      if (priority) where.priority = priority;
-      if (category) where.category = category;
-      if (quickWins === 'true') where.quickWin = true;
-
-      const recommendations = await prisma.sEORecommendation.findMany({
-        where,
-        orderBy: [
-          { priority: 'desc' },
-          { quickWin: 'desc' },
-          { businessValue: 'desc' },
-          { createdAt: 'desc' }
-        ],
-        include: {
-          issue: {
-            select: {
-              id: true,
-              title: true,
-              severity: true,
-              category: true
-            }
-          }
-        }
-      });
-
-      // Group recommendations by priority
-      const grouped = {
-        immediate: recommendations.filter(r => r.priority === 'immediate'),
-        high: recommendations.filter(r => r.priority === 'high'),
-        medium: recommendations.filter(r => r.priority === 'medium'),
-        low: recommendations.filter(r => r.priority === 'low'),
-        quickWins: recommendations.filter(r => r.quickWin),
-        byCategory: {
-          technical: recommendations.filter(r => r.category === 'technical'),
-          content: recommendations.filter(r => r.category === 'content'),
-          onpage: recommendations.filter(r => r.category === 'onpage'),
-          ux: recommendations.filter(r => r.category === 'ux')
-        }
-      };
-
-      return res.json({ 
-        success: true, 
-        data: {
-          recommendations,
-          grouped,
-          summary: {
-            total: recommendations.length,
-            immediate: grouped.immediate.length,
-            high: grouped.high.length,
-            medium: grouped.medium.length,
-            low: grouped.low.length,
-            quickWins: grouped.quickWins.length
-          }
-        }
-      });
-
-    } catch (error) {
-      console.error('Error in getRecommendations:', error);
-      return next(error);
-    }
-  }
-
-  // GET /api/enhanced-analysis/:id/performance - Performance metrics and Core Web Vitals
-  async getPerformanceMetrics(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-    try {
-      const { id: analysisId } = req.params;
-      const userId = req.user?.id;
-
-      if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
-      }
-
-      const analysis = await prisma.sEOAnalysis.findFirst({
-        where: {
-          id: analysisId,
-          crawlSession: {
-            project: { userId }
-          }
-        },
-        include: {
-          performanceMetrics: true,
-          crawlSession: {
-            select: { url: true }
-          }
-        }
-      });
-
-      if (!analysis) {
-        return res.status(404).json({ success: false, error: 'Analysis not found' });
-      }
-
-      let detailedMetrics = null;
+      // Check user's subscription limits
+      const analysisCount = await this.getAnalysisCountForUser(userId);
+      const userLimits = this.getUserLimits(project.user.subscriptionTier);
       
-      // If we have performance metrics, enhance them with fresh Core Web Vitals analysis
-      if (analysis.performanceMetrics) {
-        try {
-          // Get fresh Core Web Vitals analysis
-          const coreWebVitalsAnalysis = await this.coreWebVitalsAnalyzer.analyzeWebVitals(
-            analysis.crawlSession.url,
-            {
-              deviceType: 'mobile',
-              includeHistorical: true,
-              projectId: analysis.projectId
-            }
-          );
-
-          detailedMetrics = {
-            stored: {
-              coreWebVitals: analysis.performanceMetrics.coreWebVitals,
-              performanceScore: analysis.performanceMetrics.performanceScore,
-              loadTime: analysis.performanceMetrics.loadTime,
-              pageSize: analysis.performanceMetrics.pageSize,
-              requestCount: analysis.performanceMetrics.requestCount,
-              optimizationOpportunities: analysis.performanceMetrics.optimizationOpportunities
-            },
-            fresh: coreWebVitalsAnalysis,
-            comparison: {
-              hasImproved: false, // You can implement comparison logic here
-              changes: {}
-            }
-          };
-        } catch (error) {
-          console.error('Failed to get fresh Core Web Vitals:', error);
-          detailedMetrics = {
-            stored: {
-              coreWebVitals: analysis.performanceMetrics.coreWebVitals,
-              performanceScore: analysis.performanceMetrics.performanceScore,
-              loadTime: analysis.performanceMetrics.loadTime,
-              pageSize: analysis.performanceMetrics.pageSize,
-              requestCount: analysis.performanceMetrics.requestCount,
-              optimizationOpportunities: analysis.performanceMetrics.optimizationOpportunities
-            },
-            fresh: null,
-            comparison: null
-          };
-        }
+      if (analysisCount >= userLimits.monthlyAnalyses) {
+        res.status(429).json({
+          error: 'Monthly analysis limit exceeded',
+          limit: userLimits.monthlyAnalyses,
+          used: analysisCount,
+        });
+        return;
       }
 
-      return res.json({ 
-        success: true, 
-        data: detailedMetrics
-      });
-
-    } catch (error) {
-      console.error('Error in getPerformanceMetrics:', error);
-      return next(error);
-    }
-  }
-
-  // GET /api/enhanced-analysis/:id/summary - Analysis summary for dashboard
-  async getAnalysisSummary(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-    try {
-      const { id: analysisId } = req.params;
-      const userId = req.user?.id;
-
-      if (!userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
-      }
-
-      const analysis = await prisma.sEOAnalysis.findFirst({
-        where: {
-          id: analysisId,
-          crawlSession: {
-            project: { userId }
-          }
-        },
-        include: {
-          crawlSession: {
-            include: {
-              project: {
-                select: { id: true, name: true, url: true }
-              }
-            }
+      // Quick analysis configuration
+      const analysisData = {
+        projectId,
+        userId: req.user!.id,
+        url: project.url,
+        crawlOptions: {
+          maxPages: 1,
+          crawlDepth: 1,
+          respectRobots: true,
+          crawlDelay: 1000,
+          userAgent: 'SEO-Analyzer-Quick/2.0 (+https://rival-outranker.com/bot)',
+          timeout: timeout || 180000,
+          retryAttempts: 2,
+          viewport: {
+            width: 1200,
+            height: 800,
+            deviceType: 'desktop' as const,
           },
-          issues: {
-            select: {
-              id: true,
-              severity: true,
-              category: true
-            }
+          extractOptions: {
+            screenshots: false, // Disabled for quick analysis
+            performanceMetrics: true,
+            accessibilityCheck: false,
+            structuredData: true,
+            socialMetaTags: true,
+            technicalSEO: true,
+            contentAnalysis: true,
+            linkAnalysis: false,
+            imageAnalysis: false,
+            mobileOptimization: false,
           },
-          recommendations: {
-            select: {
-              id: true,
-              priority: true,
-              quickWin: true
-            }
-          },
-          performanceMetrics: {
-            select: {
-              performanceScore: true,
-              coreWebVitals: true
-            }
-          }
-        }
-      });
-
-      if (!analysis) {
-        return res.status(404).json({ success: false, error: 'Analysis not found' });
-      }
-
-      // Calculate issue breakdown
-      const issueBreakdown = analysis.issues.reduce((acc, issue) => {
-        acc[issue.severity] = (acc[issue.severity] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
-
-      const summary = {
-        id: analysis.id,
-        url: analysis.crawlSession.url,
-        project: analysis.crawlSession.project,
-        overallScore: analysis.overallScore,
-        grade: this.calculateGrade(analysis.overallScore),
-        categoryScores: {
-          technical: analysis.technicalScore,
-          content: analysis.contentScore,
-          onPage: analysis.onpageScore,
-          ux: analysis.uxScore
+          blockResources: ['font', 'media', 'other'],
+          allowedDomains: [new URL(project.url).hostname],
+          excludePatterns: [],
         },
-        issues: {
-          total: analysis.issues.length,
-          critical: issueBreakdown.critical || 0,
-          high: issueBreakdown.high || 0,
-          medium: issueBreakdown.medium || 0,
-          low: issueBreakdown.low || 0
+        queueConfig: {
+          concurrency: 1,
+          priority: priority === 1 ? 'high' as const : 'normal' as const,
         },
-        recommendations: {
-          total: analysis.recommendations.length,
-          quickWins: analysis.recommendations.filter(r => r.quickWin).length,
-          immediate: analysis.recommendations.filter(r => r.priority === 'immediate').length
-        },
-        coreWebVitals: analysis.performanceMetrics?.coreWebVitals || null,
-        performanceScore: analysis.performanceMetrics?.performanceScore || null,
-        lastAnalyzed: analysis.createdAt,
-        status: 'completed'
       };
 
-      return res.json({ success: true, data: summary });
+      // Add job to queue
+      const jobId = await this.queueAdapter.addAnalysisJob(analysisData);
+
+      // Create initial crawl session record
+      await this.prisma.crawlSession.create({
+        data: {
+          id: jobId,
+          projectId,
+          url: project.url,
+          status: 'queued',
+        },
+      });
+
+      // Emit initial progress event
+      this.wsGateway.emitProgress(jobId, {
+        percentage: 0,
+        stage: 'queued',
+        details: 'Analysis queued for processing',
+      });
+
+      logger.info(`Started analysis job ${jobId} for project ${projectId}`);
+
+      res.status(202).json({
+        jobId,
+        status: 'queued',
+        projectId,
+        estimatedDuration: Math.round(timeout / 1000), // seconds
+        position: await this.getQueuePosition(jobId),
+      });
 
     } catch (error) {
-      console.error('Error in getAnalysisSummary:', error);
-      return next(error);
+      logger.error('Error starting analysis:', error);
+      
+      if (error instanceof z.ZodError) {
+        res.status(400).json({
+          error: 'Invalid request data',
+          details: error.errors,
+        });
+        return;
+      }
+
+      res.status(500).json({
+        error: 'Failed to start analysis',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
     }
   }
 
-  private calculateGrade(score: number | null): string {
-    if (!score) return 'F';
-    if (score >= 90) return 'A';
-    if (score >= 80) return 'B';
-    if (score >= 70) return 'C';
-    if (score >= 60) return 'D';
-    return 'F';
-  }
-}
+  /**
+   * Start bulk analysis for multiple projects
+   */
+  async startBulkAnalysis(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
 
-export const enhancedAnalysisController = new EnhancedAnalysisController(); 
+      const validatedData = BulkAnalysisSchema.parse(req.body);
+      const { projectIds, priority, timeout, extractOptions } = validatedData;
+
+      // Verify all projects belong to user
+      const projects = await this.prisma.project.findMany({
+        where: { id: { in: projectIds }, userId },
+        include: { user: true },
+      });
+
+      if (projects.length !== projectIds.length) {
+        res.status(404).json({ error: 'One or more projects not found' });
+        return;
+      }
+
+      // Check subscription limits
+      const analysisCount = await this.getAnalysisCountForUser(userId);
+      const userLimits = this.getUserLimits(projects[0].user.subscriptionTier);
+      
+      if (analysisCount + projectIds.length > userLimits.monthlyAnalyses) {
+        res.status(429).json({
+          error: 'Bulk analysis would exceed monthly limit',
+          limit: userLimits.monthlyAnalyses,
+          used: analysisCount,
+          requested: projectIds.length,
+        });
+        return;
+      }
+
+      const results = [];
+
+      for (const project of projects) {
+        try {
+          const analysisConfig = {
+            projectId: project.id,
+            userId,
+            url: project.url,
+            crawlOptions: {
+              maxPages: 1,
+              crawlDepth: 1,
+              respectRobots: true,
+              crawlDelay: 1000,
+              userAgent: 'SEO-Analyzer-Enhanced/2.0 (+https://rival-outranker.com/bot)',
+              timeout: timeout || 300000,
+              retryAttempts: 2,
+              viewport: {
+                width: 1200,
+                height: 800,
+                deviceType: 'desktop' as const,
+              },
+              extractOptions: {
+                screenshots: extractOptions?.screenshots ?? true,
+                performanceMetrics: extractOptions?.performanceMetrics ?? true,
+                accessibilityCheck: true,
+                structuredData: true,
+                socialMetaTags: true,
+                technicalSEO: true,
+                contentAnalysis: true,
+                linkAnalysis: true,
+                imageAnalysis: true,
+                mobileOptimization: true,
+              },
+              blockResources: ['font', 'media', 'other'],
+              allowedDomains: [new URL(project.url).hostname],
+              excludePatterns: [],
+            },
+            queueConfig: {
+              concurrency: 1,
+              priority: priority === 1 ? 'high' as const : 'normal' as const,
+            },
+          };
+
+          const jobId = await this.queueAdapter.addAnalysisJob(analysisConfig);
+
+          await this.prisma.crawlSession.create({
+            data: {
+              id: jobId,
+              projectId: project.id,
+              url: project.url,
+              status: 'queued',
+            },
+          });
+
+          results.push({
+            projectId: project.id,
+            jobId,
+            status: 'queued',
+          });
+
+        } catch (error) {
+          logger.error(`Error queuing analysis for project ${project.id}:`, error);
+          results.push({
+            projectId: project.id,
+            status: 'failed',
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
+        }
+      }
+
+      res.status(202).json({
+        bulkJobId: `bulk-${Date.now()}`,
+        results,
+        queued: results.filter(r => r.status === 'queued').length,
+        failed: results.filter(r => r.status === 'failed').length,
+      });
+
+    } catch (error) {
+      logger.error('Error starting bulk analysis:', error);
+      
+      if (error instanceof z.ZodError) {
+        res.status(400).json({
+          error: 'Invalid request data',
+          details: error.errors,
+        });
+        return;
+      }
+
+      res.status(500).json({
+        error: 'Failed to start bulk analysis',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * Get analysis job status and progress
+   */
+  async getAnalysisStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const { jobId } = req.params;
+      const userId = (req as any).user?.id;
+
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      // Verify job belongs to user
+      const crawlSession = await this.prisma.crawlSession.findFirst({
+        where: { id: jobId },
+        include: { project: true },
+      });
+
+      if (!crawlSession || crawlSession.project.userId !== userId) {
+        res.status(404).json({ error: 'Analysis not found' });
+        return;
+      }
+
+      // Get job status from queue
+      const jobStatus = await this.queueAdapter.getJobStatus(jobId);
+
+      if (!jobStatus) {
+        res.status(404).json({ error: 'Job not found in queue' });
+        return;
+      }
+
+      // Calculate estimated time remaining
+      let estimatedTimeRemaining;
+      if (jobStatus.status === 'active' && jobStatus.progress) {
+        const elapsed = Date.now() - (jobStatus.startedAt?.getTime() || Date.now());
+        const progressPercent = jobStatus.progress.percentage || 1;
+        const totalEstimated = (elapsed / progressPercent) * 100;
+        estimatedTimeRemaining = Math.max(0, totalEstimated - elapsed);
+      }
+
+      res.json({
+        jobId,
+        status: jobStatus.status,
+        progress: jobStatus.progress,
+        result: jobStatus.result,
+        error: jobStatus.error,
+        createdAt: jobStatus.createdAt,
+        startedAt: jobStatus.startedAt,
+        completedAt: jobStatus.completedAt,
+        attemptsMade: jobStatus.attemptsMade,
+        estimatedTimeRemaining: estimatedTimeRemaining ? Math.round(estimatedTimeRemaining / 1000) : null,
+        projectId: crawlSession.projectId,
+        url: crawlSession.url,
+      });
+
+    } catch (error) {
+      logger.error('Error getting analysis status:', error);
+      res.status(500).json({
+        error: 'Failed to get analysis status',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * Cancel an analysis job
+   */
+  async cancelAnalysis(req: Request, res: Response): Promise<void> {
+    try {
+      const { jobId } = req.params;
+      const userId = (req as any).user?.id;
+
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      // Verify job belongs to user
+      const crawlSession = await this.prisma.crawlSession.findFirst({
+        where: { id: jobId },
+        include: { project: true },
+      });
+
+      if (!crawlSession || crawlSession.project.userId !== userId) {
+        res.status(404).json({ error: 'Analysis not found' });
+        return;
+      }
+
+      // Cancel job in queue
+      const cancelled = await this.queueAdapter.cancelJob(jobId);
+
+      if (cancelled) {
+        // Update crawl session status
+        await this.prisma.crawlSession.update({
+          where: { id: jobId },
+          data: {
+            status: 'cancelled',
+            completedAt: new Date(),
+            errorMessage: 'Cancelled by user',
+          },
+        });
+
+        res.json({ success: true, message: 'Analysis cancelled successfully' });
+      } else {
+        res.status(400).json({ error: 'Unable to cancel analysis' });
+      }
+
+    } catch (error) {
+      logger.error('Error cancelling analysis:', error);
+      res.status(500).json({
+        error: 'Failed to cancel analysis',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * Retry a failed analysis
+   */
+  async retryAnalysis(req: Request, res: Response): Promise<void> {
+    try {
+      const { jobId } = req.params;
+      const userId = (req as any).user?.id;
+
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      // Verify job belongs to user and is failed
+      const crawlSession = await this.prisma.crawlSession.findFirst({
+        where: { id: jobId, status: 'failed' },
+        include: { project: true },
+      });
+
+      if (!crawlSession || crawlSession.project.userId !== userId) {
+        res.status(404).json({ error: 'Failed analysis not found' });
+        return;
+      }
+
+      // Retry job in queue
+      const retried = await this.queueAdapter.retryJob(jobId);
+
+      if (retried) {
+        // Update crawl session status
+        await this.prisma.crawlSession.update({
+          where: { id: jobId },
+          data: {
+            status: 'queued',
+            errorMessage: null,
+            completedAt: null,
+          },
+        });
+
+        res.json({ success: true, message: 'Analysis retry queued successfully' });
+      } else {
+        res.status(400).json({ error: 'Unable to retry analysis' });
+      }
+
+    } catch (error) {
+      logger.error('Error retrying analysis:', error);
+      res.status(500).json({
+        error: 'Failed to retry analysis',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * Get queue metrics and system health
+   */
+  async getQueueMetrics(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      const [queueMetrics, workerMetrics, healthCheck] = await Promise.all([
+        this.queueAdapter.getQueueMetrics(),
+        this.worker.getWorkerMetrics(),
+        this.queueAdapter.healthCheck(),
+      ]);
+
+      res.json({
+        queue: queueMetrics,
+        worker: workerMetrics,
+        health: healthCheck,
+        timestamp: new Date(),
+      });
+
+    } catch (error) {
+      logger.error('Error getting queue metrics:', error);
+      res.status(500).json({
+        error: 'Failed to get queue metrics',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  /**
+   * Get user's recent analyses
+   */
+  async getUserAnalyses(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).user?.id;
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      const { limit = 20, offset = 0, status } = req.query;
+
+      const where: any = {
+        project: { userId },
+      };
+
+      if (status && typeof status === 'string') {
+        where.status = status;
+      }
+
+      const analyses = await this.prisma.crawlSession.findMany({
+        where,
+        include: {
+          project: {
+            select: { id: true, name: true, url: true },
+          },
+          analysis: {
+            select: { overallScore: true },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: Number(limit),
+        skip: Number(offset),
+      });
+
+      const total = await this.prisma.crawlSession.count({ where });
+
+      res.json({
+        analyses: analyses.map(analysis => ({
+          id: analysis.id,
+          projectId: analysis.projectId,
+          projectName: analysis.project.name,
+          url: analysis.url,
+          status: analysis.status,
+          overallScore: analysis.analysis?.overallScore,
+          createdAt: analysis.createdAt,
+          startedAt: analysis.startedAt,
+          completedAt: analysis.completedAt,
+          errorMessage: analysis.errorMessage,
+        })),
+        pagination: {
+          total,
+          limit: Number(limit),
+          offset: Number(offset),
+          hasNext: Number(offset) + Number(limit) < total,
+        },
+      });
+
+    } catch (error) {
+      logger.error('Error getting user analyses:', error);
+      res.status(500).json({
+        error: 'Failed to get analyses',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  // Helper methods
+
+  private async getAnalysisCountForUser(userId: string): Promise<number> {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    return this.prisma.crawlSession.count({
+      where: {
+        project: { userId },
+        createdAt: { gte: startOfMonth },
+        status: { in: ['completed', 'running', 'queued'] },
+      },
+    });
+  }
+
+  private getUserLimits(subscriptionTier: string) {
+    const limits = {
+      free: { monthlyAnalyses: 10, concurrentAnalyses: 1 },
+      basic: { monthlyAnalyses: 100, concurrentAnalyses: 3 },
+      pro: { monthlyAnalyses: 500, concurrentAnalyses: 5 },
+      enterprise: { monthlyAnalyses: 2000, concurrentAnalyses: 10 },
+    };
+
+    return limits[subscriptionTier as keyof typeof limits] || limits.free;
+  }
+
+  private async getQueuePosition(jobId: string): Promise<number> {
+    try {
+      const metrics = await this.queueAdapter.getQueueMetrics();
+      return metrics.waiting + metrics.active;
+    } catch {
+      return 0;
+    }
+  }
+
+  async shutdown(): Promise<void> {
+    try {
+      await this.worker.stop();
+      await this.queueAdapter.close();
+      await this.prisma.$disconnect();
+      logger.info('Enhanced analysis controller shutdown complete');
+    } catch (error) {
+      logger.error('Error during shutdown:', error);
+    }
+  }
+} 

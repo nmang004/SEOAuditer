@@ -1,21 +1,22 @@
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '..';
+import { PrismaClient } from '@prisma/client';
 import { 
   NotFoundError, 
   BadRequestError
 } from '../middleware/error.middleware';
-import { logger } from '../utils/logger';
 import { cache } from '../utils/cache';
-import { PrismaClient } from '@prisma/client';
-import { AuthenticatedRequest } from '../types/auth';
-import { analysisCacheService } from '../services/AnalysisCacheService';
+import { Server } from 'socket.io';
+
+// Create a separate Prisma instance to avoid circular dependency
+const prisma = new PrismaClient();
 
 // Import our enhanced analysis system
-import { EnhancedPageAnalyzer, EnhancedAnalysisResult } from '../seo-crawler/engine/AnalysisModules/EnhancedPageAnalyzer';
 import { PageAnalyzer } from '../seo-crawler/engine/PageAnalyzer';
+import { EnhancedPageAnalyzer } from '../seo-crawler/engine/AnalysisModules/EnhancedPageAnalyzer';
+import { EnhancedContentAnalyzer } from '../seo-crawler/engine/AnalysisModules/EnhancedContentAnalyzer';
+import { EnhancedIssueDetection } from '../seo-crawler/engine/AnalysisModules/EnhancedIssueDetection';
+import { EnhancedRecommendationEngine } from '../seo-crawler/engine/AnalysisModules/EnhancedRecommendationEngine';
 import { CrawlerConfig } from '../seo-crawler/types/CrawlerConfig';
-import { Server } from 'socket.io';
-import { createHash } from 'crypto';
 
 // Analysis Controller
 // Handles starting, retrieving, listing, and cancelling analyses, as well as issue management
@@ -27,6 +28,53 @@ import { createHash } from 'crypto';
 // TODO: Implement actual SEO analysis logic in runAnalysisInBackground
 
 export class AnalysisController {
+  private enhancedAnalyzer: PageAnalyzer;
+  private standardAnalyzer: PageAnalyzer;
+  private pageAnalyzer: EnhancedPageAnalyzer;
+  private contentAnalyzer: EnhancedContentAnalyzer;
+  private issueDetection: EnhancedIssueDetection;
+  private recommendationEngine: EnhancedRecommendationEngine;
+
+  constructor() {
+    const config: CrawlerConfig = {
+      url: '',
+      projectId: '',
+      userId: '',
+      crawlOptions: {
+        maxPages: 1,
+        crawlDepth: 1,
+        respectRobots: true,
+        crawlDelay: 0,
+        userAgent: 'SEO-Analyzer/2.0',
+        timeout: 30000,
+        retryAttempts: 3,
+        viewport: { width: 1200, height: 800, deviceType: 'desktop' as const },
+        extractOptions: {
+          screenshots: false,
+          performanceMetrics: false,
+          accessibilityCheck: false,
+          structuredData: true,
+          socialMetaTags: true,
+          technicalSEO: true,
+          contentAnalysis: true,
+          linkAnalysis: false,
+          imageAnalysis: false,
+          mobileOptimization: false
+        },
+        blockResources: [],
+        allowedDomains: [],
+        excludePatterns: []
+      }
+    };
+
+    this.enhancedAnalyzer = new PageAnalyzer(config);
+    this.standardAnalyzer = new PageAnalyzer(config);
+    this.pageAnalyzer = new EnhancedPageAnalyzer();
+    this.contentAnalyzer = new EnhancedContentAnalyzer();
+    this.issueDetection = new EnhancedIssueDetection();
+    this.recommendationEngine = new EnhancedRecommendationEngine();
+  }
+
   // Start a new analysis for a project
   async startAnalysis(req: Request, res: Response, next: NextFunction) {
     try {
@@ -443,7 +491,12 @@ export class AnalysisController {
       let analysisResult;
       if (useEnhanced) {
         console.log('[Analysis Controller] Running enhanced analysis...');
-        analysisResult = await this.enhancedAnalyzer.analyze(pageContext);
+        // Use enhanced analyzer with the configured pageContext
+        analysisResult = await this.enhancedAnalyzer.analyzePage(project.url);
+        
+        // Then enhance with pageAnalyzer
+        const enhancedResults = await this.pageAnalyzer.analyze(pageContext);
+        analysisResult = { ...analysisResult, ...enhancedResults };
       } else {
         console.log('[Analysis Controller] Running standard analysis...');
         analysisResult = await this.standardAnalyzer.analyzePage(project.url);
@@ -567,13 +620,143 @@ export class AnalysisController {
     }
   }
 
-  private calculateVolatility(values: number[]): number {
-    if (values.length < 2) return 0;
-    
-    const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
-    
-    return Math.round(Math.sqrt(variance));
+  // Add missing private methods
+  private async storeAnalysisResults(
+    crawlSessionId: string, 
+    projectId: string, 
+    analysisResult: any, 
+    useEnhanced: boolean
+  ): Promise<void> {
+    try {
+      // Enhanced analysis using content analyzer and recommendation engine
+      let enrichedAnalysis = analysisResult;
+      
+      if (useEnhanced) {
+        // Use the content analyzer for additional insights
+        const contentAnalysis = await this.contentAnalyzer.analyze({ pageAnalysis: analysisResult });
+        
+        // Use the recommendation engine for enhanced recommendations
+        const recommendationResults = await this.recommendationEngine.generateRecommendations({
+          pageAnalysis: analysisResult,
+          issues: analysisResult.enhancedIssues?.issues || analysisResult.issues || []
+        });
+        
+        // Use issue detection for categorized issues
+        const issueResults = await this.issueDetection.analyze({ pageAnalysis: analysisResult });
+        
+        enrichedAnalysis = {
+          ...analysisResult,
+          enhancedContent: contentAnalysis.enhancedContent,
+          enhancedRecommendations: recommendationResults.enhancedRecommendations,
+          categorizedIssues: issueResults.categorizedIssues
+        };
+      }
+
+      // Create analysis record
+      const analysis = await prisma.sEOAnalysis.create({
+        data: {
+          crawlSessionId,
+          projectId,
+          overallScore: enrichedAnalysis.score || 0,
+          technicalScore: enrichedAnalysis.enhancedScoring?.breakdown?.technical || enrichedAnalysis.technicalScore || 0,
+          contentScore: enrichedAnalysis.enhancedScoring?.breakdown?.content || enrichedAnalysis.contentScore || 0,
+          onpageScore: enrichedAnalysis.enhancedScoring?.breakdown?.onPage || enrichedAnalysis.onpageScore || 0,
+          uxScore: enrichedAnalysis.enhancedScoring?.breakdown?.userExperience || enrichedAnalysis.uxScore || 0,
+        }
+      });
+
+      // Store issues if any
+      if (enrichedAnalysis.enhancedIssues?.issues || enrichedAnalysis.issues) {
+        const issues = enrichedAnalysis.enhancedIssues?.issues || enrichedAnalysis.issues || [];
+        if (issues.length > 0) {
+          await prisma.sEOIssue.createMany({
+            data: issues.map((issue: any) => ({
+              analysisId: analysis.id,
+              type: issue.type || 'general',
+              severity: issue.severity || 'medium',
+              title: issue.title || 'Untitled Issue',
+              description: issue.description || '',
+              recommendation: issue.recommendation || '',
+              affectedElements: JSON.stringify(issue.affectedElements || []),
+              status: 'open'
+            }))
+          });
+        }
+      }
+
+      console.log(`[Analysis Controller] Stored analysis results for session ${crawlSessionId}`);
+    } catch (error) {
+      console.error(`[Analysis Controller] Failed to store analysis results:`, error);
+      throw error;
+    }
+  }
+
+  private async updateProjectStatistics(projectId: string, analysisResult: any): Promise<void> {
+    try {
+      // Get current project data
+      const project = await prisma.project.findUnique({
+        where: { id: projectId },
+        include: {
+          crawlSessions: {
+            include: { analysis: true },
+            orderBy: { startedAt: 'desc' },
+            take: 10 // Last 10 analyses for trend calculation
+          }
+        }
+      });
+
+      if (!project) return;
+
+      // Calculate statistics
+      const recentAnalyses = project.crawlSessions.filter(s => s.analysis);
+      const currentScore = analysisResult.score || 0;
+      const previousScore = recentAnalyses.length > 1 ? recentAnalyses[1].analysis?.overallScore || 0 : 0;
+      const scoreChange = currentScore - previousScore;
+
+      // Update project with latest statistics
+      await prisma.project.update({
+        where: { id: projectId },
+        data: {
+          lastScanDate: new Date(),
+          // Add other project statistics if needed
+        }
+      });
+
+      console.log(`[Analysis Controller] Updated project statistics for ${projectId}, score change: ${scoreChange}`);
+    } catch (error) {
+      console.error(`[Analysis Controller] Failed to update project statistics:`, error);
+      // Don't throw error, this is not critical
+    }
+  }
+
+  private async createTrendRecord(projectId: string, analysisResult: any): Promise<void> {
+    try {
+      // Create a trend snapshot record
+      await prisma.projectTrends.create({
+        data: {
+          projectId,
+          date: new Date(),
+          overallScore: analysisResult.score || 0,
+          technicalScore: analysisResult.enhancedScoring?.breakdown?.technical || analysisResult.technicalScore || 0,
+          contentScore: analysisResult.enhancedScoring?.breakdown?.content || analysisResult.contentScore || 0,
+          onPageScore: analysisResult.enhancedScoring?.breakdown?.onPage || analysisResult.onpageScore || 0,
+          uxScore: analysisResult.enhancedScoring?.breakdown?.userExperience || analysisResult.uxScore || 0,
+          totalIssues: analysisResult.enhancedIssues?.issues?.length || analysisResult.issues?.length || 0,
+          criticalIssues: analysisResult.enhancedIssues?.summary?.criticalCount || 0,
+          highIssues: analysisResult.enhancedIssues?.summary?.highCount || 0,
+          mediumIssues: analysisResult.enhancedIssues?.summary?.mediumCount || 0,
+          lowIssues: analysisResult.enhancedIssues?.summary?.lowCount || 0,
+          performanceScore: analysisResult.coreWebVitals?.performanceScore || null,
+          accessibilityScore: null,
+          crawlabilityScore: null,
+        }
+      });
+
+      console.log(`[Analysis Controller] Created trend record for project ${projectId}`);
+    } catch (error) {
+      console.error(`[Analysis Controller] Failed to create trend record:`, error);
+      // Don't throw error, this is not critical
+    }
   }
 }
 

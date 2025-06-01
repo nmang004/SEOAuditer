@@ -5,14 +5,15 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://backend:8080';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  context: { params: Promise<{ projectId: string }> }
 ) {
   try {
+    const { projectId } = await context.params;
     const authHeader = request.headers.get('authorization');
     const url = new URL(request.url);
     const searchParams = url.searchParams;
     
-    const backendUrl = new URL(`/api/projects/${params.projectId}/analyses`, BACKEND_URL);
+    const backendUrl = new URL(`/api/projects/${projectId}/analyses`, BACKEND_URL);
     searchParams.forEach((value, key) => {
       backendUrl.searchParams.append(key, value);
     });
@@ -29,7 +30,7 @@ export async function GET(
     
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error(`GET /api/projects/${params.projectId}/analyses error:`, error);
+    console.error(`GET /api/projects/${projectId}/analyses error:`, error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }

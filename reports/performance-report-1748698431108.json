@@ -1,0 +1,161 @@
+{
+  "timestamp": "2025-05-31T13:33:51.107Z",
+  "summary": {
+    "averagePerformanceScore": 50,
+    "canHandle100Users": true,
+    "criticalIssues": 0,
+    "highPriorityIssues": 2
+  },
+  "lighthouse": {
+    "/": {
+      "performanceScore": 100,
+      "accessibilityScore": 96,
+      "bestPracticesScore": 100,
+      "seoScore": 100,
+      "metrics": {
+        "firstContentfulPaint": 399.13009999999997,
+        "largestContentfulPaint": 717.3903,
+        "firstInputDelay": 29,
+        "cumulativeLayoutShift": 0,
+        "speedIndex": 1578.6731402159285,
+        "timeToInteractive": 717.3903
+      },
+      "opportunities": {
+        "unusedCSS": 10878,
+        "unusedJS": 0,
+        "nextGenFormats": 0,
+        "textCompression": 0
+      }
+    },
+    "/dashboard": {
+      "performanceScore": 100,
+      "accessibilityScore": 92,
+      "bestPracticesScore": 100,
+      "seoScore": 100,
+      "metrics": {
+        "firstContentfulPaint": 254.1551,
+        "largestContentfulPaint": 653.3101999999999,
+        "firstInputDelay": 16,
+        "cumulativeLayoutShift": 0,
+        "speedIndex": 681.5603090764389,
+        "timeToInteractive": 654.1101999999998
+      },
+      "opportunities": {
+        "unusedCSS": 11547,
+        "unusedJS": 0,
+        "nextGenFormats": 0,
+        "textCompression": 0
+      }
+    },
+    "/projects": {
+      "performanceScore": 0,
+      "accessibilityScore": 0,
+      "bestPracticesScore": 0,
+      "seoScore": 0,
+      "metrics": {},
+      "opportunities": {
+        "unusedCSS": 0,
+        "unusedJS": 0,
+        "nextGenFormats": 0,
+        "textCompression": 0
+      }
+    },
+    "/reports-demo": {
+      "performanceScore": 0,
+      "accessibilityScore": 0,
+      "bestPracticesScore": 0,
+      "seoScore": 0,
+      "metrics": {},
+      "opportunities": {
+        "unusedCSS": 0,
+        "unusedJS": 0,
+        "nextGenFormats": 0,
+        "textCompression": 0
+      }
+    }
+  },
+  "loadTest": {
+    "Light Load": {
+      "requests": {
+        "total": 124735,
+        "average": 4158.61,
+        "min": 2121,
+        "max": 4900
+      },
+      "latency": {
+        "average": 1.8,
+        "min": 1,
+        "max": 66,
+        "p99": 7
+      },
+      "throughput": {
+        "average": 35592328.54,
+        "min": 18155760,
+        "max": 41944000
+      },
+      "errors": 0,
+      "timeouts": 0,
+      "duration": 30.13
+    },
+    "Medium Load": {
+      "requests": {
+        "total": 125871,
+        "average": 4196.37,
+        "min": 2353,
+        "max": 4798
+      },
+      "latency": {
+        "average": 11.42,
+        "min": 6,
+        "max": 110,
+        "p99": 32
+      },
+      "throughput": {
+        "average": 35915912.54,
+        "min": 20141680,
+        "max": 41070880
+      },
+      "errors": 0,
+      "timeouts": 0,
+      "duration": 30.05
+    },
+    "Heavy Load": {
+      "requests": {
+        "total": 126470,
+        "average": 4216.14,
+        "min": 3525,
+        "max": 4683
+      },
+      "latency": {
+        "average": 23.23,
+        "min": 11,
+        "max": 105,
+        "p99": 49
+      },
+      "throughput": {
+        "average": 36085486.94,
+        "min": 30174000,
+        "max": 40086480
+      },
+      "errors": 0,
+      "timeouts": 0,
+      "duration": 30.01
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "high",
+      "category": "performance",
+      "page": "/projects",
+      "issue": "Performance score is 0.0/100",
+      "suggestion": "Optimize Core Web Vitals metrics"
+    },
+    {
+      "priority": "high",
+      "category": "performance",
+      "page": "/reports-demo",
+      "issue": "Performance score is 0.0/100",
+      "suggestion": "Optimize Core Web Vitals metrics"
+    }
+  ]
+}

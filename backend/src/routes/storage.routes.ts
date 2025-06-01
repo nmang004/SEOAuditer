@@ -2,7 +2,10 @@ import { Router } from 'express';
 import { storageController } from '../controllers/storage.controller';
 import { authenticate } from '../middleware/auth.middleware';
 // import { validate } from '../middleware/validation.middleware';
-import { rateLimit } from '../middleware/rate-limit.middleware';
+import { generalRateLimit } from '../middleware/rate-limit.middleware';
+import fs from 'fs';
+import path from 'path';
+import mime from 'mime-types';
 
 const router = Router();
 
@@ -12,7 +15,7 @@ router.use(authenticate);
 // Upload a file
 router.post(
   '/upload',
-  rateLimit.api,
+  generalRateLimit,
   storageController.uploadFile('file', {
     allowedMimeTypes: [
       'image/*',
@@ -32,7 +35,7 @@ router.post(
 // Generate pre-signed URL for direct upload
 router.post(
   '/presigned-url',
-  rateLimit.api,
+  generalRateLimit,
   // validate('generatePresignedUrl'),
   storageController.generatePresignedUrl
 );
@@ -40,35 +43,35 @@ router.post(
 // Download a file
 router.get(
   '/download/:filePath(*)',
-  rateLimit.api,
+  generalRateLimit,
   storageController.downloadFile
 );
 
 // Delete a file
 router.delete(
   '/:filePath(*)',
-  rateLimit.api,
+  generalRateLimit,
   storageController.deleteFile
 );
 
 // List files in a directory (admin only)
 router.get(
   '/list',
-  rateLimit.api,
+  generalRateLimit,
   storageController.listFiles
 );
 
 // Clean up temporary files (admin only)
 router.post(
   '/cleanup',
-  rateLimit.api,
+  generalRateLimit,
   storageController.cleanupTempFiles
 );
 
 // Direct file access (for public files)
 router.get(
   '/public/:filePath(*)',
-  rateLimit.api,
+  generalRateLimit,
   (req, res, next) => {
     // This is a simplified version of downloadFile without authentication
     const { filePath } = req.params;
@@ -104,9 +107,4 @@ router.get(
   }
 );
 
-// Add missing imports
-import fs from 'fs';
-import path from 'path';
-import mime from 'mime-types';
-
-export { router as storageRouter };
+export default router;

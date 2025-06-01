@@ -10,7 +10,8 @@ import handlebars from 'handlebars';
 interface SendEmailOptions {
   to: string;
   subject?: string;
-  template: string;
+  template?: string;
+  html?: string;
   context?: Record<string, any>;
   attachments?: Array<{
     filename: string;
@@ -186,31 +187,40 @@ class EmailService {
     }
 
     try {
-      const { to, subject, template, context = {}, attachments = [] } = options;
+      const { to, subject, template, html, context = {}, attachments = [] } = options;
 
-      // Get template
-      const templateFn = this.templates[template];
-      if (!templateFn) {
-        throw new Error(`Email template '${template}' not found`);
+      let htmlContent: string;
+
+      if (html) {
+        // Use provided HTML directly
+        htmlContent = html;
+      } else if (template) {
+        // Get template
+        const templateFn = this.templates[template];
+        if (!templateFn) {
+          throw new Error(`Email template '${template}' not found`);
+        }
+
+        // Render template with context
+        const templateContext = {
+          ...context,
+          appName: config.appName,
+          appUrl: config.appUrl,
+          currentYear: new Date().getFullYear(),
+        };
+
+        htmlContent = templateFn(templateContext);
+      } else {
+        throw new Error('Either template or html must be provided');
       }
-
-      // Render template with context
-      const templateContext = {
-        ...context,
-        appName: config.appName,
-        appUrl: config.appUrl,
-        currentYear: new Date().getFullYear(),
-      };
-
-      const html = templateFn(templateContext);
 
       // Create email options
       const mailOptions = {
         from: `"${config.email.fromName}" <${config.email.fromEmail}>`,
         to,
         subject: subject || 'No Subject',
-        html,
-        text: html.replace(/<[^>]*>?/gm, ''), // Convert HTML to plain text
+        html: htmlContent,
+        text: htmlContent.replace(/<[^>]*>?/gm, ''), // Convert HTML to plain text
         attachments,
       };
 

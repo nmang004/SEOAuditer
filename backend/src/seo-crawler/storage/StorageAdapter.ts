@@ -1,12 +1,14 @@
 import fs from 'fs';
 import path from 'path';
-import { prisma } from '@/index';
+import { databaseManager } from '../../config/database';
 
 export class StorageAdapter {
   async saveResult(jobId: string, result: any) {
     // Save crawl result to DB using Prisma models
     // jobId = CrawlSession.id
     const { projectId, userId: _userId, startedAt, completedAt, pages, issues, recommendations: _recommendations, score } = result;
+    const prisma = databaseManager.getPrisma();
+    
     // Upsert CrawlSession
     await prisma.crawlSession.upsert({
       where: { id: jobId },
@@ -72,6 +74,7 @@ export class StorageAdapter {
 
   async getResult(jobId: string): Promise<any> {
     // Retrieve crawl result from DB using Prisma models
+    const prisma = databaseManager.getPrisma();
     const crawlSession = await prisma.crawlSession.findUnique({
       where: { id: jobId },
       include: {

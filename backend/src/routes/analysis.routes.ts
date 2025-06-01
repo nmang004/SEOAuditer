@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import express from 'express';
 import { analysisController } from '../controllers/analysis.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { validate } from '../middleware/validation.middleware';
-import { rateLimit } from '../middleware/rate-limit.middleware';
+// import rateLimiters, { generalRateLimit } from '../middleware/rate-limit.middleware';
 
-const router = Router();
+const router = express.Router();
 
 // Apply authentication middleware to all routes
 router.use(authenticate);
@@ -12,7 +12,7 @@ router.use(authenticate);
 // Start a new analysis for a project
 router.post(
   '/',
-  rateLimit.api,
+  // generalRateLimit,
   validate('createAnalysis'),
   analysisController.startAnalysis
 );
@@ -20,7 +20,7 @@ router.post(
 // Get all analyses for a project
 router.get(
   '/',
-  rateLimit.api,
+  // generalRateLimit,
   validate('getProjectAnalyses'),
   analysisController.getProjectAnalyses
 );
@@ -28,7 +28,7 @@ router.get(
 // Get a specific analysis by ID
 router.get(
   '/:analysisId',
-  rateLimit.api,
+  // generalRateLimit,
   validate('getAnalysis'),
   analysisController.getAnalysis
 );
@@ -36,7 +36,7 @@ router.get(
 // Cancel an in-progress analysis
 router.post(
   '/:analysisId/cancel',
-  rateLimit.api,
+  // generalRateLimit,
   validate('cancelAnalysis'),
   analysisController.cancelAnalysis
 );
@@ -44,7 +44,7 @@ router.post(
 // Get issues for a specific analysis
 router.get(
   '/:analysisId/issues',
-  rateLimit.api,
+  // generalRateLimit,
   validate('getAnalysisIssues'),
   analysisController.getAnalysisIssues
 );
@@ -52,7 +52,7 @@ router.get(
 // Update issue status
 router.patch(
   '/issues/:issueId',
-  rateLimit.api,
+  // generalRateLimit,
   validate('updateIssueStatus'),
   analysisController.updateIssueStatus
 );
@@ -60,7 +60,7 @@ router.patch(
 // Get trend data for a project
 router.get(
   '/trends/:projectId',
-  rateLimit.api,
+  // generalRateLimit,
   analysisController.getProjectTrends
 );
 
@@ -105,4 +105,4 @@ router.get(
 //   });
 // });
 
-export { router as analysisRouter };
+export default router;

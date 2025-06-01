@@ -1,0 +1,30 @@
+<svg width="828" height="1792" viewBox="0 0 828 1792" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="828" height="1792" fill="url(#bgGrad)"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="828" height="179.20000000000002" fill="#0ea5e9"/>
+  <text x="20" y="107.52" fill="white" font-family="Arial, sans-serif" font-size="53.76" font-weight="bold">Rival Outranker</text>
+  
+  <!-- Content area -->
+  <rect x="41.400000000000006" y="268.8" width="745.2" height="358.40000000000003" fill="#1e293b" rx="8"/>
+  <text x="82.80000000000001" y="394.24" fill="#0ea5e9" font-family="Arial, sans-serif" font-size="35.84" font-weight="bold">SEO Analysis Dashboard</text>
+  <text x="82.80000000000001" y="483.84000000000003" fill="#94a3b8" font-family="Arial, sans-serif" font-size="26.88">Comprehensive SEO analysis and competitor insights</text>
+  
+  <!-- Stats cards -->
+  <rect x="41.400000000000006" y="716.8000000000001" width="331.20000000000005" height="268.8" fill="#1e293b" rx="8"/>
+  <text x="207" y="806.4" text-anchor="middle" fill="#10b981" font-family="Arial, sans-serif" font-size="53.76" font-weight="bold">85</text>
+  <text x="207" y="896" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="26.88">SEO Score</text>
+  
+  <rect x="455.40000000000003" y="716.8000000000001" width="331.20000000000005" height="268.8" fill="#1e293b" rx="8"/>
+  <text x="621" y="806.4" text-anchor="middle" fill="#f59e0b" font-family="Arial, sans-serif" font-size="53.76" font-weight="bold">12</text>
+  <text x="621" y="896" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="26.88">Issues Found</text>
+  
+  <!-- Footer note -->
+  <text x="414" y="1612.8" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="35.84">Apple Splash Screen</text>
+</svg>

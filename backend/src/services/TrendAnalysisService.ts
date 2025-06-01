@@ -136,7 +136,7 @@ export class TrendAnalysisService {
           overallScore: analysis.overallScore || 0,
           technicalScore: analysis.technicalScore || 0,
           contentScore: analysis.contentScore || 0,
-          onPageScore: analysis.onPageScore || 0,
+          onPageScore: analysis.onpageScore || 0,
           uxScore: analysis.uxScore || 0,
           performanceScore: analysis.performanceMetrics?.performanceScore,
           coreWebVitals: coreWebVitals ? {
@@ -151,8 +151,6 @@ export class TrendAnalysisService {
 
       // Add trend snapshot data
       for (const snapshot of trendSnapshots) {
-        const coreWebVitals = snapshot.coreWebVitals as any;
-        
         dataPoints.push({
           date: snapshot.date,
           overallScore: snapshot.overallScore,
@@ -161,13 +159,7 @@ export class TrendAnalysisService {
           onPageScore: snapshot.onPageScore,
           uxScore: snapshot.uxScore,
           accessibilityScore: snapshot.accessibilityScore || undefined,
-          coreWebVitals: coreWebVitals ? {
-            LCP: coreWebVitals.LCP || 0,
-            FID: coreWebVitals.FID || 0,
-            CLS: coreWebVitals.CLS || 0,
-            FCP: coreWebVitals.FCP || 0,
-            TTFB: coreWebVitals.TTFB || 0
-          } : undefined
+          coreWebVitals: undefined
         });
       }
 
@@ -542,7 +534,7 @@ export class TrendAnalysisService {
   }
 
   private getPossibleCauses(metricName: string, severity: 'critical' | 'major' | 'minor'): string[] {
-    const causes = {
+    const causes: { [key: string]: string[] } = {
       'Overall Score': [
         'Recent website changes or updates',
         'Server performance issues',
@@ -573,7 +565,7 @@ export class TrendAnalysisService {
   }
 
   private getRecommendations(metricName: string, severity: 'critical' | 'major' | 'minor'): string[] {
-    const recommendations = {
+    const recommendations: { [key: string]: string[] } = {
       'Overall Score': [
         'Review recent changes and their SEO impact',
         'Run a comprehensive SEO audit',

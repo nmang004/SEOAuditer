@@ -1,16 +1,22 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { createClient } from 'redis';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { prisma } from '..';
 import { config } from '../config/config';
-import { redisClient } from '..';
 import { 
   BadRequestError, 
   UnauthorizedError, 
   NotFoundError
 } from '../middleware/error.middleware';
 import { sendEmail } from '../services/email.service';
+
+// Create separate instances to avoid circular dependency
+const prisma = new PrismaClient();
+const redisClient = createClient({
+  url: process.env.REDIS_URL || 'redis://localhost:6379'
+});
 
 // Token generation helper
 const generateTokens = (userId: string) => {

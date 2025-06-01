@@ -1,0 +1,30 @@
+<svg width="1536" height="2048" viewBox="0 0 1536 2048" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1536" height="2048" fill="url(#bgGrad)"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="1536" height="204.8" fill="#0ea5e9"/>
+  <text x="20" y="122.88" fill="white" font-family="Arial, sans-serif" font-size="61.44" font-weight="bold">Rival Outranker</text>
+  
+  <!-- Content area -->
+  <rect x="76.80000000000001" y="307.2" width="1382.4" height="409.6" fill="#1e293b" rx="8"/>
+  <text x="153.60000000000002" y="450.56" fill="#0ea5e9" font-family="Arial, sans-serif" font-size="40.96" font-weight="bold">SEO Analysis Dashboard</text>
+  <text x="153.60000000000002" y="552.96" fill="#94a3b8" font-family="Arial, sans-serif" font-size="30.72">Comprehensive SEO analysis and competitor insights</text>
+  
+  <!-- Stats cards -->
+  <rect x="76.80000000000001" y="819.2" width="614.4000000000001" height="307.2" fill="#1e293b" rx="8"/>
+  <text x="384" y="921.6" text-anchor="middle" fill="#10b981" font-family="Arial, sans-serif" font-size="61.44" font-weight="bold">85</text>
+  <text x="384" y="1024" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="30.72">SEO Score</text>
+  
+  <rect x="844.8000000000001" y="819.2" width="614.4000000000001" height="307.2" fill="#1e293b" rx="8"/>
+  <text x="1152" y="921.6" text-anchor="middle" fill="#f59e0b" font-family="Arial, sans-serif" font-size="61.44" font-weight="bold">12</text>
+  <text x="1152" y="1024" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="30.72">Issues Found</text>
+  
+  <!-- Footer note -->
+  <text x="768" y="1843.2" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="40.96">Apple Splash Screen</text>
+</svg>

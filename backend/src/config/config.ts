@@ -10,7 +10,7 @@ dotenv.config({ path: path.join(__dirname, '../../.env') });
 // Define environment variable schema
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.string().default('3001'),
+  PORT: z.string().default('4000'),
   
   // Database
   DATABASE_URL: z.string().min(1, 'Database URL is required'),
@@ -21,7 +21,7 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRATION: z.string().default('7d'),
   
   // Redis
-  REDIS_URL: z.string().default('redis://redis:6379'),
+  REDIS_URL: z.string().default('redis://localhost:6379'),
   
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.string().default('900000'), // 15 minutes
@@ -50,7 +50,12 @@ try {
 
 export const config = {
   env: envVars.data.NODE_ENV,
-  port: process.env.PORT ? parseInt(process.env.PORT, 10) : 8080,
+  port: parseInt(envVars.data.PORT, 10),
+  
+  // Server configuration
+  server: {
+    port: parseInt(envVars.data.PORT, 10),
+  },
   
   // JWT
   jwt: {
@@ -66,7 +71,7 @@ export const config = {
   
   // Redis
   redis: {
-    url: process.env.REDIS_URL || 'redis://redis:6379',
+    url: process.env.REDIS_URL || 'redis://localhost:6379',
   },
   
   // Rate Limiting
@@ -78,6 +83,7 @@ export const config = {
   // CORS
   cors: {
     origin: envVars.data.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()),
+    credentials: true,
   },
   
   // Logging
@@ -109,5 +115,5 @@ export const postgresConfig = {
 };
 
 export const redisConfig = {
-  url: process.env.REDIS_URL || 'redis://redis:6379',
+  url: process.env.REDIS_URL || 'redis://localhost:6379',
 };

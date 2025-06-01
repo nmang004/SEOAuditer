@@ -206,3 +206,39 @@ export const validate = (schemaName: SchemaName) => {
 
 // Export schema types for use in controllers
 export type { ValidationSchemas };
+
+// Alternative validation function that accepts Zod schemas directly
+export const validateRequest = (schema: z.ZodSchema<any>) => {
+  return (req: Request, _res: Response, next: NextFunction) => {
+    try {
+      // Validate request parts based on schema
+      const result = schema.safeParse({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+        cookies: req.cookies,
+        headers: req.headers,
+      });
+
+      if (!result.success) {
+        const validationError = fromZodError(result.error);
+        throw new BadRequestError(validationError.message, {
+          details: result.error.issues,
+        });
+      }
+
+      // Replace request properties with validated values (only if present)
+      if ('body' in result.data && result.data.body) req.body = result.data.body;
+      if ('query' in result.data && result.data.query) {
+        // Mutate req.query in place to avoid Express getter-only error
+        Object.assign(req.query, result.data.query);
+      }
+      if ('params' in result.data && result.data.params) req.params = result.data.params;
+      if ('cookies' in result.data && result.data.cookies) req.cookies = result.data.cookies;
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+};

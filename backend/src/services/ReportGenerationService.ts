@@ -41,6 +41,7 @@ interface ExportResult {
   fileSize?: number;
   downloadUrl?: string;
   error?: string;
+  reportId?: string;
 }
 
 export class ReportGenerationService {
@@ -78,6 +79,7 @@ export class ReportGenerationService {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const filename = `seo-report-${projectId}-${timestamp}.${this.getFileExtension(config.format)}`;
       const filePath = path.join(this.reportsDir, filename);
+      const reportId = this.generateReportId();
 
       // Generate report based on format
       let result: ExportResult;
@@ -96,6 +98,11 @@ export class ReportGenerationService {
           break;
         default:
           throw new Error(`Unsupported format: ${config.format}`);
+      }
+
+      // Add reportId to result
+      if (result.success) {
+        result.reportId = reportId;
       }
 
       // Store export record
@@ -753,14 +760,17 @@ export class ReportGenerationService {
         data: {
           analysisId,
           projectId,
-          userId,
-          format: config.format,
-          template: config.template,
-          sections: config.sections,
-          filePath: result.filePath || '',
+          requestedBy: userId,
+          exportType: config.format,
+          fileName: result.filePath ? path.basename(result.filePath) : 'report',
           fileSize: result.fileSize || 0,
           downloadUrl: result.downloadUrl || '',
-          generatedAt: new Date()
+          status: 'completed',
+          metadata: {
+            template: config.template,
+            sections: config.sections,
+            format: config.format
+          }
         }
       });
     } catch (error) {
@@ -773,8 +783,8 @@ export class ReportGenerationService {
    */
   async getExportHistory(projectId: string, userId: string): Promise<any[]> {
     return await this.prisma.reportExport.findMany({
-      where: { projectId, userId },
-      orderBy: { generatedAt: 'desc' },
+      where: { projectId, requestedBy: userId },
+      orderBy: { createdAt: 'desc' },
       take: 20
     });
   }
@@ -789,7 +799,7 @@ export class ReportGenerationService {
 
       const oldReports = await this.prisma.reportExport.findMany({
         where: {
-          generatedAt: {
+          createdAt: {
             lt: cutoffDate
           }
         }
@@ -800,18 +810,20 @@ export class ReportGenerationService {
 
       for (const report of oldReports) {
         try {
-          await fs.unlink(report.filePath);
-          freedSize += report.fileSize;
+          // Since there's no filePath field, we'll construct it from fileName
+          const reportPath = path.join(this.reportsDir, report.fileName);
+          await fs.unlink(reportPath);
+          freedSize += report.fileSize || 0;
           deletedCount++;
         } catch (error) {
-          console.warn(`Failed to delete report file: ${report.filePath}`, error);
+          console.warn(`Failed to delete report file: ${report.fileName}`, error);
         }
       }
 
       // Remove records from database
       await this.prisma.reportExport.deleteMany({
         where: {
-          generatedAt: {
+          createdAt: {
             lt: cutoffDate
           }
         }
@@ -823,6 +835,67 @@ export class ReportGenerationService {
       console.error('Report cleanup error:', error);
       return { deletedCount: 0, freedSize: 0 };
     }
+  }
+
+  /**
+   * Get report generation status
+   */
+  async getReportStatus(reportId: string, userId: string): Promise<any> {
+    try {
+      const record = await this.prisma.exportRecord.findFirst({
+        where: {
+          reportId: reportId,
+          userId: userId
+        }
+      });
+
+      if (!record) {
+        return {
+          status: 'not_found',
+          error: 'Report not found'
+        };
+      }
+
+      // Check if file still exists
+      if (record.filePath) {
+        try {
+          await fs.access(record.filePath);
+          return {
+            status: 'completed',
+            reportId: record.reportId,
+            downloadUrl: record.downloadUrl,
+            fileSize: record.fileSize,
+            format: record.format,
+            generatedAt: record.createdAt,
+            expiresAt: new Date(record.createdAt.getTime() + 7 * 24 * 60 * 60 * 1000) // 7 days
+          };
+        } catch {
+          return {
+            status: 'expired',
+            error: 'Report file has expired or been deleted'
+          };
+        }
+      }
+
+      return {
+        status: 'failed',
+        error: 'Report generation failed'
+      };
+
+    } catch (error) {
+      console.error('Error getting report status:', error);
+      return {
+        status: 'error',
+        error: 'Unable to check report status'
+      };
+    }
+  }
+
+  /**
+   * Generate unique report ID
+   */
+  private generateReportId(): string {
+    return `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 }
 

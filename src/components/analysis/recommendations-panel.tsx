@@ -100,8 +100,8 @@ export const RecommendationsPanel = React.memo(function RecommendationsPanel({ r
       </CardHeader>
       <CardContent className="p-0">
         <div className="flex gap-2 p-2 border-b bg-muted/10">
-          <Button size="xs" variant="outline" onClick={handleExportCSV} aria-label="Export recommendations as CSV">Export CSV</Button>
-          <Button size="xs" variant="outline" onClick={handleExportPDF} aria-label="Export recommendations as PDF">Export PDF</Button>
+          <Button size="sm" variant="outline" onClick={handleExportCSV} aria-label="Export recommendations as CSV">Export CSV</Button>
+          <Button size="sm" variant="outline" onClick={handleExportPDF} aria-label="Export recommendations as PDF">Export PDF</Button>
         </div>
         <div className="space-y-1">
           {visible.length > 0 ? (
@@ -110,8 +110,8 @@ export const RecommendationsPanel = React.memo(function RecommendationsPanel({ r
                 <div className="flex items-center gap-2 p-2">
                   {allowCustomOrder && (
                     <div className="flex flex-col gap-1">
-                      <Button size="xs" variant="ghost" onClick={() => move(rec.id, -1)} disabled={idx === 0}>↑</Button>
-                      <Button size="xs" variant="ghost" onClick={() => move(rec.id, 1)} disabled={idx === visible.length - 1}>↓</Button>
+                      <Button size="sm" variant="ghost" onClick={() => move(rec.id, -1)} disabled={idx === 0}>↑</Button>
+                      <Button size="sm" variant="ghost" onClick={() => move(rec.id, 1)} disabled={idx === visible.length - 1}>↓</Button>
                     </div>
                   )}
                   <div className="flex-1 flex flex-col gap-1">
@@ -136,7 +136,7 @@ export const RecommendationsPanel = React.memo(function RecommendationsPanel({ r
                       </div>
                     </div>
                   </div>
-                  <Button size="xs" variant="ghost" onClick={() => toggleExpand(rec.id)}>
+                  <Button size="sm" variant="ghost" onClick={() => toggleExpand(rec.id)}>
                     {expandedId === rec.id ? 'Hide' : 'Details'}
                   </Button>
                 </div>

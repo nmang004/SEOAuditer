@@ -336,7 +336,7 @@ export function AdvancedAnalyticsHub({
             Live Data
           </Badge>
           
-          <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+          <Select value={selectedPeriod} onValueChange={(value) => setSelectedPeriod(value as '7d' | '30d' | '90d' | '1y')}>
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>

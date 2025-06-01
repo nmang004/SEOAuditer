@@ -12,14 +12,15 @@ import {
   Target,
   BarChart3,
   Users,
-  Zap
+  Zap,
+  Minus
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { DashboardStats } from "@/hooks/useDashboardData";
-import { useDashboardData } from "@/hooks/useDashboardData";
+import { useDashboardStats } from "@/hooks/useReactQueryDashboard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface EnhancedStatsOverviewProps {
   loading?: boolean;
@@ -46,38 +47,38 @@ interface StatCardProps {
 
 const colorClasses = {
   success: {
-    bg: 'bg-gradient-to-br from-green-50 to-emerald-50',
+    bg: 'bg-green-50',
     border: 'border-green-200',
     icon: 'text-green-600',
-    value: 'text-green-900',
+    text: 'text-green-900',
     trend: 'text-green-600'
   },
   warning: {
-    bg: 'bg-gradient-to-br from-yellow-50 to-amber-50', 
+    bg: 'bg-yellow-50',
     border: 'border-yellow-200',
     icon: 'text-yellow-600',
-    value: 'text-yellow-900',
+    text: 'text-yellow-900',
     trend: 'text-yellow-600'
   },
   danger: {
-    bg: 'bg-gradient-to-br from-red-50 to-rose-50',
-    border: 'border-red-200', 
+    bg: 'bg-red-50',
+    border: 'border-red-200',
     icon: 'text-red-600',
-    value: 'text-red-900',
+    text: 'text-red-900',
     trend: 'text-red-600'
   },
   info: {
-    bg: 'bg-gradient-to-br from-blue-50 to-sky-50',
+    bg: 'bg-blue-50',
     border: 'border-blue-200',
     icon: 'text-blue-600', 
-    value: 'text-blue-900',
+    text: 'text-blue-900',
     trend: 'text-blue-600'
   },
   primary: {
-    bg: 'bg-gradient-to-br from-purple-50 to-indigo-50',
+    bg: 'bg-purple-50',
     border: 'border-purple-200',
     icon: 'text-purple-600',
-    value: 'text-purple-900', 
+    text: 'text-purple-900', 
     trend: 'text-purple-600'
   }
 };
@@ -96,86 +97,63 @@ const StatCard: React.FC<StatCardProps> = ({
 }) => {
   const classes = colorClasses[color];
   
+  if (loading) {
+    return (
+      <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
+        <CardContent className="p-6">
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-8 w-16" />
+            <Skeleton className="h-3 w-32" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const TrendIcon = trend?.direction === 'up' ? TrendingUp : 
+                   trend?.direction === 'down' ? TrendingDown : Minus;
+
   return (
     <m.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      whileHover={{ y: -2 }}
-      className={cn(
-        "group cursor-pointer transition-all duration-200",
-        onClick && "hover:shadow-lg"
-      )}
-      onClick={onClick}
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >
-      <Card className={cn(
-        "border-2 transition-all duration-200 group-hover:shadow-md",
-        classes.bg,
-        classes.border
-      )}>
+      <Card 
+        className={`border-0 shadow-md hover:shadow-lg transition-all cursor-pointer ${classes.bg} ${classes.border}`}
+        onClick={onClick}
+      >
         <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className={cn(
-              "p-3 rounded-xl shadow-sm",
-              classes.bg
-            )}>
-              <Icon className={cn("h-6 w-6", classes.icon)} />
-            </div>
-            
-            {trend && (
-              <div className={cn(
-                "flex items-center gap-1 text-sm font-medium",
-                classes.trend
-              )}>
-                {trend.direction === 'up' ? (
-                  <TrendingUp className="h-4 w-4" />
-                ) : trend.direction === 'down' ? (
-                  <TrendingDown className="h-4 w-4" />
-                ) : (
-                  <div className="h-4 w-4 rounded-full bg-gray-300" />
-                )}
-                <span>{trend.percentage}%</span>
+          <div className="flex items-start justify-between">
+            <div className="space-y-2 flex-1">
+              <div className="flex items-center gap-2">
+                <Icon className={`h-5 w-5 ${classes.icon}`} />
+                <p className="text-sm font-medium text-gray-600">{title}</p>
               </div>
-            )}
-          </div>
-          
-          <div className="space-y-2">
-            <div className="space-y-1">
-              <h3 className="text-sm font-medium text-gray-600">{title}</h3>
-              <div className={cn(
-                "text-3xl font-bold transition-all duration-300",
-                classes.value,
-                loading && "animate-pulse"
-              )}>
-                {loading ? (
-                  <div className="h-8 bg-gray-200 rounded animate-pulse" />
-                ) : (
-                  <m.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  >
-                    {value}
-                  </m.span>
+              
+              <div className="space-y-1">
+                <p className={`text-3xl font-bold ${classes.text}`}>
+                  {typeof value === 'number' ? value.toLocaleString() : value}
+                </p>
+                {subtitle && (
+                  <p className="text-xs text-gray-500">{subtitle}</p>
                 )}
               </div>
-              {subtitle && (
-                <p className="text-xs text-gray-500">{subtitle}</p>
+
+              {showProgress && progressValue !== undefined && (
+                <div className="space-y-1">
+                  <Progress value={progressValue} className="h-2" />
+                  <p className="text-xs text-gray-500">{progressValue}% completion</p>
+                </div>
+              )}
+
+              {trend && (
+                <div className={`flex items-center gap-1 text-sm ${classes.trend}`}>
+                  <TrendIcon className="h-4 w-4" />
+                  <span>{trend.percentage}% {trend.period}</span>
+                </div>
               )}
             </div>
-            
-            {showProgress && progressValue !== undefined && (
-              <div className="space-y-1">
-                <Progress 
-                  value={progressValue} 
-                  className="h-2"
-                  // Apply color-specific progress styling
-                />
-                <p className="text-xs text-gray-500">
-                  {progressValue}% of goal
-                </p>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
@@ -193,36 +171,26 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
     isLoading,
     error,
     refetch
-  } = useDashboardData();
+  } = useDashboardStats();
 
-  // Fallback to mock data if API is unavailable
+  // Use the loading prop or the query loading state
+  const isDataLoading = loading || isLoading;
+
+  // Fallback to empty data if API is unavailable
   const fallbackData = {
-    totalProjects: 12,
-    activeAnalyses: 3,
-    completedAnalyses: 45,
-    averageScore: 78,
-    scoreImprovement: 5,
-    weeklyIssues: 23,
-    resolvedIssues: 18,
-    criticalIssues: 5,
+    totalProjects: 0,
+    activeAnalyses: 0,
+    completedAnalyses: 0,
+    averageScore: 0,
+    scoreImprovement: 0,
+    weeklyIssues: 0,
+    resolvedIssues: 0,
+    criticalIssues: 0,
     lastScanDate: new Date().toISOString(),
-    scoreDistribution: { excellent: 3, good: 6, needsWork: 2, poor: 1 },
-    scoreTrends: [
-      { date: '2025-05-25', overallScore: 72, technicalScore: 68, contentScore: 75, onPageScore: 80, uxScore: 70 },
-      { date: '2025-05-26', overallScore: 74, technicalScore: 70, contentScore: 76, onPageScore: 81, uxScore: 72 },
-      { date: '2025-05-27', overallScore: 73, technicalScore: 69, contentScore: 77, onPageScore: 79, uxScore: 71 },
-      { date: '2025-05-28', overallScore: 75, technicalScore: 71, contentScore: 78, onPageScore: 82, uxScore: 73 },
-      { date: '2025-05-29', overallScore: 76, technicalScore: 72, contentScore: 79, onPageScore: 83, uxScore: 74 },
-    ],
-    topProjects: [
-      { id: '1', name: 'Main Website', score: 85, improvement: 7 },
-      { id: '2', name: 'Blog', score: 82, improvement: 3 },
-      { id: '3', name: 'Landing Page', score: 78, improvement: -2 }
-    ],
-    concerningProjects: [
-      { id: '4', name: 'Old Site', score: 45, criticalIssues: 8 },
-      { id: '5', name: 'Mobile App', score: 52, criticalIssues: 5 }
-    ]
+    scoreDistribution: { excellent: 0, good: 0, needsWork: 0, poor: 0 },
+    scoreTrends: [],
+    topProjects: [],
+    concerningProjects: []
   };
 
   const statsData = dashboardData || fallbackData;
@@ -270,7 +238,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
           value={statsData.totalProjects}
           icon={Target}
           color="primary"
-          loading={loading}
+          loading={isDataLoading}
           subtitle="Active projects being tracked"
         />
         
@@ -279,7 +247,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
           value={statsData.activeAnalyses}
           icon={Activity}
           color="info"
-          loading={loading}
+          loading={isDataLoading}
           subtitle="Currently running scans"
         />
         
@@ -293,7 +261,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
           }}
           icon={BarChart3}
           color={getScoreColor(statsData.averageScore)}
-          loading={loading}
+          loading={isDataLoading}
           subtitle="Across all projects"
           showProgress
           progressValue={statsData.averageScore}
@@ -304,7 +272,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
           value={statsData.criticalIssues}
           icon={AlertTriangle}
           color={statsData.criticalIssues > 0 ? 'danger' : 'success'}
-          loading={loading}
+          loading={isDataLoading}
           subtitle="Requiring immediate attention"
         />
       </div>
@@ -316,7 +284,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
           value={statsData.weeklyIssues}
           icon={Zap}
           color="warning"
-          loading={loading}
+          loading={isDataLoading}
           subtitle="New issues in last 7 days"
         />
         
@@ -325,7 +293,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
           value={statsData.resolvedIssues}
           icon={CheckCircle}
           color="success"
-          loading={loading}
+          loading={isDataLoading}
           subtitle="Fixed in last 7 days"
         />
         
@@ -334,7 +302,7 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
           value={statsData.completedAnalyses}
           icon={Users}
           color="info"
-          loading={loading}
+          loading={isDataLoading}
           subtitle="Total scans completed"
         />
       </div>
@@ -348,67 +316,79 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center space-y-2">
-              <div className="text-2xl font-bold text-green-600">
-                {statsData.scoreDistribution.excellent}
+          {isDataLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="text-center space-y-2">
+                  <Skeleton className="h-8 w-8 mx-auto" />
+                  <Skeleton className="h-4 w-20 mx-auto" />
+                  <Skeleton className="h-2 w-full" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center space-y-2">
+                <div className="text-2xl font-bold text-green-600">
+                  {statsData.scoreDistribution.excellent}
+                </div>
+                <div className="text-sm text-gray-600">Excellent (80-100)</div>
+                <div className="h-2 bg-green-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-green-500 transition-all duration-500"
+                    style={{ 
+                      width: `${statsData.totalProjects > 0 ? (statsData.scoreDistribution.excellent / statsData.totalProjects) * 100 : 0}%` 
+                    }}
+                  />
+                </div>
               </div>
-              <div className="text-sm text-gray-600">Excellent (80-100)</div>
-              <div className="h-2 bg-green-100 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-green-500 transition-all duration-500"
-                  style={{ 
-                    width: `${(statsData.scoreDistribution.excellent / statsData.totalProjects) * 100}%` 
-                  }}
-                />
+              
+              <div className="text-center space-y-2">
+                <div className="text-2xl font-bold text-yellow-600">
+                  {statsData.scoreDistribution.good}
+                </div>
+                <div className="text-sm text-gray-600">Good (60-79)</div>
+                <div className="h-2 bg-yellow-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-yellow-500 transition-all duration-500"
+                    style={{ 
+                      width: `${statsData.totalProjects > 0 ? (statsData.scoreDistribution.good / statsData.totalProjects) * 100 : 0}%` 
+                    }}
+                  />
+                </div>
+              </div>
+              
+              <div className="text-center space-y-2">
+                <div className="text-2xl font-bold text-orange-600">
+                  {statsData.scoreDistribution.needsWork}
+                </div>
+                <div className="text-sm text-gray-600">Needs Work (40-59)</div>
+                <div className="h-2 bg-orange-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-orange-500 transition-all duration-500"
+                    style={{ 
+                      width: `${statsData.totalProjects > 0 ? (statsData.scoreDistribution.needsWork / statsData.totalProjects) * 100 : 0}%` 
+                    }}
+                  />
+                </div>
+              </div>
+              
+              <div className="text-center space-y-2">
+                <div className="text-2xl font-bold text-red-600">
+                  {statsData.scoreDistribution.poor}
+                </div>
+                <div className="text-sm text-gray-600">Poor (0-39)</div>
+                <div className="h-2 bg-red-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-red-500 transition-all duration-500"
+                    style={{ 
+                      width: `${statsData.totalProjects > 0 ? (statsData.scoreDistribution.poor / statsData.totalProjects) * 100 : 0}%` 
+                    }}
+                  />
+                </div>
               </div>
             </div>
-            
-            <div className="text-center space-y-2">
-              <div className="text-2xl font-bold text-yellow-600">
-                {statsData.scoreDistribution.good}
-              </div>
-              <div className="text-sm text-gray-600">Good (60-79)</div>
-              <div className="h-2 bg-yellow-100 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-yellow-500 transition-all duration-500"
-                  style={{ 
-                    width: `${(statsData.scoreDistribution.good / statsData.totalProjects) * 100}%` 
-                  }}
-                />
-              </div>
-            </div>
-            
-            <div className="text-center space-y-2">
-              <div className="text-2xl font-bold text-orange-600">
-                {statsData.scoreDistribution.needsWork}
-              </div>
-              <div className="text-sm text-gray-600">Needs Work (40-59)</div>
-              <div className="h-2 bg-orange-100 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-orange-500 transition-all duration-500"
-                  style={{ 
-                    width: `${(statsData.scoreDistribution.needsWork / statsData.totalProjects) * 100}%` 
-                  }}
-                />
-              </div>
-            </div>
-            
-            <div className="text-center space-y-2">
-              <div className="text-2xl font-bold text-red-600">
-                {statsData.scoreDistribution.poor}
-              </div>
-              <div className="text-sm text-gray-600">Poor (0-39)</div>
-              <div className="h-2 bg-red-100 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-red-500 transition-all duration-500"
-                  style={{ 
-                    width: `${(statsData.scoreDistribution.poor / statsData.totalProjects) * 100}%` 
-                  }}
-                />
-              </div>
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

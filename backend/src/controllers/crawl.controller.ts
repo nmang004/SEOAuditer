@@ -117,7 +117,11 @@ export const CrawlController = {
       }, 1000);
       
       // Optionally emit job started event
-      wsGateway.emitProgress(jobId, { status: 'started' });
+      wsGateway.emitProgress(jobId, { 
+        percentage: 0, 
+        stage: 'started',
+        details: 'Crawl job has been started'
+      });
       return res.status(202).json({ jobId });
     } catch (err) {
       const error = err as Error;
@@ -225,7 +229,11 @@ export const CrawlController = {
     try {
       const { jobId } = req.params;
       await crawlManager.cancelCrawl(jobId);
-      wsGateway.emitProgress(jobId, { status: 'cancelled' });
+      wsGateway.emitProgress(jobId, { 
+        percentage: 100, 
+        stage: 'cancelled',
+        details: 'Crawl job has been cancelled'
+      });
       return res.json({ jobId, status: 'cancelled' });
     } catch (err) {
       const error = err as Error;

@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { notificationService } from '../services/notification.service';
-import { io } from '../index';
+import { PrismaClient } from '@prisma/client';
+// Note: io import commented out to avoid circular dependency
+// import { io } from '../index';
 
 // Notification Controller
 // Handles user notifications, unread count, marking as read, deleting, and notification settings
@@ -9,6 +11,9 @@ import { io } from '../index';
 // All endpoints should be protected with JWT middleware
 // TODO: Add input validation middleware (zod) for query/params
 // TODO: Add more granular error handling and logging for production
+
+// Create a separate Prisma instance to avoid circular dependency
+const prisma = new PrismaClient();
 
 export const notificationController = {
   /**
@@ -343,10 +348,7 @@ export const notificationController = {
     // Create notification in DB (assume notificationService.createNotification exists)
     const notification = await notificationService.createNotification({ userId, ...notificationData });
     // Emit real-time notification event to the user room
-    io.to(`user:${userId}`).emit('notification:new', { notification });
+    // io.to(`user:${userId}`).emit('notification:new', { notification });
     return notification;
   },
 };
-
-// Add missing import
-import { prisma } from '..';

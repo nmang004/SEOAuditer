@@ -1,21 +1,21 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validation.middleware';
 import { authController } from '../controllers/auth.controller';
-import { rateLimit } from '../middleware/rate-limit.middleware';
+import { authRateLimit } from '../middleware/rate-limit.middleware';
 
 const router = Router();
 
 // Public routes
 router.post(
   '/register',
-  rateLimit.auth,
+  authRateLimit,
   validate('register'),
   authController.register
 );
 
 router.post(
   '/login',
-  rateLimit.auth,
+  authRateLimit,
   validate('login'),
   authController.login
 );
@@ -28,14 +28,14 @@ router.post(
 
 router.post(
   '/forgot-password',
-  rateLimit.auth,
+  authRateLimit,
   validate('forgotPassword'),
   authController.forgotPassword
 );
 
 router.post(
   '/reset-password',
-  rateLimit.auth,
+  authRateLimit,
   validate('resetPassword'),
   authController.resetPassword
 );
@@ -71,4 +71,4 @@ router.patch(
   authController.changePassword
 );
 
-export { router as authRouter };
+export default router;

@@ -14,6 +14,26 @@ module.exports = {
         "2xl": "1400px",
       },
     },
+    screens: {
+      'xs': '475px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+      // Mobile-first breakpoints
+      'mobile': '320px',
+      'mobile-lg': '414px',
+      'tablet': '768px',
+      'tablet-lg': '1024px',
+      'desktop': '1280px',
+      // Touch device queries
+      'touch': { 'raw': '(pointer: coarse)' },
+      'no-touch': { 'raw': '(pointer: fine)' },
+      // Orientation queries
+      'portrait': { 'raw': '(orientation: portrait)' },
+      'landscape': { 'raw': '(orientation: landscape)' },
+    },
     extend: {
       colors: {
         // Primary Brand Colors - Rival Digital
@@ -123,6 +143,42 @@ module.exports = {
         "4xl": ["36px", { lineHeight: "40px" }],
         "5xl": ["48px", { lineHeight: "1" }],
       },
+      spacing: {
+        // Touch-friendly spacing
+        'touch': '44px', // Minimum touch target size
+        'touch-sm': '36px',
+        'touch-lg': '56px',
+        // Mobile-specific spacing
+        'mobile-safe': 'env(safe-area-inset-bottom)',
+        'status-bar': 'env(safe-area-inset-top)',
+        'safe-left': 'env(safe-area-inset-left)',
+        'safe-right': 'env(safe-area-inset-right)',
+        // Common mobile spacing patterns
+        '15': '3.75rem',
+        '18': '4.5rem',
+        '22': '5.5rem',
+        '26': '6.5rem',
+        '30': '7.5rem',
+      },
+      minHeight: {
+        'touch': '44px',
+        'screen-safe': 'calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))',
+      },
+      minWidth: {
+        'touch': '44px',
+      },
+      maxWidth: {
+        'mobile': '320px',
+        'mobile-lg': '414px',
+        'tablet': '768px',
+      },
+      height: {
+        'screen-safe': 'calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))',
+        'screen-no-nav': 'calc(100vh - 4rem)', // Assuming 64px nav height
+      },
+      width: {
+        'touch': '44px',
+      },
       keyframes: {
         "accordion-down": {
           from: { height: 0 },
@@ -148,6 +204,33 @@ module.exports = {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(100%)" },
         },
+        "slide-up": {
+          from: { transform: "translateY(100%)" },
+          to: { transform: "translateY(0)" },
+        },
+        "slide-down": {
+          from: { transform: "translateY(0)" },
+          to: { transform: "translateY(100%)" },
+        },
+        "bounce-in": {
+          "0%": {
+            transform: "scale(0.3)",
+            opacity: "0",
+          },
+          "50%": {
+            transform: "scale(1.1)",
+            opacity: "0.8",
+          },
+          "100%": {
+            transform: "scale(1)",
+            opacity: "1",
+          },
+        },
+        "pull-refresh": {
+          "0%": { transform: "translateY(0px) rotate(0deg)" },
+          "50%": { transform: "translateY(10px) rotate(180deg)" },
+          "100%": { transform: "translateY(0px) rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -156,8 +239,119 @@ module.exports = {
         "fade-out": "fade-out 0.2s ease-out",
         "slide-in-right": "slide-in-right 0.3s ease-out",
         "slide-out-right": "slide-out-right 0.3s ease-out",
+        "slide-up": "slide-up 0.3s ease-out",
+        "slide-down": "slide-down 0.3s ease-out",
+        "bounce-in": "bounce-in 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+        "pull-refresh": "pull-refresh 1s ease-in-out infinite",
+      },
+      backdropBlur: {
+        xs: '2px',
+      },
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+      },
+      aspectRatio: {
+        'mobile': '9 / 16',
+        'tablet': '3 / 4',
+        'desktop': '16 / 9',
+      },
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    // Custom plugin for mobile utilities
+    function({ addUtilities, theme }) {
+      const newUtilities = {
+        // Touch-friendly utilities
+        '.touch-target': {
+          minHeight: theme('spacing.touch'),
+          minWidth: theme('spacing.touch'),
+        },
+        '.touch-target-sm': {
+          minHeight: theme('spacing.touch-sm'),
+          minWidth: theme('spacing.touch-sm'),
+        },
+        '.touch-target-lg': {
+          minHeight: theme('spacing.touch-lg'),
+          minWidth: theme('spacing.touch-lg'),
+        },
+        // Mobile-safe area utilities
+        '.safe-top': {
+          paddingTop: 'env(safe-area-inset-top)',
+        },
+        '.safe-bottom': {
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        },
+        '.safe-left': {
+          paddingLeft: 'env(safe-area-inset-left)',
+        },
+        '.safe-right': {
+          paddingRight: 'env(safe-area-inset-right)',
+        },
+        '.safe-x': {
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)',
+        },
+        '.safe-y': {
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        },
+        '.safe-all': {
+          padding: 'env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)',
+        },
+        // Touch behavior utilities
+        '.touch-manipulation': {
+          touchAction: 'manipulation',
+        },
+        '.touch-pan-x': {
+          touchAction: 'pan-x',
+        },
+        '.touch-pan-y': {
+          touchAction: 'pan-y',
+        },
+        '.touch-none': {
+          touchAction: 'none',
+        },
+        // Scroll behavior utilities
+        '.overscroll-contain': {
+          overscrollBehavior: 'contain',
+        },
+        '.overscroll-none': {
+          overscrollBehavior: 'none',
+        },
+        '.overscroll-auto': {
+          overscrollBehavior: 'auto',
+        },
+        // Mobile scrolling
+        '.scroll-smooth-mobile': {
+          '-webkit-overflow-scrolling': 'touch',
+          scrollBehavior: 'smooth',
+        },
+        // Text selection utilities
+        '.select-none-touch': {
+          '-webkit-user-select': 'none',
+          '-webkit-touch-callout': 'none',
+        },
+        // Tap highlight utilities
+        '.tap-highlight-none': {
+          '-webkit-tap-highlight-color': 'transparent',
+        },
+        // Font smoothing for mobile
+        '.font-smooth-mobile': {
+          '-webkit-font-smoothing': 'antialiased',
+          '-moz-osx-font-smoothing': 'grayscale',
+        },
+      };
+
+      addUtilities(newUtilities, ['responsive']);
+    },
+  ],
 }

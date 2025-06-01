@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { notificationController } from '../controllers/notification.controller';
 import { authenticate } from '../middleware/auth.middleware';
 // import { validate } from '../middleware/validation.middleware';
-import { rateLimit } from '../middleware/rate-limit.middleware';
+import { generalRateLimit } from '../middleware/rate-limit.middleware';
 
 const router = Router();
 
@@ -12,21 +12,21 @@ router.use(authenticate);
 // Get user notifications
 router.get(
   '/',
-  rateLimit.api,
+  generalRateLimit,
   notificationController.getNotifications
 );
 
 // Get unread notification count
 router.get(
   '/unread-count',
-  rateLimit.api,
+  generalRateLimit,
   notificationController.getUnreadCount
 );
 
 // Mark a notification as read
 router.patch(
   '/:id/read',
-  rateLimit.api,
+  generalRateLimit,
   // validate('markNotificationAsRead'),
   notificationController.markAsRead
 );
@@ -34,14 +34,14 @@ router.patch(
 // Mark all notifications as read
 router.patch(
   '/mark-all-read',
-  rateLimit.api,
+  generalRateLimit,
   notificationController.markAllAsRead
 );
 
 // Delete a notification
 router.delete(
   '/:id',
-  rateLimit.api,
+  generalRateLimit,
   // validate('deleteNotification'),
   notificationController.deleteNotification
 );
@@ -49,14 +49,14 @@ router.delete(
 // Get notification settings
 router.get(
   '/settings',
-  rateLimit.api,
+  generalRateLimit,
   notificationController.getNotificationSettings
 );
 
 // Update notification settings
 router.patch(
   '/settings',
-  rateLimit.api,
+  generalRateLimit,
   // validate('updateNotificationSettings'),
   notificationController.updateNotificationSettings
 );
@@ -64,9 +64,9 @@ router.patch(
 // Test notification
 router.post(
   '/test',
-  rateLimit.api,
+  generalRateLimit,
   // validate('testNotification'),
   notificationController.testNotification
 );
 
-export { router as notificationRouter };
+export default router;

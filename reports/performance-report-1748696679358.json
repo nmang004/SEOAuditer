@@ -1,0 +1,91 @@
+{
+  "timestamp": "2025-05-31T13:04:39.347Z",
+  "summary": {
+    "canHandle100Users": true,
+    "criticalIssues": 0,
+    "highPriorityIssues": 0
+  },
+  "lighthouse": {
+    "/": {
+      "error": "lighthouse is not a function"
+    },
+    "/dashboard": {
+      "error": "lighthouse is not a function"
+    },
+    "/projects": {
+      "error": "lighthouse is not a function"
+    },
+    "/reports-demo": {
+      "error": "lighthouse is not a function"
+    }
+  },
+  "loadTest": {
+    "Light Load": {
+      "requests": {
+        "total": 100760,
+        "average": 3358.9,
+        "min": 313,
+        "max": 4273
+      },
+      "latency": {
+        "average": 2.46,
+        "min": 1,
+        "max": 332,
+        "p99": 12
+      },
+      "throughput": {
+        "average": 28749448.54,
+        "min": 2679280,
+        "max": 36576880
+      },
+      "errors": 0,
+      "timeouts": 0,
+      "duration": 30.09
+    },
+    "Medium Load": {
+      "requests": {
+        "total": 124933,
+        "average": 4164.9,
+        "min": 2446,
+        "max": 4603
+      },
+      "latency": {
+        "average": 11.5,
+        "min": 4,
+        "max": 102,
+        "p99": 29
+      },
+      "throughput": {
+        "average": 35646122.67,
+        "min": 20937760,
+        "max": 39401680
+      },
+      "errors": 0,
+      "timeouts": 0,
+      "duration": 30.02
+    },
+    "Heavy Load": {
+      "requests": {
+        "total": 117468,
+        "average": 3916.4,
+        "min": 3038,
+        "max": 4453
+      },
+      "latency": {
+        "average": 25.04,
+        "min": 1,
+        "max": 153,
+        "p99": 58
+      },
+      "throughput": {
+        "average": 33518114.14,
+        "min": 26005280,
+        "max": 38117680
+      },
+      "errors": 0,
+      "timeouts": 0,
+      "duration": 30.02
+    }
+  },
+  "recommendations": []
+}

@@ -1,1 +1,4 @@
-export default function TestPage({ params }: { params: { id: string } }) { return <div>Test {params.id}</div>; }
+export default async function TestPage({ params }: { params: Promise<{ id: string }> }) { 
+  const { id } = await params;
+  return <div>Test {id}</div>; 
+}

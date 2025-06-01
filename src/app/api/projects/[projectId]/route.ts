@@ -5,11 +5,11 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://backend:8080';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  context: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const authHeader = request.headers.get('authorization');
-    const { projectId } = params;
+    const { projectId } = await context.params;
 
     const response = await fetch(`${BACKEND_URL}/api/projects/${projectId}`, {
       method: 'GET',
@@ -33,11 +33,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  context: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const authHeader = request.headers.get('authorization');
-    const { projectId } = params;
+    const { projectId } = await context.params;
     const body = await request.json();
 
     const response = await fetch(`${BACKEND_URL}/api/projects/${projectId}`, {
@@ -63,11 +63,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { projectId: string } }
+  context: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const authHeader = request.headers.get('authorization');
-    const { projectId } = params;
+    const { projectId } = await context.params;
 
     const response = await fetch(`${BACKEND_URL}/api/projects/${projectId}`, {
       method: 'DELETE',

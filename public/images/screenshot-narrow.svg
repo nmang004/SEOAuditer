@@ -1,0 +1,30 @@
+<svg width="720" height="1280" viewBox="0 0 720 1280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="720" height="1280" fill="url(#bgGrad)"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="720" height="128" fill="#0ea5e9"/>
+  <text x="20" y="76.8" fill="white" font-family="Arial, sans-serif" font-size="38.4" font-weight="bold">Rival Outranker</text>
+  
+  <!-- Content area -->
+  <rect x="36" y="192" width="648" height="256" fill="#1e293b" rx="8"/>
+  <text x="72" y="281.6" fill="#0ea5e9" font-family="Arial, sans-serif" font-size="25.6" font-weight="bold">SEO Analysis Dashboard</text>
+  <text x="72" y="345.6" fill="#94a3b8" font-family="Arial, sans-serif" font-size="19.2">Comprehensive SEO analysis and competitor insights</text>
+  
+  <!-- Stats cards -->
+  <rect x="36" y="512" width="288" height="192" fill="#1e293b" rx="8"/>
+  <text x="180" y="576" text-anchor="middle" fill="#10b981" font-family="Arial, sans-serif" font-size="38.4" font-weight="bold">85</text>
+  <text x="180" y="640" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="19.2">SEO Score</text>
+  
+  <rect x="396.00000000000006" y="512" width="288" height="192" fill="#1e293b" rx="8"/>
+  <text x="540" y="576" text-anchor="middle" fill="#f59e0b" font-family="Arial, sans-serif" font-size="38.4" font-weight="bold">12</text>
+  <text x="540" y="640" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="19.2">Issues Found</text>
+  
+  <!-- Footer note -->
+  <text x="360" y="1152" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="25.6">Mobile screenshot</text>
+</svg>

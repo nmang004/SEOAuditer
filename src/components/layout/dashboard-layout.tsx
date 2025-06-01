@@ -3,11 +3,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { MobileNavigation } from '@/components/navigation/mobile-navigation';
 import { navItems } from '@/components/navigation/nav-items';
 import { Breadcrumb } from '@/components/navigation/breadcrumb';
 import { Search } from '@/components/navigation/search';
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, Menu } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -27,10 +27,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const pathname = usePathname();
   const router = useRouter();
 
-  // Check for mobile viewport
+  // Check for mobile viewport and set initial sidebar state
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // On desktop, sidebar should be open by default
+      if (!mobile) {
+        setSidebarOpen(true);
+      }
     };
     
     checkIfMobile();
@@ -180,7 +185,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Header */}
         <header className="bg-card border-b">
           <div className="flex items-center justify-between p-4 gap-4">
-            <MobileNavigation />
+            {/* Mobile menu toggle button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={toggleSidebar}
+              aria-label="Toggle sidebar"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            
             {/* Breadcrumb navigation */}
             {showBreadcrumb && (
               <div className="flex-1 min-w-0">

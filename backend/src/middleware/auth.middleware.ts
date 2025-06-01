@@ -1,14 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { PrismaClient } from '@prisma/client';
 import { config } from '../config/config';
-import { prisma } from '..';
 import { UnauthorizedError, ForbiddenError, NotFoundError } from './error.middleware';
+
+// Create a separate Prisma instance to avoid circular dependency
+const prisma = new PrismaClient();
 
 // Define a type for the user object attached to the request (only selected fields)
 type AuthenticatedUser = {
   id: string;
   email: string;
   name: string | null;
+  role: 'user' | 'admin';
   subscriptionTier: string;
   emailVerified: boolean;
   lastLogin: Date | null;
@@ -58,8 +62,11 @@ export const authenticate = async (req: Request, _res: Response, next: NextFunct
       throw new UnauthorizedError('User not found');
     }
 
+    // Determine user role based on email or subscription tier
+    const role: 'user' | 'admin' = user.email.includes('@admin.') || user.subscriptionTier === 'admin' ? 'admin' : 'user';
+
     // Attach user to request object
-    req.user = user as AuthenticatedUser;
+    req.user = { ...user, role } as AuthenticatedUser;
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
@@ -73,13 +80,13 @@ export const authenticate = async (req: Request, _res: Response, next: NextFunct
 };
 
 // Role-based access control middleware
-export const requireRole = (roles: string | string[]) => {
+export const requireRole = (roles: ('user' | 'admin') | ('user' | 'admin')[]) => {
   return (req: Request, _res: Response, next: NextFunction) => {
     if (!req.user) {
       throw new UnauthorizedError('Authentication required');
     }
 
-    const userRoles = [req.user.subscriptionTier];
+    const userRoles = [req.user.role];
     const requiredRoles = Array.isArray(roles) ? roles : [roles];
     
     const hasRole = requiredRoles.some(role => userRoles.includes(role));
@@ -103,7 +110,7 @@ export const checkOwnership = (model: any, paramName = 'id') => {
       const resourceId = req.params[paramName];
       
       // For admin users, skip ownership check
-      if (req.user.subscriptionTier === 'admin') {
+      if (req.user.role === 'admin') {
         return next();
       }
 
