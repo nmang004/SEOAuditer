@@ -34,7 +34,7 @@ import { staggerContainer, fadeInUp } from '@/lib/animations';
 import Link from 'next/link';
 
 export default function AdvancedAnalyticsPage() {
-  const [searchFilters, setSearchFilters] = useState([]);
+  const [searchFilters, setSearchFilters] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (filters: any[], query: string) => {
@@ -194,16 +194,6 @@ export default function AdvancedAnalyticsPage() {
                 onSearch={handleSearch}
                 onSaveSearch={handleSaveSearch}
                 showSuggestions={true}
-                savedSearches={[
-                  {
-                    id: '1',
-                    name: 'Critical Issues Review',
-                    filters: [],
-                    createdAt: new Date(),
-                    lastUsed: new Date(),
-                    category: 'issues'
-                  }
-                ]}
               />
 
               {/* Search Results Preview */}

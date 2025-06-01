@@ -63,7 +63,7 @@ function getCacheKey(request: NextRequest): string {
 }
 
 function isRateLimited(request: NextRequest): boolean {
-  const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+  const ip = request.headers.get('x-real-ip') || request.headers.get('x-forwarded-for') || 'unknown';
   const pathname = request.nextUrl.pathname;
   
   // Find matching rate limit config

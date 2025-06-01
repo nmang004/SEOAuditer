@@ -122,10 +122,10 @@ export const keyboard = {
   isEscapeKey: (event: KeyboardEvent) => event.key === keyboard.keys.ESCAPE,
   isArrowKey: (event: KeyboardEvent) => 
     [keyboard.keys.ARROW_UP, keyboard.keys.ARROW_DOWN, keyboard.keys.ARROW_LEFT, keyboard.keys.ARROW_RIGHT]
-      .includes(event.key),
+      .includes(event.key as any),
   isNavigationKey: (event: KeyboardEvent) =>
     [keyboard.keys.ARROW_UP, keyboard.keys.ARROW_DOWN, keyboard.keys.HOME, keyboard.keys.END]
-      .includes(event.key),
+      .includes(event.key as any),
 
   // Activation helper (Enter or Space)
   isActivationKey: (event: KeyboardEvent) =>

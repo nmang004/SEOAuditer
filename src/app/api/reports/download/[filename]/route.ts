@@ -60,7 +60,7 @@ export async function GET(
     // Determine content type based on file extension
     const ext = path.extname(filename).toLowerCase();
     let contentType = 'application/octet-stream';
-    let downloadName = filename;
+    const downloadName = filename;
 
     switch (ext) {
       case '.pdf':

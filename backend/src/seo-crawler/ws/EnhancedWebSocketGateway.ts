@@ -593,7 +593,7 @@ export class EnhancedWebSocketGateway {
       const staleThreshold = new Date(now.getTime() - 5 * 60 * 1000); // 5 minutes
 
       // Clean up stale sessions
-      for (const [socketId, session] of this.sessions.entries()) {
+      this.sessions.forEach((session, socketId) => {
         if (session.lastActivity < staleThreshold) {
           const socket = this.io?.sockets.sockets.get(socketId);
           if (socket) {
@@ -601,7 +601,7 @@ export class EnhancedWebSocketGateway {
           }
           this.sessions.delete(socketId);
         }
-      }
+      });
     }, 30000); // Every 30 seconds
   }
 
@@ -621,25 +621,25 @@ export class EnhancedWebSocketGateway {
     const threshold = now - 300000; // 5 minutes
 
     // Clean up connection throttle
-    for (const [ip, timestamp] of this.connectionThrottle.entries()) {
+    this.connectionThrottle.forEach((timestamp, ip) => {
       if (timestamp < threshold) {
         this.connectionThrottle.delete(ip);
       }
-    }
+    });
 
     // Clean up rate limiters
-    for (const [ip, limiter] of this.rateLimiters.entries()) {
+    this.rateLimiters.forEach((limiter, ip) => {
       if (limiter.lastReset < threshold) {
         this.rateLimiters.delete(ip);
       }
-    }
+    });
 
     // Clean up progress throttle
-    for (const [jobId, timestamp] of this.progressThrottle.entries()) {
+    this.progressThrottle.forEach((timestamp, jobId) => {
       if (timestamp < threshold) {
         this.progressThrottle.delete(jobId);
       }
-    }
+    });
   }
 
   getConnectionStats(): ConnectionStats {
@@ -654,11 +654,11 @@ export class EnhancedWebSocketGateway {
     }
 
     const rooms: Record<string, number> = {};
-    for (const [roomName, room] of this.io.sockets.adapter.rooms.entries()) {
+    this.io.sockets.adapter.rooms.forEach((room, roomName) => {
       if (roomName.startsWith('user:') || roomName.startsWith('analysis:')) {
         rooms[roomName] = room.size;
       }
-    }
+    });
 
     const memUsage = process.memoryUsage();
     
@@ -716,9 +716,9 @@ export class EnhancedWebSocketGateway {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Disconnect all clients
-    for (const [, socket] of this.io.sockets.sockets.entries()) {
+    this.io.sockets.sockets.forEach((socket) => {
       socket.disconnect(true);
-    }
+    });
 
     // Close Redis connections
     try {

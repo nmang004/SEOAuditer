@@ -114,8 +114,8 @@ export const HistoricalTrends = React.memo(function HistoricalTrends({ timeRange
       </CardHeader>
       <CardContent className="h-[340px]">
         <div className="flex gap-2 p-2 border-b bg-muted/10">
-          <Button size="xs" variant="outline" onClick={handleExportCSV} aria-label="Export trends as CSV">Export CSV</Button>
-          <Button size="xs" variant="outline" onClick={handleExportPDF} aria-label="Export trends as PDF">Export PDF</Button>
+          <Button size="sm" variant="outline" onClick={handleExportCSV} aria-label="Export trends as CSV">Export CSV</Button>
+          <Button size="sm" variant="outline" onClick={handleExportPDF} aria-label="Export trends as PDF">Export PDF</Button>
         </div>
         <div ref={chartRef} className="h-full w-full" role="img" aria-label="SEO historical trends line chart" tabIndex={0} aria-describedby="historical-trends-desc">
           <ResponsiveContainer width="100%" height={300}>
@@ -133,7 +133,7 @@ export const HistoricalTrends = React.memo(function HistoricalTrends({ timeRange
                 height={36}
                 iconType="circle"
                 wrapperStyle={{ paddingBottom: '1rem' }}
-                onClick={e => toggleLine(e.dataKey)}
+                onClick={e => e.dataKey && toggleLine(String(e.dataKey))}
               />
               <Brush dataKey="date" height={20} stroke="#3b82f6" travellerWidth={10} />
               {/* Render metric lines */}
@@ -170,7 +170,7 @@ export const HistoricalTrends = React.memo(function HistoricalTrends({ timeRange
           {Object.entries(chartColors).map(([key, color]) => (
             <Button
               key={key}
-              size="xs"
+              size="sm"
               variant={visibleLines.includes(key) ? 'default' : 'outline'}
               style={{ color, borderColor: color }}
               onClick={() => toggleLine(key)}
@@ -180,7 +180,7 @@ export const HistoricalTrends = React.memo(function HistoricalTrends({ timeRange
               {key.replace('Score', '')}
             </Button>
           ))}
-          <Button size="xs" variant="ghost" onClick={() => setAnnotations(a => [...a, { index: 5, label: 'Manual Note', color: '#10b981' }])}>
+          <Button size="sm" variant="ghost" onClick={() => setAnnotations(a => [...a, { index: 5, label: 'Manual Note', color: '#10b981' }])}>
             <Plus className="h-3 w-3 mr-1" /> Add Annotation
           </Button>
         </div>

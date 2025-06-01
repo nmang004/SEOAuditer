@@ -1,5 +1,5 @@
 import lighthouse from 'lighthouse';
-import chromeLauncher from 'chrome-launcher';
+import * as chromeLauncher from 'chrome-launcher';
 import { performance } from 'perf_hooks';
 
 export interface CoreWebVitals {

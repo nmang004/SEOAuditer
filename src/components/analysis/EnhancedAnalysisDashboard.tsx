@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Card, 
   CardContent, 
@@ -94,11 +94,7 @@ export function EnhancedAnalysisDashboard({
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
-  useEffect(() => {
-    loadAnalysisData();
-  }, [analysisId]);
-
-  const loadAnalysisData = async () => {
+  const loadAnalysisData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/enhanced-analysis/${analysisId}/detailed`);
@@ -112,7 +108,11 @@ export function EnhancedAnalysisDashboard({
     } finally {
       setLoading(false);
     }
-  };
+  }, [analysisId]);
+
+  useEffect(() => {
+    loadAnalysisData();
+  }, [loadAnalysisData]);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600';

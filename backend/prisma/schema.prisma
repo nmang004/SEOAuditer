@@ -24,6 +24,8 @@ model User {
   accountLocked       Boolean        @default(false)
   lockoutExpires      DateTime?
   lastLogin           DateTime?
+  failedLoginAttempts Int            @default(0)
+  lastFailedAttempt   DateTime?
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
   activityLogs        ActivityLog[]
@@ -31,6 +33,7 @@ model User {
   projects            Project[]
   refreshTokens       RefreshToken[]
   settings            UserSettings?  @relation("UserToUserSettings")
+  passwordHistory     PasswordHistory[]
 
   @@index([email], map: "idx_users_email")
   @@index([subscriptionTier, emailVerified], map: "idx_users_subscription_verified")
@@ -588,4 +591,190 @@ view pg_stat_statements {
   jit_emission_time      Float?
 
   @@ignore
+}
+
+model PasswordHistory {
+  id           String   @id @default(uuid())
+  userId       String
+  passwordHash String
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_password_history_user_id")
+  @@index([createdAt], map: "idx_password_history_created_at")
+  @@index([userId, createdAt], map: "idx_password_history_user_time")
+  @@map("password_history")
+}
+
+model ExportJob {
+  id                       String    @id @default(uuid())
+  projectId                String
+  userId                   String
+  type                     String
+  status                   String    @default("pending")
+  progress                 Int       @default(0)
+  fileName                 String?
+  fileSize                 Int?
+  downloadUrl              String?
+  metadata                 Json?
+  errorMessage             String?
+  processedRecords         Int?      @default(0)
+  estimatedTimeRemaining   Int?
+  createdAt                DateTime  @default(now())
+  startedAt                DateTime?
+  completedAt              DateTime?
+  expiresAt                DateTime?
+
+  @@index([projectId], map: "idx_export_jobs_project")
+  @@index([userId], map: "idx_export_jobs_user")
+  @@index([status], map: "idx_export_jobs_status")
+  @@index([createdAt], map: "idx_export_jobs_created_at")
+  @@index([userId, status], map: "idx_export_jobs_user_status")
+  @@index([status, createdAt], map: "idx_export_jobs_status_time")
+  @@map("export_jobs")
+}
+
+model SystemConfig {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Json
+  description String?
+  category    String   @default("general")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([key], map: "idx_system_config_key")
+  @@index([category], map: "idx_system_config_category")
+  @@index([isActive], map: "idx_system_config_active")
+  @@map("system_config")
+}
+
+model EmailTemplate {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  type        String   @default("general")
+  subject     String
+  htmlContent String
+  textContent String?
+  html        String?
+  text        String?
+  variables   String[] @default([])
+  category    String   @default("general")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name], map: "idx_email_templates_name")
+  @@index([category], map: "idx_email_templates_category")
+  @@index([isActive], map: "idx_email_templates_active")
+  @@index([type], map: "idx_email_templates_type")
+  @@map("email_templates")
+}
+
+model EmailLog {
+  id          String    @id @default(uuid())
+  userId      String?
+  toEmail     String
+  fromEmail   String
+  subject     String
+  templateId  String?
+  status      String    @default("pending")
+  recipients  String[]  @default([])
+  metadata    Json?
+  errorMessage String?
+  sentAt      DateTime?
+  createdAt   DateTime  @default(now())
+  
+  @@index([userId], map: "idx_email_logs_user")
+  @@index([toEmail], map: "idx_email_logs_to_email")
+  @@index([status], map: "idx_email_logs_status")
+  @@index([createdAt], map: "idx_email_logs_created_at")
+  @@index([sentAt], map: "idx_email_logs_sent_at")
+  @@map("email_logs")
+}
+
+model ExportRecord {
+  id           String    @id @default(uuid())
+  userId       String
+  projectId    String?
+  analysisId   String?
+  reportId     String?
+  exportType   String
+  fileName     String
+  fileSize     Int?
+  filePath     String?
+  downloadUrl  String?
+  metadata     Json?
+  format       String?
+  status       String    @default("processing")
+  errorMessage String?
+  createdAt    DateTime  @default(now())
+  completedAt  DateTime?
+  expiresAt    DateTime?
+
+  @@index([userId], map: "idx_export_records_user")
+  @@index([projectId], map: "idx_export_records_project")
+  @@index([reportId], map: "idx_export_records_report")
+  @@index([status], map: "idx_export_records_status")
+  @@index([createdAt], map: "idx_export_records_created_at")
+  @@index([expiresAt], map: "idx_export_records_expires")
+  @@map("export_records")
+}
+
+model ReportTemplate {
+  id           String   @id @default(uuid())
+  name         String
+  description  String?
+  category     String   @default("standard")
+  templateData Json
+  isDefault    Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  isPublic     Boolean  @default(false)
+  userId       String?
+  createdBy    String?
+  usageCount   Int      @default(0)
+  lastUsed     DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([name], map: "idx_report_templates_name")
+  @@index([category], map: "idx_report_templates_category")
+  @@index([isActive], map: "idx_report_templates_active")
+  @@index([isDefault], map: "idx_report_templates_default")
+  @@index([userId], map: "idx_report_templates_user")
+  @@index([isPublic], map: "idx_report_templates_public")
+  @@index([lastUsed], map: "idx_report_templates_last_used")
+  @@map("report_templates")
+}
+
+model ScheduledReport {
+  id             String    @id @default(uuid())
+  userId         String
+  projectId      String
+  name           String
+  description    String?
+  frequency      String
+  schedule       String?
+  templateId     String?
+  recipients     String[]
+  settings       Json?
+  isActive       Boolean   @default(true)
+  lastRunAt      DateTime?
+  nextRunAt      DateTime?
+  lastExecuted   DateTime?
+  lastStatus     String?
+  lastError      String?
+  nextExecution  DateTime?
+  executionCount Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([userId], map: "idx_scheduled_reports_user")
+  @@index([projectId], map: "idx_scheduled_reports_project")
+  @@index([frequency], map: "idx_scheduled_reports_frequency")
+  @@index([isActive], map: "idx_scheduled_reports_active")
+  @@index([nextRunAt], map: "idx_scheduled_reports_next_run")
+  @@index([nextExecution], map: "idx_scheduled_reports_next_execution")
+  @@map("scheduled_reports")
 }

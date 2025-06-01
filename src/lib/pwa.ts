@@ -169,7 +169,10 @@ class PWAManager {
     
     try {
       const registration = await navigator.serviceWorker.ready;
-      await registration.sync.register('background-sync-analysis');
+      // Check if background sync is supported
+      if ('sync' in registration) {
+        await (registration as any).sync.register('background-sync-analysis');
+      }
     } catch (error) {
       console.error('Background sync registration failed:', error);
     }

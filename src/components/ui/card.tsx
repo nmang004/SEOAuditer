@@ -10,18 +10,22 @@ const Card = React.forwardRef<
     glass?: boolean;
     hover?: boolean;
   }
->(({ className, glass = false, hover = false, ...props }, ref) => (
-  <Animated
-    ref={ref}
-    type="fade"
-    className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
-      glass && "glassmorphism border-opacity-30",
-      className
-    )}
-    style={{ willChange: 'transform, opacity' }}
-    {...props}
-  >
+>(({ className, glass = false, hover = false, ...props }, ref) => {
+  // Filter out non-animated props
+  const { onDrag, onDragStart, onDragEnd, onAnimationStart, onAnimationEnd, children, ...divProps } = props;
+  
+  return (
+    <Animated
+      ref={ref}
+      type="fade"
+      className={cn(
+        "rounded-lg border bg-card text-card-foreground shadow-sm",
+        glass && "glassmorphism border-opacity-30",
+        className
+      )}
+      style={{ willChange: 'transform, opacity' }}
+      {...divProps}
+    >
     <div
       className={cn(
         hover &&
@@ -29,10 +33,11 @@ const Card = React.forwardRef<
         "h-full w-full"
       )}
     >
-      {props.children}
+      {children}
     </div>
   </Animated>
-));
+  );
+});
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<

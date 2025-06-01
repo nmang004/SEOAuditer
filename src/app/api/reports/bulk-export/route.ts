@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     };
 
     // Start bulk export (async process)
-    const exportJob = await bulkExportService.startBulkExport({
+    const exportJob = await bulkExportService.bulkExport({
       userId: body.userId,
       projectId: body.projectId,
       analysisIds: body.analysisIds,
@@ -110,7 +110,7 @@ export async function GET(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const job = await bulkExportService.getExportStatus(jobId, userId);
+    const job = await bulkExportService.getExportStatus(jobId);
 
     if (!job) {
       return NextResponse.json({
@@ -159,7 +159,7 @@ export async function DELETE(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const cancelled = await bulkExportService.cancelExport(jobId, userId);
+    const cancelled = await bulkExportService.cancelExport(jobId);
 
     if (!cancelled) {
       return NextResponse.json({

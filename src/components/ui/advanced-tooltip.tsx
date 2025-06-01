@@ -74,7 +74,7 @@ export function AdvancedTooltip({
   interactive = false,
   showArrow = true,
   animation = 'fade',
-  zIndex = designTokens.zIndex.tooltip,
+  zIndex = parseInt(designTokens.zIndex.tooltip),
 }: AdvancedTooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<TooltipPosition>({ x: 0, y: 0, placement });

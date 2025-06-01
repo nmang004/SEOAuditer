@@ -365,9 +365,8 @@ export class DatabaseService {
           select: { analysis: { select: { projectId: true } } },
         });
         
-        const uniqueProjectIds = [...new Set(
-          affectedProjectIds.map(item => item.analysis.projectId)
-        )];
+        const projectIds = affectedProjectIds.map(item => item.analysis.projectId);
+        const uniqueProjectIds = Array.from(new Set(projectIds));
         
         await Promise.all(
           uniqueProjectIds.map(async (projectId) => {

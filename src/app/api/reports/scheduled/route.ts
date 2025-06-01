@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const scheduledReports = await scheduledReportService.getScheduledReports(userId, projectId);
+    const scheduledReports = await scheduledReportService.getScheduledReports(userId);
 
     return NextResponse.json({
       success: true,
@@ -97,7 +97,7 @@ export async function PUT(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const scheduledReport = await scheduledReportService.updateScheduledReport(body.scheduleId, body.userId, {
+    const scheduledReport = await scheduledReportService.updateScheduledReport(body.scheduleId, {
       name: body.name,
       description: body.description,
       templateId: body.templateId,
@@ -134,7 +134,7 @@ export async function DELETE(req: NextRequest) {
       }, { status: 400 });
     }
 
-    await scheduledReportService.deleteScheduledReport(scheduleId, userId);
+    await scheduledReportService.deleteScheduledReport(scheduleId);
 
     return NextResponse.json({
       success: true,

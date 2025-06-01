@@ -113,7 +113,7 @@ export default function NewAnalysisPage() {
       color: "text-purple-600"
     },
     {
-      icon: <Image className="h-5 w-5" alt="" />,
+      icon: <Image className="h-5 w-5" />,
       title: "Image Optimization",
       description: "Alt text and image performance",
       color: "text-orange-600"

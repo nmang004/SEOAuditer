@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const templates = await templateService.getTemplates(userId, includeDefault);
+    const templates = await templateService.getTemplates();
 
     return NextResponse.json({
       success: true,
@@ -83,7 +83,7 @@ export async function PUT(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const template = await templateService.updateTemplate(body.templateId, body.userId, {
+    const template = await templateService.updateTemplate(body.templateId, {
       name: body.name,
       description: body.description,
       sections: body.sections,
@@ -121,7 +121,7 @@ export async function DELETE(req: NextRequest) {
       }, { status: 400 });
     }
 
-    await templateService.deleteTemplate(templateId, userId);
+    await templateService.deleteTemplate(templateId);
 
     return NextResponse.json({
       success: true,

@@ -289,7 +289,7 @@ export const componentVariants = {
 
 // Export utility function for accessing design tokens
 export function getToken(path: string): any {
-  return path.split('.').reduce((obj, key) => obj?.[key], designTokens);
+  return path.split('.').reduce((obj, key) => obj?.[key as keyof typeof obj], designTokens as any);
 }
 
 // Export CSS custom properties generator

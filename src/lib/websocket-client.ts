@@ -101,7 +101,7 @@ export class WebSocketClient {
     try {
       // Store credentials for reconnection
       this.lastToken = token;
-      this.lastDeviceId = deviceId;
+      this.lastDeviceId = deviceId || null;
 
       if (this.socket?.connected) {
         logger.debug('WebSocket already connected');
@@ -352,7 +352,7 @@ export class WebSocketClient {
     }
 
     if (this.lastToken) {
-      this.scheduleReconnect(this.lastToken, this.lastDeviceId);
+      this.scheduleReconnect(this.lastToken, this.lastDeviceId || undefined);
     }
   }
 
@@ -384,9 +384,9 @@ export class WebSocketClient {
 
     logger.info(`Re-subscribing to ${this.subscriptions.size} analysis jobs`);
     
-    for (const jobId of this.subscriptions.keys()) {
-      this.socket.emit('subscribe_analysis', { jobId });
-    }
+    Array.from(this.subscriptions.keys()).forEach(jobId => {
+      this.socket?.emit('subscribe_analysis', { jobId });
+    });
   }
 
   subscribeToAnalysis(jobId: string, callbacks: SubscriptionCallback): void {

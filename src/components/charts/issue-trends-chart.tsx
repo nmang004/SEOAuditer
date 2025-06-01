@@ -258,13 +258,11 @@ export function IssueTrendsChart({
                 Updating...
               </Badge>
             )}
-            {trendsData?.summary && (
+            {trendsData?.data && trendsData.data.length > 0 && (
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span>{trendsData.summary.totalNewIssues} new</span>
+                <span>{trendsData.data.reduce((sum, d) => sum + d.newIssues, 0)} new</span>
                 <span>•</span>
-                <span>{trendsData.summary.totalResolvedIssues} resolved</span>
-                <span>•</span>
-                <span>{trendsData.summary.resolutionRate}% resolution rate</span>
+                <span>{trendsData.data.reduce((sum, d) => sum + d.resolvedIssues, 0)} resolved</span>
               </div>
             )}
           </div>
@@ -323,55 +321,25 @@ export function IssueTrendsChart({
       </div>
 
       {/* Summary Stats */}
-      {trendsData?.summary && !isLoading && (
+      {trendsData?.data && trendsData.data.length > 0 && !isLoading && (
         <div className="mt-6 pt-4 border-t">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
             <div>
-              <span className="text-gray-600">New Issues</span>
-              <div className="font-semibold text-lg text-red-600">{trendsData.summary.totalNewIssues}</div>
-            </div>
-            <div>
-              <span className="text-gray-600">Resolved</span>
-              <div className="font-semibold text-lg text-green-600">{trendsData.summary.totalResolvedIssues}</div>
-            </div>
-            <div>
-              <span className="text-gray-600">Net Change</span>
-              <div className={`font-semibold text-lg ${
-                trendsData.summary.netIssueChange > 0 ? 'text-red-600' : 
-                trendsData.summary.netIssueChange < 0 ? 'text-green-600' : 'text-gray-600'
-              }`}>
-                {trendsData.summary.netIssueChange > 0 ? '+' : ''}{trendsData.summary.netIssueChange}
+              <span className="text-gray-600">Total New Issues</span>
+              <div className="font-semibold text-lg text-red-600">
+                {trendsData.data.reduce((sum, d) => sum + d.newIssues, 0)}
               </div>
             </div>
             <div>
-              <span className="text-gray-600">Open Issues</span>
-              <div className="font-semibold text-lg">{trendsData.summary.currentOpenIssues}</div>
+              <span className="text-gray-600">Total Resolved</span>
+              <div className="font-semibold text-lg text-green-600">
+                {trendsData.data.reduce((sum, d) => sum + d.resolvedIssues, 0)}
+              </div>
             </div>
             <div>
-              <span className="text-gray-600">Resolution Rate</span>
-              <div className="font-semibold text-lg text-blue-600">{trendsData.summary.resolutionRate}%</div>
-            </div>
-          </div>
-          
-          {/* Severity Breakdown */}
-          <div className="mt-4 pt-4 border-t">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">New Issues by Severity</h4>
-            <div className="grid grid-cols-4 gap-4 text-sm">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-red-600">{trendsData.summary.severityBreakdown.critical}</div>
-                <div className="text-gray-600">Critical</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-orange-500">{trendsData.summary.severityBreakdown.high}</div>
-                <div className="text-gray-600">High</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-500">{trendsData.summary.severityBreakdown.medium}</div>
-                <div className="text-gray-600">Medium</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-500">{trendsData.summary.severityBreakdown.low}</div>
-                <div className="text-gray-600">Low</div>
+              <span className="text-gray-600">Current Issues</span>
+              <div className="font-semibold text-lg">
+                {trendsData.data[trendsData.data.length - 1]?.totalIssues || 0}
               </div>
             </div>
           </div>

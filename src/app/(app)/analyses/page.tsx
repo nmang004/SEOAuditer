@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Plus, Search, Filter, Calendar, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -203,9 +204,11 @@ export default function AnalysesPage() {
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
                         {analysis.favicon ? (
-                          <img 
+                          <Image 
                             src={analysis.favicon} 
                             alt={`${analysis.projectName} favicon`}
+                            width={24}
+                            height={24}
                             className="w-6 h-6"
                           />
                         ) : (

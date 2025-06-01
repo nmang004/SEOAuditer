@@ -73,12 +73,12 @@ export async function POST(req: NextRequest) {
     };
 
     // Generate report
-    const result = await reportService.generateReport(
-      body.analysisId,
-      body.projectId,
-      config,
-      body.userId
-    );
+    const result = await reportService.generateReport({
+      analysisId: body.analysisId,
+      projectId: body.projectId,
+      config: config,
+      userId: body.userId
+    });
 
     if (!result.success) {
       return NextResponse.json({
@@ -88,14 +88,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Handle email delivery if requested
-    if (body.config.delivery?.email && body.config.delivery?.recipients?.length > 0) {
+    if (body.config.delivery?.email && body.config.delivery?.recipients && body.config.delivery.recipients.length > 0) {
       try {
-        await emailService.sendReportEmail({
-          recipients: body.config.delivery.recipients,
+        await emailService.sendEmail({
+          to: body.config.delivery.recipients,
           subject: body.config.delivery.subject || 'SEO Analysis Report',
-          message: body.config.delivery.message || 'Please find your SEO analysis report attached.',
-          attachmentPath: result.filePath!,
-          attachmentName: `seo-report.${body.config.format}`
+          body: body.config.delivery.message || 'Please find your SEO analysis report attached.'
         });
       } catch (emailError) {
         console.warn('Email delivery failed:', emailError);
@@ -138,7 +136,7 @@ export async function GET(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const status = await reportService.getReportStatus(reportId, userId);
+    const status = await reportService.getReportStatus(reportId);
 
     return NextResponse.json({
       success: true,

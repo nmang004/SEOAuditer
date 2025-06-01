@@ -350,11 +350,11 @@ export class AnalysisCacheService {
       `;
 
       // Clean memory cache
-      for (const [key, entry] of this.memoryCache.entries()) {
+      this.memoryCache.forEach((entry, key) => {
         if (entry.expiresAt <= new Date()) {
           this.memoryCache.delete(key);
         }
-      }
+      });
 
       return {
         deletedCount: Number(deletedCount),

@@ -63,7 +63,7 @@ export function RealTimeAnalysis({
     autoReconnect: true,
     maxReconnectAttempts: 10,
     fallbackPolling: true,
-    onProgress: useCallback((progress) => {
+    onProgress: useCallback((progress: any) => {
       setLastUpdate(new Date());
       
       // If we get a high progress percentage, try to prefetch results
@@ -71,7 +71,7 @@ export function RealTimeAnalysis({
         fetchResults();
       }
     }, []),
-    onCompleted: useCallback((event) => {
+    onCompleted: useCallback((event: any) => {
       setAnalysisResults(event.data);
       resultsRef.current = event.data;
       setLastUpdate(new Date());
@@ -83,13 +83,13 @@ export function RealTimeAnalysis({
         }, 2000);
       }
     }, [onComplete, autoNavigateOnComplete, projectId, jobId]),
-    onError: useCallback((event) => {
+    onError: useCallback((event: any) => {
       onError?.(event.data?.message || 'Analysis failed');
     }, [onError]),
-    onStepChange: useCallback((event) => {
+    onStepChange: useCallback((event: any) => {
       setLastUpdate(new Date());
     }, []),
-    onQueueUpdate: useCallback((update) => {
+    onQueueUpdate: useCallback((update: any) => {
       setLastUpdate(new Date());
     }, [])
   });

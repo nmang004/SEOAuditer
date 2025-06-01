@@ -147,13 +147,15 @@ export function IssuesDashboard({
           </div>
         </div>
         <div className="flex flex-wrap gap-2 items-center">
-          <Input
-            value={search}
-            onChange={e => debouncedSetSearch(e.target.value)}
-            placeholder="Search issues..."
-            className="w-48"
-            prefix={<Search className="h-4 w-4 text-muted-foreground" />}
-          />
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              value={search}
+              onChange={e => debouncedSetSearch(e.target.value)}
+              placeholder="Search issues..."
+              className="w-48 pl-9"
+            />
+          </div>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -167,7 +169,7 @@ export function IssuesDashboard({
                       {allSeverities.map(sev => (
                         <Button
                           key={sev}
-                          size="xs"
+                          size="sm"
                           variant={filters.severity.includes(sev) ? 'default' : 'outline'}
                           onClick={() => handleFilter('severity', sev)}
                         >
@@ -182,7 +184,7 @@ export function IssuesDashboard({
                       {allCategories.map(cat => (
                         <Button
                           key={cat}
-                          size="xs"
+                          size="sm"
                           variant={filters.category.includes(cat) ? 'default' : 'outline'}
                           onClick={() => handleFilter('category', cat)}
                         >
@@ -197,7 +199,7 @@ export function IssuesDashboard({
                       {allStatuses.map(stat => (
                         <Button
                           key={stat}
-                          size="xs"
+                          size="sm"
                           variant={filters.status.includes(stat) ? 'default' : 'outline'}
                           onClick={() => handleFilter('status', stat)}
                         >
@@ -226,10 +228,10 @@ export function IssuesDashboard({
         </div>
         <div className="flex gap-2 p-2 border-b bg-muted/10">
           <div className="inline-flex rounded-md shadow-sm overflow-hidden border border-muted divide-x divide-muted bg-background">
-            <Button size="xs" variant="ghost" onClick={handleExportCSV} aria-label="Export issues as CSV" className="flex items-center gap-1 px-2">
+            <Button size="sm" variant="ghost" onClick={handleExportCSV} aria-label="Export issues as CSV" className="flex items-center gap-1 px-2">
               <Download className="h-3 w-3" /> CSV
             </Button>
-            <Button size="xs" variant="ghost" onClick={handleExportPDF} aria-label="Export issues as PDF" className="flex items-center gap-1 px-2">
+            <Button size="sm" variant="ghost" onClick={handleExportPDF} aria-label="Export issues as PDF" className="flex items-center gap-1 px-2">
               <Download className="h-3 w-3" /> PDF
             </Button>
           </div>
@@ -243,8 +245,6 @@ export function IssuesDashboard({
           className="w-full"
           outerElementType="div"
           innerElementType="ul"
-          role="listbox"
-          aria-label="SEO Issues Virtual List"
         >
           {({ index, style }) => {
             const issue = filteredIssues[index];
@@ -268,10 +268,10 @@ export function IssuesDashboard({
                     </div>
                   </div>
                   <div className="flex flex-row gap-2 items-center mt-2 md:mt-0">
-                    <Button size="xs" variant="success" onClick={() => onIssueAction(issue.id, 'fixed')} aria-label={`Mark ${issue.title} as fixed`} className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold">
+                    <Button size="sm" variant="outline" onClick={() => onIssueAction(issue.id, 'fixed')} aria-label={`Mark ${issue.title} as fixed`} className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-green-600 hover:text-green-700 hover:bg-green-50">
                       <Check className="h-4 w-4" /> Fixed
                     </Button>
-                    <Button size="xs" variant="destructive" onClick={() => onIssueAction(issue.id, 'ignored')} aria-label={`Ignore ${issue.title}`} className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold">
+                    <Button size="sm" variant="outline" onClick={() => onIssueAction(issue.id, 'ignored')} aria-label={`Ignore ${issue.title}`} className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50">
                       <X className="h-4 w-4" /> Ignore
                     </Button>
                   </div>

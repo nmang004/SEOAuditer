@@ -40,7 +40,11 @@ export const SmartSearch: React.FC<SmartSearchProps> = ({
     debounceTimeout.current = setTimeout(() => {
       onSearch(query);
     }, 200);
-    return () => debounceTimeout.current && clearTimeout(debounceTimeout.current);
+    return () => {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
   }, [query, onSearch]);
 
   // Keyboard navigation

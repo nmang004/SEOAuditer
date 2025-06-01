@@ -1,4 +1,4 @@
-import { useEffect, useRef, MutableRefObject } from 'react';
+import React, { useEffect, useRef, MutableRefObject } from 'react';
 import { a11y } from './design-tokens';
 
 /**
@@ -101,54 +101,6 @@ export function useFocusManagement<T extends HTMLElement = HTMLElement>(
   return ref;
 }
 
-/**
- * Hook to manage keyboard navigation within a component
- */
-export function useKeyboardNavigation<T extends HTMLElement = HTMLElement>(
-  keyHandlers: Record<string, (e: KeyboardEvent) => void>,
-  options: {
-    /** Whether the keyboard navigation is active */
-    isActive?: boolean;
-    /** Whether to prevent default behavior for handled keys */
-    preventDefault?: boolean;
-    /** Whether to stop propagation for handled keys */
-    stopPropagation?: boolean;
-    /** The element to attach the event listener to (defaults to document) */
-    target?: HTMLElement | Document | Window | null;
-  } = {}
-): MutableRefObject<T | null> {
-  const ref = useRef<T>(null);
-  const {
-    isActive = true,
-    preventDefault = true,
-    stopPropagation = false,
-    target = typeof document !== 'undefined' ? document : null,
-  } = options;
-
-  useEffect(() => {
-    if (!isActive || !target) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const handler = keyHandlers[e.key];
-      if (handler) {
-        if (preventDefault) {
-          e.preventDefault();
-        }
-        if (stopPropagation) {
-          e.stopPropagation();
-        }
-        handler(e);
-      }
-    };
-
-    target.addEventListener('keydown', handleKeyDown as EventListener);
-    return () => {
-      target.removeEventListener('keydown', handleKeyDown as EventListener);
-    };
-  }, [isActive, keyHandlers, preventDefault, stopPropagation, target]);
-
-  return ref;
-}
 
 /**
  * Hook to manage focus on mount and cleanup
@@ -392,10 +344,10 @@ export const keyboard = {
   isEscapeKey: (event: KeyboardEvent) => event.key === keyboard.keys.ESCAPE,
   isArrowKey: (event: KeyboardEvent) => 
     [keyboard.keys.ARROW_UP, keyboard.keys.ARROW_DOWN, keyboard.keys.ARROW_LEFT, keyboard.keys.ARROW_RIGHT]
-      .includes(event.key),
+      .includes(event.key as any),
   isNavigationKey: (event: KeyboardEvent) =>
     [keyboard.keys.ARROW_UP, keyboard.keys.ARROW_DOWN, keyboard.keys.HOME, keyboard.keys.END]
-      .includes(event.key),
+      .includes(event.key as any),
 
   // Activation helper (Enter or Space)
   isActivationKey: (event: KeyboardEvent) =>

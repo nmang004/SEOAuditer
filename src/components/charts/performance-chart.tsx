@@ -110,8 +110,8 @@ export function PerformanceChart({
           },
           afterBody: (context) => {
             const dataPoint = trendsData?.data?.[context[0]?.dataIndex];
-            if (dataPoint?.analysisCount) {
-              return [`${dataPoint.analysisCount} analyses`, `${dataPoint.projectCount} projects`];
+            if (dataPoint?.projectCount) {
+              return [`${dataPoint.projectCount} projects`];
             }
             return [];
           },
@@ -292,13 +292,11 @@ export function PerformanceChart({
                 Updating...
               </Badge>
             )}
-            {trendsData?.summary && (
+            {trendsData?.data && trendsData.data.length > 0 && (
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span>{trendsData.summary.totalAnalyses} analyses</span>
+                <span>{trendsData.data.length} data points</span>
                 <span>•</span>
-                <span>{trendsData.summary.uniqueProjects} projects</span>
-                <span>•</span>
-                <span>Avg: {trendsData.summary.averageScore}</span>
+                <span>{trendsData.data.reduce((sum, d) => sum + d.projectCount, 0)} total projects</span>
               </div>
             )}
           </div>
@@ -354,24 +352,32 @@ export function PerformanceChart({
       </div>
 
       {/* Summary Stats */}
-      {trendsData?.summary && !isLoading && (
+      {trendsData?.data && trendsData.data.length > 0 && !isLoading && (
         <div className="mt-6 pt-4 border-t">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-gray-600">Average Score</span>
-              <div className="font-semibold text-lg">{trendsData.summary.averageScore}</div>
+              <div className="font-semibold text-lg">
+                {(trendsData.data.reduce((sum, d) => sum + d.overallScore, 0) / trendsData.data.length).toFixed(1)}
+              </div>
             </div>
             <div>
               <span className="text-gray-600">Best Score</span>
-              <div className="font-semibold text-lg text-green-600">{trendsData.summary.highestScore}</div>
+              <div className="font-semibold text-lg text-green-600">
+                {Math.max(...trendsData.data.map(d => d.overallScore))}
+              </div>
             </div>
             <div>
               <span className="text-gray-600">Lowest Score</span>
-              <div className="font-semibold text-lg text-red-600">{trendsData.summary.lowestScore}</div>
+              <div className="font-semibold text-lg text-red-600">
+                {Math.min(...trendsData.data.map(d => d.overallScore))}
+              </div>
             </div>
             <div>
-              <span className="text-gray-600">Total Analyses</span>
-              <div className="font-semibold text-lg">{trendsData.summary.totalAnalyses}</div>
+              <span className="text-gray-600">Total Projects</span>
+              <div className="font-semibold text-lg">
+                {trendsData.data.reduce((sum, d) => sum + d.projectCount, 0)}
+              </div>
             </div>
           </div>
         </div>

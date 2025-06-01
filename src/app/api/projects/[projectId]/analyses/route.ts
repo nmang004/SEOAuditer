@@ -30,7 +30,7 @@ export async function GET(
     
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error(`GET /api/projects/${projectId}/analyses error:`, error);
+    console.error(`GET /api/projects/[projectId]/analyses error:`, error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }

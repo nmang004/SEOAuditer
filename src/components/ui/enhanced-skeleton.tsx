@@ -51,6 +51,9 @@ export function Skeleton({
 }: SkeletonProps & React.HTMLAttributes<HTMLDivElement>) {
   const duration = speedConfig[speed];
   const reducedMotion = motionPreferences.prefersReducedMotion();
+  
+  // Filter out event handlers that conflict with motion
+  const { onAnimationStart, onAnimationEnd, onDrag, onDragStart, onDragEnd, ...cleanProps } = props;
 
   const pulseVariants = {
     animate: {
@@ -99,7 +102,7 @@ export function Skeleton({
         animate="animate"
         role="status"
         aria-label="Loading content"
-        {...props}
+        {...cleanProps}
       >
         {children}
       </motion.div>
@@ -112,7 +115,7 @@ export function Skeleton({
         className={cn(baseClasses, 'relative overflow-hidden', className)}
         role="status"
         aria-label="Loading content"
-        {...props}
+        {...cleanProps}
       >
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 dark:via-white/10 to-transparent"
@@ -131,7 +134,7 @@ export function Skeleton({
       animate="animate"
       role="status"
       aria-label="Loading content"
-      {...props}
+      {...cleanProps}
     >
       {children}
     </motion.div>

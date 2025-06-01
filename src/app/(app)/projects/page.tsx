@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Plus, Search, Filter, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -177,9 +178,11 @@ export default function ProjectsPage() {
                   <CardHeader className="flex flex-row items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
                       {project.favicon ? (
-                        <img 
+                        <Image 
                           src={project.favicon} 
                           alt={`${project.name} favicon`}
+                          width={24}
+                          height={24}
                           className="w-6 h-6"
                         />
                       ) : (

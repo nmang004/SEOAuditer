@@ -445,8 +445,8 @@ export default function AnalysisResultsPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-sm font-semibold text-gray-900 block mb-2">Status Code</label>
-                        <div className={`p-3 rounded-lg border text-center font-mono ${(page?.statusCode || page?.status) === 200 ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'}`}>
-                          {page?.statusCode || page?.status || 'Unknown'}
+                        <div className={`p-3 rounded-lg border text-center font-mono ${page?.statusCode === 200 ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'}`}>
+                          {page?.statusCode || 'Unknown'}
                         </div>
                       </div>
                       <div>
@@ -545,7 +545,7 @@ export default function AnalysisResultsPage() {
                   <CardContent className="space-y-4">
                     <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                       <span className="text-gray-700 flex items-center gap-2">
-                        <Image className="h-4 w-4" alt="Images icon" />
+                        <Image className="h-4 w-4" />
                         Images without alt text
                       </span>
                       <span className="font-bold text-gray-900">{page?.stats?.imgWithoutAlt || 0}</span>

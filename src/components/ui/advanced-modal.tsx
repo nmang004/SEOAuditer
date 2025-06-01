@@ -65,7 +65,7 @@ export function AdvancedModal({
   overlayClassName,
   contentClassName,
   animation = 'scale',
-  zIndex = designTokens.zIndex.modal,
+  zIndex = parseInt(designTokens.zIndex.modal),
   role = 'dialog',
   onOpenComplete,
   onCloseComplete,

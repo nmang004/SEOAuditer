@@ -27,8 +27,8 @@ export function RecentProjects({
       // If we have trend data from API, use it
       if ('trend' in project && project.trend) {
         return {
-          direction: project.trend,
-          percentage: project.trendPercentage || 0
+          direction: project.trend as 'up' | 'down' | 'neutral',
+          percentage: ('trendPercentage' in project ? (project as any).trendPercentage : 0)
         };
       }
       
@@ -48,7 +48,7 @@ export function RecentProjects({
       favicon: `https://www.google.com/s2/favicons?domain=${new URL(project.url).hostname}`,
       lastScanDate: project.lastAnalyzed ? new Date(project.lastAnalyzed) : new Date(),
       currentScore: project.score || 0,
-      issueCount: project.issueCount || 0,
+      issueCount: ('issueCount' in project ? (project as any).issueCount : 0),
       trend: trendData.direction,
       trendPercentage: trendData.percentage
     };

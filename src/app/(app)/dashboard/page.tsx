@@ -230,7 +230,7 @@ export default function DashboardPage() {
     url: project.url,
     createdAt: project.createdAt,
     updatedAt: project.updatedAt,
-    lastAnalyzed: project.lastScanDate || project.updatedAt,
+    lastAnalyzed: (project.lastScanDate || project.updatedAt).toString(),
     score: project.currentScore
   })) || [];
 

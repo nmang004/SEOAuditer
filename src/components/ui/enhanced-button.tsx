@@ -91,7 +91,7 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const Comp = asChild ? Slot : motion.button;
+    const Comp: any = asChild ? Slot : motion.button;
     const { prefersReducedMotion } = useMotionPreferences();
     
     const isDisabled = disabled || loading;
@@ -135,6 +135,46 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
     const animationProps = getAnimationProps();
     const mergedMotionProps = { ...animationProps, ...motionProps };
 
+    // Filter out conflicting event handlers and style for HTML elements
+    const { onAnimationStart, onAnimationEnd, onDrag, onDragStart, onDragEnd, style, ...cleanProps } = props;
+    
+    // When using Slot, don't apply any motion props
+    if (asChild) {
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size, fullWidth, elevation, className }))}
+          ref={ref}
+          disabled={isDisabled}
+          aria-disabled={isDisabled}
+          aria-describedby={tooltip ? `${buttonId}-tooltip` : undefined}
+          id={buttonId}
+          {...cleanProps}
+          style={typeof style === 'object' && !Array.isArray(style) && style ? style : undefined}
+        >
+          {loading && (
+            <Loader2 
+              className="h-4 w-4 animate-spin" 
+              aria-hidden="true"
+            />
+          )}
+          {leftIcon && !loading && (
+            <span className="h-4 w-4" aria-hidden="true">{leftIcon}</span>
+          )}
+          {children}
+          {rightIcon && !loading && (
+            <span className="h-4 w-4" aria-hidden="true">{rightIcon}</span>
+          )}
+          {tooltip && (
+            <span className="sr-only" id={`${buttonId}-tooltip`}>
+              {tooltip}
+            </span>
+          )}
+        </Comp>
+      );
+    }
+    
+    // The mergedMotionProps are already safe since they come from our animation system
+    
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, fullWidth, elevation, className }))}
@@ -144,7 +184,8 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-describedby={tooltip ? `${buttonId}-tooltip` : undefined}
         id={buttonId}
         {...mergedMotionProps}
-        {...props}
+        {...cleanProps}
+        style={style}
       >
         {loading && (
           <Loader2 

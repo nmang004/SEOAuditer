@@ -12,6 +12,9 @@ export interface AnimatedButtonProps extends React.ButtonHTMLAttributes<HTMLButt
 
 export const AnimatedButton = React.forwardRef<HTMLButtonElement, AnimatedButtonProps>(
   ({ loading = false, success = false, children, className, disabled, ...props }, ref) => {
+    // Filter out non-motion props
+    const { onAnimationStart, onAnimationEnd, onDrag, onDragEnd, onDragStart, ...buttonProps } = props;
+    
     return (
       <m.button
         ref={ref}
@@ -22,7 +25,7 @@ export const AnimatedButton = React.forwardRef<HTMLButtonElement, AnimatedButton
         whileHover={!disabled && !loading && !success ? { scale: 1.02, boxShadow: '0 4px 16px rgba(0,0,0,0.08)' } : {}}
         whileTap={!disabled && !loading && !success ? { scale: 0.98 } : {}}
         disabled={disabled || loading}
-        {...props}
+        {...buttonProps}
       >
         {/* Loading State */}
         {loading && (

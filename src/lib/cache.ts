@@ -7,7 +7,7 @@ export const runtime = 'nodejs';
 
 // Types
 interface CacheEntry<T = any> {
-  data: T;
+  data: T | string; // Can be compressed (string) or original type
   timestamp: number;
   ttl: number;
   tags: string[];
@@ -82,7 +82,6 @@ export class AdvancedCacheService {
         commandTimeout: 5000,
         // Cluster configuration for production
         enableReadyCheck: true,
-        maxLoadingTimeout: 5000,
         // Performance optimizations
         family: 4,
         keyPrefix: 'rival-outranker:',

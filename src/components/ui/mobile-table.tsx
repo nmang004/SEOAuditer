@@ -96,7 +96,7 @@ export function MobileTable<T = any>({
       if (col.hiddenOnMobile) return false;
       if (col.priority === 'high') return true;
       if (col.priority === 'low') return false;
-      if (screenSize === 'sm') return col.priority === 'high';
+      if (screenSize === 'sm') return false; // For small screens, only show high priority
       return true;
     });
   }, [columns, isMobile, screenSize]);

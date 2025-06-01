@@ -51,8 +51,7 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
       {children}
       <Suspense fallback={null}>
         <ReactQueryDevtools 
-          initialIsOpen={false} 
-          position="bottom-left"
+          initialIsOpen={false}
         />
       </Suspense>
     </QueryClientProvider>

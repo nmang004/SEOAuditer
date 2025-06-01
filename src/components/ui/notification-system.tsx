@@ -410,9 +410,5 @@ export function GlobalNotificationSystem() {
     // ... existing code ...
   }, []);
 
-  return (
-    <NotificationProvider>
-      {/* Rest of the component content */}
-    </NotificationProvider>
-  );
+  return null; // This seems to be a test/demo component
 } 

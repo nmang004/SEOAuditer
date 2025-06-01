@@ -381,7 +381,7 @@ export class PasswordSecurity {
         });
       }
     } catch (error) {
-      logger.error('Failed to update password history:', error);
+      logger.error('Failed to add password to history:', error);
     }
   }
 
