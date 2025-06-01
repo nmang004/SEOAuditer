@@ -565,3 +565,6 @@
   "stack": "TypeError: Cannot read properties of null (reading 'sockets')\n    at WebSocketGateway.shutdown (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/ws/WebSocketGateway.ts:387:13)\n    at EnhancedAnalysisSystem.shutdown (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:240:7)\n    at gracefulShutdown (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/index.ts:296:11)"
 }
 2025-05-31 11:23:31.495 PM [[31merror[39m]: 	[31mUncaught Exception: server.handleUpgrade() was called more than once with the same socket, possibly due to a misconfiguration[39m
+2025-05-31 11:31:09.325 PM [[31merror[39m]: 	[31mUncaught Exception: listen EADDRINUSE: address already in use :::4000[39m
+2025-05-31 11:54:53.201 PM [[31merror[39m]: 	[31mUncaught Exception: listen EADDRINUSE: address already in use :::4000[39m
+2025-05-31 11:59:37.529 PM [[31merror[39m]: 	[31mUncaught Exception: listen EADDRINUSE: address already in use :::4000[39m

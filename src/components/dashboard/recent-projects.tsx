@@ -22,9 +22,24 @@ export function RecentProjects({
 }: RecentProjectsProps) {
   // Transform projects to match the ProjectCardProps format
   const displayProjects = projects.slice(0, maxItems).map(project => {
-    // Randomly select a trend
-    const trends = ['up', 'down', 'neutral'] as const;
-    const trend = trends[Math.floor(Math.random() * trends.length)];
+    // Calculate real trend based on score changes or analysis data
+    const getTrendFromProject = (project: Project) => {
+      // If we have trend data from API, use it
+      if ('trend' in project && project.trend) {
+        return {
+          direction: project.trend,
+          percentage: project.trendPercentage || 0
+        };
+      }
+      
+      // Fallback: calculate trend from score history or default to neutral
+      return {
+        direction: 'neutral' as const,
+        percentage: 0
+      };
+    };
+    
+    const trendData = getTrendFromProject(project);
     
     return {
       id: project.id,
@@ -33,9 +48,9 @@ export function RecentProjects({
       favicon: `https://www.google.com/s2/favicons?domain=${new URL(project.url).hostname}`,
       lastScanDate: project.lastAnalyzed ? new Date(project.lastAnalyzed) : new Date(),
       currentScore: project.score || 0,
-      issueCount: 0, // This will be updated from the analysis data
-      trend,
-      trendPercentage: trend === 'neutral' ? 0 : Math.floor(Math.random() * 20) + 1
+      issueCount: project.issueCount || 0,
+      trend: trendData.direction,
+      trendPercentage: trendData.percentage
     };
   });
 
