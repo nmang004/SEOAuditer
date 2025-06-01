@@ -258,7 +258,7 @@ class ComprehensiveDatabaseSetup {
 
       const indexNames = criticalIndexes.map((i: { indexname: string }) => i.indexname);
       const missingEssentialIndexes = essentialIndexPatterns.filter(pattern => 
-        !indexNames.some(name => name.includes(pattern))
+        !indexNames.some((name: string) => name.includes(pattern))
       );
 
       if (missingEssentialIndexes.length > 0) {
@@ -568,7 +568,7 @@ class ComprehensiveDatabaseSetup {
       if (!project) return { status: 'skipped', reason: 'No projects available' };
 
       // Test transaction integrity
-      await this.prisma.$transaction(async (tx) => {
+      await this.prisma.$transaction(async (tx: PrismaClient) => {
         const crawlSession = await tx.crawlSession.create({
           data: {
             projectId: project.id,
