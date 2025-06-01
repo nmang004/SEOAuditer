@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { logger } from '../src/utils/logger';
 import { databaseManager } from '../src/config/database';
 import { validationRegistry } from '../src/utils/database-validators';
@@ -568,7 +568,7 @@ class ComprehensiveDatabaseSetup {
       if (!project) return { status: 'skipped', reason: 'No projects available' };
 
       // Test transaction integrity
-      await this.prisma.$transaction(async (tx) => {
+      await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         const crawlSession = await tx.crawlSession.create({
           data: {
             projectId: project.id,
