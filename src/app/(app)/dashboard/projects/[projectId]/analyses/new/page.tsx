@@ -113,6 +113,7 @@ export default function NewAnalysisPage() {
       color: "text-purple-600"
     },
     {
+      // eslint-disable-next-line jsx-a11y/alt-text
       icon: <Image className="h-5 w-5" />,
       title: "Image Optimization",
       description: "Alt text and image performance",

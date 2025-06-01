@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { m } from 'framer-motion';
 import {
   Card,
@@ -170,13 +170,7 @@ export function ReportingHub({ analysisId, projectId, userId, onReportGenerated 
   
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadTemplates();
-    loadScheduledReports();
-    loadExportHistory();
-  }, [userId, projectId]);
-
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     try {
       const response = await fetch(`/api/reports/templates?userId=${userId}&includeDefault=true`);
       const data = await response.json();
@@ -186,9 +180,9 @@ export function ReportingHub({ analysisId, projectId, userId, onReportGenerated 
     } catch (error) {
       console.error('Failed to load templates:', error);
     }
-  };
+  }, [userId]);
 
-  const loadScheduledReports = async () => {
+  const loadScheduledReports = useCallback(async () => {
     try {
       const response = await fetch(`/api/reports/scheduled?userId=${userId}&projectId=${projectId}`);
       const data = await response.json();
@@ -198,7 +192,13 @@ export function ReportingHub({ analysisId, projectId, userId, onReportGenerated 
     } catch (error) {
       console.error('Failed to load scheduled reports:', error);
     }
-  };
+  }, [userId, projectId]);
+
+  useEffect(() => {
+    loadTemplates();
+    loadScheduledReports();
+    loadExportHistory();
+  }, [loadTemplates, loadScheduledReports, userId, projectId]);
 
   const loadExportHistory = async () => {
     // Load recent export jobs

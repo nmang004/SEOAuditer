@@ -1,10 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma, isDatabaseConnected } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if database is available
+    if (!isDatabaseConnected()) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          totalProjects: 0,
+          totalAnalyses: 0,
+          averageScore: 0,
+          trendsData: [],
+          recentActivity: []
+        }
+      });
+    }
     // Calculate real-time statistics from database
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -166,7 +177,7 @@ export async function GET(request: NextRequest) {
 
     // Process score trends into daily aggregates
     const scoreTrendsByDay = new Map();
-    scoreTrendsData.forEach(analysis => {
+    scoreTrendsData.forEach((analysis: any) => {
       const day = analysis.createdAt.toISOString().split('T')[0];
       if (!scoreTrendsByDay.has(day)) {
         scoreTrendsByDay.set(day, {
@@ -216,7 +227,7 @@ export async function GET(request: NextRequest) {
 
     // Process score distribution
     const distribution = { excellent: 0, good: 0, needsWork: 0, poor: 0 };
-    scoreDistribution.forEach(group => {
+    scoreDistribution.forEach((group: any) => {
       const score = group.currentScore || 0;
       const count = group._count.id;
       if (score >= 80) distribution.excellent += count;
@@ -226,7 +237,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform top projects data
-    const topProjects = topProjectsData.map(project => ({
+    const topProjects = topProjectsData.map((project: any) => ({
       id: project.id,
       name: project.name,
       score: project.currentScore || 0,
@@ -236,7 +247,7 @@ export async function GET(request: NextRequest) {
     }));
 
     // Transform concerning projects data
-    const concerningProjects = concerningProjectsData.map(project => ({
+    const concerningProjects = concerningProjectsData.map((project: any) => ({
       id: project.id,
       name: project.name,
       score: project.currentScore || 0,

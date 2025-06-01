@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
@@ -86,7 +86,7 @@ export function AdvancedTooltip({
   const hideTimer = useRef<NodeJS.Timeout>();
   
   const tooltipId = aria.generateId('tooltip');
-  const triggers = Array.isArray(trigger) ? trigger : [trigger];
+  const triggers = useMemo(() => Array.isArray(trigger) ? trigger : [trigger], [trigger]);
 
   // Mount state for portal
   useEffect(() => {

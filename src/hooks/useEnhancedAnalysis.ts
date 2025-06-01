@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface EnhancedAnalysisData {
   id: string;
@@ -55,7 +55,7 @@ export const useEnhancedAnalysis = (analysisId: string | null): UseEnhancedAnaly
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAnalysis = async () => {
+  const fetchAnalysis = useCallback(async () => {
     if (!analysisId) return;
 
     setLoading(true);
@@ -119,11 +119,11 @@ export const useEnhancedAnalysis = (analysisId: string | null): UseEnhancedAnaly
     } finally {
       setLoading(false);
     }
-  };
+  }, [analysisId]);
 
   useEffect(() => {
     fetchAnalysis();
-  }, [analysisId]);
+  }, [analysisId, fetchAnalysis]);
 
   const refetch = () => {
     fetchAnalysis();
@@ -144,7 +144,7 @@ export const usePerformanceMetrics = (analysisId: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPerformanceMetrics = async () => {
+  const fetchPerformanceMetrics = useCallback(async () => {
     if (!analysisId) return;
 
     setLoading(true);
@@ -185,11 +185,11 @@ export const usePerformanceMetrics = (analysisId: string | null) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [analysisId]);
 
   useEffect(() => {
     fetchPerformanceMetrics();
-  }, [analysisId]);
+  }, [analysisId, fetchPerformanceMetrics]);
 
   return {
     data,

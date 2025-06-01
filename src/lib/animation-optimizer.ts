@@ -202,7 +202,7 @@ export function useOptimizedAnimations(
   // Memoize the optimized variants to prevent unnecessary recalculations
   const optimizedVariants = useMemo(() => {
     return optimizeVariants(variants, options);
-  }, [variants, options, reducedMotion]);
+  }, [variants, options]);
 
   return {
     variants: optimizedVariants,

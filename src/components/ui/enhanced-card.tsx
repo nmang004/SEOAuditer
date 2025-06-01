@@ -3,6 +3,7 @@
 import React, { forwardRef } from 'react';
 import { motion, MotionProps } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { motionVariants, useMotionPreferences } from '@/lib/motion-preferences';
 
@@ -267,9 +268,11 @@ export function FeatureCard({
     >
       {image && (
         <div className="aspect-video w-full overflow-hidden rounded-t-lg">
-          <img
+          <Image
             src={image}
             alt=""
+            width={400}
+            height={225}
             className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
           />
         </div>
@@ -330,9 +333,11 @@ export function ProductCard({
     >
       {image && (
         <div className="relative aspect-square w-full overflow-hidden">
-          <img
+          <Image
             src={image}
             alt={title}
+            width={300}
+            height={300}
             className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
           />
           {badge && (

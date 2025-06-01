@@ -269,7 +269,6 @@ export function ButtonGroup({
         className
       )}
       role="group"
-      aria-orientation={orientation}
     >
       {children}
     </div>

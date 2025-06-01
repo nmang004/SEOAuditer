@@ -66,7 +66,7 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
           cancelAnimationFrame(animationRef.current);
         }
       };
-    }, [value]);
+    }, [value, displayValue]);
 
     const getVariantStyles = (variant: string) => {
       switch (variant) {

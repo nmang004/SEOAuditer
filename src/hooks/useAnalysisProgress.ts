@@ -245,7 +245,7 @@ export function useAnalysisProgress(options: UseAnalysisProgressOptions = {}): A
         unsubscribe();
       }
     };
-  }, [token, user]); // Don't include initializeConnection to avoid loops
+  }, [token, user, initializeConnection]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -254,7 +254,7 @@ export function useAnalysisProgress(options: UseAnalysisProgressOptions = {}): A
         unsubscribe();
       }
     };
-  }, []);
+  }, [state.isSubscribed, unsubscribe]);
 
   const canRetry = state.connectionAttempts < (options.maxReconnectAttempts ?? 10);
 

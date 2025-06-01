@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma, isDatabaseConnected } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if database is available
+    if (!isDatabaseConnected()) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          issues: [],
+          stats: { critical: 0, high: 0, medium: 0, low: 0 }
+        }
+      });
+    }
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '10');
     const severity = url.searchParams.get('severity'); // filter by severity
@@ -56,7 +64,7 @@ export async function GET(request: NextRequest) {
     const severityPriority = { 'critical': 4, 'high': 3, 'medium': 2, 'low': 1 };
 
     // Transform issues data
-    const priorityIssues = issues.map(issue => {
+    const priorityIssues = issues.map((issue: any) => {
       const project = issue.analysis?.project;
       
       // Calculate severity score for prioritization
@@ -117,7 +125,7 @@ export async function GET(request: NextRequest) {
       low: 0
     };
 
-    issueStats.forEach(stat => {
+    issueStats.forEach((stat: any) => {
       const severity = stat.severity as keyof typeof stats;
       if (severity in stats) {
         stats[severity] = stat._count.id;
@@ -126,7 +134,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Sort by priority score for final ordering
-    priorityIssues.sort((a, b) => b.priorityScore - a.priorityScore);
+    priorityIssues.sort((a: any, b: any) => b.priorityScore - a.priorityScore);
 
     return NextResponse.json({
       success: true,
@@ -151,6 +159,6 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   } finally {
-    await prisma.$disconnect();
+    await prisma.$disconnect?.();
   }
 } 

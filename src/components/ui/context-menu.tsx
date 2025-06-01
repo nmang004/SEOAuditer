@@ -80,7 +80,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   // Controlled/uncontrolled open
   React.useEffect(() => {
     if (isControlled) setOpen(!!controlledOpen);
-  }, [controlledOpen]);
+  }, [controlledOpen, isControlled]);
 
   return (
     <>
@@ -103,7 +103,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             style={{ willChange: 'transform, opacity', left: menuPos?.x, top: menuPos?.y }}
             tabIndex={-1}
             role="menu"
-            aria-modal="true"
             aria-label="Context Menu"
             onBlur={() => setOpen(false)}
             {...anim}

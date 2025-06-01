@@ -1,5 +1,8 @@
+// Import types for proper typing
+type PrismaClientType = any;
+
 // Prisma client with build-time safety
-let prismaInstance: any = null;
+let prismaInstance: PrismaClientType = null;
 let isDatabaseAvailable = false;
 
 // Check if we're in a build environment
@@ -22,8 +25,8 @@ if (!isBuildTime && process.env.DATABASE_URL && process.env.DATABASE_URL !== 'du
   }
 }
 
-// Export a proxy that handles build-time safety
-export const prisma = new Proxy({}, {
+// Export a proxy that handles build-time safety with proper typing
+export const prisma = new Proxy({} as any, {
   get(target, prop) {
     if (!isDatabaseAvailable || !prismaInstance) {
       console.warn(`Prisma method ${String(prop)} called but database not available`);
@@ -31,7 +34,7 @@ export const prisma = new Proxy({}, {
     }
     return prismaInstance[prop];
   }
-});
+}) as PrismaClientType;
 
 // Connection management functions
 export async function connectPrisma() {

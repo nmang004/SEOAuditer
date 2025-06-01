@@ -294,7 +294,7 @@ export function useOptimizedVariants(
       ...options,
       disableOnLowEnd: false, // Already handled by shouldAnimate
     });
-  }, [variants, options, devicePerf, shouldAnimate]);
+  }, [variants, options, shouldAnimate]);
 }
 
 /**
@@ -316,5 +316,5 @@ export function useOptimizedTransition(
       ...options,
       disableOnLowEnd: false, // Already handled by shouldAnimate
     });
-  }, [defaultTransition, options, devicePerf, shouldAnimate]);
+  }, [defaultTransition, options, shouldAnimate]);
 }

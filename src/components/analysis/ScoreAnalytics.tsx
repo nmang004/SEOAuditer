@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -87,11 +87,7 @@ export function ScoreAnalytics({ projectId, currentAnalysisId }: ScoreAnalyticsP
   const [timeRange, setTimeRange] = useState('30d');
   const [selectedMetric, setSelectedMetric] = useState('overallScore');
 
-  useEffect(() => {
-    loadAnalyticsData();
-  }, [projectId, timeRange]);
-
-  const loadAnalyticsData = async () => {
+  const loadAnalyticsData = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -122,7 +118,11 @@ export function ScoreAnalytics({ projectId, currentAnalysisId }: ScoreAnalyticsP
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId, timeRange, currentAnalysisId]);
+
+  useEffect(() => {
+    loadAnalyticsData();
+  }, [loadAnalyticsData]);
 
   const calculateIssueDistribution = (categorizedIssues: any): IssueDistribution[] => {
     const colors = {

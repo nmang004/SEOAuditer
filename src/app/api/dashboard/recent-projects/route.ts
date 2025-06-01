@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma, isDatabaseConnected } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if database is available
+    if (!isDatabaseConnected()) {
+      return NextResponse.json({
+        success: true,
+        data: []
+      });
+    }
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '5');
     const page = parseInt(url.searchParams.get('page') || '1');
@@ -51,7 +56,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Transform projects data
-    const recentProjects = projects.map(project => {
+    const recentProjects = projects.map((project: any) => {
       const latestAnalysis = project.analyses[0];
       const previousAnalysis = project.analyses[1];
       const latestCrawl = project.crawlSessions[0];
@@ -69,7 +74,7 @@ export async function GET(request: NextRequest) {
 
       // Count issues by severity
       const issueCount = latestAnalysis?.issues?.length || 0;
-      const criticalIssues = latestAnalysis?.issues?.filter(i => i.severity === 'critical').length || 0;
+      const criticalIssues = latestAnalysis?.issues?.filter((i: any) => i.severity === 'critical').length || 0;
 
       return {
         id: project.id,
@@ -90,7 +95,7 @@ export async function GET(request: NextRequest) {
         lastCompletedScan: latestCrawl?.completedAt,
         hasRecentActivity: project.lastScanDate ? 
           (Date.now() - project.lastScanDate.getTime()) < 7 * 24 * 60 * 60 * 1000 : false,
-        scoreHistory: project.analyses.map(a => ({
+        scoreHistory: project.analyses.map((a: any) => ({
           score: a.overallScore,
           date: a.createdAt
         }))
