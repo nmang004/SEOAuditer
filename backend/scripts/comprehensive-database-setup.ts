@@ -256,7 +256,7 @@ class ComprehensiveDatabaseSetup {
         'idx_crawl_sessions_project_id'
       ];
 
-      const indexNames = criticalIndexes.map(i => i.indexname);
+      const indexNames = criticalIndexes.map((i: { indexname: string }) => i.indexname);
       const missingEssentialIndexes = essentialIndexPatterns.filter(pattern => 
         !indexNames.some(name => name.includes(pattern))
       );
