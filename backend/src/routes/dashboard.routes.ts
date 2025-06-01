@@ -1,13 +1,12 @@
 import { Router } from 'express';
 import { dashboardController } from '../controllers/dashboard.controller';
-// import { authenticate } from '../middleware/auth.middleware';
-// import { validate } from '../middleware/validation.middleware';
+import { authenticateToken } from '../middleware/auth-rs256.middleware';
 import { generalRateLimit } from '../middleware/rate-limit.middleware';
 
 const router = Router();
 
-// Apply authentication middleware to all routes (temporarily disabled for testing)
-// router.use(authenticate);
+// Apply authentication middleware to all routes (SECURITY: ALL ROUTES PROTECTED)
+router.use(authenticateToken);
 
 // Dashboard statistics
 router.get(

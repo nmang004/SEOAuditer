@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { projectController } from '../controllers/project.controller';
 import { analysisController } from '../controllers/analysis.controller';
+import { authenticateToken } from '../middleware/auth-rs256.middleware';
 import { generalRateLimit } from '../middleware/rate-limit.middleware';
 
 const router = Router();
 
-// All project routes require authentication
-// router.use(authenticate);
+// All project routes require authentication (SECURITY: ALL ROUTES PROTECTED)
+router.use(authenticateToken);
 
 // Create a new project
 router.post(

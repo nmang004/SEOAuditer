@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { notificationController } from '../controllers/notification.controller';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticateToken } from '../middleware/auth-rs256.middleware';
 // import { validate } from '../middleware/validation.middleware';
 import { generalRateLimit } from '../middleware/rate-limit.middleware';
 
 const router = Router();
 
-// Apply authentication middleware to all routes
-router.use(authenticate);
+// Apply authentication middleware to all routes (SECURITY: RS256 PROTECTION)
+router.use(authenticateToken);
 
 // Get user notifications
 router.get(

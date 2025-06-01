@@ -209,8 +209,8 @@ class AuthController {
         throw new UnauthorizedError('Invalid email or password');
       }
 
-      // Check if email is verified
-      if (!user.emailVerified) {
+      // Check if email is verified (bypass in development mode)
+      if (!user.emailVerified && config.env !== 'development') {
         await this.logSecurityEvent(user.id, email, 'login_attempt_unverified', deviceInfo);
         
         throw new UnauthorizedError('Please verify your email address before logging in.');

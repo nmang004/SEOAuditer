@@ -21,7 +21,7 @@ import { logger } from './utils/logger';
 console.log('--- logger imported ---');
 import { errorHandler } from './middleware/error.middleware';
 console.log('--- errorHandler imported ---');
-import authRouter from './routes/auth.routes';
+// import authRouter from './routes/auth.routes'; // DEPRECATED: Removed basic auth
 import dashboardRouter from './routes/dashboard.routes';
 import projectRouter from './routes/project.routes';
 import analysisRouter from './routes/analysis.routes';
@@ -195,9 +195,10 @@ try {
 // Serve Swagger UI
 app.use('/api-docs', swaggerUi.serve as any, swaggerUi.setup(openApiSpec) as any);
 
-// API Routes
-app.use('/api/auth', authRouter);
-app.use('/api/auth-rs256', authRS256Router);
+// API Routes - Using RS256 authentication system only
+// app.use('/api/auth', authRouter); // DEPRECATED: Basic auth system disabled
+app.use('/api/auth', authRS256Router); // Main authentication endpoint
+app.use('/api/auth-rs256', authRS256Router); // Legacy endpoint support
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/analyses', analysisRouter);

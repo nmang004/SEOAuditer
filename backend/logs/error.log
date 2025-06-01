@@ -478,3 +478,90 @@
   "code": "ERR_SERVER_NOT_RUNNING",
   "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
 }
+2025-05-31 10:17:48.166 PM [[31merror[39m]: 	[31mUncaught Exception: listen EADDRINUSE: address already in use :::4000[39m
+2025-05-31 10:18:38.728 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}
+2025-05-31 10:18:38.743 PM [[31merror[39m]: 	[31mFailed to initialize email service: Failed to initialize email service[39m
+{
+  "stack": "Error: Failed to initialize email service\n    at /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/email.service.ts:116:18\n    at SMTPConnection.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-transport/index.js:347:24)\n    at Object.onceWrapper (node:events:633:26)\n    at SMTPConnection.emit (node:events:518:28)\n    at SMTPConnection._onError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:799:14)\n    at Immediate.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:344:52)\n    at processImmediate (node:internal/timers:485:21)"
+}
+2025-05-31 10:22:07.834 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 10:23:22.791 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 10:23:30.734 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 10:23:42.557 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 10:28:11.218 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}
+2025-05-31 10:28:11.240 PM [[31merror[39m]: 	[31mFailed to initialize email service: Failed to initialize email service[39m
+{
+  "stack": "Error: Failed to initialize email service\n    at /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/email.service.ts:116:18\n    at SMTPConnection.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-transport/index.js:347:24)\n    at Object.onceWrapper (node:events:633:26)\n    at SMTPConnection.emit (node:events:518:28)\n    at SMTPConnection._onError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:799:14)\n    at Immediate.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:344:52)\n    at processImmediate (node:internal/timers:485:21)"
+}
+2025-05-31 10:28:23.470 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 10:29:03.968 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 10:33:29.046 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 10:33:37.844 PM [[31merror[39m]: 	[31mError closing HTTP server: Server is not running.[39m
+{
+  "code": "ERR_SERVER_NOT_RUNNING",
+  "stack": "Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-05-31 10:34:36.983 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}
+2025-05-31 10:34:36.990 PM [[31merror[39m]: 	[31mFailed to initialize email service: Failed to initialize email service[39m
+{
+  "stack": "Error: Failed to initialize email service\n    at /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/email.service.ts:116:18\n    at SMTPConnection.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-transport/index.js:347:24)\n    at Object.onceWrapper (node:events:633:26)\n    at SMTPConnection.emit (node:events:518:28)\n    at SMTPConnection._onError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:799:14)\n    at Immediate.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:344:52)\n    at processImmediate (node:internal/timers:485:21)"
+}
+2025-05-31 10:42:32.053 PM [[31merror[39m]: 	[31mUncaught Exception: listen EADDRINUSE: address already in use :::4000[39m
+2025-05-31 11:15:38.407 PM [[31merror[39m]: 	[31mUncaught Exception: listen EADDRINUSE: address already in use :::4000[39m
+2025-05-31 11:16:10.196 PM [[31merror[39m]: 	[31mError shutting down Enhanced Analysis System: Cannot read properties of null (reading 'sockets')[39m
+{
+  "stack": "TypeError: Cannot read properties of null (reading 'sockets')\n    at WebSocketGateway.shutdown (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/ws/WebSocketGateway.ts:387:13)\n    at EnhancedAnalysisSystem.shutdown (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/seo-crawler/enhanced-analysis-system.ts:240:7)\n    at gracefulShutdown (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/index.ts:296:11)"
+}
+2025-05-31 11:23:31.495 PM [[31merror[39m]: 	[31mUncaught Exception: server.handleUpgrade() was called more than once with the same socket, possibly due to a misconfiguration[39m

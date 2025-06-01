@@ -163,8 +163,8 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
       throw new UnauthorizedError(`Account is locked. Try again in ${lockoutMinutes} minutes.`);
     }
 
-    // Check if email is verified for protected routes
-    if (!user.emailVerified) {
+    // Check if email is verified for protected routes (bypass in development mode)
+    if (!user.emailVerified && config.env !== 'development') {
       throw new UnauthorizedError('Email verification required');
     }
 

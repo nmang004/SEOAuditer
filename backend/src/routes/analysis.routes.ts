@@ -1,13 +1,13 @@
 import express from 'express';
 import { analysisController } from '../controllers/analysis.controller';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticateToken } from '../middleware/auth-rs256.middleware';
 import { validate } from '../middleware/validation.middleware';
 // import rateLimiters, { generalRateLimit } from '../middleware/rate-limit.middleware';
 
 const router = express.Router();
 
-// Apply authentication middleware to all routes
-router.use(authenticate);
+// Apply authentication middleware to all routes (SECURITY: RS256 PROTECTION)
+router.use(authenticateToken);
 
 // Start a new analysis for a project
 router.post(

@@ -1998,3 +1998,1443 @@
 2025-05-31 10:04:09.842 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
 2025-05-31 10:04:10.844 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
 2025-05-31 10:04:10.845 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:17:47.854 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 10:17:47.875 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 10:17:47.876 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 10:17:47.958 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 10:17:47.964 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:17:47.965 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 10:17:47.965 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:17:47.966 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 10:17:47.968 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:17:48.026 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:17:48.034 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:17:48.034 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:17:48.035 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 10:17:48.035 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 10:17:48.039 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 10:17:48.040 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 10:17:48.141 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 10:17:48.141 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 10:17:48.141 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 10:17:48.143 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 10:17:48.143 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 10:17:48.143 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 10:17:48.143 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 10:17:48.151 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:17:48.164 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 10:17:48.164 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 10:17:48.164 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 10:17:48.164 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:17:48.165 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 10:18:38.728 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}
+2025-05-31 10:18:38.743 PM [[31merror[39m]: 	[31mFailed to initialize email service: Failed to initialize email service[39m
+{
+  "stack": "Error: Failed to initialize email service\n    at /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/email.service.ts:116:18\n    at SMTPConnection.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-transport/index.js:347:24)\n    at Object.onceWrapper (node:events:633:26)\n    at SMTPConnection.emit (node:events:518:28)\n    at SMTPConnection._onError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:799:14)\n    at Immediate.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:344:52)\n    at processImmediate (node:internal/timers:485:21)"
+}
+2025-05-31 10:18:38.743 PM [[33mwarn[39m]: 	[33mEmail service will be disabled[39m
+2025-05-31 10:18:38.743 PM [[33mwarn[39m]: 	[33mEmail service is not available, skipping email send[39m
+2025-05-31 10:19:56.131 PM [[33mwarn[39m]: 	[33mEmail service is not available, skipping email send[39m
+2025-05-31 10:19:56.146 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "c880e8e8-1781-4b82-b1bb-353c20b6b50c",
+  "email": "testuser@example.com",
+  "event": "user_registered",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 10:19:56.146 PM [[32minfo[39m]: 	[32mUser registered successfully[39m
+{
+  "userId": "c880e8e8-1781-4b82-b1bb-353c20b6b50c",
+  "email": "testuser@example.com",
+  "ipAddress": "::1"
+}
+2025-05-31 10:20:25.676 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "c880e8e8-1781-4b82-b1bb-353c20b6b50c",
+  "email": "testuser@example.com",
+  "event": "login_attempt_unverified",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 10:22:06.722 PM [[32minfo[39m]: 	[32mReceived SIGTERM, starting graceful shutdown[39m
+2025-05-31 10:22:06.727 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:22:06.728 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:22:06.729 PM [[32minfo[39m]: 	[32mShutting down enhanced worker...[39m
+2025-05-31 10:22:06.781 PM [[32minfo[39m]: 	[32mEnhanced worker shutdown complete[39m
+2025-05-31 10:22:06.782 PM [[32minfo[39m]: 	[32mShutting down WebSocket Gateway...[39m
+2025-05-31 10:22:06.787 PM [[32minfo[39m]: 	[32mBroadcasted system update: System Maintenance[39m
+2025-05-31 10:22:07.789 PM [[32minfo[39m]: 	[32mWebSocket Gateway shutdown completed[39m
+2025-05-31 10:22:07.796 PM [[32minfo[39m]: 	[32mClosing Enhanced Queue Adapter...[39m
+2025-05-31 10:22:07.804 PM [[32minfo[39m]: 	[32mEnhanced Queue Adapter closed[39m
+2025-05-31 10:22:07.829 PM [[32minfo[39m]: 	[32mEnhanced Analysis System shutdown completed[39m
+2025-05-31 10:22:09.429 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 10:22:10.340 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 10:22:10.340 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 10:22:10.446 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 10:22:10.446 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 10:22:10.447 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:22:10.447 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 10:22:10.448 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:22:10.450 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:22:10.523 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:22:10.537 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:22:10.537 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:22:10.539 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 10:22:10.539 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 10:22:10.545 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 10:22:10.546 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 10:22:10.647 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 10:22:10.647 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 10:22:10.647 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 10:22:10.648 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 10:22:10.648 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 10:22:10.648 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 10:22:10.649 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 10:22:10.658 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:22:10.670 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 10:22:10.670 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 10:22:10.670 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 10:22:10.670 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:22:10.671 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 10:22:10.671 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 10:22:10.671 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 10:22:10.671 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 10:22:10.671 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 10:22:11.674 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 10:22:11.675 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:23:21.671 PM [[32minfo[39m]: 	[32mReceived SIGTERM, starting graceful shutdown[39m
+2025-05-31 10:23:21.684 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:23:21.684 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:23:21.685 PM [[32minfo[39m]: 	[32mShutting down enhanced worker...[39m
+2025-05-31 10:23:21.710 PM [[32minfo[39m]: 	[32mEnhanced worker shutdown complete[39m
+2025-05-31 10:23:21.711 PM [[32minfo[39m]: 	[32mShutting down WebSocket Gateway...[39m
+2025-05-31 10:23:21.740 PM [[32minfo[39m]: 	[32mBroadcasted system update: System Maintenance[39m
+2025-05-31 10:23:22.742 PM [[32minfo[39m]: 	[32mWebSocket Gateway shutdown completed[39m
+2025-05-31 10:23:22.743 PM [[32minfo[39m]: 	[32mClosing Enhanced Queue Adapter...[39m
+2025-05-31 10:23:22.753 PM [[32minfo[39m]: 	[32mEnhanced Queue Adapter closed[39m
+2025-05-31 10:23:22.780 PM [[32minfo[39m]: 	[32mEnhanced Analysis System shutdown completed[39m
+2025-05-31 10:23:23.774 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 10:23:24.614 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 10:23:24.615 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 10:23:24.707 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 10:23:24.707 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:23:24.708 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 10:23:24.709 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 10:23:24.710 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:23:24.711 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:23:24.767 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:23:24.775 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:23:24.775 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:23:24.776 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 10:23:24.776 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 10:23:24.786 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 10:23:24.786 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 10:23:24.887 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 10:23:24.887 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 10:23:24.887 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 10:23:24.888 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 10:23:24.888 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 10:23:24.888 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 10:23:24.889 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 10:23:24.897 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:23:24.907 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 10:23:24.908 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 10:23:24.908 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 10:23:24.908 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:23:24.909 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 10:23:24.909 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 10:23:24.909 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 10:23:24.909 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 10:23:24.909 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 10:23:25.912 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 10:23:25.913 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:23:29.660 PM [[32minfo[39m]: 	[32mReceived SIGTERM, starting graceful shutdown[39m
+2025-05-31 10:23:29.661 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:23:29.661 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:23:29.662 PM [[32minfo[39m]: 	[32mShutting down enhanced worker...[39m
+2025-05-31 10:23:29.685 PM [[32minfo[39m]: 	[32mEnhanced worker shutdown complete[39m
+2025-05-31 10:23:29.685 PM [[32minfo[39m]: 	[32mShutting down WebSocket Gateway...[39m
+2025-05-31 10:23:29.689 PM [[32minfo[39m]: 	[32mBroadcasted system update: System Maintenance[39m
+2025-05-31 10:23:30.691 PM [[32minfo[39m]: 	[32mWebSocket Gateway shutdown completed[39m
+2025-05-31 10:23:30.692 PM [[32minfo[39m]: 	[32mClosing Enhanced Queue Adapter...[39m
+2025-05-31 10:23:30.697 PM [[32minfo[39m]: 	[32mEnhanced Queue Adapter closed[39m
+2025-05-31 10:23:30.732 PM [[32minfo[39m]: 	[32mEnhanced Analysis System shutdown completed[39m
+2025-05-31 10:23:33.953 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 10:23:34.617 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 10:23:34.617 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 10:23:34.711 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:23:34.711 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 10:23:34.712 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 10:23:34.712 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:23:34.713 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 10:23:34.715 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:23:34.782 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:23:34.789 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:23:34.789 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:23:34.790 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 10:23:34.790 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 10:23:34.794 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 10:23:34.795 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 10:23:34.896 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 10:23:34.896 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 10:23:34.896 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 10:23:34.898 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 10:23:34.898 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 10:23:34.898 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 10:23:34.898 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 10:23:34.910 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:23:34.930 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 10:23:34.930 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 10:23:34.930 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 10:23:34.930 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:23:34.931 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 10:23:34.931 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 10:23:34.932 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 10:23:34.932 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 10:23:34.932 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 10:23:35.934 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 10:23:35.935 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:23:41.529 PM [[32minfo[39m]: 	[32mReceived SIGTERM, starting graceful shutdown[39m
+2025-05-31 10:23:41.530 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:23:41.530 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:23:41.530 PM [[32minfo[39m]: 	[32mShutting down enhanced worker...[39m
+2025-05-31 10:23:41.539 PM [[32minfo[39m]: 	[32mEnhanced worker shutdown complete[39m
+2025-05-31 10:23:41.539 PM [[32minfo[39m]: 	[32mShutting down WebSocket Gateway...[39m
+2025-05-31 10:23:41.540 PM [[32minfo[39m]: 	[32mBroadcasted system update: System Maintenance[39m
+2025-05-31 10:23:42.541 PM [[32minfo[39m]: 	[32mWebSocket Gateway shutdown completed[39m
+2025-05-31 10:23:42.542 PM [[32minfo[39m]: 	[32mClosing Enhanced Queue Adapter...[39m
+2025-05-31 10:23:42.545 PM [[32minfo[39m]: 	[32mEnhanced Queue Adapter closed[39m
+2025-05-31 10:23:42.554 PM [[32minfo[39m]: 	[32mEnhanced Analysis System shutdown completed[39m
+2025-05-31 10:23:43.198 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 10:23:43.821 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 10:23:43.821 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 10:23:43.881 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 10:23:43.881 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:23:43.882 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 10:23:43.882 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 10:23:43.883 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:23:43.888 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:23:43.915 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:23:43.922 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:23:43.922 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:23:43.924 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 10:23:43.924 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 10:23:43.927 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 10:23:43.927 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 10:23:44.029 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 10:23:44.029 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 10:23:44.029 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 10:23:44.030 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 10:23:44.030 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 10:23:44.031 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 10:23:44.031 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 10:23:44.041 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:23:44.053 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 10:23:44.053 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 10:23:44.054 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 10:23:44.054 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:23:44.055 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 10:23:44.055 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 10:23:44.055 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 10:23:44.055 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 10:23:44.055 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 10:23:45.058 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 10:23:45.059 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:28:11.218 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}
+2025-05-31 10:28:11.240 PM [[31merror[39m]: 	[31mFailed to initialize email service: Failed to initialize email service[39m
+{
+  "stack": "Error: Failed to initialize email service\n    at /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/email.service.ts:116:18\n    at SMTPConnection.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-transport/index.js:347:24)\n    at Object.onceWrapper (node:events:633:26)\n    at SMTPConnection.emit (node:events:518:28)\n    at SMTPConnection._onError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:799:14)\n    at Immediate.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:344:52)\n    at processImmediate (node:internal/timers:485:21)"
+}
+2025-05-31 10:28:11.240 PM [[33mwarn[39m]: 	[33mEmail service will be disabled[39m
+2025-05-31 10:28:11.240 PM [[33mwarn[39m]: 	[33mEmail service is not available, skipping email send[39m
+2025-05-31 10:28:11.269 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "b5bf2e1c-da60-49fa-85b8-f13095ef58b8",
+  "email": "fallback@example.com",
+  "event": "user_registered",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 10:28:11.269 PM [[32minfo[39m]: 	[32mUser registered successfully[39m
+{
+  "userId": "b5bf2e1c-da60-49fa-85b8-f13095ef58b8",
+  "email": "fallback@example.com",
+  "ipAddress": "::1"
+}
+2025-05-31 10:28:22.398 PM [[32minfo[39m]: 	[32mReceived SIGTERM, starting graceful shutdown[39m
+2025-05-31 10:28:22.404 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:28:22.405 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:28:22.407 PM [[32minfo[39m]: 	[32mShutting down enhanced worker...[39m
+2025-05-31 10:28:22.441 PM [[32minfo[39m]: 	[32mEnhanced worker shutdown complete[39m
+2025-05-31 10:28:22.441 PM [[32minfo[39m]: 	[32mShutting down WebSocket Gateway...[39m
+2025-05-31 10:28:22.451 PM [[32minfo[39m]: 	[32mBroadcasted system update: System Maintenance[39m
+2025-05-31 10:28:23.454 PM [[32minfo[39m]: 	[32mWebSocket Gateway shutdown completed[39m
+2025-05-31 10:28:23.454 PM [[32minfo[39m]: 	[32mClosing Enhanced Queue Adapter...[39m
+2025-05-31 10:28:23.459 PM [[32minfo[39m]: 	[32mEnhanced Queue Adapter closed[39m
+2025-05-31 10:28:23.468 PM [[32minfo[39m]: 	[32mEnhanced Analysis System shutdown completed[39m
+2025-05-31 10:28:24.331 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 10:28:25.162 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 10:28:25.162 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 10:28:25.249 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:28:25.251 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 10:28:25.252 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 10:28:25.252 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:28:25.252 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 10:28:25.254 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:28:25.311 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:28:25.323 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:28:25.323 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:28:25.324 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 10:28:25.325 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 10:28:25.329 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 10:28:25.330 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 10:28:25.431 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 10:28:25.431 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 10:28:25.431 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 10:28:25.432 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 10:28:25.432 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 10:28:25.432 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 10:28:25.433 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 10:28:25.442 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:28:25.452 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 10:28:25.452 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 10:28:25.452 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 10:28:25.452 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:28:25.453 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 10:28:25.453 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 10:28:25.454 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 10:28:25.454 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 10:28:25.454 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 10:28:26.457 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 10:28:26.458 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:28:27.945 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "b5bf2e1c-da60-49fa-85b8-f13095ef58b8",
+  "email": "fallback@example.com",
+  "event": "login_success",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 10:28:27.945 PM [[32minfo[39m]: 	[32mUser logged in successfully[39m
+{
+  "userId": "b5bf2e1c-da60-49fa-85b8-f13095ef58b8",
+  "email": "fallback@example.com",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1"
+}
+2025-05-31 10:28:33.957 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "b5bf2e1c-da60-49fa-85b8-f13095ef58b8",
+  "email": "fallback@example.com",
+  "event": "login_success",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 10:28:33.957 PM [[32minfo[39m]: 	[32mUser logged in successfully[39m
+{
+  "userId": "b5bf2e1c-da60-49fa-85b8-f13095ef58b8",
+  "email": "fallback@example.com",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1"
+}
+2025-05-31 10:28:50.428 PM [[33mwarn[39m]: 	[33mAuthentication failed[39m
+{
+  "error": "Email verification required",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1",
+  "endpoint": "/stats",
+  "method": "GET"
+}
+2025-05-31 10:29:02.906 PM [[32minfo[39m]: 	[32mReceived SIGTERM, starting graceful shutdown[39m
+2025-05-31 10:29:02.907 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:29:02.907 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:29:02.908 PM [[32minfo[39m]: 	[32mShutting down enhanced worker...[39m
+2025-05-31 10:29:02.920 PM [[32minfo[39m]: 	[32mEnhanced worker shutdown complete[39m
+2025-05-31 10:29:02.921 PM [[32minfo[39m]: 	[32mShutting down WebSocket Gateway...[39m
+2025-05-31 10:29:02.924 PM [[32minfo[39m]: 	[32mBroadcasted system update: System Maintenance[39m
+2025-05-31 10:29:03.927 PM [[32minfo[39m]: 	[32mWebSocket Gateway shutdown completed[39m
+2025-05-31 10:29:03.930 PM [[32minfo[39m]: 	[32mClosing Enhanced Queue Adapter...[39m
+2025-05-31 10:29:03.937 PM [[32minfo[39m]: 	[32mEnhanced Queue Adapter closed[39m
+2025-05-31 10:29:03.946 PM [[32minfo[39m]: 	[32mEnhanced Analysis System shutdown completed[39m
+2025-05-31 10:29:04.769 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 10:29:05.728 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 10:29:05.729 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 10:29:05.919 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 10:29:05.919 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:29:05.921 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 10:29:05.921 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 10:29:05.922 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:29:05.922 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:29:06.028 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:29:06.062 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:29:06.062 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:29:06.065 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 10:29:06.065 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 10:29:06.075 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 10:29:06.075 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 10:29:06.176 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 10:29:06.177 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 10:29:06.177 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 10:29:06.178 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 10:29:06.178 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 10:29:06.178 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 10:29:06.178 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 10:29:06.196 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:29:06.226 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 10:29:06.226 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 10:29:06.226 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 10:29:06.226 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:29:06.227 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 10:29:06.227 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 10:29:06.227 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 10:29:06.228 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 10:29:06.228 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 10:29:07.233 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 10:29:07.237 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:32:21.298 PM [[33mwarn[39m]: 	[33mAuthentication failed[39m
+{
+  "error": "Access token is required",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1",
+  "endpoint": "/stats",
+  "method": "GET"
+}
+2025-05-31 10:33:28.001 PM [[32minfo[39m]: 	[32mReceived SIGTERM, starting graceful shutdown[39m
+2025-05-31 10:33:28.003 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:33:28.004 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:33:28.007 PM [[32minfo[39m]: 	[32mShutting down enhanced worker...[39m
+2025-05-31 10:33:28.019 PM [[32minfo[39m]: 	[32mEnhanced worker shutdown complete[39m
+2025-05-31 10:33:28.019 PM [[32minfo[39m]: 	[32mShutting down WebSocket Gateway...[39m
+2025-05-31 10:33:28.022 PM [[32minfo[39m]: 	[32mBroadcasted system update: System Maintenance[39m
+2025-05-31 10:33:29.024 PM [[32minfo[39m]: 	[32mWebSocket Gateway shutdown completed[39m
+2025-05-31 10:33:29.024 PM [[32minfo[39m]: 	[32mClosing Enhanced Queue Adapter...[39m
+2025-05-31 10:33:29.030 PM [[32minfo[39m]: 	[32mEnhanced Queue Adapter closed[39m
+2025-05-31 10:33:29.043 PM [[32minfo[39m]: 	[32mEnhanced Analysis System shutdown completed[39m
+2025-05-31 10:33:30.019 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 10:33:30.809 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 10:33:30.809 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 10:33:30.913 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 10:33:30.914 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:33:30.915 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 10:33:30.915 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 10:33:30.916 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:33:30.916 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:33:30.980 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:33:30.988 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:33:30.988 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:33:30.990 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 10:33:30.990 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 10:33:30.994 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 10:33:30.994 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 10:33:31.096 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 10:33:31.096 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 10:33:31.096 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 10:33:31.098 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 10:33:31.098 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 10:33:31.098 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 10:33:31.098 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 10:33:31.110 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:33:31.123 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 10:33:31.123 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 10:33:31.123 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 10:33:31.123 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:33:31.124 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 10:33:31.124 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 10:33:31.125 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 10:33:31.125 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 10:33:31.125 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 10:33:32.127 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 10:33:32.129 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:33:36.818 PM [[32minfo[39m]: 	[32mReceived SIGTERM, starting graceful shutdown[39m
+2025-05-31 10:33:36.821 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:33:36.821 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 10:33:36.821 PM [[32minfo[39m]: 	[32mShutting down enhanced worker...[39m
+2025-05-31 10:33:36.825 PM [[32minfo[39m]: 	[32mEnhanced worker shutdown complete[39m
+2025-05-31 10:33:36.826 PM [[32minfo[39m]: 	[32mShutting down WebSocket Gateway...[39m
+2025-05-31 10:33:36.826 PM [[32minfo[39m]: 	[32mBroadcasted system update: System Maintenance[39m
+2025-05-31 10:33:37.828 PM [[32minfo[39m]: 	[32mWebSocket Gateway shutdown completed[39m
+2025-05-31 10:33:37.829 PM [[32minfo[39m]: 	[32mClosing Enhanced Queue Adapter...[39m
+2025-05-31 10:33:37.836 PM [[32minfo[39m]: 	[32mEnhanced Queue Adapter closed[39m
+2025-05-31 10:33:37.842 PM [[32minfo[39m]: 	[32mEnhanced Analysis System shutdown completed[39m
+2025-05-31 10:33:38.410 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 10:33:39.053 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 10:33:39.053 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 10:33:39.138 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 10:33:39.139 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:33:39.139 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 10:33:39.139 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:33:39.140 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 10:33:39.142 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:33:39.178 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:33:39.192 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:33:39.192 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:33:39.194 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 10:33:39.194 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 10:33:39.199 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 10:33:39.199 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 10:33:39.299 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 10:33:39.299 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 10:33:39.299 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 10:33:39.301 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 10:33:39.301 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 10:33:39.301 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 10:33:39.301 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 10:33:39.313 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:33:39.331 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 10:33:39.331 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 10:33:39.331 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 10:33:39.331 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:33:39.332 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 10:33:39.332 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 10:33:39.333 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 10:33:39.333 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 10:33:39.333 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 10:33:40.334 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 10:33:40.335 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:34:36.983 PM [[31merror[39m]: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m
+{
+  "errno": -3008,
+  "code": "EDNS",
+  "syscall": "getaddrinfo",
+  "hostname": "smtp.example.com",
+  "command": "CONN",
+  "stack": "Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)"
+}
+2025-05-31 10:34:36.990 PM [[31merror[39m]: 	[31mFailed to initialize email service: Failed to initialize email service[39m
+{
+  "stack": "Error: Failed to initialize email service\n    at /Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/src/services/email.service.ts:116:18\n    at SMTPConnection.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-transport/index.js:347:24)\n    at Object.onceWrapper (node:events:633:26)\n    at SMTPConnection.emit (node:events:518:28)\n    at SMTPConnection._onError (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:799:14)\n    at Immediate.<anonymous> (/Users/nicholasmangubat/CascadeProjects/rival-outranker/backend/node_modules/nodemailer/lib/smtp-connection/index.js:344:52)\n    at processImmediate (node:internal/timers:485:21)"
+}
+2025-05-31 10:34:36.990 PM [[33mwarn[39m]: 	[33mEmail service will be disabled[39m
+2025-05-31 10:34:36.990 PM [[33mwarn[39m]: 	[33mEmail service is not available, skipping email send[39m
+2025-05-31 10:34:37.005 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "dead0114-c11b-4ff9-8b7a-efb2be4f3605",
+  "email": "consolidated@example.com",
+  "event": "user_registered",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 10:34:37.005 PM [[32minfo[39m]: 	[32mUser registered successfully[39m
+{
+  "userId": "dead0114-c11b-4ff9-8b7a-efb2be4f3605",
+  "email": "consolidated@example.com",
+  "ipAddress": "::1"
+}
+2025-05-31 10:35:12.482 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "dead0114-c11b-4ff9-8b7a-efb2be4f3605",
+  "email": "consolidated@example.com",
+  "event": "login_success",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 10:35:12.482 PM [[32minfo[39m]: 	[32mUser logged in successfully[39m
+{
+  "userId": "dead0114-c11b-4ff9-8b7a-efb2be4f3605",
+  "email": "consolidated@example.com",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1"
+}
+2025-05-31 10:36:27.881 PM [[33mwarn[39m]: 	[33mEmail service is not available, skipping email send[39m
+2025-05-31 10:36:27.889 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "f027e079-1ac6-4b3b-8f86-38bf5485a0a3",
+  "email": "validation@example.com",
+  "event": "user_registered",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 10:36:27.889 PM [[32minfo[39m]: 	[32mUser registered successfully[39m
+{
+  "userId": "f027e079-1ac6-4b3b-8f86-38bf5485a0a3",
+  "email": "validation@example.com",
+  "ipAddress": "::1"
+}
+2025-05-31 10:36:32.926 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "f027e079-1ac6-4b3b-8f86-38bf5485a0a3",
+  "email": "validation@example.com",
+  "event": "login_success",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 10:36:32.926 PM [[32minfo[39m]: 	[32mUser logged in successfully[39m
+{
+  "userId": "f027e079-1ac6-4b3b-8f86-38bf5485a0a3",
+  "email": "validation@example.com",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1"
+}
+2025-05-31 10:36:39.115 PM [[33mwarn[39m]: 	[33mAuthentication failed[39m
+{
+  "error": "Access token is required",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1",
+  "endpoint": "/stats",
+  "method": "GET"
+}
+2025-05-31 10:42:30.562 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 10:42:31.614 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 10:42:31.614 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 10:42:31.803 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 10:42:31.804 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:42:31.804 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 10:42:31.804 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 10:42:31.804 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:42:31.805 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:42:31.887 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:42:31.896 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:42:31.896 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:42:31.903 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 10:42:31.903 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 10:42:31.908 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 10:42:31.908 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 10:42:32.009 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 10:42:32.009 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 10:42:32.010 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 10:42:32.011 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 10:42:32.012 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 10:42:32.012 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 10:42:32.012 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 10:42:32.025 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 10:42:32.044 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 10:42:32.044 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 10:42:32.044 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 10:42:32.044 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 10:42:32.045 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 10:45:23.015 PM [[33mwarn[39m]: 	[33mInvalid access token format[39m
+2025-05-31 10:45:23.030 PM [[33mwarn[39m]: 	[33mAuthentication failed[39m
+{
+  "error": "Invalid or expired access token",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1",
+  "endpoint": "/",
+  "method": "GET"
+}
+2025-05-31 10:47:00.025 PM [[33mwarn[39m]: 	[33mEmail service is not available, skipping email send[39m
+2025-05-31 10:47:57.482 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "94884fde-bcc2-47d4-aca3-9dd3aa65132e",
+  "email": "test@example.com",
+  "event": "login_failed",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1",
+  "reason": "invalid_password"
+}
+2025-05-31 10:49:56.580 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:49:56.596 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:49:56.651 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:49:56.660 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:49:56.660 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:49:56.756 PM [[32minfo[39m]: 	[32m✅ Database disconnected successfully[39m
+2025-05-31 10:51:59.462 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:51:59.480 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:51:59.549 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:51:59.558 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:51:59.558 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:51:59.577 PM [[32minfo[39m]: 	[32m✅ Database disconnected successfully[39m
+2025-05-31 10:54:03.943 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 10:54:03.956 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 10:54:04.016 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 10:54:04.027 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 10:54:04.028 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 10:54:04.106 PM [[32minfo[39m]: 	[32m✅ Database disconnected successfully[39m
+2025-05-31 10:55:32.039 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "a13eac87-240b-4d94-8682-4567d022031f",
+  "email": "api-test-user@example.com",
+  "event": "login_success",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 10:55:32.041 PM [[32minfo[39m]: 	[32mUser logged in successfully[39m
+{
+  "userId": "a13eac87-240b-4d94-8682-4567d022031f",
+  "email": "api-test-user@example.com",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1"
+}
+2025-05-31 10:55:35.950 PM [[33mwarn[39m]: 	[33mInvalid access token format[39m
+2025-05-31 10:55:35.951 PM [[33mwarn[39m]: 	[33mAuthentication failed[39m
+{
+  "error": "Invalid or expired access token",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1",
+  "endpoint": "/",
+  "method": "GET"
+}
+2025-05-31 10:57:59.812 PM [[33mwarn[39m]: 	[33mWebSocket server not initialized[39m
+2025-05-31 11:02:06.800 PM [[33mwarn[39m]: 	[33mAuthentication failed[39m
+{
+  "error": "Access token is required",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1",
+  "endpoint": "/results/crawl-1748746679665-ufodsxqua",
+  "method": "GET"
+}
+2025-05-31 11:04:05.846 PM [[33mwarn[39m]: 	[33mWebSocket server not initialized[39m
+2025-05-31 11:04:11.182 PM [[33mwarn[39m]: 	[33mWebSocket server not initialized[39m
+2025-05-31 11:04:13.042 PM [[33mwarn[39m]: 	[33mInvalid access token format[39m
+2025-05-31 11:04:13.043 PM [[33mwarn[39m]: 	[33mAuthentication failed[39m
+{
+  "error": "Invalid or expired access token",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1",
+  "endpoint": "/start",
+  "method": "POST"
+}
+2025-05-31 11:04:32.053 PM [[32minfo[39m]: 	[32mSecurity event[39m
+{
+  "userId": "a13eac87-240b-4d94-8682-4567d022031f",
+  "email": "api-test-user@example.com",
+  "event": "login_success",
+  "userAgent": "curl/8.7.1",
+  "ipAddress": "::1"
+}
+2025-05-31 11:04:32.053 PM [[32minfo[39m]: 	[32mUser logged in successfully[39m
+{
+  "userId": "a13eac87-240b-4d94-8682-4567d022031f",
+  "email": "api-test-user@example.com",
+  "ipAddress": "::1",
+  "userAgent": "curl/8.7.1"
+}
+2025-05-31 11:05:17.623 PM [[33mwarn[39m]: 	[33mWebSocket server not initialized[39m
+2025-05-31 11:15:36.930 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 11:15:37.997 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 11:15:37.997 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 11:15:38.171 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 11:15:38.172 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 11:15:38.172 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 11:15:38.174 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 11:15:38.174 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 11:15:38.174 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 11:15:38.245 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 11:15:38.256 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 11:15:38.256 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 11:15:38.264 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 11:15:38.264 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 11:15:38.268 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 11:15:38.268 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 11:15:38.369 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 11:15:38.369 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 11:15:38.370 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 11:15:38.372 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 11:15:38.372 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 11:15:38.373 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 11:15:38.373 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 11:15:38.386 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 11:15:38.398 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 11:15:38.398 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 11:15:38.398 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 11:15:38.398 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 11:15:38.399 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 11:16:09.066 PM [[32minfo[39m]: 	[32mReceived SIGTERM, starting graceful shutdown[39m
+2025-05-31 11:16:09.088 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 11:16:09.094 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 11:16:09.098 PM [[32minfo[39m]: 	[32mShutting down enhanced worker...[39m
+2025-05-31 11:16:09.122 PM [[32minfo[39m]: 	[32mReceived SIGTERM, starting graceful shutdown[39m
+2025-05-31 11:16:09.122 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 11:16:09.122 PM [[32minfo[39m]: 	[32mShutting down Enhanced Analysis System...[39m
+2025-05-31 11:16:09.122 PM [[32minfo[39m]: 	[32mShutting down enhanced worker...[39m
+2025-05-31 11:16:09.151 PM [[32minfo[39m]: 	[32mEnhanced worker shutdown complete[39m
+2025-05-31 11:16:09.151 PM [[32minfo[39m]: 	[32mEnhanced worker shutdown complete[39m
+2025-05-31 11:16:09.152 PM [[32minfo[39m]: 	[32mShutting down WebSocket Gateway...[39m
+2025-05-31 11:16:09.161 PM [[32minfo[39m]: 	[32mBroadcasted system update: System Maintenance[39m
+2025-05-31 11:16:09.161 PM [[32minfo[39m]: 	[32mShutting down WebSocket Gateway...[39m
+2025-05-31 11:16:09.161 PM [[32minfo[39m]: 	[32mBroadcasted system update: System Maintenance[39m
+2025-05-31 11:16:10.162 PM [[32minfo[39m]: 	[32mWebSocket Gateway shutdown completed[39m
+2025-05-31 11:17:57.513 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 11:17:58.600 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 11:17:58.600 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 11:17:58.773 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 11:17:58.773 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 11:17:58.775 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 11:17:58.775 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 11:17:58.777 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 11:17:58.779 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 11:17:58.849 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 11:17:58.858 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 11:17:58.859 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 11:17:58.865 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 11:17:58.865 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 11:17:58.870 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 11:17:58.870 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 11:17:58.971 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 11:17:58.971 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 11:17:58.971 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 11:17:58.973 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 11:17:58.973 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 11:17:58.973 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 11:17:58.973 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 11:17:58.983 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 11:17:58.996 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 11:17:58.996 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 11:17:58.996 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 11:17:58.996 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 11:17:58.998 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 11:17:58.998 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 11:17:58.998 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 11:17:58.999 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 11:17:58.999 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 11:18:00.003 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 11:18:00.006 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 11:19:36.179 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 11:19:37.294 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 11:19:37.294 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 11:19:37.459 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 11:19:37.460 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 11:19:37.460 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 11:19:37.463 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 11:19:37.463 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 11:19:37.464 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 11:19:37.498 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 11:19:37.507 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 11:19:37.507 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 11:19:37.513 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 11:19:37.513 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 11:19:37.517 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 11:19:37.517 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 11:19:37.618 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 11:19:37.618 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 11:19:37.618 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 11:19:37.620 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 11:19:37.620 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 11:19:37.620 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 11:19:37.620 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 11:19:37.638 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 11:19:37.649 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 11:19:37.649 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 11:19:37.650 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 11:19:37.650 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 11:19:37.650 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 11:19:37.650 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 11:19:37.651 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 11:19:37.651 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 11:19:37.651 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 11:19:38.653 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 11:19:38.655 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 11:22:18.129 PM [[33mwarn[39m]: 	[33mAuthentication failed[39m
+{
+  "error": "Access token is required",
+  "ipAddress": "::1",
+  "userAgent": "node",
+  "endpoint": "/start",
+  "method": "POST"
+}
+2025-05-31 11:23:31.495 PM [[31merror[39m]: 	[31mUncaught Exception: server.handleUpgrade() was called more than once with the same socket, possibly due to a misconfiguration[39m
+2025-05-31 11:24:28.196 PM [[32minfo[39m]: 	[32mLoaded existing RSA keys for JWT signing[39m
+2025-05-31 11:24:29.190 PM [[32minfo[39m]: 	[32mStarting enhanced worker...[39m
+2025-05-31 11:24:29.190 PM [[32minfo[39m]: 	[32mEnhanced worker started successfully[39m
+2025-05-31 11:24:29.361 PM [[32minfo[39m]: 	[32mRedis clients initialized for WebSocket gateway[39m
+2025-05-31 11:24:29.362 PM [[32minfo[39m]: 	[32mConnected to Redis[39m
+2025-05-31 11:24:29.362 PM [[32minfo[39m]: 	[32mAttempting database connection (attempt 1/5)[39m
+{
+  "connectionString": "postgresql://postgres:****@localhost:5432/rival_outranker",
+  "poolSize": 25,
+  "timeout": 30000
+}
+2025-05-31 11:24:29.363 PM [[32minfo[39m]: 	[32mConnected to Redis for JWT service[39m
+2025-05-31 11:24:29.363 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 11:24:29.366 PM [[32minfo[39m]: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m
+{
+  "target": "quaint::pooled"
+}
+2025-05-31 11:24:29.423 PM [[32minfo[39m]: 	[32m✅ Database connected successfully[39m
+{
+  "attempt": 1,
+  "connectionPoolSize": 25,
+  "database": "rival_outranker",
+  "responseTime": "0ms",
+  "pgVersion": "15.13"
+}
+2025-05-31 11:24:29.442 PM [[32minfo[39m]: 	[32mpg_stat_statements extension enabled for query monitoring[39m
+2025-05-31 11:24:29.442 PM [[32minfo[39m]: 	[32mDatabase optimized for SEO analysis workloads[39m
+{
+  "optimizations": 13,
+  "workMem": "256MB",
+  "effectiveCacheSize": "2GB"
+}
+2025-05-31 11:24:29.448 PM [[32minfo[39m]: 	[32mInitializing Enhanced Analysis System...[39m
+2025-05-31 11:24:29.448 PM [[32minfo[39m]: 	[32mInitializing enhanced queue adapter...[39m
+2025-05-31 11:24:29.455 PM [[32minfo[39m]: 	[32mQueue adapter initialized and healthy[39m
+2025-05-31 11:24:29.455 PM [[32minfo[39m]: 	[32mInitializing WebSocket gateway...[39m
+2025-05-31 11:24:29.557 PM [[32minfo[39m]: 	[32mWebSocket Gateway initialized[39m
+2025-05-31 11:24:29.557 PM [[32minfo[39m]: 	[32mWebSocket gateway initialized[39m
+2025-05-31 11:24:29.557 PM [[32minfo[39m]: 	[32mInitializing enhanced worker...[39m
+2025-05-31 11:24:29.558 PM [[32minfo[39m]: 	[32mWorker event handlers configured[39m
+2025-05-31 11:24:29.558 PM [[32minfo[39m]: 	[32mWorker initialized with concurrency: 5[39m
+2025-05-31 11:24:29.558 PM [[32minfo[39m]: 	[32mSetting up queue cleanup every 3600000ms[39m
+2025-05-31 11:24:29.558 PM [[32minfo[39m]: 	[32mValidating system health...[39m
+2025-05-31 11:24:29.568 PM [[32minfo[39m]: 	[32mEnhanced worker is ready to process analysis jobs[39m
+2025-05-31 11:24:29.576 PM [[32minfo[39m]: 	[32mDatabase connectivity verified[39m
+2025-05-31 11:24:29.576 PM [[32minfo[39m]: 	[32mWebSocket gateway health verified[39m
+2025-05-31 11:24:29.576 PM [[32minfo[39m]: 	[32mSystem health validation completed successfully[39m
+2025-05-31 11:24:29.576 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
+2025-05-31 11:24:29.576 PM [[32minfo[39m]: 	[32mSystem Status:[39m
+{
+  "initialized": true,
+  "queueMetrics": {
+    "waiting": 0,
+    "active": 0,
+    "completed": 0,
+    "failed": 0,
+    "delayed": 0,
+    "paused": 0,
+    "totalProcessingTime": 0,
+    "averageProcessingTime": 300000
+  },
+  "workerConcurrency": 5,
+  "webSocketEnabled": true,
+  "cleanupInterval": 3600000
+}
+2025-05-31 11:24:29.577 PM [[32minfo[39m]: 	[32mAnalysis system initialized successfully[39m
+2025-05-31 11:24:29.577 PM [[32minfo[39m]: 	[32mServer is running on port 4000[39m
+2025-05-31 11:24:29.577 PM [[32minfo[39m]: 	[32mEnvironment: development[39m
+2025-05-31 11:24:29.577 PM [[32minfo[39m]: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m
+2025-05-31 11:24:30.579 PM [[33mwarn[39m]: 	[33mAnalysis system already initialized[39m
+2025-05-31 11:24:30.580 PM [[32minfo[39m]: 	[32mEnhanced Analysis System initialized successfully[39m
