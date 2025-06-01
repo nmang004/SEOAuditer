@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { databaseManager, DatabasePerformanceMonitor } from '../src/config/database';
 import { schemas } from '../src/schemas/validation';
 import { logger } from '../src/utils/logger';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 
 const prisma = new PrismaClient();
 

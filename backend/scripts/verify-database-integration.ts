@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { databaseManager, DatabasePerformanceMonitor } from '../src/config/database';
 import { DatabaseService } from '../src/services/DatabaseService';
 import { schemas } from '../src/schemas/validation';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 
 interface VerificationResult {
   success: boolean;
