@@ -130,7 +130,7 @@ async function testNetworkInterruption() {
     reconnectionDelay: 1000
   });
 
-  let networkTest = {
+  const networkTest = {
     initialConnection: false,
     reconnectionAttempts: 0,
     finalReconnection: false

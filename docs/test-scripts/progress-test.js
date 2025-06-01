@@ -11,7 +11,7 @@ async function testProgressEvents() {
   });
 
   let progressUpdates = 0;
-  let testJobId = 'test-progress-' + Date.now();
+  const testJobId = 'test-progress-' + Date.now();
   
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {

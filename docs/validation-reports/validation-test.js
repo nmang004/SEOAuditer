@@ -499,7 +499,7 @@ class ValidationTester {
     ];
 
     let totalComplete = 0;
-    let totalCategories = categories.length;
+    const totalCategories = categories.length;
 
     categories.forEach(category => {
       const result = this.results[category.key];
@@ -547,7 +547,7 @@ class ValidationTester {
     console.log('\n' + '-'.repeat(40));
     console.log('CRITICAL ISSUES SUMMARY:');
     
-    let criticalIssues = [];
+    const criticalIssues = [];
     Object.values(this.results).forEach(result => {
       result.details.filter(d => d.status === 'fail').forEach(detail => {
         criticalIssues.push(detail.message);

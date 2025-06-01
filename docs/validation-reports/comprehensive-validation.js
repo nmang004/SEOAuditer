@@ -61,7 +61,7 @@ class ComprehensiveValidator {
     ];
 
     let totalPoints = 0;
-    let maxPoints = 5;
+    const maxPoints = 5;
 
     // Check for React Query usage
     const dashboardPage = this.readFile(files[0]);
@@ -111,7 +111,7 @@ class ComprehensiveValidator {
     
     const hookFile = this.readFile('src/hooks/useReactQueryDashboard.ts');
     let totalPoints = 0;
-    let maxPoints = 4;
+    const maxPoints = 4;
 
     if (hookFile) {
       // Check caching configuration
@@ -153,7 +153,7 @@ class ComprehensiveValidator {
     ];
 
     let totalPoints = 0;
-    let maxPoints = 4;
+    const maxPoints = 4;
 
     chartFiles.forEach(file => {
       const content = this.readFile(file);
@@ -187,7 +187,7 @@ class ComprehensiveValidator {
     this.log('🚀 Validating performance optimizations...');
     
     let totalPoints = 0;
-    let maxPoints = 3;
+    const maxPoints = 3;
 
     // Check React Query optimization
     const hookFile = this.readFile('src/hooks/useReactQueryDashboard.ts');
