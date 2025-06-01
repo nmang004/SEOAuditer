@@ -33,10 +33,18 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [notifications, setNotifications] = React.useState<Notification[]>([]);
   const pathname = usePathname();
 
+  const dismissAll = React.useCallback(() => {
+    setNotifications([]);
+  }, []);
+
+  const dismissNotification = React.useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  }, []);
+
   // Clear notifications when route changes
   React.useEffect(() => {
     dismissAll();
-  }, [pathname]);
+  }, [pathname, dismissAll]);
 
   const showNotification = React.useCallback((notification: Omit<Notification, 'id'>) => {
     const id = Math.random().toString(36).substring(2, 9);
@@ -58,11 +66,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     }
 
     return id;
-  }, []);
-
-  const dismissNotification = React.useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  }, []);
+  }, [dismissNotification]);
 
   const updateNotification = React.useCallback((id: string, updates: Partial<Notification>) => {
     setNotifications((prev) =>
@@ -70,10 +74,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         notification.id === id ? { ...notification, ...updates } : notification
       )
     );
-  }, []);
-
-  const dismissAll = React.useCallback(() => {
-    setNotifications([]);
   }, []);
 
   const value = React.useMemo(

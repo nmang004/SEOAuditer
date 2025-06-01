@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { getDatabase } from '@/lib/database';
 
 export async function GET(request: NextRequest) {
   try {
+    const prisma = await getDatabase();
     const url = new URL(request.url);
     const days = parseInt(url.searchParams.get('days') || '30');
     const projectId = url.searchParams.get('projectId'); // optional filter
@@ -48,7 +47,7 @@ export async function GET(request: NextRequest) {
     // Group by date and calculate daily averages
     const trendsByDate = new Map();
     
-    analyses.forEach(analysis => {
+    analyses.forEach((analysis: any) => {
       const date = analysis.createdAt.toISOString().split('T')[0];
       
       if (!trendsByDate.has(date)) {
@@ -99,7 +98,7 @@ export async function GET(request: NextRequest) {
     
     while (currentDate <= endDate) {
       const dateStr = currentDate.toISOString().split('T')[0];
-      const existingTrend = trends.find(t => t.date === dateStr);
+      const existingTrend = trends.find((t: any) => t.date === dateStr);
       
       if (existingTrend) {
         filledTrends.push(existingTrend);
@@ -120,13 +119,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate summary statistics
-    const allScores = analyses.map(a => a.overallScore).filter(s => s !== null) as number[];
+    const allScores = analyses.map((a: any) => a.overallScore).filter((s: any) => s !== null) as number[];
     const summary = {
       totalAnalyses: analyses.length,
       averageScore: allScores.length > 0 ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : 0,
       highestScore: allScores.length > 0 ? Math.max(...allScores) : 0,
       lowestScore: allScores.length > 0 ? Math.min(...allScores) : 0,
-      uniqueProjects: new Set(analyses.map(a => a.project.id)).size,
+      uniqueProjects: new Set(analyses.map((a: any) => a.project.id)).size,
       dateRange: {
         start: startDate.toISOString().split('T')[0],
         end: endDate.toISOString().split('T')[0]
@@ -154,7 +153,5 @@ export async function GET(request: NextRequest) {
       },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 } 

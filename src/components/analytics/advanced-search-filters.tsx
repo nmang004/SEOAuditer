@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -41,9 +41,9 @@ export function AdvancedSearchFilters({
     setSearchQuery('');
   };
 
-  const executeSearch = () => {
+  const executeSearch = useCallback(() => {
     onSearch(activeFilters, searchQuery);
-  };
+  }, [onSearch, activeFilters, searchQuery]);
 
   // Auto-search on changes
   useEffect(() => {
@@ -54,7 +54,7 @@ export function AdvancedSearchFilters({
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, activeFilters]);
+  }, [searchQuery, activeFilters, executeSearch]);
 
   return (
     <div className="space-y-4">

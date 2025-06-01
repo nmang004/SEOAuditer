@@ -51,6 +51,27 @@ export function RealTimeAnalysis({
   const [isManualRefresh, setIsManualRefresh] = useState(false);
   const resultsRef = useRef<any>(null);
 
+  // Fetch results manually for fallback
+  const fetchResults = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/analysis/results/${jobId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.results) {
+          setAnalysisResults(data.results);
+          resultsRef.current = data.results;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to fetch results:', error);
+    }
+  }, [jobId]);
+
   const {
     state,
     subscribe,
@@ -70,7 +91,7 @@ export function RealTimeAnalysis({
       if (progress.percentage > 90 && !resultsRef.current) {
         fetchResults();
       }
-    }, []),
+    }, [fetchResults]),
     onCompleted: useCallback((event: any) => {
       setAnalysisResults(event.data);
       resultsRef.current = event.data;
@@ -93,27 +114,6 @@ export function RealTimeAnalysis({
       setLastUpdate(new Date());
     }, [])
   });
-
-  // Fetch results manually for fallback
-  const fetchResults = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/analysis/results/${jobId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.results) {
-          setAnalysisResults(data.results);
-          resultsRef.current = data.results;
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to fetch results:', error);
-    }
-  }, [jobId]);
 
   // Manual refresh handler
   const handleManualRefresh = useCallback(async () => {

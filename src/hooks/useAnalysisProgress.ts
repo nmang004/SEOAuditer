@@ -245,7 +245,7 @@ export function useAnalysisProgress(options: UseAnalysisProgressOptions = {}): A
         unsubscribe();
       }
     };
-  }, [token, user, initializeConnection]);
+  }, [token, user, initializeConnection, state.isSubscribed, unsubscribe]);
 
   // Cleanup on unmount
   useEffect(() => {

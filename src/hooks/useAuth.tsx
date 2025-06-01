@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, createContext, useContext } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext, useMemo } from 'react';
 import { logger } from '@/lib/logger';
 
 export interface User {
@@ -67,6 +67,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     error: null,
   });
 
+  const logout = useCallback(() => {
+    // Clear localStorage
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    
+    // Reset state
+    setState({
+      user: null,
+      token: null,
+      isLoading: false,
+      isAuthenticated: false,
+      error: null,
+    });
+    
+    logger.info('User logged out');
+  }, []);
+
+  const refreshToken = useCallback(async () => {
+    const currentToken = state.token || localStorage.getItem('authToken');
+    if (!currentToken) return;
+    
+    try {
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${currentToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.token) {
+          localStorage.setItem('authToken', data.token);
+          setState(prev => ({ ...prev, token: data.token }));
+        }
+      } else {
+        // Token is invalid, logout
+        logout();
+      }
+    } catch (error) {
+      logger.warn('Token refresh failed:', error);
+      logout();
+    }
+  }, [state.token, logout]);
+
   // Initialize auth state from localStorage
   useEffect(() => {
     const initializeAuth = async () => {
@@ -96,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     initializeAuth();
-  }, []);
+  }, [refreshToken]);
 
   const login = useCallback(async (email: string, password: string) => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
@@ -144,23 +190,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }));
       logger.error('Login error:', error);
     }
-  }, []);
-
-  const logout = useCallback(() => {
-    // Clear localStorage
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    
-    // Reset state
-    setState({
-      user: null,
-      token: null,
-      isLoading: false,
-      isAuthenticated: false,
-      error: null,
-    });
-    
-    logger.info('User logged out');
   }, []);
 
   const register = useCallback(async (email: string, password: string, name: string) => {
@@ -211,47 +240,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const refreshToken = useCallback(async () => {
-    const currentToken = state.token || localStorage.getItem('authToken');
-    if (!currentToken) return;
-    
-    try {
-      const response = await fetch('/api/auth/refresh', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${currentToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.token) {
-          localStorage.setItem('authToken', data.token);
-          setState(prev => ({ ...prev, token: data.token }));
-        }
-      } else {
-        // Token is invalid, logout
-        logout();
-      }
-    } catch (error) {
-      logger.warn('Token refresh failed:', error);
-      logout();
-    }
-  }, [state.token, logout]);
-
   const clearError = useCallback(() => {
     setState(prev => ({ ...prev, error: null }));
   }, []);
 
-  const value: AuthContextType = {
+  const value: AuthContextType = useMemo(() => ({
     ...state,
     login,
     logout,
     register,
     refreshToken,
     clearError,
-  };
+  }), [state, login, logout, register, refreshToken, clearError]);
 
   return (
     <AuthContext.Provider value={value}>

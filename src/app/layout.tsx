@@ -17,6 +17,7 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://rival-outranker.com'),
   title: 'Rival Outranker - Premium SEO Analysis Dashboard',
   description: 'A powerful SEO analysis tool to help you outrank your competitors with comprehensive website audits, competitor analysis, and performance tracking.',
   keywords: 'SEO, search engine optimization, competitor analysis, website ranking, SEO audit, performance tracking, mobile optimization',

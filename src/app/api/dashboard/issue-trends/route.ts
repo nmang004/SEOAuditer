@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { getDatabase } from '@/lib/database';
 
 export async function GET(request: NextRequest) {
   try {
+    const prisma = await getDatabase();
     const url = new URL(request.url);
     const days = parseInt(url.searchParams.get('days') || '30');
     const projectId = url.searchParams.get('projectId'); // optional filter
@@ -92,7 +91,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Process new issues
-    newIssues.forEach(issue => {
+    newIssues.forEach((issue: any) => {
       const date = issue.createdAt.toISOString().split('T')[0];
       const dayData = trendsByDate.get(date);
       if (dayData) {
@@ -117,7 +116,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Process resolved issues
-    resolvedIssues.forEach(issue => {
+    resolvedIssues.forEach((issue: any) => {
       const date = issue.createdAt.toISOString().split('T')[0];
       const dayData = trendsByDate.get(date);
       if (dayData) {
@@ -144,10 +143,10 @@ export async function GET(request: NextRequest) {
 
     // Count issues by severity
     const severityCounts = {
-      critical: newIssues.filter(i => i.severity === 'critical').length,
-      high: newIssues.filter(i => i.severity === 'high').length,
-      medium: newIssues.filter(i => i.severity === 'medium').length,
-      low: newIssues.filter(i => i.severity === 'low').length
+      critical: newIssues.filter((i: any) => i.severity === 'critical').length,
+      high: newIssues.filter((i: any) => i.severity === 'high').length,
+      medium: newIssues.filter((i: any) => i.severity === 'medium').length,
+      low: newIssues.filter((i: any) => i.severity === 'low').length
     };
 
     // Get current open issues count
@@ -197,7 +196,5 @@ export async function GET(request: NextRequest) {
       },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 } 

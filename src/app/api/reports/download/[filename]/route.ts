@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { getDatabase } from '@/lib/database';
 
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ filename: string }> }
 ) {
   try {
+    const prisma = await getDatabase();
     const { filename } = await context.params;
     
     if (!filename) {

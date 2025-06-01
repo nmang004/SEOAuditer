@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, isDatabaseConnected } from '@/lib/prisma';
+import { getDatabase, isDatabaseAvailable } from '@/lib/database';
 
 export async function GET(request: NextRequest) {
   try {
+    // Get database instance
+    const prisma = await getDatabase();
+    
     // Check if database is available
-    if (!isDatabaseConnected()) {
+    if (!isDatabaseAvailable()) {
       return NextResponse.json({
         success: true,
         data: {
@@ -287,7 +290,5 @@ export async function GET(request: NextRequest) {
       },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 } 

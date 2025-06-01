@@ -69,14 +69,6 @@ export function AdvancedDataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [columnPinning, setColumnPinning] = React.useState<ColumnPinningState>({});
 
-  // Update row selection callback
-  React.useEffect(() => {
-    if (onRowSelectionChange) {
-      const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
-      onRowSelectionChange(selectedRows);
-    }
-  }, [rowSelection]);
-
   // Setup table
   const table = useReactTable({
     data,
@@ -98,6 +90,14 @@ export function AdvancedDataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
+
+  // Update row selection callback
+  React.useEffect(() => {
+    if (onRowSelectionChange) {
+      const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
+      onRowSelectionChange(selectedRows);
+    }
+  }, [rowSelection, onRowSelectionChange, table]);
 
   return (
     <div className={cn('space-y-4', className)}>

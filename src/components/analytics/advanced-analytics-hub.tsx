@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { m } from 'framer-motion';
 import {
   Card,
@@ -224,7 +224,7 @@ export function AdvancedAnalyticsHub({
   });
 
   // Data fetching with auto-refresh
-  const fetchAnalyticsData = async () => {
+  const fetchAnalyticsData = useCallback(async () => {
     try {
       setLoading(true);
       // In a real implementation, this would be API calls
@@ -241,7 +241,7 @@ export function AdvancedAnalyticsHub({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Auto-refresh setup
   useEffect(() => {
@@ -252,7 +252,7 @@ export function AdvancedAnalyticsHub({
       setRefreshInterval(interval);
       return () => clearInterval(interval);
     }
-  }, [selectedPeriod, projectId, autoRefresh]);
+  }, [selectedPeriod, projectId, autoRefresh, fetchAnalyticsData]);
 
   // Metric trend calculation
   const getTrendDirection = (current: number, previous: number): 'up' | 'down' | 'stable' => {
