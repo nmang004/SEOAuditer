@@ -100,7 +100,7 @@ export function MarketingMobileNavigation({ className }: MarketingMobileNavigati
               </div>
 
               {/* Navigation Items */}
-              <div className="flex flex-col p-4 space-y-1">
+              <div className="flex flex-col p-4 space-y-1 bg-gray-900 flex-1">
                 {marketingNavItems.map((item) => {
                   const isActive = pathname === item.href;
                   return (
