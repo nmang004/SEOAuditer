@@ -11,6 +11,7 @@ import {
   NotFoundError
 } from '../middleware/error.middleware';
 import { sendEmail } from '../services/email.service';
+import { logger } from '../utils/logger';
 
 // Create separate instances to avoid circular dependency
 const prisma = new PrismaClient();
@@ -113,17 +114,22 @@ export const authController = {
         },
       });
 
-      // Send verification email
+      // Send verification email (but don't fail if email service is down)
       const verificationUrl = `${config.clientUrl}/verify-email/${verificationToken}`;
-      await sendEmail({
-        to: user.email,
-        subject: 'Verify Your Email',
-        template: 'verify-email',
-        context: {
-          name: user.name || 'there',
-          verificationUrl,
-        },
-      });
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'Verify Your Email',
+          template: 'verify-email',
+          context: {
+            name: user.name || 'there',
+            verificationUrl,
+          },
+        });
+      } catch (emailError) {
+        logger.warn('Failed to send verification email:', emailError);
+        // Continue without failing the registration
+      }
 
       // Generate tokens
       const { accessToken, refreshToken } = generateTokens(user.id);
@@ -474,17 +480,22 @@ export const authController = {
         },
       });
 
-      // Send password reset email
+      // Send password reset email (but don't fail if email service is down)
       const resetUrl = `${config.clientUrl}/reset-password/${resetToken}`;
-      await sendEmail({
-        to: user.email,
-        subject: 'Reset Your Password',
-        template: 'reset-password',
-        context: {
-          name: user.name || 'there',
-          resetUrl,
-        },
-      });
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'Reset Your Password',
+          template: 'reset-password',
+          context: {
+            name: user.name || 'there',
+            resetUrl,
+          },
+        });
+      } catch (emailError) {
+        logger.warn('Failed to send password reset email:', emailError);
+        // Continue without failing - user can still request another reset
+      }
 
       res.status(200).json({
         success: true,
@@ -538,15 +549,20 @@ export const authController = {
         },
       });
 
-      // Send password changed confirmation email
-      await sendEmail({
-        to: user.email,
-        subject: 'Password Changed',
-        template: 'password-changed',
-        context: {
-          name: user.name || 'there',
-        },
-      });
+      // Send password changed confirmation email (but don't fail if email service is down)
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'Password Changed',
+          template: 'password-changed',
+          context: {
+            name: user.name || 'there',
+          },
+        });
+      } catch (emailError) {
+        logger.warn('Failed to send password changed email:', emailError);
+        // Continue without failing
+      }
 
       res.status(200).json({
         success: true,

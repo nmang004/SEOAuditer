@@ -178,8 +178,13 @@ class EmailService {
       return true;
     }
     
-    // Ensure service is initialized before sending
-    await this.ensureInitialized();
+    try {
+      // Ensure service is initialized before sending
+      await this.ensureInitialized();
+    } catch (error) {
+      logger.warn('Email service initialization failed, continuing without email:', error);
+      return false;
+    }
     
     if (!this.isInitialized) {
       logger.warn('Email service is not available, skipping email send');
@@ -198,18 +203,20 @@ class EmailService {
         // Get template
         const templateFn = this.templates[template];
         if (!templateFn) {
-          throw new Error(`Email template '${template}' not found`);
+          // If template not found, use a fallback HTML
+          logger.warn(`Email template '${template}' not found, using fallback`);
+          htmlContent = `<p>${context.message || 'Email content not available'}</p>`;
+        } else {
+          // Render template with context
+          const templateContext = {
+            ...context,
+            appName: config.appName,
+            appUrl: config.appUrl,
+            currentYear: new Date().getFullYear(),
+          };
+
+          htmlContent = templateFn(templateContext);
         }
-
-        // Render template with context
-        const templateContext = {
-          ...context,
-          appName: config.appName,
-          appUrl: config.appUrl,
-          currentYear: new Date().getFullYear(),
-        };
-
-        htmlContent = templateFn(templateContext);
       } else {
         throw new Error('Either template or html must be provided');
       }
@@ -236,7 +243,8 @@ class EmailService {
       return true;
     } catch (error) {
       logger.error('Error sending email:', error);
-      throw new Error('Failed to send email');
+      // Don't throw - return false to indicate failure
+      return false;
     }
   }
 

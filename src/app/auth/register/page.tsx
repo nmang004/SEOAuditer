@@ -139,6 +139,9 @@ export default function RegisterPage() {
                 required
                 className="w-full"
               />
+              <p className="text-xs text-muted-foreground">
+                Password must be at least 8 characters and include uppercase, lowercase, number, and special character
+              </p>
             </div>
 
             <div className="space-y-2">

@@ -69,7 +69,8 @@ export class InternalServerError extends ApiError {
 export const errorHandler = (
   err: Error | ApiError,
   req: Request,
-  res: Response
+  res: Response,
+  _next?: any
 ) => {
   // Default to 500 (Internal Server Error)
   let statusCode = 500;

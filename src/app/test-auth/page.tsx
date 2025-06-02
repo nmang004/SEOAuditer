@@ -40,7 +40,7 @@ export default function TestAuthPage() {
         },
         body: JSON.stringify({
           email: 'test@example.com',
-          password: 'password123',
+          password: 'TestPass123!',
         }),
       });
       
@@ -71,7 +71,7 @@ export default function TestAuthPage() {
         body: JSON.stringify({
           name: 'Test User',
           email: `test${Date.now()}@example.com`,
-          password: 'password123',
+          password: 'TestPass123!',
         }),
       });
       

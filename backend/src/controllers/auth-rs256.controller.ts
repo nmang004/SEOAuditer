@@ -860,7 +860,7 @@ class AuthController {
 
       const verificationUrl = `${config.appUrl}/verify-email/${user.verificationToken}`;
 
-      await sendEmail({
+      const emailSent = await sendEmail({
         to: email,
         subject: 'Verify your email address',
         html: `
@@ -875,10 +875,14 @@ class AuthController {
         `
       });
 
-      logger.debug('Email verification sent', { userId, email });
+      if (emailSent) {
+        logger.debug('Email verification sent', { userId, email });
+      } else {
+        logger.warn('Email verification could not be sent', { userId, email });
+      }
     } catch (error) {
       logger.error('Failed to send email verification:', error);
-      throw error;
+      // Don't throw - just log the error
     }
   }
 
@@ -889,7 +893,7 @@ class AuthController {
     try {
       const resetUrl = `${config.appUrl}/reset-password/${resetToken}`;
 
-      await sendEmail({
+      const emailSent = await sendEmail({
         to: email,
         subject: 'Password Reset Request',
         html: `
@@ -904,10 +908,14 @@ class AuthController {
         `
       });
 
-      logger.debug('Password reset email sent', { email });
+      if (emailSent) {
+        logger.debug('Password reset email sent', { email });
+      } else {
+        logger.warn('Password reset email could not be sent', { email });
+      }
     } catch (error) {
       logger.error('Failed to send password reset email:', error);
-      throw error;
+      // Don't throw - just log the error
     }
   }
 
