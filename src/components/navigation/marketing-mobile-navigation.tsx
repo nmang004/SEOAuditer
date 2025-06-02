@@ -73,7 +73,7 @@ export function MarketingMobileNavigation({ className }: MarketingMobileNavigati
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-40 bg-black md:hidden"
               onClick={() => setIsOpen(false)}
             />
 
@@ -83,17 +83,17 @@ export function MarketingMobileNavigation({ className }: MarketingMobileNavigati
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
-              className="fixed right-0 top-0 z-50 h-full w-80 max-w-[80vw] bg-slate-900 border-l border-slate-600 shadow-2xl md:hidden"
+              className="fixed right-0 top-0 z-50 h-full w-80 max-w-[80vw] bg-gray-900 border-l border-gray-700 shadow-2xl md:hidden"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-slate-600 bg-slate-800">
+              <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">
                 <h2 className="text-lg font-semibold text-white">Menu</h2>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsOpen(false)}
-                  className="text-gray-300 hover:text-white hover:bg-slate-700"
+                  className="text-gray-300 hover:text-white hover:bg-gray-700"
                 >
                   <X className="h-5 w-5" />
                 </Button>
@@ -112,7 +112,7 @@ export function MarketingMobileNavigation({ className }: MarketingMobileNavigati
                         'flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors',
                         isActive
                           ? 'bg-indigo-600 text-white shadow-lg'
-                          : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+                          : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                       )}
                     >
                       {item.name}
@@ -122,11 +122,11 @@ export function MarketingMobileNavigation({ className }: MarketingMobileNavigati
               </div>
 
               {/* Action Buttons */}
-              <div className="border-t border-slate-600 p-4 space-y-3 bg-slate-800">
+              <div className="border-t border-gray-700 p-4 space-y-3 bg-gray-800">
                 <Link href="/auth/login" onClick={() => setIsOpen(false)}>
                   <Button 
                     variant="ghost" 
-                    className="w-full justify-start text-gray-300 hover:text-white hover:bg-slate-700"
+                    className="w-full justify-start text-gray-300 hover:text-white hover:bg-gray-700"
                   >
                     Log In
                   </Button>
