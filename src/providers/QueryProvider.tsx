@@ -132,7 +132,11 @@ export function useQueryCache() {
       errorQueries: queries.filter(q => q.state.status === 'error').length,
       loadingQueries: queries.filter(q => q.state.status === 'pending').length,
       cacheSize: queries.reduce((size, query) => {
-        return size + (JSON.stringify(query.state.data).length || 0);
+        try {
+          return size + (query.state.data ? JSON.stringify(query.state.data).length : 0);
+        } catch {
+          return size;
+        }
       }, 0),
     };
   };
