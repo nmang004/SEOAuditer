@@ -43,14 +43,13 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <Card className="p-8">
+    <m.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full"
+    >
+      <Card className="p-8">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold mb-2">Forgot Password</h1>
             <p className="text-muted-foreground">
@@ -103,8 +102,7 @@ export default function ForgotPasswordPage() {
               </Link>
             </p>
           </div>
-        </Card>
-      </m.div>
-    </div>
+      </Card>
+    </m.div>
   );
 }
