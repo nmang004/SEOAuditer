@@ -3,6 +3,7 @@
 import { ReactNode, useEffect } from 'react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { QueryProvider } from '@/providers/QueryProvider';
 
 type ProvidersProps = {
   children: ReactNode;
@@ -30,15 +31,17 @@ export function Providers({
   }, []);
 
   return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme={defaultTheme}
-      enableSystem
-      disableTransitionOnChange
-    >
-      <TooltipProvider>
-        {children}
-      </TooltipProvider>
-    </NextThemesProvider>
+    <QueryProvider>
+      <NextThemesProvider
+        attribute="class"
+        defaultTheme={defaultTheme}
+        enableSystem
+        disableTransitionOnChange
+      >
+        <TooltipProvider>
+          {children}
+        </TooltipProvider>
+      </NextThemesProvider>
+    </QueryProvider>
   );
 }
