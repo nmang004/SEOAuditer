@@ -1,0 +1,11 @@
+backend
+backend/**
+*.log
+.env.local
+.env.development
+.env.test
+.env.production
+/test
+/tests
+/scripts/*.js
+/docs/test-scripts

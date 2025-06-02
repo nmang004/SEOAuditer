@@ -30,7 +30,7 @@
     ".next/types/**/*.ts",
     "src/types/**/*.d.ts"
   ],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "backend/**/*", "backend"],
   "typeRoots": [
     "./node_modules/@types",
     "./src/types"
