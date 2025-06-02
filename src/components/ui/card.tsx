@@ -9,10 +9,30 @@ const Card = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement> & { 
     glass?: boolean;
     hover?: boolean;
+    noAnimate?: boolean;
   }
->(({ className, glass = false, hover = false, ...props }, ref) => {
+>(({ className, glass = false, hover = false, noAnimate = false, ...props }, ref) => {
   // Filter out non-animated props
   const { onDrag, onDragStart, onDragEnd, onAnimationStart, onAnimationEnd, children, ...divProps } = props;
+  
+  // If noAnimate is true, render without animation wrapper
+  if (noAnimate) {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "rounded-lg border bg-card text-card-foreground shadow-sm",
+          glass && "glassmorphism border-opacity-30",
+          hover &&
+            "transition-all duration-200 hover:shadow-md hover:scale-[1.02] hover:-translate-y-1",
+          className
+        )}
+        {...divProps}
+      >
+        {children}
+      </div>
+    );
+  }
   
   return (
     <Animated

@@ -1,14 +1,13 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { m } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function TestLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
@@ -20,7 +19,7 @@ export default function LoginPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (error) setError(""); // Clear error when user types
+    if (error) setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,14 +46,9 @@ export default function LoginPage() {
       }
 
       if (data.success && data.data.token) {
-        // Store token in localStorage
         localStorage.setItem('token', data.data.token);
-        
-        // Store user data in localStorage for the profile page
         localStorage.setItem('userData', JSON.stringify(data.data.user));
-        
-        // Redirect to profile page
-        router.push('/profile');
+        router.push('/dashboard');
       } else {
         throw new Error('Login failed - no token received');
       }
@@ -66,22 +60,37 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold mb-2">Welcome Back</h1>
-        <p className="text-muted-foreground">
-          Sign in to your account to continue
-        </p>
-      </div>
-
-      {error && (
-        <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-          {error}
+    <div className="min-h-screen bg-background">
+      {/* Simple Header */}
+      <header className="border-b">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Link href="/" className="text-xl font-bold">
+            Rival Outranker
+          </Link>
+          <nav className="flex gap-4">
+            <Link href="/pricing" className="text-sm">Pricing</Link>
+            <Link href="/features" className="text-sm">Features</Link>
+            <Link href="/auth/register" className="text-sm">Sign Up</Link>
+          </nav>
         </div>
-      )}
+      </header>
 
-      <Card className="p-6" noAnimate>
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-16 max-w-md">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold mb-2">Sign In</h1>
+          <p className="text-muted-foreground">
+            Welcome back! Please sign in to continue.
+          </p>
+        </div>
 
+        {error && (
+          <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+            {error}
+          </div>
+        )}
+
+        <Card className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
@@ -91,7 +100,7 @@ export default function LoginPage() {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="you@example.com"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
@@ -107,7 +116,7 @@ export default function LoginPage() {
                 id="password"
                 name="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
@@ -116,16 +125,6 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  className="rounded border-gray-300"
-                />
-                <label htmlFor="remember" className="text-sm">
-                  Remember me
-                </label>
-              </div>
               <Link
                 href="/auth/forgot-password"
                 className="text-sm text-primary hover:underline"
@@ -143,15 +142,35 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-center text-sm text-gray-600">
-              Don&apos;t have an account?{' '}
-              <Link href="/auth/register" className="font-medium text-blue-600 hover:text-blue-500">
+          <div className="mt-6 pt-6 border-t">
+            <p className="text-center text-sm text-muted-foreground">
+              Don't have an account?{' '}
+              <Link href="/auth/register" className="font-medium text-primary hover:underline">
                 Sign up here
               </Link>
             </p>
           </div>
-      </Card>
+        </Card>
+      </main>
+
+      {/* Simple Footer */}
+      <footer className="border-t mt-auto">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-muted-foreground">
+              © 2024 Rival Outranker. All rights reserved.
+            </p>
+            <nav className="flex gap-4">
+              <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
+                Privacy
+              </Link>
+              <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">
+                Terms
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

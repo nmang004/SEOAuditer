@@ -36,6 +36,9 @@ const publicRoutes = [
 ];
 
 const authRoutes = [
+  '/auth/login',
+  '/auth/register', 
+  '/auth/forgot-password',
   '/login',
   '/register', 
   '/forgot-password'

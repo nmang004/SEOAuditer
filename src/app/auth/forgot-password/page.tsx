@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
         </div>
       )}
 
-      <Card className="p-6">
+      <Card className="p-6" noAnimate>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
