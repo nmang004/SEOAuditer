@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
+import { MarketingMobileNavigation } from '@/components/navigation/marketing-mobile-navigation';
 import { 
   ArrowRight,
   BarChart3,
@@ -67,11 +68,12 @@ export default function MarketingLayout({
               </Button>
             </Link>
             <Link href="/auth/register">
-              <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0">
+              <Button className="hidden sm:inline-flex bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0">
                 Get Started
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
+            <MarketingMobileNavigation />
           </div>
         </motion.div>
       </header>
