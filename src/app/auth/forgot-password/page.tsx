@@ -43,31 +43,27 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <m.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full"
-    >
-      <Card className="p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold mb-2">Forgot Password</h1>
-            <p className="text-muted-foreground">
-              Enter your email address and we'll send you a link to reset your password.
-            </p>
-          </div>
+    <div className="w-full">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold mb-2">Forgot Password</h1>
+        <p className="text-muted-foreground">
+          Enter your email address and we'll send you a link to reset your password.
+        </p>
+      </div>
 
-          {error && (
-            <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-              {error}
-            </div>
-          )}
+      {error && (
+        <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
 
-          {message && (
-            <div className="mb-4 p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
-              {message}
-            </div>
-          )}
+      {message && (
+        <div className="mb-4 p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
+          {message}
+        </div>
+      )}
+
+      <Card className="p-6">
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -103,6 +99,6 @@ export default function ForgotPasswordPage() {
             </p>
           </div>
       </Card>
-    </m.div>
+    </div>
   );
 }

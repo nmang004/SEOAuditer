@@ -76,25 +76,21 @@ export default function RegisterPage() {
   };
 
   return (
-    <m.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full"
-    >
-      <Card className="p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold mb-2">Create an Account</h1>
-            <p className="text-muted-foreground">
-              Sign up to start analyzing your website's SEO
-            </p>
-          </div>
+    <div className="w-full">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold mb-2">Create an Account</h1>
+        <p className="text-muted-foreground">
+          Sign up to start analyzing your website's SEO
+        </p>
+      </div>
 
-          {error && (
-            <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-              {error}
-            </div>
-          )}
+      {error && (
+        <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
+
+      <Card className="p-6">
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -198,6 +194,6 @@ export default function RegisterPage() {
             </p>
           </div>
       </Card>
-    </m.div>
+    </div>
   );
 }

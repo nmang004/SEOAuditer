@@ -122,23 +122,35 @@ export function useQueryCache() {
   const getCache = () => queryClient.getQueryCache();
   
   const getCacheStats = () => {
-    const cache = getCache();
-    const queries = cache.getAll();
-    
-    return {
-      totalQueries: queries.length,
-      freshQueries: queries.filter(q => q.state.status === 'success' && !q.isStale()).length,
-      staleQueries: queries.filter(q => q.isStale()).length,
-      errorQueries: queries.filter(q => q.state.status === 'error').length,
-      loadingQueries: queries.filter(q => q.state.status === 'pending').length,
-      cacheSize: queries.reduce((size, query) => {
-        try {
-          return size + (query.state.data ? JSON.stringify(query.state.data).length : 0);
-        } catch {
-          return size;
-        }
-      }, 0),
-    };
+    try {
+      const cache = getCache();
+      const queries = cache.getAll() || [];
+      
+      return {
+        totalQueries: queries.length,
+        freshQueries: queries.filter(q => q && q.state && q.state.status === 'success' && !q.isStale()).length,
+        staleQueries: queries.filter(q => q && q.isStale()).length,
+        errorQueries: queries.filter(q => q && q.state && q.state.status === 'error').length,
+        loadingQueries: queries.filter(q => q && q.state && q.state.status === 'pending').length,
+        cacheSize: queries.reduce((size, query) => {
+          try {
+            if (!query || !query.state) return size;
+            return size + (query.state.data ? JSON.stringify(query.state.data).length : 0);
+          } catch {
+            return size;
+          }
+        }, 0),
+      };
+    } catch {
+      return {
+        totalQueries: 0,
+        freshQueries: 0,
+        staleQueries: 0,
+        errorQueries: 0,
+        loadingQueries: 0,
+        cacheSize: 0,
+      };
+    }
   };
   
   return {
