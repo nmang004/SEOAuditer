@@ -43,7 +43,7 @@ export default function MarketingLayout({
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500">
               <BarChart3 className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-white">Rival Outranker</span>
+            <span className="text-xl font-bold text-white">SEO Director</span>
           </Link>
           
           <nav className="hidden items-center gap-6 md:flex">
@@ -91,10 +91,10 @@ export default function MarketingLayout({
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500">
                   <BarChart3 className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-lg font-bold text-white">Rival Outranker</span>
+                <span className="text-lg font-bold text-white">SEO Director</span>
               </div>
               <p className="mb-6 max-w-md text-sm text-gray-400">
-                The most advanced SEO platform that helps you outrank your competitors and grow your organic traffic with AI-powered insights.
+                The most advanced SEO platform that helps you direct your SEO strategy and grow your organic traffic with AI-powered insights.
               </p>
               <div className="flex gap-4">
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -161,7 +161,7 @@ export default function MarketingLayout({
           
           <div className="mt-12 border-t border-gray-700 pt-8">
             <p className="text-center text-sm text-gray-400">
-              &copy; {new Date().getFullYear()} Rival Outranker. All rights reserved.
+              &copy; {new Date().getFullYear()} SEO Director. All rights reserved.
             </p>
           </div>
         </div>

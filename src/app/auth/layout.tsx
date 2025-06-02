@@ -39,11 +39,11 @@ export default function AuthLayout({
                   <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
                 </svg>
               </div>
-              <span className="text-2xl font-bold">Rival Outranker</span>
+              <span className="text-2xl font-bold">SEO Director</span>
             </Link>
             
             <h1 className="text-4xl font-bold mb-6 leading-tight">
-              Outrank Your Competition with 
+              Direct Your SEO Strategy with 
               <span className="text-primary"> Advanced SEO Analytics</span>
             </h1>
             
@@ -102,7 +102,7 @@ export default function AuthLayout({
                     <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
                   </svg>
                 </div>
-                <span className="text-xl font-bold">Rival Outranker</span>
+                <span className="text-xl font-bold">SEO Director</span>
               </Link>
             </div>
             

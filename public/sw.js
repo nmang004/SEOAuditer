@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rival-outranker-v1';
+const CACHE_NAME = 'seo-director-v1';
 const STATIC_CACHE = 'static-v1';
 const DYNAMIC_CACHE = 'dynamic-v1';
 const API_CACHE = 'api-v1';

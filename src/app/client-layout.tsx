@@ -232,7 +232,7 @@ export default function ClientLayout({
                       <Download className="h-5 w-5 text-primary-foreground" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium">Install Rival Outranker</h4>
+                      <h4 className="font-medium">Install SEO Director</h4>
                       <p className="text-sm text-muted-foreground">
                         Get the full app experience with offline access and faster loading.
                       </p>
