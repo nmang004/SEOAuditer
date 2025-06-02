@@ -10,6 +10,8 @@ const mockData = {
     create: () => Promise.resolve({}),
     update: () => Promise.resolve({}),
     delete: () => Promise.resolve({}),
+    count: () => Promise.resolve(0),
+    groupBy: () => Promise.resolve([]),
   },
   user: {
     findMany: () => Promise.resolve([]),
@@ -18,7 +20,47 @@ const mockData = {
     update: () => Promise.resolve({}),
     delete: () => Promise.resolve({}),
   },
-  // Add other models as needed
+  sEOAnalysis: {
+    findMany: () => Promise.resolve([]),
+    findUnique: () => Promise.resolve(null),
+    create: () => Promise.resolve({}),
+    update: () => Promise.resolve({}),
+    delete: () => Promise.resolve({}),
+    count: () => Promise.resolve(0),
+    aggregate: () => Promise.resolve({ _avg: { overallScore: 0 } }),
+  },
+  crawlJob: {
+    findMany: () => Promise.resolve([]),
+    findUnique: () => Promise.resolve(null),
+    create: () => Promise.resolve({}),
+    update: () => Promise.resolve({}),
+    delete: () => Promise.resolve({}),
+    count: () => Promise.resolve(0),
+  },
+  crawlSession: {
+    findMany: () => Promise.resolve([]),
+    findUnique: () => Promise.resolve(null),
+    create: () => Promise.resolve({}),
+    update: () => Promise.resolve({}),
+    delete: () => Promise.resolve({}),
+    count: () => Promise.resolve(0),
+  },
+  sEOIssue: {
+    findMany: () => Promise.resolve([]),
+    findUnique: () => Promise.resolve(null),
+    create: () => Promise.resolve({}),
+    update: () => Promise.resolve({}),
+    delete: () => Promise.resolve({}),
+    count: () => Promise.resolve(0),
+  },
+  notification: {
+    findMany: () => Promise.resolve([]),
+    findUnique: () => Promise.resolve(null),
+    create: () => Promise.resolve({}),
+    update: () => Promise.resolve({}),
+    delete: () => Promise.resolve({}),
+    count: () => Promise.resolve(0),
+  },
 };
 
 async function initializePrisma() {

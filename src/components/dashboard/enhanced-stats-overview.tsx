@@ -194,6 +194,14 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
   };
 
   const statsData = dashboardData || fallbackData;
+  
+  // Ensure scoreDistribution exists and has required properties
+  const safeScoreDistribution = {
+    excellent: statsData.scoreDistribution?.excellent || 0,
+    good: statsData.scoreDistribution?.good || 0,
+    needsWork: statsData.scoreDistribution?.needsWork || 0,
+    poor: statsData.scoreDistribution?.poor || 0
+  };
 
   const getScoreColor = (score: number): 'success' | 'warning' | 'danger' => {
     if (score >= 80) return 'success';
@@ -330,14 +338,14 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center space-y-2">
                 <div className="text-2xl font-bold text-green-600">
-                  {statsData.scoreDistribution.excellent}
+                  {safeScoreDistribution.excellent}
                 </div>
                 <div className="text-sm text-gray-600">Excellent (80-100)</div>
                 <div className="h-2 bg-green-100 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-green-500 transition-all duration-500"
                     style={{ 
-                      width: `${statsData.totalProjects > 0 ? (statsData.scoreDistribution.excellent / statsData.totalProjects) * 100 : 0}%` 
+                      width: `${statsData.totalProjects > 0 ? (safeScoreDistribution.excellent / statsData.totalProjects) * 100 : 0}%` 
                     }}
                   />
                 </div>
@@ -345,14 +353,14 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
               
               <div className="text-center space-y-2">
                 <div className="text-2xl font-bold text-yellow-600">
-                  {statsData.scoreDistribution.good}
+                  {safeScoreDistribution.good}
                 </div>
                 <div className="text-sm text-gray-600">Good (60-79)</div>
                 <div className="h-2 bg-yellow-100 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-yellow-500 transition-all duration-500"
                     style={{ 
-                      width: `${statsData.totalProjects > 0 ? (statsData.scoreDistribution.good / statsData.totalProjects) * 100 : 0}%` 
+                      width: `${statsData.totalProjects > 0 ? (safeScoreDistribution.good / statsData.totalProjects) * 100 : 0}%` 
                     }}
                   />
                 </div>
@@ -360,14 +368,14 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
               
               <div className="text-center space-y-2">
                 <div className="text-2xl font-bold text-orange-600">
-                  {statsData.scoreDistribution.needsWork}
+                  {safeScoreDistribution.needsWork}
                 </div>
                 <div className="text-sm text-gray-600">Needs Work (40-59)</div>
                 <div className="h-2 bg-orange-100 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-orange-500 transition-all duration-500"
                     style={{ 
-                      width: `${statsData.totalProjects > 0 ? (statsData.scoreDistribution.needsWork / statsData.totalProjects) * 100 : 0}%` 
+                      width: `${statsData.totalProjects > 0 ? (safeScoreDistribution.needsWork / statsData.totalProjects) * 100 : 0}%` 
                     }}
                   />
                 </div>
@@ -375,14 +383,14 @@ export const EnhancedStatsOverview: React.FC<EnhancedStatsOverviewProps> = ({
               
               <div className="text-center space-y-2">
                 <div className="text-2xl font-bold text-red-600">
-                  {statsData.scoreDistribution.poor}
+                  {safeScoreDistribution.poor}
                 </div>
                 <div className="text-sm text-gray-600">Poor (0-39)</div>
                 <div className="h-2 bg-red-100 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-red-500 transition-all duration-500"
                     style={{ 
-                      width: `${statsData.totalProjects > 0 ? (statsData.scoreDistribution.poor / statsData.totalProjects) * 100 : 0}%` 
+                      width: `${statsData.totalProjects > 0 ? (safeScoreDistribution.poor / statsData.totalProjects) * 100 : 0}%` 
                     }}
                   />
                 </div>
