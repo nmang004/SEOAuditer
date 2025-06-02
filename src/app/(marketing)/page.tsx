@@ -224,7 +224,7 @@ export default function HomePage() {
                     <div className="h-3 w-3 rounded-full bg-yellow-400" />
                     <div className="h-3 w-3 rounded-full bg-green-400" />
                   </div>
-                  <div className="ml-4 text-xs text-gray-500">rival-outranker.com/dashboard</div>
+                  <div className="ml-4 text-xs text-gray-500">seo-director.com/dashboard</div>
                 </div>
                 <div className="flex h-96 items-center justify-center p-8 bg-gray-900 rounded-b-xl">
                   <div className="text-center">
@@ -354,7 +354,7 @@ export default function HomePage() {
               Ready to transform your SEO strategy?
             </h2>
             <p className="text-xl text-indigo-100 mb-8">
-              Join thousands of businesses that trust Rival Outranker for their SEO success.
+              Join thousands of businesses that trust SEO Director for their SEO success.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button 
