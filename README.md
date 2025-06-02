@@ -1,4 +1,4 @@
-# Rival Outranker – SEO Analysis Dashboard
+# SEO Director – SEO Analysis Dashboard
 
 ## Overview
 

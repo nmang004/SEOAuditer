@@ -116,7 +116,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <div className="h-full overflow-y-auto bg-card border-r">
           <div className="flex h-full flex-col">
             <div className="p-4">
-              <h2 className="text-xl font-bold">Rival Outranker</h2>
+              <h2 className="text-xl font-bold">SEO Director</h2>
             </div>
             
             {/* Main Navigation */}

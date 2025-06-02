@@ -1,7 +1,7 @@
 {
-  "name": "Rival Outranker - SEO Analysis Dashboard",
-  "short_name": "Rival Outranker",
-  "description": "A powerful SEO analysis tool to help you outrank your competitors",
+  "name": "SEO Director - SEO Analysis Dashboard",
+  "short_name": "SEO Director",
+  "description": "A powerful SEO analysis tool to help you direct your SEO strategy",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#0f172a",

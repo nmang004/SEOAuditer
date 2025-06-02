@@ -255,7 +255,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             href="/dashboard" 
             className="flex items-center space-x-2 rounded-md p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
-            <span className="text-xl font-bold">Rival Outranker</span>
+            <span className="text-xl font-bold">SEO Director</span>
           </Link>
           <Button
             variant="ghost"

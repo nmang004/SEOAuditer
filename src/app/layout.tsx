@@ -17,17 +17,17 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://rival-outranker.com'),
-  title: 'Rival Outranker - Premium SEO Analysis Dashboard',
-  description: 'A powerful SEO analysis tool to help you outrank your competitors with comprehensive website audits, competitor analysis, and performance tracking.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://seo-director.com'),
+  title: 'SEO Director - Premium SEO Analysis Dashboard',
+  description: 'A powerful SEO analysis tool to help you direct your SEO strategy with comprehensive website audits, competitor analysis, and performance tracking.',
   keywords: 'SEO, search engine optimization, competitor analysis, website ranking, SEO audit, performance tracking, mobile optimization',
-  applicationName: 'Rival Outranker',
-  authors: [{ name: 'Rival Outranker Team' }],
+  applicationName: 'SEO Director',
+  authors: [{ name: 'SEO Director Team' }],
   generator: 'Next.js',
   category: 'Business',
   classification: 'SEO Tools',
-  creator: 'Rival Outranker',
-  publisher: 'Rival Outranker',
+  creator: 'SEO Director',
+  publisher: 'SEO Director',
   formatDetection: {
     email: false,
     address: false,
@@ -47,29 +47,29 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    siteName: 'Rival Outranker',
-    title: 'Rival Outranker - Premium SEO Analysis Dashboard',
-    description: 'A powerful SEO analysis tool to help you outrank your competitors',
-    url: 'https://rival-outranker.com',
+    siteName: 'SEO Director',
+    title: 'SEO Director - Premium SEO Analysis Dashboard',
+    description: 'A powerful SEO analysis tool to help you direct your SEO strategy',
+    url: 'https://seo-director.com',
     images: [
       {
         url: '/images/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Rival Outranker SEO Dashboard',
+        alt: 'SEO Director SEO Dashboard',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Rival Outranker - Premium SEO Analysis Dashboard',
-    description: 'A powerful SEO analysis tool to help you outrank your competitors',
+    title: 'SEO Director - Premium SEO Analysis Dashboard',
+    description: 'A powerful SEO analysis tool to help you direct your SEO strategy',
     images: ['/images/twitter-image.png'],
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Rival Outranker',
+    title: 'SEO Director',
     startupImage: [
       {
         url: '/images/apple-splash-2048-2732.png',
@@ -128,7 +128,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Rival Outranker" />
+        <meta name="apple-mobile-web-app-title" content="SEO Director" />
         <meta name="msapplication-TileColor" content="#0ea5e9" />
         <meta name="msapplication-tap-highlight" content="no" />
 

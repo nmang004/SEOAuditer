@@ -99,7 +99,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-muted-foreground text-sm">
-              © {new Date().getFullYear()} Rival Outranker. All rights reserved.
+              © {new Date().getFullYear()} SEO Director. All rights reserved.
             </p>
             <div className="mt-4 md:mt-0">
               <p className="text-muted-foreground text-sm">

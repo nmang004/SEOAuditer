@@ -104,7 +104,7 @@ const testimonials = [
   {
     name: 'Sarah Johnson',
     role: 'Marketing Director',
-    content: 'Rival Outranker has transformed our SEO strategy. Our organic traffic has increased by 150% in just 3 months!',
+    content: 'SEO Director has transformed our SEO strategy. Our organic traffic has increased by 150% in just 3 months!',
     rating: 5,
     avatar: 'SJ'
   },

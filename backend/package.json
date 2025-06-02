@@ -1,7 +1,7 @@
 {
-  "name": "seo-audit-backend",
+  "name": "seo-director-backend",
   "version": "1.0.0",
-  "description": "Backend for SEO Audit Tool",
+  "description": "Backend for SEO Director",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",

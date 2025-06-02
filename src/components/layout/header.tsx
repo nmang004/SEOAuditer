@@ -51,7 +51,7 @@ export function Header() {
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <span className="hidden font-bold sm:inline-block">
-              Rival Outranker
+              SEO Director
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
@@ -91,7 +91,7 @@ export function Header() {
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <Link href="/" className="mr-6 flex items-center space-x-2 md:hidden">
-              <span className="font-bold">Rival Outranker</span>
+              <span className="font-bold">SEO Director</span>
             </Link>
           </div>
           <nav className="flex items-center space-x-2">
