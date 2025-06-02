@@ -107,4 +107,4 @@ export default function ForgotPasswordPage() {
       </m.div>
     </div>
   );
-} 
+}

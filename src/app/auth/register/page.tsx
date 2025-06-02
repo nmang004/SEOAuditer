@@ -8,12 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const router = useRouter();
 
@@ -28,13 +30,21 @@ export default function LoginPage() {
     setIsLoading(true);
     setError("");
 
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          name: formData.name,
           email: formData.email,
           password: formData.password,
         }),
@@ -43,7 +53,7 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || data.error || 'Login failed');
+        throw new Error(data.error?.message || data.error || 'Registration failed');
       }
 
       if (data.success && data.data.token) {
@@ -56,10 +66,10 @@ export default function LoginPage() {
         // Redirect to profile page
         router.push('/profile');
       } else {
-        throw new Error('Login failed - no token received');
+        throw new Error('Registration failed - no token received');
       }
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message || 'Registration failed');
     } finally {
       setIsLoading(false);
     }
@@ -75,9 +85,9 @@ export default function LoginPage() {
       >
         <Card className="p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold mb-2">Welcome Back</h1>
+            <h1 className="text-2xl font-bold mb-2">Create an Account</h1>
             <p className="text-muted-foreground">
-              Sign in to your account to continue
+              Sign up to start analyzing your website's SEO
             </p>
           </div>
 
@@ -88,6 +98,22 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="name" className="text-sm font-medium">
+                Full Name
+              </label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Enter your full name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+                className="w-full"
+              />
+            </div>
+
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
@@ -112,7 +138,7 @@ export default function LoginPage() {
                 id="password"
                 name="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Create a password"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
@@ -120,23 +146,39 @@ export default function LoginPage() {
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  className="rounded border-gray-300"
-                />
-                <label htmlFor="remember" className="text-sm">
-                  Remember me
-                </label>
-              </div>
-              <Link
-                href="/auth/forgot-password"
-                className="text-sm text-primary hover:underline"
-              >
-                Forgot password?
-              </Link>
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="text-sm font-medium">
+                Confirm Password
+              </label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="Confirm your password"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                required
+                className="w-full"
+              />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="terms"
+                required
+                className="rounded border-gray-300"
+              />
+              <label htmlFor="terms" className="text-sm">
+                I agree to the{" "}
+                <Link href="/terms" className="text-primary hover:underline">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" className="text-primary hover:underline">
+                  Privacy Policy
+                </Link>
+              </label>
             </div>
 
             <Button
@@ -144,15 +186,15 @@ export default function LoginPage() {
               className="w-full"
               disabled={isLoading}
             >
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? "Creating account..." : "Create account"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-center text-sm text-gray-600">
-              Don&apos;t have an account?{' '}
-              <Link href="/auth/register" className="font-medium text-blue-600 hover:text-blue-500">
-                Sign up here
+            <p className="text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link href="/auth/login" className="text-primary hover:underline">
+                Sign in
               </Link>
             </p>
           </div>

@@ -8,14 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
   const router = useRouter();
 
@@ -30,21 +28,13 @@ export default function RegisterPage() {
     setIsLoading(true);
     setError("");
 
-    // Validate passwords match
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
           email: formData.email,
           password: formData.password,
         }),
@@ -53,7 +43,7 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || data.error || 'Registration failed');
+        throw new Error(data.error?.message || data.error || 'Login failed');
       }
 
       if (data.success && data.data.token) {
@@ -66,10 +56,10 @@ export default function RegisterPage() {
         // Redirect to profile page
         router.push('/profile');
       } else {
-        throw new Error('Registration failed - no token received');
+        throw new Error('Login failed - no token received');
       }
     } catch (err: any) {
-      setError(err.message || 'Registration failed');
+      setError(err.message || 'Login failed');
     } finally {
       setIsLoading(false);
     }
@@ -85,9 +75,9 @@ export default function RegisterPage() {
       >
         <Card className="p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold mb-2">Create an Account</h1>
+            <h1 className="text-2xl font-bold mb-2">Welcome Back</h1>
             <p className="text-muted-foreground">
-              Sign up to start analyzing your website's SEO
+              Sign in to your account to continue
             </p>
           </div>
 
@@ -98,22 +88,6 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">
-                Full Name
-              </label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="Enter your full name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-                className="w-full"
-              />
-            </div>
-
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
@@ -138,7 +112,7 @@ export default function RegisterPage() {
                 id="password"
                 name="password"
                 type="password"
-                placeholder="Create a password"
+                placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
@@ -146,39 +120,23 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium">
-                Confirm Password
-              </label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                required
-                className="w-full"
-              />
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="terms"
-                required
-                className="rounded border-gray-300"
-              />
-              <label htmlFor="terms" className="text-sm">
-                I agree to the{" "}
-                <Link href="/terms" className="text-primary hover:underline">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link href="/privacy" className="text-primary hover:underline">
-                  Privacy Policy
-                </Link>
-              </label>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="remember"
+                  className="rounded border-gray-300"
+                />
+                <label htmlFor="remember" className="text-sm">
+                  Remember me
+                </label>
+              </div>
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
             </div>
 
             <Button
@@ -186,15 +144,15 @@ export default function RegisterPage() {
               className="w-full"
               disabled={isLoading}
             >
-              {isLoading ? "Creating account..." : "Create account"}
+              {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/auth/login" className="text-primary hover:underline">
-                Sign in
+            <p className="text-center text-sm text-gray-600">
+              Don&apos;t have an account?{' '}
+              <Link href="/auth/register" className="font-medium text-blue-600 hover:text-blue-500">
+                Sign up here
               </Link>
             </p>
           </div>
@@ -202,4 +160,4 @@ export default function RegisterPage() {
       </m.div>
     </div>
   );
-} 
+}
