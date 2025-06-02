@@ -295,15 +295,15 @@ class DatabaseHealthMonitor {
         ORDER BY idx_scan DESC
       `;
 
-      const unusedIndexes = indexUsage.filter(idx => Number(idx.idx_scan) === 0);
-      const activeIndexes = indexUsage.filter(idx => Number(idx.idx_scan) > 0);
+      const unusedIndexes = indexUsage.filter((idx: any) => Number(idx.idx_scan) === 0);
+      const activeIndexes = indexUsage.filter((idx: any) => Number(idx.idx_scan) > 0);
 
       const metrics = {
         totalIndexes: indexUsage.length,
         activeIndexes: activeIndexes.length,
         unusedIndexes: unusedIndexes.length,
         topIndexes: activeIndexes.slice(0, 5),
-        unusedIndexList: unusedIndexes.map(idx => idx.indexname)
+        unusedIndexList: unusedIndexes.map((idx: any) => idx.indexname)
       };
 
       if (unusedIndexes.length > 10) {
