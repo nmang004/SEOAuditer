@@ -14,9 +14,33 @@ import { sendEmail } from '../services/email.service';
 
 // Create separate instances to avoid circular dependency
 const prisma = new PrismaClient();
-const redisClient = createClient({
-  url: process.env.REDIS_URL || 'redis://localhost:6379'
-});
+let redisClient: ReturnType<typeof createClient> | null = null;
+
+// Initialize Redis client with error handling
+const initRedisClient = async () => {
+  if (redisClient) return redisClient;
+  
+  try {
+    const client = createClient({
+      url: process.env.REDIS_URL || 'redis://localhost:6379'
+    });
+    
+    client.on('error', (err) => {
+      console.error('Redis Client Error:', err);
+    });
+    
+    await client.connect();
+    redisClient = client;
+    console.log('Redis client connected successfully');
+    return client;
+  } catch (error) {
+    console.warn('Failed to connect to Redis, using fallback mode:', error);
+    return null;
+  }
+};
+
+// Initialize Redis on startup
+initRedisClient();
 
 // Token generation helper
 const generateTokens = (userId: string) => {
@@ -104,13 +128,19 @@ export const authController = {
       // Generate tokens
       const { accessToken, refreshToken } = generateTokens(user.id);
 
-      // Store refresh token in Redis
-      if (redisClient) {
-        await redisClient.setEx(
-          `refresh_token:${user.id}`,
-          parseInt(config.jwt.refreshExpiration, 10),
-          refreshToken
-        );
+      // Store refresh token in Redis if available
+      const redis = await initRedisClient();
+      if (redis) {
+        try {
+          await redis.setEx(
+            `refresh_token:${user.id}`,
+            parseInt(config.jwt.refreshExpiration, 10),
+            refreshToken
+          );
+        } catch (error) {
+          console.warn('Failed to store refresh token in Redis:', error);
+          // Continue without Redis - cookies will still work
+        }
       }
 
       // Set refresh token as HTTP-only cookie
@@ -156,13 +186,19 @@ export const authController = {
       // Generate tokens
       const { accessToken, refreshToken } = generateTokens(user.id);
 
-      // Store refresh token in Redis
-      if (redisClient) {
-        await redisClient.setEx(
-          `refresh_token:${user.id}`,
-          parseInt(config.jwt.refreshExpiration, 10),
-          refreshToken
-        );
+      // Store refresh token in Redis if available
+      const redis = await initRedisClient();
+      if (redis) {
+        try {
+          await redis.setEx(
+            `refresh_token:${user.id}`,
+            parseInt(config.jwt.refreshExpiration, 10),
+            refreshToken
+          );
+        } catch (error) {
+          console.warn('Failed to store refresh token in Redis:', error);
+          // Continue without Redis - cookies will still work
+        }
       }
 
       // Update last login
@@ -209,8 +245,16 @@ export const authController = {
         tokenId: string;
       };
 
-      // Get stored refresh token from Redis
-      const storedToken = redisClient ? await redisClient.get(`refresh_token:${decoded.userId}`) : null;
+      // Get stored refresh token from Redis if available
+      const redis = await initRedisClient();
+      let storedToken = null;
+      if (redis) {
+        try {
+          storedToken = await redis.get(`refresh_token:${decoded.userId}`);
+        } catch (error) {
+          console.warn('Failed to get refresh token from Redis:', error);
+        }
+      }
 
       if (!storedToken || storedToken !== refreshToken) {
         throw new UnauthorizedError('Invalid refresh token');
@@ -220,13 +264,19 @@ export const authController = {
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } = 
         generateTokens(decoded.userId);
 
-      // Update refresh token in Redis
-      if (redisClient) {
-        await redisClient.setEx(
-          `refresh_token:${decoded.userId}`,
-          parseInt(config.jwt.refreshExpiration, 10),
-          newRefreshToken
-        );
+      // Update refresh token in Redis if available
+      const updateRedis = await initRedisClient();
+      if (updateRedis) {
+        try {
+          await updateRedis.setEx(
+            `refresh_token:${decoded.userId}`,
+            parseInt(config.jwt.refreshExpiration, 10),
+            newRefreshToken
+          );
+        } catch (error) {
+          console.warn('Failed to update refresh token in Redis:', error);
+          // Continue without Redis - cookies will still work
+        }
       }
 
       // Set new refresh token as HTTP-only cookie
@@ -264,9 +314,14 @@ export const authController = {
           const decoded = jwt.verify(refreshToken, config.jwt.secret) as {
             userId: string;
           };
-          // Delete refresh token from Redis
-          if (redisClient) {
-            await redisClient.del(`refresh_token:${decoded.userId}`);
+          // Delete refresh token from Redis if available
+          const redis = await initRedisClient();
+          if (redis) {
+            try {
+              await redis.del(`refresh_token:${decoded.userId}`);
+            } catch (error) {
+              console.warn('Failed to delete refresh token from Redis:', error);
+            }
           }
         } catch (error) {
           // Token is invalid or expired, nothing to do

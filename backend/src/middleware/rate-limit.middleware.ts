@@ -10,14 +10,34 @@ const isTest = process.env.NODE_ENV === 'test';
 
 type RateLimiter = RateLimiterMemory | RateLimiterRedis;
 
-const redisClient = createClient({
-  url: config.redis.url
-});
-
+let redisClient: ReturnType<typeof createClient> | null = null;
 const prisma = new PrismaClient();
 
-// Initialize Redis connection
-redisClient.connect().catch(console.error);
+// Initialize Redis connection with error handling
+const initRedisClient = async () => {
+  if (redisClient) return redisClient;
+  
+  try {
+    const client = createClient({
+      url: config.redis.url
+    });
+    
+    client.on('error', (err) => {
+      console.error('Redis Client Error in rate-limit middleware:', err);
+    });
+    
+    await client.connect();
+    redisClient = client;
+    console.log('Redis client connected successfully in rate-limit middleware');
+    return client;
+  } catch (error) {
+    console.warn('Failed to connect to Redis in rate-limit middleware, using memory fallback:', error);
+    return null;
+  }
+};
+
+// Initialize Redis on startup
+initRedisClient();
 
 // Memory-based rate limiter for when Redis is not available
 const createMemoryRateLimiter = () => {
@@ -35,6 +55,11 @@ const createMemoryRateLimiter = () => {
 
 // Redis-based rate limiter for production
 const createRedisRateLimiter = () => {
+  if (!redisClient) {
+    console.warn('Redis client not available, falling back to memory rate limiter');
+    return createMemoryRateLimiter();
+  }
+  
   return {
     api: new RateLimiterRedis({
       storeClient: redisClient,
@@ -51,7 +76,7 @@ const createRedisRateLimiter = () => {
   };
 };
 
-const rateLimiters = isTest ? createMemoryRateLimiter() : createRedisRateLimiter();
+const rateLimiters = isTest || !redisClient ? createMemoryRateLimiter() : createRedisRateLimiter();
 
 export const createRateLimitMiddleware = (limiter: RateLimiter) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -141,8 +166,8 @@ class AuthRateLimiter {
   private passwordResetLimiter: RateLimiterRedis | RateLimiterMemory;
 
   constructor() {
-    if (isTest) {
-      // Use memory-based limiters for testing
+    if (isTest || !redisClient) {
+      // Use memory-based limiters for testing or when Redis is unavailable
       this.loginAttemptsLimiter = new RateLimiterMemory({
         points: 5, // 5 attempts
         duration: 900, // Per 15 minutes

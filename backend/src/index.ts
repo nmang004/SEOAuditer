@@ -247,13 +247,17 @@ const startServer = async () => {
       }
     }
     
-    // Initialize Analysis System 
-    // const { initializeAnalysisSystem } = require(analysisSystemPath);
-    const analysisSystemPath = './seo-crawler/enhanced-analysis-system';
-    const analysisSystemModule = require(analysisSystemPath);
-    if (analysisSystemModule.initializeAnalysisSystem) {
-      await analysisSystemModule.initializeAnalysisSystem(server);
-      logger.info('Analysis system initialized successfully');
+    // Initialize Analysis System (skip if Redis/DB not available)
+    try {
+      const analysisSystemPath = './seo-crawler/enhanced-analysis-system';
+      const analysisSystemModule = require(analysisSystemPath);
+      if (analysisSystemModule.initializeAnalysisSystem) {
+        await analysisSystemModule.initializeAnalysisSystem(server);
+        logger.info('Analysis system initialized successfully');
+      }
+    } catch (error) {
+      logger.warn('Analysis system initialization failed, continuing without it:', error);
+      console.log('⚠️  Analysis system unavailable - SEO crawling features will be disabled');
     }
     
     server.listen(config.port, () => {
@@ -261,20 +265,6 @@ const startServer = async () => {
       logger.info(`Environment: ${config.env}`);
       logger.info(`API Documentation: http://localhost:${config.port}/api-docs`);
       
-      // Initialize the enhanced analysis system with the HTTP server after server starts
-      setTimeout(async () => {
-        try {
-          const analysisSystemModule = require('./seo-crawler/enhanced-analysis-system');
-          if (analysisSystemModule.initializeAnalysisSystem) {
-            await analysisSystemModule.initializeAnalysisSystem(server);
-            logger.info('Enhanced Analysis System initialized successfully');
-            console.log('✅ Enhanced Analysis System ready for processing jobs');
-          }
-        } catch (error) {
-          logger.error('Failed to initialize Enhanced Analysis System:', error);
-          console.error('❌ Enhanced Analysis System initialization failed:', error);
-        }
-      }, 1000); // Small delay to ensure server is fully started
       
       console.log(`✅ Server started successfully on port ${config.port}`);
     });

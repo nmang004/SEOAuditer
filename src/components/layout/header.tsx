@@ -40,8 +40,8 @@ export function Header() {
     router.push('/');
   };
 
-  // Don't show header on auth pages, dashboard pages, or homepage
-  if (pathname?.startsWith('/auth/') || pathname?.startsWith('/dashboard') || pathname === '/') {
+  // Don't show header on dashboard pages or homepage
+  if (pathname?.startsWith('/dashboard') || pathname === '/') {
     return null;
   }
 
