@@ -6,6 +6,15 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
+import { 
+  ArrowRight,
+  BarChart3,
+  Shield,
+  Zap,
+  Twitter,
+  Github,
+  Linkedin
+} from 'lucide-react';
 
 export default function MarketingLayout({
   children,
@@ -20,53 +29,48 @@ export default function MarketingLayout({
   ];
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-[#0F172A]">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-[#0F172A]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0F172A]/60">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="container flex h-16 items-center justify-between"
         >
-          <div className="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-6 w-6 text-primary"
-            >
-              <path d="m3 11 18-5v12L3 14v-3z"></path>
-              <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
-            </svg>
-            <span className="text-xl font-bold">Rival Outranker</span>
-          </div>
+          <Link href="/" className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500">
+              <BarChart3 className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-white">Rival Outranker</span>
+          </Link>
+          
           <nav className="hidden items-center gap-6 md:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'text-sm font-medium transition-colors hover:text-foreground/80',
-                  pathname === link.href ? 'text-foreground' : 'text-foreground/60'
+                  'text-sm font-medium transition-colors hover:text-white',
+                  pathname === link.href ? 'text-white' : 'text-gray-400'
                 )}
               >
                 {link.name}
               </Link>
             ))}
           </nav>
+          
           <div className="flex items-center gap-4">
-            <Link href="/auth/login">
-              <Button variant="ghost" className="hidden sm:inline-flex">
+            <Link href="/login">
+              <Button variant="ghost" className="hidden sm:inline-flex text-gray-300 hover:text-white hover:bg-gray-800">
                 Log In
               </Button>
             </Link>
-            <Link href="/auth/register">
-              <Button>Sign Up</Button>
+            <Link href="/register">
+              <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0">
+                Get Started
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
             </Link>
           </div>
         </motion.div>
@@ -76,88 +80,85 @@ export default function MarketingLayout({
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
-      <footer className="border-t bg-background/95">
-        <div className="container py-12 md:py-16">
+      <footer className="border-t border-gray-800 bg-[#1A202C]">
+        <div className="container py-16 md:py-20">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-6 w-6 text-primary"
-                >
-                  <path d="m3 11 18-5v12L3 14v-3z"></path>
-                  <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path>
-                </svg>
-                <span className="text-lg font-bold">Rival Outranker</span>
+            {/* Company Info */}
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500">
+                  <BarChart3 className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-lg font-bold text-white">Rival Outranker</span>
               </div>
-              <p className="mt-4 text-sm text-muted-foreground">
-                The all-in-one SEO platform that helps you outrank your competitors and grow your organic traffic.
+              <p className="mb-6 max-w-md text-sm text-gray-400">
+                The most advanced SEO platform that helps you outrank your competitors and grow your organic traffic with AI-powered insights.
               </p>
+              <div className="flex gap-4">
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  <Twitter className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  <Github className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  <Linkedin className="h-5 w-5" />
+                </a>
+              </div>
             </div>
+            
+            {/* Product Links */}
             <div>
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Product</h3>
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white">Product</h3>
               <ul className="space-y-2">
                 {navLinks.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      className="text-sm text-gray-400 transition-colors hover:text-white"
                     >
                       {link.name}
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <Link href="/dashboard" className="text-sm text-gray-400 transition-colors hover:text-white">
+                    Dashboard
+                  </Link>
+                </li>
               </ul>
             </div>
+            
+            {/* Resources */}
             <div>
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Resources</h3>
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white">Resources</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <a href="#" className="text-sm text-gray-400 transition-colors hover:text-white">
                     Documentation
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <a href="#" className="text-sm text-gray-400 transition-colors hover:text-white">
+                    API Reference
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-sm text-gray-400 transition-colors hover:text-white">
                     Blog
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <a href="#" className="text-sm text-gray-400 transition-colors hover:text-white">
                     Support
                   </a>
                 </li>
               </ul>
             </div>
-            <div>
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Legal</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                    Terms of Service
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                    Cookie Policy
-                  </a>
-                </li>
-              </ul>
-            </div>
           </div>
-          <div className="mt-12 border-t pt-8">
-            <p className="text-center text-sm text-muted-foreground">
+          
+          <div className="mt-12 border-t border-gray-700 pt-8">
+            <p className="text-center text-sm text-gray-400">
               &copy; {new Date().getFullYear()} Rival Outranker. All rights reserved.
             </p>
           </div>
