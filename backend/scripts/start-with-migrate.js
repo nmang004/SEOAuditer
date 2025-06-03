@@ -32,6 +32,10 @@ async function startWithMigrate() {
   // Only run migrations if DATABASE_URL is available
   if (process.env.DATABASE_URL) {
     try {
+      console.log('Generating Prisma client...');
+      await execAsync('npx prisma generate');
+      console.log('Prisma client generated successfully');
+      
       console.log('Running database migrations...');
       
       // Set flag to skip schema validation during initial connection

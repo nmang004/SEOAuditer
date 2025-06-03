@@ -45,6 +45,13 @@ try {
 
 // Initialize Express app
 const app: Express = express();
+
+// Trust proxy for Railway deployment (enables proper IP detection behind proxies)
+if (config.env === 'production') {
+  app.set('trust proxy', true);
+  console.log('--- Trust proxy enabled for production ---');
+}
+
 const server = http.createServer(app);
 console.log('--- Express app and server initialized ---');
 
