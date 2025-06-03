@@ -91,8 +91,12 @@ export default function RegisterPage() {
         data = { error: 'Invalid response from server', details: text };
       }
 
-      console.log('[Register] Response data:', data);
+      console.log('[Register] Response data:', JSON.stringify(data, null, 2));
       console.log('[Register] Response status:', response.status);
+      console.log('[Register] Data type:', typeof data);
+      console.log('[Register] Data has success:', 'success' in data);
+      console.log('[Register] Data has data:', 'data' in data);
+      console.log('[Register] Data.data type:', typeof data.data);
 
       if (!response.ok) {
         // Handle specific error statuses
@@ -121,33 +125,60 @@ export default function RegisterPage() {
         }
       }
 
-      if (data.success) {
-        // Check if email verification is required
-        if (data.data.requiresVerification) {
-          // Registration successful but requires email verification
-          setError('');
-          setErrorDetails('');
-          setSuccessMessage('Registration successful! Please check your email to verify your account and then log in.');
-          
-          // Store user data temporarily for potential auto-login after verification
-          if (data.data.user) {
-            localStorage.setItem('pendingUser', JSON.stringify(data.data.user));
+      if (data && data.success) {
+        console.log('[Register] Success response data:', data);
+        
+        // Check if we have data object
+        if (data.data && typeof data.data === 'object') {
+          // Check if email verification is required
+          if (data.data.requiresVerification) {
+            // Registration successful but requires email verification
+            setError('');
+            setErrorDetails('');
+            setSuccessMessage('Registration successful! Please check your email to verify your account and then log in.');
+            
+            // Store user data temporarily for potential auto-login after verification
+            if (data.data.user) {
+              localStorage.setItem('pendingUser', JSON.stringify(data.data.user));
+            }
+            
+            // Redirect to login page with a success message
+            setTimeout(() => {
+              router.push('/auth/login?verified=pending');
+            }, 3000);
+          } else if (data.data.accessToken) {
+            // Immediate login (token provided)
+            localStorage.setItem('token', data.data.accessToken);
+            localStorage.setItem('userData', JSON.stringify(data.data.user));
+            router.push('/profile');
+          } else {
+            throw new Error('Registration completed but authentication method unclear');
           }
-          
-          // Redirect to login page with a success message
-          setTimeout(() => {
-            router.push('/auth/login?verified=pending');
-          }, 3000);
-        } else if (data.data.accessToken) {
-          // Immediate login (token provided)
-          localStorage.setItem('token', data.data.accessToken);
-          localStorage.setItem('userData', JSON.stringify(data.data.user));
-          router.push('/profile');
         } else {
-          throw new Error('Registration completed but authentication method unclear');
+          // Handle case where data.data is undefined but success is true
+          console.log('[Register] Success but no data object, checking for requiresVerification at root level');
+          if (data.requiresVerification) {
+            setError('');
+            setErrorDetails('');
+            setSuccessMessage('Registration successful! Please check your email to verify your account and then log in.');
+            
+            setTimeout(() => {
+              router.push('/auth/login?verified=pending');
+            }, 3000);
+          } else {
+            // Default success case - assume email verification is required
+            console.log('[Register] Assuming email verification required for safety');
+            setError('');
+            setErrorDetails('');
+            setSuccessMessage('Registration successful! Please check your email to verify your account and then log in.');
+            
+            setTimeout(() => {
+              router.push('/auth/login?verified=pending');
+            }, 3000);
+          }
         }
       } else {
-        throw new Error(data.error || 'Registration failed');
+        throw new Error((data && data.error) || 'Registration failed');
       }
     } catch (err: any) {
       console.error('[Register] Caught error:', err);

@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       };
     }
     
-    console.log('[Auth API] Backend response data:', data);
+    console.log('[Auth API] Backend response data:', JSON.stringify(data, null, 2));
     
     // Handle specific error cases
     if (!response.ok) {
@@ -128,6 +128,7 @@ export async function POST(request: NextRequest) {
       }, { status: response.status });
     }
     
+    console.log('[Auth API] Returning success response:', JSON.stringify(data, null, 2));
     return NextResponse.json(data, { status: response.status });
   } catch (error: any) {
     console.error('[Auth API] Register error:', error);
