@@ -10,16 +10,6 @@ const redisClient = config.redis.url ? createClient({
   url: config.redis.url
 }) : null;
 
-// Helper function to safely call Redis operations
-const safeRedisCall = async <T>(operation: () => Promise<T>, fallback?: T): Promise<T | undefined> => {
-  if (!redisClient) return fallback;
-  try {
-    return await operation();
-  } catch (error) {
-    console.warn('Redis operation failed:', error);
-    return fallback;
-  }
-};
 
 interface JWTPayload {
   userId: string;

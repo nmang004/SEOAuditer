@@ -79,8 +79,8 @@ export class EnhancedWebSocketGateway {
       // Check if Redis URL is available and valid
       const redisUrl = config.redis?.url || process.env.REDIS_URL;
       
-      if (!redisUrl || redisUrl === 'redis://localhost:6379') {
-        logger.warn('Redis URL not configured or using default localhost - skipping Redis adapter');
+      if (!redisUrl) {
+        logger.warn('Redis URL not configured - skipping Redis adapter');
         return;
       }
       

@@ -8,6 +8,7 @@ import { enhancedWebSocketGateway, EnhancedAnalysisProgress } from '../ws/Enhanc
 import { AnalysisIntegrationService } from '../../services/analysis-integration.service';
 import IORedis from 'ioredis';
 import { EnhancedPageAnalyzer } from '../engine/EnhancedPageAnalyzer';
+import { redisConfig } from '../../config/config';
 
 interface AnalysisJobData extends CrawlerConfig {
   projectId: string;
@@ -52,34 +53,56 @@ export interface EnhancedPageAnalysis {
 }
 
 export class EnhancedWorker {
-  private worker: BullWorker;
+  private worker: BullWorker | null = null;
   private queueAdapter: EnhancedQueueAdapter;
   private prisma: PrismaClient;
   private analysisIntegrationService: AnalysisIntegrationService;
-  private redis: IORedis;
+  private redis: IORedis | null = null;
   private progressUpdateThrottle = new Map<string, number>();
 
   constructor(queueAdapter: EnhancedQueueAdapter) {
     this.queueAdapter = queueAdapter;
     this.prisma = new PrismaClient();
     this.analysisIntegrationService = new AnalysisIntegrationService();
-    this.redis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
-
-    this.worker = new BullWorker(
-      'seo-analysis',
-      this.processAnalysisJob.bind(this),
-      {
-        connection: {
-          host: process.env.REDIS_HOST || 'localhost',
-          port: parseInt(process.env.REDIS_PORT || '6379'),
-        },
-        concurrency: parseInt(process.env.WORKER_CONCURRENCY || '2'),
-        removeOnComplete: { count: 10 },
-        removeOnFail: { count: 25 },
+    
+    // Initialize Redis only if URL is available
+    if (redisConfig.url) {
+      try {
+        this.redis = new IORedis(redisConfig.url);
+        this.redis.on('error', (error) => {
+          logger.warn('Worker Redis connection error:', error);
+          this.redis = null;
+        });
+      } catch (error) {
+        logger.warn('Failed to initialize Worker Redis client:', error);
+        this.redis = null;
       }
-    );
+    }
 
-    this.setupEventHandlers();
+    // Initialize worker only if Redis is available
+    if (redisConfig.url) {
+      try {
+        this.worker = new BullWorker(
+          'seo-analysis',
+          this.processAnalysisJob.bind(this),
+          {
+            connection: {
+              url: redisConfig.url
+            },
+            concurrency: parseInt(process.env.WORKER_CONCURRENCY || '2'),
+            removeOnComplete: { count: 10 },
+            removeOnFail: { count: 25 },
+          }
+        );
+        this.setupEventHandlers();
+      } catch (error) {
+        logger.error('Failed to initialize BullWorker:', error);
+        this.worker = null;
+      }
+    } else {
+      logger.warn('Redis not configured - EnhancedWorker disabled');
+      this.worker = null;
+    }
   }
 
   private setupEventHandlers(): void {

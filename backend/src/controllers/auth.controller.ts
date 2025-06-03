@@ -1,10 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { createClient } from 'redis';
+import { config } from '../config/config';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { config } from '../config/config';
 import { 
   BadRequestError, 
   UnauthorizedError, 
@@ -21,13 +21,19 @@ let redisClient: ReturnType<typeof createClient> | null = null;
 const initRedisClient = async () => {
   if (redisClient) return redisClient;
   
+  if (!config.redis.url) {
+    console.log('Redis URL not configured - auth controller using fallback mode');
+    return null;
+  }
+  
   try {
     const client = createClient({
-      url: process.env.REDIS_URL || 'redis://localhost:6379'
+      url: config.redis.url
     });
     
     client.on('error', (err) => {
       console.error('Redis Client Error:', err);
+      redisClient = null;
     });
     
     await client.connect();
@@ -36,6 +42,7 @@ const initRedisClient = async () => {
     return client;
   } catch (error) {
     console.warn('Failed to connect to Redis, using fallback mode:', error);
+    redisClient = null;
     return null;
   }
 };

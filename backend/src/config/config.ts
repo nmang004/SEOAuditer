@@ -90,7 +90,9 @@ export const config = {
   
   // Redis
   redis: {
-    url: process.env.REDIS_URL || (process.env.NODE_ENV === 'production' ? undefined : 'redis://localhost:6379'),
+    url: process.env.NODE_ENV === 'production' && !process.env.REDIS_URL 
+      ? undefined 
+      : (process.env.REDIS_URL || (process.env.NODE_ENV === 'production' ? undefined : 'redis://localhost:6379')),
   },
   
   // Rate Limiting
@@ -134,6 +136,8 @@ export const postgresConfig = {
 };
 
 export const redisConfig = {
-  url: process.env.NODE_ENV === 'production' && !process.env.REDIS_URL ? undefined : (process.env.REDIS_URL || 'redis://localhost:6379'),
+  url: process.env.NODE_ENV === 'production' && !process.env.REDIS_URL 
+    ? undefined 
+    : (process.env.REDIS_URL || (process.env.NODE_ENV === 'production' ? undefined : 'redis://localhost:6379')),
   isOptional: process.env.NODE_ENV === 'production' && !process.env.REDIS_URL
 };

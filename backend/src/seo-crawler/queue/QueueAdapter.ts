@@ -1,20 +1,36 @@
 import { Queue } from 'bullmq';
 import { CrawlerConfig } from '../types/CrawlerConfig';
-
-// Use Docker service name 'redis' in production, localhost in development
-const connection = { 
-  host: process.env.NODE_ENV === 'production' ? 'redis' : 'localhost', 
-  port: 6379 
-};
+import { redisConfig } from '../../config/config';
+import { logger } from '../../utils/logger';
 
 export class QueueAdapter {
-  private queue: Queue;
+  private queue: Queue | null = null;
 
   constructor() {
-    this.queue = new Queue('seo-crawl', { connection });
+    // Skip queue initialization if Redis not available
+    if (!redisConfig.url) {
+      logger.warn('Redis not configured - QueueAdapter disabled');
+      return;
+    }
+
+    try {
+      this.queue = new Queue('seo-crawl', { 
+        connection: {
+          url: redisConfig.url
+        }
+      });
+    } catch (error) {
+      logger.error('Failed to initialize QueueAdapter:', error);
+      this.queue = null;
+    }
   }
 
   async addJob(config: CrawlerConfig): Promise<string> {
+    if (!this.queue) {
+      logger.warn('Queue not available - returning synthetic job ID');
+      return 'sync-' + Date.now();
+    }
+    
     const job = await this.queue.add('crawl', config, {
       removeOnComplete: true,
       removeOnFail: false,
@@ -23,6 +39,10 @@ export class QueueAdapter {
   }
 
   async getJobStatus(jobId: string): Promise<string> {
+    if (!this.queue) {
+      return 'not_available';
+    }
+    
     const job = await this.queue.getJob(jobId);
     if (!job) return 'not_found';
     return job.getState();
