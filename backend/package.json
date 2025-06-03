@@ -33,7 +33,9 @@
     "health-check": "ts-node src/scripts/analysis-system-health-check.ts",
     "db:migrate": "npx prisma migrate deploy",
     "db:generate": "npx prisma generate",
-    "db:studio": "npx prisma studio"
+    "db:studio": "npx prisma studio",
+    "railway:migrate": "node scripts/railway-migrate.js",
+    "railway:setup": "npm run railway:migrate && npm run seed"
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
