@@ -62,12 +62,32 @@ export class EnhancedQueueAdapter {
 
   constructor() {
     // Enhanced Redis connection with proper error handling
-    this.connection = new IORedis({
-      host: process.env.REDIS_HOST || (process.env.NODE_ENV === 'production' ? 'redis' : 'localhost'),
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      maxRetriesPerRequest: 3,
-      enableReadyCheck: false,
-      lazyConnect: true,
+    const redisUrl = process.env.REDIS_URL;
+    
+    if (!redisUrl && process.env.NODE_ENV === 'production') {
+      logger.warn('Redis URL not provided in production - queue functionality will be limited');
+    }
+    
+    this.connection = redisUrl 
+      ? new IORedis(redisUrl)
+      : new IORedis({
+          host: process.env.REDIS_HOST || 'localhost',
+          port: parseInt(process.env.REDIS_PORT || '6379'),
+          maxRetriesPerRequest: 3,
+          enableReadyCheck: false,
+          lazyConnect: true,
+          retryStrategy: (times: number) => {
+            if (times > 3) {
+              logger.error('Redis connection failed after 3 retries');
+              return null; // Stop retrying
+            }
+            return Math.min(times * 100, 3000);
+          }
+        });
+
+    // Handle connection errors
+    this.connection.on('error', (error) => {
+      logger.error('IORedis connection error:', error);
     });
 
     const queueOptions: QueueOptions = {

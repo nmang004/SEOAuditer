@@ -50,27 +50,40 @@ console.log('--- Express app and server initialized ---');
 
 // Initialize Redis client
 console.log('--- Initializing Redis client ---');
-export const redisClient = createClient({
-  url: redisConfig.url,
-  socket: {
-    reconnectStrategy: (retries) => {
-      if (retries > 5) {
-        console.log('Too many retries on Redis. Connection Terminated');
-        return new Error('Could not connect to Redis after 5 retries');
-      }
-      return Math.min(retries * 100, 5000);
+export let redisClient: any = null;
+
+if (redisConfig.url) {
+  redisClient = createClient({
+    url: redisConfig.url,
+    socket: {
+      reconnectStrategy: (retries) => {
+        if (retries > 5) {
+          console.log('Too many retries on Redis. Connection Terminated');
+          return new Error('Could not connect to Redis after 5 retries');
+        }
+        return Math.min(retries * 100, 5000);
+      },
     },
-  },
-});
-redisClient.on('error', (err) => {
-  logger.error('Redis Client Error:', err);
-});
-console.log('--- Redis client initialized ---');
+  });
+  redisClient.on('error', (err: Error) => {
+    logger.error('Redis Client Error:', err);
+  });
+  console.log('--- Redis client initialized ---');
+} else {
+  console.log('--- Redis URL not provided, skipping Redis initialization ---');
+  logger.warn('Redis URL not provided, running without Redis support');
+}
 
 // Remove the old prisma client initialization and replace with database manager
 console.log('--- Initializing Database Manager ---');
 
 const connectRedis = async (): Promise<void> => {
+  if (!redisClient) {
+    console.log('--- Redis client not configured, skipping connection ---');
+    logger.warn('Redis not configured - rate limiting and caching will be disabled');
+    return;
+  }
+
   const REDIS_TIMEOUT = 10000; // 10 seconds
   try {
     console.log('--- Attempting Redis connection ---');
