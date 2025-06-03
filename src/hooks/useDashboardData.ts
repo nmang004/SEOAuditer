@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { getClientBackendUrl } from '@/lib/backend-url';
 
 export interface DashboardStats {
   totalProjects: number;
@@ -105,8 +106,8 @@ interface UseDashboardDataReturn {
 // Environment-based API configuration
 const getApiBaseUrl = () => {
   if (typeof window !== 'undefined') {
-    // Client-side: use backend API directly
-    return process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000/api';
+    // Client-side: use backend API directly with proper protocol
+    return getClientBackendUrl();
   }
   // Server-side fallback
   return process.env.BACKEND_URL || 'http://localhost:4000/api';
