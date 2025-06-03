@@ -3,23 +3,32 @@
  */
 
 /**
- * Ensures a URL has the proper protocol (http:// or https://)
+ * Ensures a URL has the proper protocol (http:// or https://) and /api path
  */
 export function ensureProtocol(url: string): string {
   if (!url) return 'http://localhost:4000/api';
   
-  // If URL already has protocol, return as is
+  let processedUrl = url;
+  
+  // If URL already has protocol, extract it
   if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
+    processedUrl = url;
+  } else {
+    // Add https:// for production domains, http:// for localhost
+    if (url.includes('localhost') || url.includes('127.0.0.1') || url.includes('backend:')) {
+      processedUrl = `http://${url}`;
+    } else {
+      // For production domains, always use https
+      processedUrl = `https://${url}`;
+    }
   }
   
-  // Add https:// for production domains, http:// for localhost
-  if (url.includes('localhost') || url.includes('127.0.0.1') || url.includes('backend:')) {
-    return `http://${url}`;
+  // Ensure /api path is included if not present
+  if (!processedUrl.endsWith('/api') && !processedUrl.includes('/api/')) {
+    processedUrl = processedUrl.endsWith('/') ? `${processedUrl}api` : `${processedUrl}/api`;
   }
   
-  // For production domains, always use https
-  return `https://${url}`;
+  return processedUrl;
 }
 
 /**
