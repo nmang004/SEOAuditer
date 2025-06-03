@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [formData, setFormData] = useState({
     name: "",
@@ -50,12 +51,14 @@ export default function RegisterPage() {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (error) setError(""); // Clear error when user types
+    if (successMessage) setSuccessMessage(""); // Clear success message when user types
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    setSuccessMessage("");
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
@@ -118,17 +121,33 @@ export default function RegisterPage() {
         }
       }
 
-      if (data.success && data.data.token) {
-        // Store token in localStorage
-        localStorage.setItem('token', data.data.token);
-        
-        // Store user data in localStorage for the profile page
-        localStorage.setItem('userData', JSON.stringify(data.data.user));
-        
-        // Redirect to profile page
-        router.push('/profile');
+      if (data.success) {
+        // Check if email verification is required
+        if (data.data.requiresVerification) {
+          // Registration successful but requires email verification
+          setError('');
+          setErrorDetails('');
+          setSuccessMessage('Registration successful! Please check your email to verify your account and then log in.');
+          
+          // Store user data temporarily for potential auto-login after verification
+          if (data.data.user) {
+            localStorage.setItem('pendingUser', JSON.stringify(data.data.user));
+          }
+          
+          // Redirect to login page with a success message
+          setTimeout(() => {
+            router.push('/auth/login?verified=pending');
+          }, 3000);
+        } else if (data.data.accessToken) {
+          // Immediate login (token provided)
+          localStorage.setItem('token', data.data.accessToken);
+          localStorage.setItem('userData', JSON.stringify(data.data.user));
+          router.push('/profile');
+        } else {
+          throw new Error('Registration completed but authentication method unclear');
+        }
       } else {
-        throw new Error('Registration failed - no token received');
+        throw new Error(data.error || 'Registration failed');
       }
     } catch (err: any) {
       console.error('[Register] Caught error:', err);
@@ -190,6 +209,15 @@ export default function RegisterPage() {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="mb-4 p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md flex items-start gap-2">
+          <CheckCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <div>
+            <p>{successMessage}</p>
+          </div>
         </div>
       )}
 

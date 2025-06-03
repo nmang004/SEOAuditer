@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [formData, setFormData] = useState({
     email: "",
@@ -20,9 +21,15 @@ export default function LoginPage() {
   });
   const router = useRouter();
 
-  // Check backend connectivity on mount
+  // Check backend connectivity and URL params on mount
   useEffect(() => {
     checkBackendHealth();
+    
+    // Check for verification pending message
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('verified') === 'pending') {
+      setSuccessMessage('Registration successful! Please check your email to verify your account, then log in here.');
+    }
   }, []);
 
   const checkBackendHealth = async () => {
@@ -139,6 +146,15 @@ export default function LoginPage() {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="mb-4 p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md flex items-start gap-2">
+          <CheckCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <div>
+            <p>{successMessage}</p>
+          </div>
         </div>
       )}
 
