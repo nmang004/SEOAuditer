@@ -14,6 +14,7 @@ const envSchema = z.object({
   
   // Database
   DATABASE_URL: z.string().min(1, 'Database URL is required'),
+  DATABASE_PROXY_URL: z.string().optional(), // Railway provides this
   
   // JWT
   JWT_SECRET: z.string().min(32, 'JWT secret must be at least 32 characters long'),

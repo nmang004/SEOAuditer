@@ -69,7 +69,8 @@ const dbConfig: DatabaseConfig = {
 
 // Enhanced connection string builder for production optimization
 const buildConnectionString = (): string => {
-  const baseUrl = process.env.DATABASE_URL;
+  // Railway provides DATABASE_PROXY_URL for pooled connections
+  const baseUrl = process.env.DATABASE_PROXY_URL || process.env.DATABASE_URL;
   if (!baseUrl) {
     throw new Error('DATABASE_URL environment variable is required');
   }
@@ -248,7 +249,7 @@ export class DatabaseManager {
         logger.info('✅ Database connected successfully', {
           attempt,
           connectionPoolSize: dbConfig.connectionPoolSize,
-          database: this.extractDatabaseName(process.env.DATABASE_URL || ''),
+          database: this.extractDatabaseName(process.env.DATABASE_PROXY_URL || process.env.DATABASE_URL || ''),
           responseTime: `${Date.now() - connectionMetrics.lastConnectionTime}ms`,
           pgVersion: await this.getPostgreSQLVersion(),
         });
