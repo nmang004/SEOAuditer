@@ -38,10 +38,28 @@ const envSchema = z.object({
 let envVars;
 try {
   console.log('--- Validating environment variables ---');
+  
+  // Check if we're in Railway deployment without required env vars
+  const isRailwayDeployment = process.env.RAILWAY_ENVIRONMENT === 'production';
+  const missingCriticalVars = !process.env.DATABASE_URL || !process.env.JWT_SECRET;
+  
+  if (isRailwayDeployment && missingCriticalVars) {
+    console.error('=== RAILWAY DEPLOYMENT ERROR ===');
+    console.error('Missing required environment variables!');
+    console.error('Please configure these in Railway dashboard:');
+    console.error('1. DATABASE_URL - Add PostgreSQL service to auto-generate');
+    console.error('2. JWT_SECRET - Add manually with 32+ character string');
+    console.error('See backend/RAILWAY_ENV_SETUP.md for instructions');
+    console.error('================================');
+    
+    // Exit with clear error for Railway logs
+    process.exit(1);
+  }
+  
   envVars = envSchema.safeParse(process.env);
   if (!envVars.success) {
-    console.error('Config validation error:', envVars.error.message);
-    throw new Error(`Config validation error: ${envVars.error.message}`);
+    console.error('Config validation error:', JSON.stringify(envVars.error.issues, null, 2));
+    throw new Error(`Config validation error: ${JSON.stringify(envVars.error.issues)}`);
   }
   console.log('--- Environment variables validated successfully ---');
 } catch (err) {

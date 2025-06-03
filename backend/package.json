@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "prestart": "node scripts/deployment-check.js",
     "start": "node dist/index.js",
     "start:production": "node scripts/start-with-migrate.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
