@@ -67,6 +67,12 @@ export async function POST(request: NextRequest) {
     
     // Handle specific error cases
     if (!response.ok) {
+      // Log the full error for debugging
+      console.log('[Auth API] Error response from backend:', {
+        status: response.status,
+        data: data
+      });
+      
       if (response.status === 400) {
         return NextResponse.json(
           { 
@@ -86,14 +92,36 @@ export async function POST(request: NextRequest) {
           { status: 409 }
         );
       }
+      if (response.status === 500) {
+        // Database or server error
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: 'Unable to create account. Please try again later.',
+            details: process.env.NODE_ENV === 'development' ? data.details : undefined
+          },
+          { status: 500 }
+        );
+      }
     }
     
     // Pass through the backend response, normalizing error format
-    if (!response.ok && data.error && typeof data.error === 'object') {
-      // Backend returns error as object, normalize to string
+    if (!response.ok) {
+      // Handle nested error object from backend
+      let errorMessage = 'An error occurred';
+      
+      if (data.error) {
+        if (typeof data.error === 'object' && data.error.message) {
+          errorMessage = data.error.message;
+        } else if (typeof data.error === 'string') {
+          errorMessage = data.error;
+        }
+      }
+      
       return NextResponse.json({
-        ...data,
-        error: data.error.message || 'An error occurred'
+        success: false,
+        error: errorMessage,
+        details: data.details || data.error?.details
       }, { status: response.status });
     }
     

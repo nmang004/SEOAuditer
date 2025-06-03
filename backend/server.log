@@ -7420,3 +7420,35 @@ Redis client connected successfully in rate-limit middleware
 [32m[32minfo[32m[39m: 	[32mQueue cleanup completed[39m {"timestamp":"2025-06-03 11:38:13.980 AM"}
 [32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 11:48:26.590 AM"}
 [32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 11:48:32.471 AM"}
+[31m[31merror[31m[39m: 	[31mError verifying email transporter: getaddrinfo ENOTFOUND smtp.example.com[39m {"code":"EDNS","command":"CONN","errno":-3008,"hostname":"smtp.example.com","stack":"Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)","syscall":"getaddrinfo","timestamp":"2025-06-03 12:04:59.924 PM"}
+[31m[31merror[31m[39m: 	[31mFailed to initialize email service: Failed to initialize email service[39m {"stack":"Error: Failed to initialize email service\n    at /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/services/email.service.ts:116:18\n    at SMTPConnection.<anonymous> (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/nodemailer/lib/smtp-transport/index.js:347:24)\n    at Object.onceWrapper (node:events:633:26)\n    at SMTPConnection.emit (node:events:518:28)\n    at SMTPConnection._onError (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/nodemailer/lib/smtp-connection/index.js:799:14)\n    at Immediate.<anonymous> (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/nodemailer/lib/smtp-connection/index.js:344:52)\n    at processImmediate (node:internal/timers:485:21)","timestamp":"2025-06-03 12:04:59.934 PM"}
+[33m[33mwarn[33m[39m: 	[33mEmail service will be disabled[39m {"timestamp":"2025-06-03 12:04:59.934 PM"}
+[33m[33mwarn[33m[39m: 	[33mEmail service is not available, skipping email send[39m {"timestamp":"2025-06-03 12:04:59.934 PM"}
+[33m[33mwarn[33m[39m: 	[33mEmail verification could not be sent[39m {"email":"test-1748966699504@example.com","timestamp":"2025-06-03 12:04:59.934 PM","userId":"4cd5f0a7-42ee-42ae-83a7-ace4c159fe0b"}
+[32m[32minfo[32m[39m: 	[32mSecurity event[39m {"email":"test-1748966699504@example.com","event":"user_registered","ipAddress":"::1","timestamp":"2025-06-03 12:04:59.962 PM","userAgent":"axios/1.9.0","userId":"4cd5f0a7-42ee-42ae-83a7-ace4c159fe0b"}
+[32m[32minfo[32m[39m: 	[32mUser registered successfully[39m {"email":"test-1748966699504@example.com","ipAddress":"::1","timestamp":"2025-06-03 12:04:59.963 PM","userId":"4cd5f0a7-42ee-42ae-83a7-ace4c159fe0b"}
+[0mPOST /api/auth/register [32m201[0m 380.042 ms - 338[0m
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:09:36.350 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:09:36.353 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow select query detected[39m {"duration":"2428ms","params":"[]","query":"SELECT 1","target":"quaint::connector::metrics","threshold":1000,"timestamp":"2025-06-03 12:09:36.828 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow select query detected: 2428ms[39m {"timestamp":"2025-06-03 12:09:36.830 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow query detected: 2428ms[39m {"operationName":"select","timestamp":"2025-06-03 12:09:36.830 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow select query detected[39m {"duration":"2483ms","params":"[]","query":"SELECT 1","target":"quaint::connector::metrics","threshold":1000,"timestamp":"2025-06-03 12:09:36.869 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow select query detected: 2483ms[39m {"timestamp":"2025-06-03 12:09:36.869 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow query detected: 2483ms[39m {"operationName":"select","timestamp":"2025-06-03 12:09:36.870 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow select query detected[39m {"duration":"2482ms","params":"[]","query":"SELECT 1","target":"quaint::connector::metrics","threshold":1000,"timestamp":"2025-06-03 12:09:36.870 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow select query detected: 2482ms[39m {"timestamp":"2025-06-03 12:09:36.870 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow query detected: 2482ms[39m {"operationName":"select","timestamp":"2025-06-03 12:09:36.870 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow [39m
+[33m query detected[39m {"duration":"1068ms","params":"[]","query":"\n        SELECT \n          datname,\n          numbackends as active_connections,\n          xact_commit as committed_transactions,\n          xact_rollback as rolled_back_transactions,\n          blks_re...","target":"quaint::connector::metrics","threshold":1000,"timestamp":"2025-06-03 12:09:37.946 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow [39m
+[33m query detected: 1068ms[39m {"timestamp":"2025-06-03 12:09:37.947 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow query detected: 1068ms[39m {"operationName":"\n","timestamp":"2025-06-03 12:09:37.947 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow [39m
+[33m query detected[39m {"duration":"1170ms","params":"[]","query":"\n        SELECT \n          count(*) as total_connections,\n          count(*) FILTER (WHERE state = 'active') as active_connections,\n          count(*) FILTER (WHERE state = 'idle') as idle_connections...","target":"quaint::connector::metrics","threshold":1000,"timestamp":"2025-06-03 12:09:38.035 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow [39m
+[33m query detected: 1170ms[39m {"timestamp":"2025-06-03 12:09:38.036 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow query detected: 1170ms[39m {"operationName":"\n","timestamp":"2025-06-03 12:09:38.036 PM"}
+[33m[33mwarn[33m[39m: 	[33mSlow health check detected: 3695ms[39m {"checks":[{"reason":"success","status":"fulfilled"},{"reason":"success","status":"fulfilled"},{"reason":"success","status":"fulfilled"}],"timestamp":"2025-06-03 12:09:38.039 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:09:41.460 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:09:41.461 PM"}

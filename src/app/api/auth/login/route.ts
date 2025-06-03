@@ -79,11 +79,22 @@ export async function POST(request: NextRequest) {
     }
     
     // Pass through the backend response, normalizing error format
-    if (!response.ok && data.error && typeof data.error === 'object') {
-      // Backend returns error as object, normalize to string
+    if (!response.ok) {
+      // Handle nested error object from backend
+      let errorMessage = 'An error occurred';
+      
+      if (data.error) {
+        if (typeof data.error === 'object' && data.error.message) {
+          errorMessage = data.error.message;
+        } else if (typeof data.error === 'string') {
+          errorMessage = data.error;
+        }
+      }
+      
       return NextResponse.json({
-        ...data,
-        error: data.error.message || 'An error occurred'
+        success: false,
+        error: errorMessage,
+        details: data.details || data.error?.details
       }, { status: response.status });
     }
     
