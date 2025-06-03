@@ -1,4 +1,3 @@
-import * as chromeLauncher from 'chrome-launcher';
 import { performance } from 'perf_hooks';
 
 export interface CoreWebVitals {
@@ -80,6 +79,9 @@ export class LighthouseService {
     try {
       console.log(`[Lighthouse] Starting performance analysis for: ${url}`);
 
+      // Dynamic import for chrome-launcher (ES module)
+      const chromeLauncher = await import('chrome-launcher');
+      
       // Launch Chrome
       chrome = await chromeLauncher.launch({
         chromeFlags: this.chromeFlags,
