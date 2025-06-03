@@ -7414,3 +7414,7 @@ Redis client connected successfully in rate-limit middleware
 [32m[32minfo[32m[39m: 	[32mQueue cleanup completed[39m {"timestamp":"2025-06-03 10:38:13.980 AM"}
 [32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 11:16:16.502 AM"}
 [32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 11:16:20.703 AM"}
+[32m[32minfo[32m[39m: 	[32mCleaned 0 completed jobs[39m {"timestamp":"2025-06-03 11:38:13.978 AM"}
+[32m[32minfo[32m[39m: 	[32mCleaned 0 failed jobs[39m {"timestamp":"2025-06-03 11:38:13.979 AM"}
+[32m[32minfo[32m[39m: 	[32mCleaned queue of jobs older than 86400000ms[39m {"timestamp":"2025-06-03 11:38:13.979 AM"}
+[32m[32minfo[32m[39m: 	[32mQueue cleanup completed[39m {"timestamp":"2025-06-03 11:38:13.980 AM"}
