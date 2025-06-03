@@ -310,7 +310,17 @@ export class DatabaseService {
           const batchResults = await Promise.all(
             batch.map(async (analysisData) => {
               const analysis = await tx.sEOAnalysis.create({
-                data: analysisData,
+                data: {
+                  crawlSessionId: analysisData.crawlSessionId,
+                  projectId: analysisData.projectId,
+                  overallScore: analysisData.overallScore || 0,
+                  technicalScore: analysisData.technicalScore || 0,
+                  contentScore: analysisData.contentScore || 0,
+                  onpageScore: analysisData.onpageScore || 0,
+                  uxScore: analysisData.uxScore || 0,
+                  previousScore: analysisData.previousScore || null,
+                  scoreChange: analysisData.scoreChange || null
+                },
                 include: withSEOAnalysisIncludes.basic,
               });
               
@@ -591,7 +601,12 @@ export class DatabaseService {
     
     return await databaseManager.executeWithRetry(async () => {
       return await this.prisma.user.create({
-        data: validatedData,
+        data: {
+          email: validatedData.email,
+          passwordHash: validatedData.passwordHash,
+          name: validatedData.name || null,
+          subscriptionTier: validatedData.subscriptionTier || 'free'
+        },
         select: {
           id: true,
           email: true,
@@ -657,7 +672,14 @@ export class DatabaseService {
     return await databaseManager.executeWithRetry(async () => {
       return await withTransaction(async (tx) => {
         const project = await tx.project.create({
-          data: validatedData,
+          data: {
+            userId: validatedData.userId,
+            name: validatedData.name,
+            url: validatedData.url,
+            faviconUrl: validatedData.faviconUrl || null,
+            status: validatedData.status || 'active',
+            scanFrequency: validatedData.scanFrequency || 'manual'
+          },
           select: {
             id: true,
             name: true,
@@ -815,7 +837,13 @@ export class DatabaseService {
     return await databaseManager.executeWithRetry(async () => {
       return await this.prisma.project.update({
         where: { id: projectId, userId },
-        data: validatedData,
+        data: {
+          name: validatedData.name,
+          url: validatedData.url,
+          faviconUrl: validatedData.faviconUrl,
+          status: validatedData.status,
+          scanFrequency: validatedData.scanFrequency
+        },
         select: {
           id: true,
           name: true,
@@ -1179,16 +1207,44 @@ export class DatabaseService {
           // Bulk create issues
           validatedIssues.length > 0 ? tx.sEOIssue.createMany({
             data: validatedIssues.map(issue => ({
-              ...issue,
-              analysisId: analysis.id
+              analysisId: analysis.id,
+              type: issue.type || 'general',
+              severity: issue.severity || 'medium',
+              title: issue.title || 'SEO Issue',
+              description: issue.description || null,
+              recommendation: issue.recommendation || null,
+              affectedElements: issue.affectedElements || null,
+              status: issue.status || 'new',
+              category: issue.category || 'general',
+              affectedPages: issue.affectedPages || 1,
+              fixComplexity: issue.fixComplexity || null,
+              estimatedTime: issue.estimatedTime || null,
+              businessImpact: issue.businessImpact || null,
+              implementationSteps: issue.implementationSteps || []
             }))
           }) : Promise.resolve({ count: 0 }),
 
           // Bulk create recommendations
           validatedRecommendations.length > 0 ? tx.sEORecommendation.createMany({
             data: validatedRecommendations.map(rec => ({
-              ...rec,
-              analysisId: analysis.id
+              analysisId: analysis.id,
+              issueId: rec.issueId || null,
+              priority: rec.priority || 'medium',
+              category: rec.category || 'general',
+              title: rec.title || 'SEO Recommendation',
+              description: rec.description || '',
+              implementationSteps: rec.implementationSteps || {},
+              codeExamples: rec.codeExamples || null,
+              tools: rec.tools || [],
+              resources: rec.resources || [],
+              expectedResults: rec.expectedResults || {},
+              validation: rec.validation || {},
+              effortLevel: rec.effortLevel || 'medium',
+              timeEstimate: rec.timeEstimate || '1-2 hours',
+              businessValue: rec.businessValue || null,
+              quickWin: rec.quickWin || false,
+              status: rec.status || 'pending',
+              notes: rec.notes || null
             }))
           }) : Promise.resolve({ count: 0 }),
 
@@ -1203,8 +1259,15 @@ export class DatabaseService {
           // Create performance metrics if provided
           analysisData.performanceMetrics ? tx.performanceMetrics.create({
             data: {
-              ...analysisData.performanceMetrics,
-              analysisId: analysis.id
+              analysisId: analysis.id,
+              coreWebVitals: analysisData.performanceMetrics.coreWebVitals || {},
+              loadTime: analysisData.performanceMetrics.loadTime || null,
+              pageSize: analysisData.performanceMetrics.pageSize || null,
+              requestCount: analysisData.performanceMetrics.requestCount || null,
+              performanceScore: analysisData.performanceMetrics.performanceScore || 0,
+              mobilePerfScore: analysisData.performanceMetrics.mobilePerfScore || null,
+              optimizationOpportunities: analysisData.performanceMetrics.optimizationOpportunities || {},
+              lighthouseData: analysisData.performanceMetrics.lighthouseData || null
             }
           }) : Promise.resolve(null)
         ]);
