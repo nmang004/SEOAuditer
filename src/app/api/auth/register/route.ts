@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerBackendUrl } from '@/lib/backend-url';
 
-const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000/api';
+const BACKEND_URL = getServerBackendUrl();
 
 export async function POST(request: NextRequest) {
   console.log('[Auth API] Register request received');
@@ -105,11 +106,12 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Pass through more helpful error information
     return NextResponse.json(
       { 
         success: false, 
-        error: 'An unexpected error occurred',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        error: error.message || 'An unexpected error occurred',
+        details: process.env.NODE_ENV === 'development' ? error.stack : error.message
       },
       { status: 500 }
     );

@@ -7408,3 +7408,7 @@ Redis client connected successfully in rate-limit middleware
 [32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 09:38:13.994 AM"}
 [32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 09:38:13.994 AM"}
 ✅ Server started successfully on port 4000
+[32m[32minfo[32m[39m: 	[32mCleaned 0 completed jobs[39m {"timestamp":"2025-06-03 10:38:13.968 AM"}
+[32m[32minfo[32m[39m: 	[32mCleaned 0 failed jobs[39m {"timestamp":"2025-06-03 10:38:13.979 AM"}
+[32m[32minfo[32m[39m: 	[32mCleaned queue of jobs older than 86400000ms[39m {"timestamp":"2025-06-03 10:38:13.980 AM"}
+[32m[32minfo[32m[39m: 	[32mQueue cleanup completed[39m {"timestamp":"2025-06-03 10:38:13.980 AM"}
