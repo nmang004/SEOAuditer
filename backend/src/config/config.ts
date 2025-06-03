@@ -33,6 +33,15 @@ const envSchema = z.object({
   
   // Logging
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'http', 'debug']).default('info'),
+  
+  // Email Configuration
+  EMAIL_PROVIDER: z.enum(['sendgrid', 'mock']).default('mock'),
+  SENDGRID_API_KEY: z.string().optional(),
+  EMAIL_FROM_ADDRESS: z.string().email().optional(),
+  EMAIL_FROM_NAME: z.string().default('SEO Director'),
+  APP_NAME: z.string().default('SEO Director'),
+  APP_URL: z.string().url().optional(),
+  SUPPORT_EMAIL: z.string().email().optional(),
 });
 
 let envVars;
@@ -113,18 +122,23 @@ export const config = {
   },
   // Add clientUrl for use in controllers
   clientUrl: process.env.CLIENT_URL || envVars.data.ALLOWED_ORIGINS.split(',')[0],
-  // Add missing config properties for email and app info
+  // Email Configuration
   email: {
+    provider: envVars.data.EMAIL_PROVIDER,
+    sendgridApiKey: envVars.data.SENDGRID_API_KEY,
+    fromAddress: envVars.data.EMAIL_FROM_ADDRESS || 'noreply@seoauditer.netlify.app',
+    fromName: envVars.data.EMAIL_FROM_NAME,
+    supportEmail: envVars.data.SUPPORT_EMAIL || 'support@seoauditer.netlify.app',
+    // Legacy nodemailer config for backward compatibility
     host: process.env.EMAIL_HOST || 'smtp.example.com',
     port: parseInt(process.env.EMAIL_PORT || '587', 10),
     secure: process.env.EMAIL_SECURE === 'true',
     user: process.env.EMAIL_USER || 'user@example.com',
     password: process.env.EMAIL_PASSWORD || 'password',
-    fromName: process.env.EMAIL_FROM_NAME || 'Rival Outranker',
-    fromEmail: process.env.EMAIL_FROM_EMAIL || 'noreply@example.com',
+    fromEmail: envVars.data.EMAIL_FROM_ADDRESS || 'noreply@seoauditer.netlify.app',
   },
-  appName: process.env.APP_NAME || 'Rival Outranker',
-  appUrl: process.env.APP_URL || 'http://localhost:3000',
+  appName: envVars.data.APP_NAME,
+  appUrl: envVars.data.APP_URL || envVars.data.ALLOWED_ORIGINS.split(',')[0] || 'https://seoauditer.netlify.app',
   apiUrl: process.env.API_URL || 'http://localhost:3001',
 } as const;
 

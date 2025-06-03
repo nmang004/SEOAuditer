@@ -31,6 +31,7 @@ import YAML from 'yamljs';
 import enhancedAnalysisRoutes from './routes/enhanced-analysis.routes';
 import healthRouter from './routes/health.router';
 import authRS256Router from './routes/auth-rs256.routes';
+import emailRouter from './routes/email.routes';
 
 let config, redisConfig;
 try {
@@ -211,6 +212,7 @@ app.use('/api/analyses', analysisRouter);
 app.use('/api/crawl', crawlRouter);
 app.use('/api/enhanced-analysis', enhancedAnalysisRoutes);
 app.use('/api/health', healthRouter);
+app.use('/api/email', emailRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

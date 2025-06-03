@@ -4,7 +4,7 @@ import { jwtService } from '../services/jwt-rs256.service';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { config } from '../config/config';
-import { sendEmail } from '../services/email.service';
+import { emailService } from '../services/email/EmailService';
 import { 
   BadRequestError, 
   UnauthorizedError, 
@@ -858,22 +858,7 @@ class AuthController {
         throw new Error('Verification token not found');
       }
 
-      const verificationUrl = `${config.appUrl}/verify-email/${user.verificationToken}`;
-
-      const emailSent = await sendEmail({
-        to: email,
-        subject: 'Verify your email address',
-        html: `
-          <h1>Welcome to ${config.appName}!</h1>
-          <p>Hi ${name},</p>
-          <p>Thank you for registering. Please click the link below to verify your email address:</p>
-          <a href="${verificationUrl}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
-            Verify Email Address
-          </a>
-          <p>This link will expire in 24 hours.</p>
-          <p>If you didn't create this account, please ignore this email.</p>
-        `
-      });
+      const emailSent = await emailService.sendWelcomeEmail(email, name, user.verificationToken);
 
       if (emailSent) {
         logger.debug('Email verification sent', { userId, email });
@@ -891,22 +876,7 @@ class AuthController {
    */
   private async sendPasswordResetEmail(email: string, name: string, resetToken: string): Promise<void> {
     try {
-      const resetUrl = `${config.appUrl}/reset-password/${resetToken}`;
-
-      const emailSent = await sendEmail({
-        to: email,
-        subject: 'Password Reset Request',
-        html: `
-          <h1>Password Reset Request</h1>
-          <p>Hi ${name},</p>
-          <p>You requested to reset your password. Click the link below to set a new password:</p>
-          <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 5px;">
-            Reset Password
-          </a>
-          <p>This link will expire in 1 hour.</p>
-          <p>If you didn't request this password reset, please ignore this email.</p>
-        `
-      });
+      const emailSent = await emailService.sendPasswordResetEmail(email, name, resetToken);
 
       if (emailSent) {
         logger.debug('Password reset email sent', { email });

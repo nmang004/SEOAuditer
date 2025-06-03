@@ -7535,3 +7535,1102 @@ Redis client connected successfully in rate-limit middleware
 [32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 12:14:33.095 PM"}
 [32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 12:14:33.095 PM"}
 ✅ Server started successfully on port 4000
+[INFO] 12:21:02 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/index.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 12:21:02.554 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:21:02.561 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:21:02.561 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 12:21:02.562 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 12:21:02.573 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 12:21:02.574 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 12:21:02.581 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 12:21:03.583 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 12:21:03.583 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 12:21:03.584 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 12:21:03.585 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 12:21:03.592 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 12:21:03.593 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 12:21:03.597 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 12:21:03.598 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 12:21:04.330 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 12:21:05.114 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 12:21:05.116 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 12:21:05.116 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 12:21:05.218 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 12:21:05.219 PM"}
+Redis client connected successfully in rate-limit middleware
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 12:21:05.219 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:21:05.221 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 12:21:05.221 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"1ms","timestamp":"2025-06-03 12:21:05.258 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 12:21:05.264 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 12:21:05.264 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:21:05.266 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 12:21:05.266 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 12:21:05.266 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 12:21:05.270 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 12:21:05.270 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 12:21:05.371 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 12:21:05.371 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 12:21:05.371 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 12:21:05.372 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 12:21:05.372 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 12:21:05.372 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 12:21:05.372 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:21:05.378 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 12:21:05.380 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 12:21:05.380 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 12:21:05.380 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 12:21:05.380 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 12:21:05.381 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 12:21:05.381 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 12:21:05.381 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 12:21:05.381 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 12:21:05.381 PM"}
+✅ Server started successfully on port 4000
+[INFO] 12:25:41 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/index.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 12:25:41.076 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:25:41.077 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:25:41.078 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 12:25:41.078 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 12:25:41.081 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 12:25:41.081 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 12:25:41.086 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 12:25:42.088 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 12:25:42.088 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 12:25:42.089 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 12:25:42.090 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 12:25:42.097 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 12:25:42.097 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 12:25:42.098 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 12:25:42.099 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 12:25:42.830 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 12:25:43.557 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 12:25:43.558 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 12:25:43.559 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 12:25:43.662 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 12:25:43.662 PM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 12:25:43.663 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:25:43.664 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 12:25:43.665 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"1ms","timestamp":"2025-06-03 12:25:43.699 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 12:25:43.703 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 12:25:43.703 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:25:43.705 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 12:25:43.705 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 12:25:43.705 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 12:25:43.709 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 12:25:43.709 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 12:25:43.810 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 12:25:43.810 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 12:25:43.810 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 12:25:43.811 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 12:25:43.811 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 12:25:43.811 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 12:25:43.811 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:25:43.818 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 12:25:43.819 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 12:25:43.819 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 12:25:43.819 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 12:25:43.819 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 12:25:43.820 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 12:25:43.820 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 12:25:43.820 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 12:25:43.820 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 12:25:43.820 PM"}
+✅ Server started successfully on port 4000
+[INFO] 12:36:56 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/routes/auth-rs256.routes.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 12:36:56.656 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:36:56.682 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:36:56.682 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 12:36:56.688 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 12:36:56.702 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 12:36:56.702 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 12:36:56.710 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 12:36:57.711 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 12:36:57.712 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 12:36:57.714 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 12:36:57.714 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 12:36:57.721 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 12:36:57.721 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 12:36:57.726 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 12:36:57.727 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 12:36:58.511 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 12:36:59.308 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 12:36:59.310 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 12:36:59.310 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 12:36:59.412 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 12:36:59.412 PM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 12:36:59.413 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 12:36:59.414 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:36:59.414 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"1ms","timestamp":"2025-06-03 12:36:59.456 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 12:36:59.462 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 12:36:59.463 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:36:59.464 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 12:36:59.464 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 12:36:59.464 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 12:36:59.468 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 12:36:59.468 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 12:36:59.569 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 12:36:59.570 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 12:36:59.570 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 12:36:59.570 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 12:36:59.571 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 12:36:59.571 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 12:36:59.571 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:36:59.578 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 12:36:59.579 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 12:36:59.579 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 12:36:59.579 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 12:36:59.579 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 12:36:59.580 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 12:36:59.580 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 12:36:59.580 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 12:36:59.580 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 12:36:59.580 PM"}
+✅ Server started successfully on port 4000
+[INFO] 12:37:26 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/routes/auth-rs256.routes.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 12:37:26.775 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:37:26.776 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:37:26.776 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 12:37:26.776 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 12:37:26.780 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 12:37:26.781 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 12:37:26.782 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 12:37:27.783 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 12:37:27.783 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 12:37:27.784 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 12:37:27.784 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 12:37:27.789 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 12:37:27.789 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 12:37:27.790 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 12:37:27.790 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 12:37:28.339 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 12:37:28.974 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 12:37:28.976 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 12:37:28.976 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 12:37:29.060 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 12:37:29.061 PM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 12:37:29.061 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:37:29.063 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 12:37:29.063 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"0ms","timestamp":"2025-06-03 12:37:29.081 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 12:37:29.086 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 12:37:29.086 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 12:37:29.087 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 12:37:29.087 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 12:37:29.087 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 12:37:29.091 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 12:37:29.091 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 12:37:29.193 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 12:37:29.193 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 12:37:29.193 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 12:37:29.194 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 12:37:29.194 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 12:37:29.194 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 12:37:29.194 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 12:37:29.200 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 12:37:29.202 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 12:37:29.202 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 12:37:29.202 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 12:37:29.202 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 12:37:29.203 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 12:37:29.203 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 12:37:29.203 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 12:37:29.203 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 12:37:29.203 PM"}
+✅ Server started successfully on port 4000
+[INFO] 13:10:30 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/package.json has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 01:10:30.265 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:10:30.298 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:10:30.301 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 01:10:30.304 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 01:10:30.337 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 01:10:30.337 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 01:10:30.346 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 01:10:31.348 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 01:10:31.350 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 01:10:31.354 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 01:10:31.354 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:10:31.362 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:10:31.362 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 01:10:31.367 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 01:10:31.368 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 01:10:32.064 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:10:32.823 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 01:10:32.825 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 01:10:32.825 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 01:10:32.939 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 01:10:32.940 PM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 01:10:32.940 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:10:32.943 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 01:10:32.943 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"0ms","timestamp":"2025-06-03 01:10:32.981 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 01:10:32.988 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 01:10:32.988 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:10:32.989 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 01:10:32.989 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:10:32.989 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 01:10:32.994 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 01:10:32.994 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 01:10:33.094 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 01:10:33.094 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 01:10:33.094 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 01:10:33.095 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 01:10:33.095 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 01:10:33.095 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 01:10:33.095 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:10:33.102 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 01:10:33.103 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 01:10:33.103 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 01:10:33.103 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 01:10:33.103 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 01:10:33.104 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 01:10:33.104 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 01:10:33.105 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 01:10:33.105 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 01:10:33.105 PM"}
+✅ Server started successfully on port 4000
+[INFO] 13:14:49 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/config/config.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 01:14:49.121 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:14:49.123 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:14:49.123 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 01:14:49.123 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 01:14:49.128 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 01:14:49.128 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 01:14:49.131 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 01:14:50.132 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 01:14:50.133 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 01:14:50.134 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 01:14:50.134 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:14:50.142 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:14:50.142 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 01:14:50.146 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 01:14:50.146 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 01:14:50.885 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:14:51.822 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 01:14:51.824 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 01:14:51.824 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 01:14:52.115 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 01:14:52.115 PM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 01:14:52.116 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 01:14:52.117 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:14:52.428 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"1ms","timestamp":"2025-06-03 01:14:52.690 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 01:14:52.696 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 01:14:52.696 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:14:52.697 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 01:14:52.698 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:14:52.698 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 01:14:52.701 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 01:14:52.701 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 01:14:52.803 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 01:14:52.803 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 01:14:52.803 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 01:14:52.804 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 01:14:52.804 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 01:14:52.804 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 01:14:52.804 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:14:52.810 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 01:14:52.813 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 01:14:52.813 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 01:14:52.813 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 01:14:52.813 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 01:14:52.814 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 01:14:52.814 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 01:14:52.814 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 01:14:52.814 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 01:14:52.814 PM"}
+✅ Server started successfully on port 4000
+[INFO] 13:15:02 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/config/config.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 01:15:02.665 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:02.665 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:02.665 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 01:15:02.665 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 01:15:02.667 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 01:15:02.667 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 01:15:02.668 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 01:15:03.669 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 01:15:03.669 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 01:15:03.670 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 01:15:03.670 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:15:03.676 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:15:03.676 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 01:15:03.677 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 01:15:03.677 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 01:15:04.214 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:15:04.822 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 01:15:04.824 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 01:15:04.824 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 01:15:04.910 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 01:15:04.911 PM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 01:15:04.911 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:15:04.911 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 01:15:04.912 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"0ms","timestamp":"2025-06-03 01:15:04.929 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 01:15:04.932 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 01:15:04.933 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:04.934 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 01:15:04.934 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:15:04.934 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 01:15:04.938 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 01:15:04.938 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 01:15:05.039 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 01:15:05.039 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 01:15:05.039 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 01:15:05.040 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 01:15:05.040 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 01:15:05.040 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 01:15:05.040 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:15:05.046 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 01:15:05.048 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 01:15:05.048 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 01:15:05.048 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 01:15:05.048 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 01:15:05.049 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 01:15:05.049 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 01:15:05.049 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 01:15:05.049 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 01:15:05.049 PM"}
+✅ Server started successfully on port 4000
+[INFO] 13:15:19 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/controllers/auth-rs256.controller.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 01:15:19.805 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:19.806 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:19.806 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 01:15:19.806 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 01:15:19.808 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 01:15:19.808 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 01:15:19.809 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 01:15:20.810 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 01:15:20.810 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 01:15:20.811 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 01:15:20.811 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:15:20.817 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:15:20.817 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 01:15:20.817 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 01:15:20.817 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 01:15:21.356 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:15:21.974 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 01:15:21.975 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 01:15:21.975 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 01:15:22.031 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:15:22.031 PM"}
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 01:15:22.033 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 01:15:22.033 PM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 01:15:22.034 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"0ms","timestamp":"2025-06-03 01:15:22.055 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 01:15:22.060 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 01:15:22.060 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:22.061 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 01:15:22.061 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:15:22.061 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 01:15:22.065 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 01:15:22.065 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 01:15:22.166 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 01:15:22.166 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 01:15:22.166 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 01:15:22.167 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 01:15:22.167 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 01:15:22.167 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 01:15:22.167 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:15:22.174 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 01:15:22.175 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 01:15:22.175 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 01:15:22.175 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 01:15:22.175 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 01:15:22.176 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 01:15:22.176 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 01:15:22.176 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 01:15:22.176 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 01:15:22.176 PM"}
+✅ Server started successfully on port 4000
+[INFO] 13:15:35 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/controllers/auth-rs256.controller.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 01:15:35.316 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:35.317 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:35.317 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 01:15:35.317 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 01:15:35.319 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 01:15:35.320 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 01:15:35.322 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 01:15:36.323 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 01:15:36.324 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 01:15:36.324 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 01:15:36.324 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:15:36.329 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:15:36.329 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 01:15:36.330 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 01:15:36.331 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 01:15:36.880 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:15:37.582 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 01:15:37.583 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 01:15:37.584 PM"}
+[33m[33mwarn[33m[39m: 	[33mSendGrid API key not found in environment variables[39m {"timestamp":"2025-06-03 01:15:37.637 PM"}
+[33m[33mwarn[33m[39m: 	[33mSendGrid validation failed: SENDGRID_API_KEY not set[39m {"timestamp":"2025-06-03 01:15:37.637 PM"}
+[33m[33mwarn[33m[39m: 	[33mEmail provider SendGrid configuration is invalid[39m {"timestamp":"2025-06-03 01:15:37.638 PM"}
+[32m[32minfo[32m[39m: 	[32mEmail service initialized with SendGrid provider[39m {"timestamp":"2025-06-03 01:15:37.638 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 01:15:37.688 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 01:15:37.688 PM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 01:15:37.689 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:15:37.689 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 01:15:37.689 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"1ms","timestamp":"2025-06-03 01:15:37.709 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 01:15:37.713 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 01:15:37.713 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:37.715 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 01:15:37.715 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:15:37.715 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 01:15:37.718 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 01:15:37.718 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 01:15:37.819 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 01:15:37.819 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 01:15:37.820 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 01:15:37.820 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 01:15:37.820 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 01:15:37.820 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 01:15:37.821 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:15:37.827 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 01:15:37.827 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 01:15:37.827 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 01:15:37.827 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 01:15:37.827 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 01:15:37.828 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 01:15:37.828 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 01:15:37.828 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 01:15:37.828 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 01:15:37.828 PM"}
+✅ Server started successfully on port 4000
+[INFO] 13:15:44 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/controllers/auth-rs256.controller.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 01:15:44.540 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:44.540 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:44.540 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 01:15:44.540 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 01:15:44.544 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 01:15:44.545 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 01:15:44.546 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 01:15:45.548 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 01:15:45.548 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 01:15:45.548 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 01:15:45.549 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:15:45.553 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:15:45.553 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 01:15:45.554 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 01:15:45.554 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 01:15:46.148 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:15:46.747 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 01:15:46.748 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 01:15:46.749 PM"}
+[33m[33mwarn[33m[39m: 	[33mSendGrid API key not found in environment variables[39m {"timestamp":"2025-06-03 01:15:46.762 PM"}
+[33m[33mwarn[33m[39m: 	[33mSendGrid validation failed: SENDGRID_API_KEY not set[39m {"timestamp":"2025-06-03 01:15:46.763 PM"}
+[33m[33mwarn[33m[39m: 	[33mEmail provider SendGrid configuration is invalid[39m {"timestamp":"2025-06-03 01:15:46.763 PM"}
+[32m[32minfo[32m[39m: 	[32mEmail service initialized with SendGrid provider[39m {"timestamp":"2025-06-03 01:15:46.763 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 01:15:46.805 PM"}
+Redis client connected successfully in rate-limit middleware
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 01:15:46.810 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 01:15:46.810 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:15:46.810 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 01:15:46.811 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"1ms","timestamp":"2025-06-03 01:15:46.832 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 01:15:46.836 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 01:15:46.836 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:15:46.837 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 01:15:46.838 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:15:46.838 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 01:15:46.841 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 01:15:46.841 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 01:15:46.943 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 01:15:46.943 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 01:15:46.943 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 01:15:46.944 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 01:15:46.944 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 01:15:46.944 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 01:15:46.944 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:15:46.950 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 01:15:46.952 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 01:15:46.952 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 01:15:46.952 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 01:15:46.952 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 01:15:46.952 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 01:15:46.952 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 01:15:46.953 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 01:15:46.953 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 01:15:46.953 PM"}
+✅ Server started successfully on port 4000
+[INFO] 13:16:27 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/index.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 01:16:27.603 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:16:27.604 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:16:27.604 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 01:16:27.604 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 01:16:27.606 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 01:16:27.606 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 01:16:27.607 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 01:16:28.609 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 01:16:28.609 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 01:16:28.609 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 01:16:28.610 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:16:28.614 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:16:28.614 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 01:16:28.615 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 01:16:28.615 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 01:16:29.260 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:16:29.944 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 01:16:29.946 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 01:16:29.946 PM"}
+[33m[33mwarn[33m[39m: 	[33mSendGrid API key not found in environment variables[39m {"timestamp":"2025-06-03 01:16:29.966 PM"}
+[33m[33mwarn[33m[39m: 	[33mSendGrid validation failed: SENDGRID_API_KEY not set[39m {"timestamp":"2025-06-03 01:16:29.967 PM"}
+[33m[33mwarn[33m[39m: 	[33mEmail provider SendGrid configuration is invalid[39m {"timestamp":"2025-06-03 01:16:29.967 PM"}
+[32m[32minfo[32m[39m: 	[32mEmail service initialized with SendGrid provider[39m {"timestamp":"2025-06-03 01:16:29.967 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 01:16:30.014 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 01:16:30.014 PM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 01:16:30.015 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:16:30.015 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 01:16:30.015 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"1ms","timestamp":"2025-06-03 01:16:30.032 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 01:16:30.036 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 01:16:30.037 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:16:30.038 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 01:16:30.038 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:16:30.038 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 01:16:30.041 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 01:16:30.041 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 01:16:30.143 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 01:16:30.143 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 01:16:30.143 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 01:16:30.144 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 01:16:30.144 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 01:16:30.144 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 01:16:30.144 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:16:30.150 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 01:16:30.153 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 01:16:30.153 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 01:16:30.153 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 01:16:30.153 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 01:16:30.153 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 01:16:30.153 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 01:16:30.154 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 01:16:30.154 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 01:16:30.154 PM"}
+✅ Server started successfully on port 4000
+[INFO] 13:16:32 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/index.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 01:16:32.094 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:16:32.094 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:16:32.094 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 01:16:32.094 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 01:16:32.098 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 01:16:32.098 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 01:16:32.099 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 01:16:33.100 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 01:16:33.100 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 01:16:33.100 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 01:16:33.101 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:16:33.105 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:16:33.106 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 01:16:33.106 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 01:16:33.106 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 01:16:33.458 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:16:33.813 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 01:16:33.815 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 01:16:33.815 PM"}
+[33m[33mwarn[33m[39m: 	[33mSendGrid API key not found in environment variables[39m {"timestamp":"2025-06-03 01:16:33.825 PM"}
+[33m[33mwarn[33m[39m: 	[33mSendGrid validation failed: SENDGRID_API_KEY not set[39m {"timestamp":"2025-06-03 01:16:33.825 PM"}
+[33m[33mwarn[33m[39m: 	[33mEmail provider SendGrid configuration is invalid[39m {"timestamp":"2025-06-03 01:16:33.825 PM"}
+[32m[32minfo[32m[39m: 	[32mEmail service initialized with SendGrid provider[39m {"timestamp":"2025-06-03 01:16:33.825 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 01:16:33.882 PM"}
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 01:16:33.883 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 01:16:33.883 PM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:16:33.883 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 01:16:33.884 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"1ms","timestamp":"2025-06-03 01:16:33.902 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 01:16:33.906 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 01:16:33.906 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:16:33.907 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 01:16:33.907 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:16:33.907 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 01:16:33.911 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 01:16:33.911 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 01:16:34.012 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 01:16:34.012 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 01:16:34.012 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 01:16:34.013 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 01:16:34.013 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 01:16:34.013 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 01:16:34.013 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:16:34.019 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 01:16:34.021 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 01:16:34.021 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 01:16:34.022 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 01:16:34.022 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 01:16:34.022 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 01:16:34.022 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 01:16:34.023 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 01:16:34.023 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 01:16:34.023 PM"}
+✅ Server started successfully on port 4000
+[INFO] 13:17:27 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/services/email/providers/SendGridProvider.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-03 01:17:27.826 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:17:27.827 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:17:27.827 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-03 01:17:27.827 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-03 01:17:27.830 PM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-03 01:17:27.831 PM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-03 01:17:27.831 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-03 01:17:28.832 PM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-03 01:17:28.832 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-03 01:17:28.833 PM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-03 01:17:28.833 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:17:28.839 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-03 01:17:28.839 PM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-03 01:17:28.840 PM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-03 01:17:28.840 PM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-03 01:17:29.455 PM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:17:30.127 PM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-03 01:17:30.128 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-03 01:17:30.129 PM"}
+[33m[33mwarn[33m[39m: 	[33mSendGrid API key not found in environment variables[39m {"timestamp":"2025-06-03 01:17:30.147 PM"}
+[33m[33mwarn[33m[39m: 	[33mSendGrid validation failed: SENDGRID_API_KEY not set[39m {"timestamp":"2025-06-03 01:17:30.147 PM"}
+[33m[33mwarn[33m[39m: 	[33mEmail provider SendGrid configuration is invalid[39m {"timestamp":"2025-06-03 01:17:30.147 PM"}
+[32m[32minfo[32m[39m: 	[32mEmail service initialized with SendGrid provider[39m {"timestamp":"2025-06-03 01:17:30.147 PM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-03 01:17:30.191 PM"}
+Redis client connected successfully in rate-limit middleware
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-03 01:17:30.195 PM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-03 01:17:30.196 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:17:30.196 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-03 01:17:30.196 PM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"0ms","timestamp":"2025-06-03 01:17:30.219 PM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-03 01:17:30.223 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-03 01:17:30.223 PM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-03 01:17:30.224 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-03 01:17:30.224 PM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-03 01:17:30.224 PM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-03 01:17:30.228 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-03 01:17:30.228 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-03 01:17:30.329 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-03 01:17:30.329 PM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-03 01:17:30.329 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-03 01:17:30.330 PM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-03 01:17:30.330 PM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-03 01:17:30.330 PM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-03 01:17:30.330 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-03 01:17:30.335 PM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-03 01:17:30.337 PM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-03 01:17:30.337 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-03 01:17:30.337 PM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-03 01:17:30.337 PM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-03 01:17:30.344 PM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-03 01:17:30.344 PM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-03 01:17:30.345 PM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-03 01:17:30.345 PM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-03 01:17:30.345 PM"}
+✅ Server started successfully on port 4000
