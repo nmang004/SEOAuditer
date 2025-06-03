@@ -40,7 +40,7 @@ export const notificationController = {
           page: parseInt(page as string, 10) || 1,
           limit: parseInt(limit as string, 10) || 20,
           unreadOnly: unread === 'true',
-          types: type ? [(type as string).toUpperCase()] : undefined,
+          type: type ? (type as string).toUpperCase() : undefined,
         }
       );
 

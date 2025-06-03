@@ -36,7 +36,7 @@ export class ContentQuality {
     const imageCount = $('img').length;
     const videoCount = $('video').length;
     // Spelling/grammar placeholder
-    const spellingErrors = null; // TODO: Integrate spellchecker
+    const spellingErrors: any = null; // TODO: Integrate spellchecker
     return {
       content: {
         text,

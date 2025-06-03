@@ -134,7 +134,7 @@ export class EnhancedAnalysisController {
           },
           blockResources: ['font', 'media', 'other'],
           allowedDomains: [new URL(project.url).hostname],
-          excludePatterns: [],
+          excludePatterns: [] as string[],
         },
         queueConfig: {
           concurrency: 1,
@@ -264,7 +264,7 @@ export class EnhancedAnalysisController {
               },
               blockResources: ['font', 'media', 'other'],
               allowedDomains: [new URL(project.url).hostname],
-              excludePatterns: [],
+              excludePatterns: [] as string[],
             },
             queueConfig: {
               concurrency: 1,

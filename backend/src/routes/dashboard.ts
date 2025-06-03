@@ -71,7 +71,7 @@ router.get('/recent-projects', async (req: Request, res: Response) => {
         lastScanDate: new Date(),
         status: 'completed' as const,
         criticalIssues: 1,
-        progress: undefined
+        progress: undefined as any
       },
       {
         id: '2',

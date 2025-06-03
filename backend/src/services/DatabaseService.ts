@@ -868,7 +868,17 @@ export class DatabaseService {
     return await databaseManager.executeWithRetry(async () => {
       return await withTransaction(async (tx) => {
         const analysis = await tx.sEOAnalysis.create({
-          data: validatedData,
+          data: {
+            crawlSessionId: validatedData.crawlSessionId,
+            projectId: validatedData.projectId,
+            overallScore: validatedData.overallScore || 0,
+            technicalScore: validatedData.technicalScore || 0,
+            contentScore: validatedData.contentScore || 0,
+            onpageScore: validatedData.onpageScore || 0,
+            uxScore: validatedData.uxScore || 0,
+            previousScore: validatedData.previousScore || null,
+            scoreChange: validatedData.scoreChange || null
+          },
           include: withSEOAnalysisIncludes.basic,
         });
 
@@ -1148,7 +1158,14 @@ export class DatabaseService {
       return await this.prisma.analysisCache.upsert({
         where: { urlHash: validatedData.urlHash },
         create: {
-          ...validatedData,
+          key: validatedData.key,
+          url: validatedData.url,
+          urlHash: validatedData.urlHash,
+          data: validatedData.data,
+          analysisData: validatedData.analysisData,
+          expiresAt: validatedData.expiresAt,
+          tags: validatedData.tags || [],
+          size: validatedData.size || 0,
           accessCount: 1,
           lastAccessed: new Date()
         },
@@ -1199,7 +1216,17 @@ export class DatabaseService {
       return await withTransaction(async (tx) => {
         // Create analysis first
         const analysis = await tx.sEOAnalysis.create({
-          data: validatedAnalysis
+          data: {
+            crawlSessionId: validatedAnalysis.crawlSessionId,
+            projectId: validatedAnalysis.projectId,
+            overallScore: validatedAnalysis.overallScore || 0,
+            technicalScore: validatedAnalysis.technicalScore || 0,
+            contentScore: validatedAnalysis.contentScore || 0,
+            onpageScore: validatedAnalysis.onpageScore || 0,
+            uxScore: validatedAnalysis.uxScore || 0,
+            previousScore: validatedAnalysis.previousScore || null,
+            scoreChange: validatedAnalysis.scoreChange || null
+          }
         });
 
         // Create related data in parallel where possible

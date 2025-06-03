@@ -118,7 +118,7 @@ export class EnhancedRecommendationEngine {
       timeline: this.mapPriorityToTimeline(issue.severity as IssuePriority),
       quickWin: issue.fixComplexity === 'easy' && issue.businessImpact !== 'low',
       strategicValue: this.calculateStrategicValue(issue),
-      relatedIssues: []
+      relatedIssues: [] as any[]
     };
 
     // Generate specific implementation guidance based on issue type

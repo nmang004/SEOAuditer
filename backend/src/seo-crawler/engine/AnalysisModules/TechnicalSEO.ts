@@ -53,7 +53,7 @@ export class TechnicalSEO {
     // Redirects
     const isRedirect = response?.status && response.status >= 300 && response.status < 400;
     // Page speed placeholder
-    const pageSpeed = null; // TODO: Integrate with Lighthouse/performance metrics
+    const pageSpeed: any = null; // TODO: Integrate with Lighthouse/performance metrics
     return {
       statusCode: response?.status,
       technicalSEO: {
