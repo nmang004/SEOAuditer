@@ -156,13 +156,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
+        throw new Error(errorData.error || errorData.message || 'Login failed');
       }
 
       const data = await response.json();
       
-      if (data.success) {
-        const { user, token } = data;
+      if (data.success && data.data) {
+        const { user, token } = data.data;
         
         // Store in localStorage
         localStorage.setItem('authToken', token);
@@ -179,7 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         logger.info('User logged in successfully');
       } else {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.error || data.message || 'Login failed');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
@@ -204,13 +204,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
+        throw new Error(errorData.error || errorData.message || 'Registration failed');
       }
 
       const data = await response.json();
       
-      if (data.success) {
-        const { user, token } = data;
+      if (data.success && data.data) {
+        const { user, token } = data.data;
         
         // Store in localStorage
         localStorage.setItem('authToken', token);
@@ -227,7 +227,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         logger.info('User registered successfully');
       } else {
-        throw new Error(data.message || 'Registration failed');
+        throw new Error(data.error || data.message || 'Registration failed');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Registration failed';

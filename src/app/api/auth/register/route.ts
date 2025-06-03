@@ -88,7 +88,15 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // Pass through the backend response
+    // Pass through the backend response, normalizing error format
+    if (!response.ok && data.error && typeof data.error === 'object') {
+      // Backend returns error as object, normalize to string
+      return NextResponse.json({
+        ...data,
+        error: data.error.message || 'An error occurred'
+      }, { status: response.status });
+    }
+    
     return NextResponse.json(data, { status: response.status });
   } catch (error: any) {
     console.error('[Auth API] Register error:', error);
@@ -107,11 +115,12 @@ export async function POST(request: NextRequest) {
     }
     
     // Pass through more helpful error information
+    const errorMessage = error.message || 'An unexpected error occurred';
     return NextResponse.json(
       { 
         success: false, 
-        error: error.message || 'An unexpected error occurred',
-        details: process.env.NODE_ENV === 'development' ? error.stack : error.message
+        error: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 }
     );
