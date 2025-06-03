@@ -48,8 +48,9 @@ const app: Express = express();
 
 // Trust proxy for Railway deployment (enables proper IP detection behind proxies)
 if (config.env === 'production') {
-  app.set('trust proxy', true);
-  console.log('--- Trust proxy enabled for production ---');
+  // Trust proxy only for Railway's specific proxy setup
+  app.set('trust proxy', 1); // Trust first proxy only (Railway's proxy)
+  console.log('--- Trust proxy enabled for Railway deployment ---');
 }
 
 const server = http.createServer(app);
