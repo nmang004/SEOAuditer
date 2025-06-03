@@ -1,4 +1,3 @@
-import lighthouse from 'lighthouse';
 import * as chromeLauncher from 'chrome-launcher';
 import { performance } from 'perf_hooks';
 
@@ -112,6 +111,9 @@ export class LighthouseService {
 
       // Run Lighthouse audit
       console.log(`[Lighthouse] Running audit with ${lighthouseOptions.formFactor} settings...`);
+      
+      // Dynamic import for ES module compatibility
+      const { default: lighthouse } = await import('lighthouse');
       const runnerResult = await lighthouse(url, lighthouseOptions);
 
       if (!runnerResult?.lhr) {
