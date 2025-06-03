@@ -42,6 +42,7 @@ RUN npm install --only=production
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/docs ./docs
+COPY --from=builder /app/scripts ./scripts
 
 # Create a non-root user
 RUN useradd -m appuser && \
@@ -57,4 +58,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8080/health || exit 1
 
 # Start the application
-CMD ["node", "dist/index.js"]
+CMD ["npm", "run", "start:production"]
