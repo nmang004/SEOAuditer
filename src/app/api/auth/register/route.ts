@@ -11,7 +11,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log('[Auth API] Request body received:', { 
       email: body.email,
-      name: body.name 
+      name: body.name,
+      passwordLength: body.password?.length,
+      hasPassword: !!body.password
     });
 
     const backendUrl = `${BACKEND_URL}/auth/register`;
@@ -70,7 +72,8 @@ export async function POST(request: NextRequest) {
       // Log the full error for debugging
       console.log('[Auth API] Error response from backend:', {
         status: response.status,
-        data: data
+        data: data,
+        requestBody: { email: body.email, name: body.name, passwordLength: body.password?.length }
       });
       
       if (response.status === 400) {

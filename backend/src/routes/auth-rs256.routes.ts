@@ -509,6 +509,19 @@ router.get('/health',
   }
 );
 
+// Test endpoint for debugging
+router.get('/test',
+  async (req, res) => {
+    return res.status(200).json({
+      success: true,
+      message: 'Authentication test endpoint is working',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      service: 'auth-rs256'
+    });
+  }
+);
+
 // Cleanup expired tokens (Admin only - can be called manually or via cron)
 router.post('/admin/cleanup',
   authenticateToken,
@@ -535,6 +548,12 @@ router.post('/admin/cleanup',
  * Development/Testing Routes (only available in development)
  */
 if (process.env.NODE_ENV === 'development') {
+  // Debug registration endpoint without validation
+  router.post('/debug-register',
+    registrationRateLimit,
+    trackActivity,
+    authController.register
+  );
   // Generate test tokens for development
   router.post('/dev/generate-tokens',
     async (req, res, next) => {
