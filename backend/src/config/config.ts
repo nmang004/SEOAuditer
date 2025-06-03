@@ -21,8 +21,8 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRATION: z.string().default('15m'),
   JWT_REFRESH_EXPIRATION: z.string().default('7d'),
   
-  // Redis
-  REDIS_URL: z.string().default('redis://localhost:6379'),
+  // Redis - Optional in production
+  REDIS_URL: z.string().optional(),
   
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.string().default('900000'), // 15 minutes
@@ -90,7 +90,7 @@ export const config = {
   
   // Redis
   redis: {
-    url: process.env.REDIS_URL || 'redis://localhost:6379',
+    url: process.env.REDIS_URL || (process.env.NODE_ENV === 'production' ? undefined : 'redis://localhost:6379'),
   },
   
   // Rate Limiting
@@ -134,6 +134,6 @@ export const postgresConfig = {
 };
 
 export const redisConfig = {
-  url: process.env.REDIS_URL || (process.env.NODE_ENV === 'production' ? null : 'redis://localhost:6379'),
-  isOptional: !process.env.REDIS_URL && process.env.NODE_ENV === 'production'
+  url: process.env.NODE_ENV === 'production' && !process.env.REDIS_URL ? undefined : (process.env.REDIS_URL || 'redis://localhost:6379'),
+  isOptional: process.env.NODE_ENV === 'production' && !process.env.REDIS_URL
 };

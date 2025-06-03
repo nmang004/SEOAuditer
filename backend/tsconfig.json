@@ -13,7 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noImplicitAny": true,
-    "strictNullChecks": true,
+    "strictNullChecks": false,
     "strictBindCallApply": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,

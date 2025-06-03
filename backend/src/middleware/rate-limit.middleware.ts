@@ -17,13 +17,30 @@ const prisma = new PrismaClient();
 const initRedisClient = async () => {
   if (redisClient) return redisClient;
   
+  // Don't attempt Redis connection if URL is not provided or in production without Redis
+  if (!config.redis.url) {
+    console.log('Redis URL not provided for rate-limit middleware, using memory fallback');
+    return null;
+  }
+  
   try {
     const client = createClient({
-      url: config.redis.url
+      url: config.redis.url,
+      socket: {
+        connectTimeout: 5000, // 5 second timeout
+        reconnectStrategy: (retries) => {
+          if (retries > 2) {
+            console.warn('Too many Redis retries in rate-limit middleware, using memory fallback');
+            return false; // Stop retrying
+          }
+          return Math.min(retries * 1000, 3000);
+        },
+      },
     });
     
     client.on('error', (err) => {
-      console.error('Redis Client Error in rate-limit middleware:', err);
+      console.warn('Redis Client Error in rate-limit middleware (falling back to memory):', err.message);
+      redisClient = null; // Reset to null on error
     });
     
     await client.connect();
@@ -32,12 +49,17 @@ const initRedisClient = async () => {
     return client;
   } catch (error) {
     console.warn('Failed to connect to Redis in rate-limit middleware, using memory fallback:', error);
+    redisClient = null;
     return null;
   }
 };
 
-// Initialize Redis on startup
-initRedisClient();
+// Initialize Redis on startup if URL is provided
+if (config.redis.url) {
+  initRedisClient().catch(() => {
+    console.log('Redis initialization failed in rate-limit middleware, will use memory fallback');
+  });
+}
 
 // Memory-based rate limiter for when Redis is not available
 const createMemoryRateLimiter = () => {
@@ -76,7 +98,26 @@ const createRedisRateLimiter = () => {
   };
 };
 
-const rateLimiters = isTest || !redisClient ? createMemoryRateLimiter() : createRedisRateLimiter();
+// Create initial rate limiters - will use memory if Redis is not available
+let rateLimiters = createMemoryRateLimiter();
+
+// Try to upgrade to Redis limiters if Redis becomes available
+const upgradeToRedisIfAvailable = async () => {
+  if (!isTest && config.redis.url) {
+    try {
+      await initRedisClient();
+      if (redisClient) {
+        rateLimiters = createRedisRateLimiter();
+        console.log('Upgraded rate limiters to use Redis');
+      }
+    } catch (error) {
+      console.log('Could not upgrade to Redis rate limiters, staying with memory');
+    }
+  }
+};
+
+// Attempt upgrade
+upgradeToRedisIfAvailable();
 
 export const createRateLimitMiddleware = (limiter: RateLimiter) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -161,50 +202,66 @@ export const registrationRateLimit = rateLimit({
 
 // Advanced rate limiter using Redis for per-user login attempts
 class AuthRateLimiter {
-  private loginAttemptsLimiter: RateLimiterRedis | RateLimiterMemory;
-  private accountLockLimiter: RateLimiterRedis | RateLimiterMemory;
-  private passwordResetLimiter: RateLimiterRedis | RateLimiterMemory;
+  private loginAttemptsLimiter!: RateLimiterRedis | RateLimiterMemory;
+  private accountLockLimiter!: RateLimiterRedis | RateLimiterMemory;
+  private passwordResetLimiter!: RateLimiterRedis | RateLimiterMemory;
 
   constructor() {
-    if (isTest || !redisClient) {
-      // Use memory-based limiters for testing or when Redis is unavailable
-      this.loginAttemptsLimiter = new RateLimiterMemory({
-        points: 5, // 5 attempts
-        duration: 900, // Per 15 minutes
-      });
+    // Always try Redis first if available, fall back to memory
+    const useRedis = !isTest && redisClient && redisClient.isReady;
+    
+    if (useRedis) {
+      try {
+        // Use Redis-based limiters for production
+        this.loginAttemptsLimiter = new RateLimiterRedis({
+          storeClient: redisClient,
+          keyPrefix: 'login_attempts',
+          points: 5, // 5 attempts
+          duration: 900, // Per 15 minutes
+        });
 
-      this.accountLockLimiter = new RateLimiterMemory({
-        points: 3, // 3 failed login windows
-        duration: 86400, // Per 24 hours
-      });
+        this.accountLockLimiter = new RateLimiterRedis({
+          storeClient: redisClient,
+          keyPrefix: 'account_lock',
+          points: 3, // 3 failed login windows
+          duration: 86400, // Per 24 hours
+        });
 
-      this.passwordResetLimiter = new RateLimiterMemory({
-        points: 3, // 3 reset requests
-        duration: 3600, // Per hour
-      });
+        this.passwordResetLimiter = new RateLimiterRedis({
+          storeClient: redisClient,
+          keyPrefix: 'password_reset',
+          points: 3, // 3 reset requests
+          duration: 3600, // Per hour
+        });
+        
+        console.log('AuthRateLimiter using Redis backend');
+      } catch (error) {
+        console.warn('Failed to create Redis rate limiters, falling back to memory:', error);
+        this.createMemoryLimiters();
+      }
     } else {
-      // Use Redis-based limiters for production
-      this.loginAttemptsLimiter = new RateLimiterRedis({
-        storeClient: redisClient,
-        keyPrefix: 'login_attempts',
-        points: 5, // 5 attempts
-        duration: 900, // Per 15 minutes
-      });
-
-      this.accountLockLimiter = new RateLimiterRedis({
-        storeClient: redisClient,
-        keyPrefix: 'account_lock',
-        points: 3, // 3 failed login windows
-        duration: 86400, // Per 24 hours
-      });
-
-      this.passwordResetLimiter = new RateLimiterRedis({
-        storeClient: redisClient,
-        keyPrefix: 'password_reset',
-        points: 3, // 3 reset requests
-        duration: 3600, // Per hour
-      });
+      this.createMemoryLimiters();
     }
+  }
+  
+  private createMemoryLimiters() {
+    // Use memory-based limiters for testing or when Redis is unavailable
+    this.loginAttemptsLimiter = new RateLimiterMemory({
+      points: 5, // 5 attempts
+      duration: 900, // Per 15 minutes
+    });
+
+    this.accountLockLimiter = new RateLimiterMemory({
+      points: 3, // 3 failed login windows
+      duration: 86400, // Per 24 hours
+    });
+
+    this.passwordResetLimiter = new RateLimiterMemory({
+      points: 3, // 3 reset requests
+      duration: 3600, // Per hour
+    });
+    
+    console.log('AuthRateLimiter using memory backend');
   }
 
   async checkLoginAttempts(email: string, ip: string): Promise<void> {

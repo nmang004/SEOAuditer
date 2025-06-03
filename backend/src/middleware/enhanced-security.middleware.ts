@@ -11,8 +11,10 @@ import { createClient } from 'redis';
 import slowDown from 'express-slow-down';
 
 const prisma = new PrismaClient();
-const redisClient = createClient({ url: config.redis.url });
-redisClient.connect().catch(console.error);
+const redisClient = config.redis.url ? createClient({ url: config.redis.url }) : null;
+if (redisClient) {
+  redisClient.connect().catch(console.error);
+}
 
 // ============ TWO-FACTOR AUTHENTICATION ============
 

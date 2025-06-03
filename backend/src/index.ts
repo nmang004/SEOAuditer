@@ -48,30 +48,43 @@ const app: Express = express();
 const server = http.createServer(app);
 console.log('--- Express app and server initialized ---');
 
-// Initialize Redis client
+// Initialize Redis client - completely optional
 console.log('--- Initializing Redis client ---');
 export let redisClient: any = null;
 
-if (redisConfig.url) {
-  redisClient = createClient({
-    url: redisConfig.url,
-    socket: {
-      reconnectStrategy: (retries) => {
-        if (retries > 5) {
-          console.log('Too many retries on Redis. Connection Terminated');
-          return new Error('Could not connect to Redis after 5 retries');
-        }
-        return Math.min(retries * 100, 5000);
+if (redisConfig.url && !redisConfig.isOptional) {
+  try {
+    redisClient = createClient({
+      url: redisConfig.url,
+      socket: {
+        reconnectStrategy: (retries) => {
+          if (retries > 3) {
+            console.log('Too many retries on Redis. Disabling Redis support.');
+            return false; // Stop retrying
+          }
+          return Math.min(retries * 100, 2000);
+        },
+        connectTimeout: 5000, // 5 second timeout
       },
-    },
-  });
-  redisClient.on('error', (err: Error) => {
-    logger.error('Redis Client Error:', err);
-  });
-  console.log('--- Redis client initialized ---');
+    });
+    
+    redisClient.on('error', (err: Error) => {
+      console.warn('Redis Client Error (Redis disabled):', err.message);
+      redisClient = null; // Disable Redis on error
+    });
+    
+    console.log('--- Redis client initialized ---');
+  } catch (error) {
+    console.warn('Failed to initialize Redis client:', error);
+    redisClient = null;
+  }
 } else {
-  console.log('--- Redis URL not provided, skipping Redis initialization ---');
-  logger.warn('Redis URL not provided, running without Redis support');
+  console.log('--- Redis disabled or not configured ---');
+  if (redisConfig.isOptional) {
+    logger.info('Redis is optional in production and not configured - running without Redis support');
+  } else {
+    logger.warn('Redis URL not provided, running without Redis support');
+  }
 }
 
 // Remove the old prisma client initialization and replace with database manager
@@ -80,11 +93,11 @@ console.log('--- Initializing Database Manager ---');
 const connectRedis = async (): Promise<void> => {
   if (!redisClient) {
     console.log('--- Redis client not configured, skipping connection ---');
-    logger.warn('Redis not configured - rate limiting and caching will be disabled');
+    logger.info('Redis not configured - rate limiting and caching will use memory fallback');
     return;
   }
 
-  const REDIS_TIMEOUT = 10000; // 10 seconds
+  const REDIS_TIMEOUT = 5000; // 5 seconds - shorter timeout
   try {
     console.log('--- Attempting Redis connection ---');
     
@@ -98,17 +111,14 @@ const connectRedis = async (): Promise<void> => {
     console.log('--- Redis connected successfully ---');
     logger.info('Connected to Redis');
   } catch (error) {
-    console.error('Failed to connect to Redis:', error);
-    logger.error('Failed to connect to Redis:', error);
+    console.warn('Failed to connect to Redis (will use memory fallback):', error);
+    logger.warn('Failed to connect to Redis - using memory fallback for rate limiting and caching');
     
-    if (process.env.NODE_ENV === 'development') {
-      logger.warn('Running without Redis. Rate limiting and caching will be disabled.');
-    } else {
-      logger.error('Failed to connect to Redis in production. Continuing anyway...');
-    }
+    // Disable Redis client on connection failure
+    redisClient = null;
     
-    // Re-throw error so it can be caught in startServer
-    throw error;
+    // Don't throw error - just continue without Redis
+    return;
   }
 };
 
@@ -213,12 +223,7 @@ const startServer = async () => {
   console.log('--- startServer: BEGIN ---');
   try {
     // Connect to Redis before starting the server (with error handling)
-    try {
-      await connectRedis();
-    } catch (redisError) {
-      console.warn('Redis connection failed, continuing without Redis:', redisError);
-      logger.warn('Redis connection failed, continuing without Redis:', redisError);
-    }
+    await connectRedis(); // This will handle errors internally and continue without Redis
     
     // Initialize database (with error handling)
     try {

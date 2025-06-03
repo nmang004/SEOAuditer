@@ -16,7 +16,7 @@ export class AnalysisSystemHealthChecker {
 
   constructor() {
     this.prisma = new PrismaClient();
-    this.redisClient = createClient({ url: config.redis.url });
+    this.redisClient = config.redis.url ? createClient({ url: config.redis.url }) : null;
   }
 
   async runHealthCheck(): Promise<HealthCheckResult[]> {

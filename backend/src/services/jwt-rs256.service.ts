@@ -9,9 +9,9 @@ import fs from 'fs';
 import path from 'path';
 
 const prisma = new PrismaClient();
-const redisClient = createClient({
+const redisClient = config.redis.url ? createClient({
   url: config.redis.url
-});
+}) : null;
 
 interface ExtendedJWTPayload extends JwtPayload {
   userId: string;

@@ -7,9 +7,9 @@ import { config } from '../config/config';
 import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient();
-const redisClient = createClient({
+const redisClient = config.redis.url ? createClient({
   url: config.redis.url
-});
+}) : null;
 
 interface ExtendedJWTPayload extends JwtPayload {
   userId: string;

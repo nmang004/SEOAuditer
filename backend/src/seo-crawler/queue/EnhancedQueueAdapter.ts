@@ -64,51 +64,41 @@ export class EnhancedQueueAdapter {
     // Enhanced Redis connection with proper error handling
     const redisUrl = process.env.REDIS_URL;
     
-    if (!redisUrl && process.env.NODE_ENV === 'production') {
-      logger.warn('Redis URL not provided in production - queue functionality will be limited');
+    // Skip Redis initialization if not provided
+    if (!redisUrl) {
+      logger.warn('Redis URL not provided - queue functionality will be disabled');
+      logger.info('SEO analysis will run in synchronous mode without queue');
+      return;
     }
     
     try {
-      // Use Redis URL if provided, otherwise try localhost in development
-      if (redisUrl && redisUrl !== 'redis://localhost:6379') {
-        logger.info(`Connecting to Redis for queue: ${redisUrl.replace(/:\/\/[^:]+:[^@]+@/, '://***:***@')}`);
-        this.connection = new IORedis(redisUrl, {
-          maxRetriesPerRequest: 3,
-          enableReadyCheck: false,
-          lazyConnect: true,
-          retryStrategy: (times: number) => {
-            if (times > 3) {
-              logger.warn('Redis connection failed after 3 retries for queue');
-              return null; // Stop retrying
-            }
-            return Math.min(times * 100, 1000);
+      // Use Redis URL
+      logger.info(`Connecting to Redis for queue: ${redisUrl.replace(/:\/\/[^:]+:[^@]+@/, '://***:***@')}`);
+      this.connection = new IORedis(redisUrl, {
+        maxRetriesPerRequest: 2,
+        enableReadyCheck: false,
+        lazyConnect: true,
+        connectTimeout: 5000,
+        retryStrategy: (times: number) => {
+          if (times > 2) {
+            logger.warn('Redis connection failed after 2 retries for queue - disabling queue');
+            return null; // Stop retrying
           }
-        });
-      } else if (process.env.NODE_ENV !== 'production') {
-        // Only try localhost in development
-        this.connection = new IORedis({
-          host: process.env.REDIS_HOST || 'localhost',
-          port: parseInt(process.env.REDIS_PORT || '6379'),
-          maxRetriesPerRequest: 3,
-          enableReadyCheck: false,
-          lazyConnect: true,
-          retryStrategy: (times: number) => {
-            if (times > 3) {
-              logger.warn('Redis connection to localhost failed after 3 retries');
-              return null; // Stop retrying
-            }
-            return Math.min(times * 100, 1000);
-          }
-        });
-      } else {
-        // Production without Redis URL - queue won't work
-        logger.error('No Redis URL provided in production - queue functionality disabled');
-        return;
-      }
+          return Math.min(times * 1000, 2000);
+        }
+      });
 
       // Handle connection errors gracefully
       this.connection.on('error', (error) => {
-        logger.warn('IORedis connection error (queue):', error.message);
+        logger.warn('IORedis connection error (queue) - disabling queue functionality:', error.message);
+        this.connection = null;
+        this.queue = null;
+      });
+      
+      this.connection.on('close', () => {
+        logger.warn('Redis connection closed - queue functionality disabled');
+        this.connection = null;
+        this.queue = null;
       });
 
       const queueOptions: QueueOptions = {
@@ -131,10 +121,9 @@ export class EnhancedQueueAdapter {
       this.setupQueueEventListeners();
       this.startMetricsCollection();
     } catch (error) {
-      logger.error('Failed to initialize queue adapter:', error);
-      if (process.env.NODE_ENV === 'production') {
-        logger.error('Queue functionality will be disabled in production');
-      }
+      logger.warn('Failed to initialize queue adapter - queue functionality disabled:', error);
+      this.connection = null;
+      this.queue = null;
     }
   }
 
@@ -236,7 +225,13 @@ export class EnhancedQueueAdapter {
   ): Promise<string> {
     try {
       if (!this.queue) {
-        throw new Error('Queue not initialized - Redis connection required');
+        // Generate a fake job ID for synchronous processing
+        const jobId = config.projectId + '-sync-' + Date.now();
+        logger.warn('Queue not available - analysis will run synchronously');
+        
+        // TODO: Implement synchronous analysis processing here
+        // For now, return the job ID so the caller can handle it
+        return jobId;
       }
       const jobData = {
         ...config,

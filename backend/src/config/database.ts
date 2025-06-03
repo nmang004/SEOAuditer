@@ -253,12 +253,19 @@ export class DatabaseManager {
         connectionMetrics.successfulConnections++;
         connectionMetrics.lastConnectionTime = Date.now();
         
+        let pgVersion = 'unknown';
+        try {
+          pgVersion = await this.getPostgreSQLVersion();
+        } catch (error) {
+          logger.warn('Could not get PostgreSQL version:', error);
+        }
+        
         logger.info('✅ Database connected successfully', {
           attempt,
           connectionPoolSize: dbConfig.connectionPoolSize,
           database: this.extractDatabaseName(process.env.DATABASE_PROXY_URL || process.env.DATABASE_URL || ''),
           responseTime: `${Date.now() - connectionMetrics.lastConnectionTime}ms`,
-          pgVersion: await this.getPostgreSQLVersion(),
+          pgVersion,
         });
         
         // Start enhanced health checks and monitoring
@@ -315,35 +322,63 @@ export class DatabaseManager {
     const validations = [
       // Test basic connectivity
       () => this.prisma.$queryRaw`SELECT 1 as connectivity_test`,
+      
+      // Test transaction capability
+      () => this.prisma.$queryRaw`SELECT NOW() as transaction_test`,
     ];
     
     // Only run schema validation if not in initial migration mode
     if (!process.env.SKIP_SCHEMA_VALIDATION) {
-      validations.push(
-        // Test database schema accessibility
-        () => this.prisma.user.findFirst({ 
-          take: 1,
-          select: { id: true }
-        }),
+      try {
+        // Check if users table exists before trying to query it
+        const tableExists = await this.prisma.$queryRaw`
+          SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name = 'users'
+          ) as table_exists
+        `;
         
-        // Test transaction capability
-        () => this.prisma.$queryRaw`SELECT NOW() as transaction_test`,
+        if (Array.isArray(tableExists) && tableExists[0] && (tableExists[0] as any).table_exists) {
+          validations.push(
+            // Test database schema accessibility
+            () => this.prisma.user.findFirst({ 
+              take: 1,
+              select: { id: true }
+            })
+          );
+        } else {
+          logger.warn('Users table does not exist - skipping schema validation (migrations may be needed)');
+        }
         
         // Test index accessibility (critical for SEO analysis performance)
-        () => this.prisma.$queryRaw`
-          SELECT schemaname, tablename, indexname, indexdef 
-          FROM pg_indexes 
-          WHERE schemaname = 'public' 
-          LIMIT 5
-        `
-      );
+        validations.push(
+          () => this.prisma.$queryRaw`
+            SELECT schemaname, tablename, indexname, indexdef 
+            FROM pg_indexes 
+            WHERE schemaname = 'public' 
+            LIMIT 5
+          `
+        );
+      } catch (error) {
+        logger.warn('Schema validation check failed, proceeding with basic connectivity test only:', error);
+      }
     }
 
     for (const validation of validations) {
-      await Promise.race([
-        validation(),
-        this.createTimeoutPromise(dbConfig.queryTimeout, 'Validation query timeout'),
-      ]);
+      try {
+        await Promise.race([
+          validation(),
+          this.createTimeoutPromise(dbConfig.queryTimeout, 'Validation query timeout'),
+        ]);
+      } catch (error) {
+        logger.warn('Database validation failed:', error);
+        // Don't fail the entire connection for validation errors
+        if (validation === validations[0]) {
+          // If basic connectivity fails, re-throw
+          throw error;
+        }
+      }
     }
   }
 
