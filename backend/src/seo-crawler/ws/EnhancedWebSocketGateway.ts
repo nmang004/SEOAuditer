@@ -71,36 +71,57 @@ export class EnhancedWebSocketGateway {
   private progressThrottle = new Map<string, number>();
 
   constructor() {
-    this.initializeRedisClients();
+    // Delay Redis initialization to avoid early connection attempts
   }
 
   private async initializeRedisClients(): Promise<void> {
     try {
+      // Check if Redis URL is available and valid
+      const redisUrl = config.redis?.url || process.env.REDIS_URL;
+      
+      if (!redisUrl || redisUrl === 'redis://localhost:6379') {
+        logger.warn('Redis URL not configured or using default localhost - skipping Redis adapter');
+        return;
+      }
+      
+      logger.info(`Attempting to connect to Redis: ${redisUrl.replace(/:\/\/[^:]+:[^@]+@/, '://***:***@')}`);
+      
       this.redisClient = createClient({ 
-        url: config.redis.url,
+        url: redisUrl,
         socket: {
-          reconnectStrategy: (retries) => Math.min(retries * 50, 500)
+          reconnectStrategy: (retries) => {
+            if (retries > 3) {
+              logger.warn('Redis connection failed after 3 retries, giving up');
+              return false; // Stop retrying
+            }
+            return Math.min(retries * 100, 1000);
+          }
         }
       });
       this.pubClient = createClient({ 
-        url: config.redis.url,
+        url: redisUrl,
         socket: {
-          reconnectStrategy: (retries) => Math.min(retries * 50, 500)
+          reconnectStrategy: (retries) => {
+            if (retries > 3) {
+              return false;
+            }
+            return Math.min(retries * 100, 1000);
+          }
         }
       });
       this.subClient = this.pubClient.duplicate();
 
       // Add error handlers
       this.redisClient.on('error', (err: Error) => {
-        logger.error('Redis client error:', err);
+        logger.warn('Redis client error (WebSocket):', err.message);
       });
 
       this.pubClient.on('error', (err: Error) => {
-        logger.error('Redis pub client error:', err);
+        logger.warn('Redis pub client error (WebSocket):', err.message);
       });
 
       this.subClient.on('error', (err: Error) => {
-        logger.error('Redis sub client error:', err);
+        logger.warn('Redis sub client error (WebSocket):', err.message);
       });
 
       await Promise.all([
@@ -111,14 +132,22 @@ export class EnhancedWebSocketGateway {
 
       logger.info('Redis clients initialized for WebSocket gateway');
     } catch (error) {
-      logger.error('Failed to initialize Redis clients:', error);
-      // Continue without Redis for development
-      logger.warn('Continuing without Redis adapter');
+      logger.warn('Failed to initialize Redis clients for WebSocket:', error);
+      // Clear any partial connections
+      this.redisClient = null;
+      this.pubClient = null;
+      this.subClient = null;
+      logger.info('WebSocket gateway will run without Redis adapter (no horizontal scaling)');
     }
   }
 
   async initialize(httpServer: HttpServer): Promise<void> {
     try {
+      // Initialize Redis clients if not already done
+      if (!this.redisClient && !this.pubClient && !this.subClient) {
+        await this.initializeRedisClients();
+      }
+      
       this.io = new SocketIOServer(httpServer, {
         cors: {
           origin: process.env.FRONTEND_URL || "http://localhost:3000",
@@ -144,6 +173,8 @@ export class EnhancedWebSocketGateway {
       if (this.pubClient && this.subClient) {
         this.io.adapter(createAdapter(this.pubClient, this.subClient));
         logger.info('Redis adapter configured for Socket.IO');
+      } else {
+        logger.info('Socket.IO running without Redis adapter (single instance mode)');
       }
 
       this.setupEventHandlers();

@@ -118,31 +118,6 @@ const initializeDatabase = async (): Promise<void> => {
     console.log('--- Attempting database connection via Database Manager ---');
     await databaseManager.connect();
     console.log('--- Database Manager connected successfully ---');
-    
-    // Run migrations if in production
-    if (config.env === 'production') {
-      console.log('--- Running Prisma migrations ---');
-      try {
-        const { execSync } = await import('child_process');
-        execSync('npx prisma migrate deploy', { 
-          stdio: 'inherit',
-          timeout: 60000, // 60 seconds timeout
-          env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL }
-        });
-        console.log('--- Prisma migrations completed ---');
-      } catch (migrationError) {
-        console.error('Migration failed:', migrationError);
-        logger.error('Migration failed:', migrationError);
-        
-        // Check if it's just because migrations are already applied
-        try {
-          await databaseManager.getPrisma().$queryRaw`SELECT 1`;
-          console.log('--- Database is accessible, continuing without migrations ---');
-        } catch (dbError) {
-          throw new Error(`Database migration and connection both failed: ${migrationError}`);
-        }
-      }
-    }
   } catch (error) {
     console.error('Database initialization failed:', error);
     logger.error('Database initialization failed:', error);

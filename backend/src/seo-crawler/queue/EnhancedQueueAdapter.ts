@@ -55,8 +55,8 @@ export interface JobStatusResponse {
 }
 
 export class EnhancedQueueAdapter {
-  private queue: Queue;
-  private connection: IORedis;
+  private queue: Queue | null = null;
+  private connection: IORedis | null = null;
   private queueMetricsInterval: NodeJS.Timeout | null = null;
   private lastMetricsUpdate: QueueMetrics | null = null;
 
@@ -68,9 +68,25 @@ export class EnhancedQueueAdapter {
       logger.warn('Redis URL not provided in production - queue functionality will be limited');
     }
     
-    this.connection = redisUrl 
-      ? new IORedis(redisUrl)
-      : new IORedis({
+    try {
+      // Use Redis URL if provided, otherwise try localhost in development
+      if (redisUrl && redisUrl !== 'redis://localhost:6379') {
+        logger.info(`Connecting to Redis for queue: ${redisUrl.replace(/:\/\/[^:]+:[^@]+@/, '://***:***@')}`);
+        this.connection = new IORedis(redisUrl, {
+          maxRetriesPerRequest: 3,
+          enableReadyCheck: false,
+          lazyConnect: true,
+          retryStrategy: (times: number) => {
+            if (times > 3) {
+              logger.warn('Redis connection failed after 3 retries for queue');
+              return null; // Stop retrying
+            }
+            return Math.min(times * 100, 1000);
+          }
+        });
+      } else if (process.env.NODE_ENV !== 'production') {
+        // Only try localhost in development
+        this.connection = new IORedis({
           host: process.env.REDIS_HOST || 'localhost',
           port: parseInt(process.env.REDIS_PORT || '6379'),
           maxRetriesPerRequest: 3,
@@ -78,40 +94,53 @@ export class EnhancedQueueAdapter {
           lazyConnect: true,
           retryStrategy: (times: number) => {
             if (times > 3) {
-              logger.error('Redis connection failed after 3 retries');
+              logger.warn('Redis connection to localhost failed after 3 retries');
               return null; // Stop retrying
             }
-            return Math.min(times * 100, 3000);
+            return Math.min(times * 100, 1000);
           }
         });
+      } else {
+        // Production without Redis URL - queue won't work
+        logger.error('No Redis URL provided in production - queue functionality disabled');
+        return;
+      }
 
-    // Handle connection errors
-    this.connection.on('error', (error) => {
-      logger.error('IORedis connection error:', error);
-    });
+      // Handle connection errors gracefully
+      this.connection.on('error', (error) => {
+        logger.warn('IORedis connection error (queue):', error.message);
+      });
 
-    const queueOptions: QueueOptions = {
-      connection: this.connection,
-      defaultJobOptions: {
-        removeOnComplete: 10, // Keep last 10 completed jobs
-        removeOnFail: 50,     // Keep last 50 failed jobs for debugging
-        attempts: 3,          // Retry failed jobs up to 3 times
-        backoff: {
-          type: 'exponential',
-          delay: 2000,
+      const queueOptions: QueueOptions = {
+        connection: this.connection,
+        defaultJobOptions: {
+          removeOnComplete: 10, // Keep last 10 completed jobs
+          removeOnFail: 50,     // Keep last 50 failed jobs for debugging
+          attempts: 3,          // Retry failed jobs up to 3 times
+          backoff: {
+            type: 'exponential',
+            delay: 2000,
+          },
+          delay: 0,
         },
-        delay: 0,
-      },
-    };
+      };
 
-    this.queue = new Queue('seo-analysis', queueOptions);
+      this.queue = new Queue('seo-analysis', queueOptions);
 
-    // Queue event listeners for monitoring
-    this.setupQueueEventListeners();
-    this.startMetricsCollection();
+      // Queue event listeners for monitoring
+      this.setupQueueEventListeners();
+      this.startMetricsCollection();
+    } catch (error) {
+      logger.error('Failed to initialize queue adapter:', error);
+      if (process.env.NODE_ENV === 'production') {
+        logger.error('Queue functionality will be disabled in production');
+      }
+    }
   }
 
   private setupQueueEventListeners(): void {
+    if (!this.queue) return;
+    
     this.queue.on('error', (error) => {
       logger.error('Queue error:', error);
     });
@@ -157,13 +186,17 @@ export class EnhancedQueueAdapter {
   }
 
   private startMetricsCollection(): void {
+    if (!this.queue) return;
+    
     this.queueMetricsInterval = setInterval(async () => {
       try {
-        const metrics = await this.getQueueMetrics();
-        this.lastMetricsUpdate = metrics;
-        
-        // Update waiting jobs with new queue positions
-        await this.updateWaitingJobPositions();
+        if (this.queue) {
+          const metrics = await this.getQueueMetrics();
+          this.lastMetricsUpdate = metrics;
+          
+          // Update waiting jobs with new queue positions
+          await this.updateWaitingJobPositions();
+        }
       } catch (error) {
         logger.error('Error collecting queue metrics:', error);
       }
@@ -172,6 +205,8 @@ export class EnhancedQueueAdapter {
 
   private async updateWaitingJobPositions(): Promise<void> {
     try {
+      if (!this.queue) return;
+      
       const waitingJobs = await this.queue.getWaiting(0, -1);
       
       for (let i = 0; i < waitingJobs.length; i++) {
@@ -200,6 +235,9 @@ export class EnhancedQueueAdapter {
     }
   ): Promise<string> {
     try {
+      if (!this.queue) {
+        throw new Error('Queue not initialized - Redis connection required');
+      }
       const jobData = {
         ...config,
         addedAt: new Date(),
@@ -237,6 +275,9 @@ export class EnhancedQueueAdapter {
 
   async getJobStatus(jobId: string): Promise<JobStatusResponse | null> {
     try {
+      if (!this.queue) {
+        return null;
+      }
       const job = await this.queue.getJob(jobId);
       if (!job) {
         return null;
@@ -274,6 +315,8 @@ export class EnhancedQueueAdapter {
 
   async getJobQueuePosition(jobId: string): Promise<number> {
     try {
+      if (!this.queue) return 0;
+      
       const waitingJobs = await this.queue.getWaiting(0, -1);
       const position = waitingJobs.findIndex(job => job.id === jobId);
       return position >= 0 ? position + 1 : 0;
@@ -303,6 +346,18 @@ export class EnhancedQueueAdapter {
 
   async getQueueMetrics(): Promise<QueueMetrics> {
     try {
+      if (!this.queue) {
+        return {
+          waiting: 0,
+          active: 0,
+          completed: 0,
+          failed: 0,
+          delayed: 0,
+          paused: 0,
+          totalProcessingTime: 0,
+          averageProcessingTime: 300000
+        };
+      }
       const [waiting, active, completed, failed, delayed] = await Promise.all([
         this.queue.getWaiting(),
         this.queue.getActive(),
@@ -351,16 +406,20 @@ export class EnhancedQueueAdapter {
 
   async updateJobProgress(jobId: string, progress: JobProgress): Promise<void> {
     try {
+      if (!this.queue) return;
+      
       const job = await this.queue.getJob(jobId);
       if (job) {
         await job.updateProgress(progress);
         
         // Cache progress in Redis for quick retrieval
-        await this.connection.setex(
-          `job:progress:${jobId}`,
-          3600, // 1 hour TTL
-          JSON.stringify(progress)
-        );
+        if (this.connection) {
+          await this.connection.setex(
+            `job:progress:${jobId}`,
+            3600, // 1 hour TTL
+            JSON.stringify(progress)
+          );
+        }
       }
     } catch (error) {
       logger.warn(`Failed to update progress for job ${jobId}:`, error);
@@ -369,6 +428,8 @@ export class EnhancedQueueAdapter {
 
   async cancelJob(jobId: string): Promise<boolean> {
     try {
+      if (!this.queue) return false;
+      
       const job = await this.queue.getJob(jobId);
       if (!job) {
         return false;
@@ -396,6 +457,8 @@ export class EnhancedQueueAdapter {
 
   async retryJob(jobId: string): Promise<boolean> {
     try {
+      if (!this.queue) return false;
+      
       const job = await this.queue.getJob(jobId);
       if (!job) {
         return false;
@@ -412,6 +475,8 @@ export class EnhancedQueueAdapter {
 
   async getJobsByUser(userId: string, limit: number = 50): Promise<JobStatusResponse[]> {
     try {
+      if (!this.queue) return [];
+      
       const [waiting, active, completed, failed] = await Promise.all([
         this.queue.getWaiting(0, limit),
         this.queue.getActive(0, limit),
@@ -437,17 +502,30 @@ export class EnhancedQueueAdapter {
   }
 
   async pauseQueue(): Promise<void> {
+    if (!this.queue) {
+      logger.warn('Cannot pause queue - queue not initialized');
+      return;
+    }
     await this.queue.pause();
     logger.info('Queue paused');
   }
 
   async resumeQueue(): Promise<void> {
+    if (!this.queue) {
+      logger.warn('Cannot resume queue - queue not initialized');
+      return;
+    }
     await this.queue.resume();
     logger.info('Queue resumed');
   }
 
   async cleanQueue(age: number = 24 * 60 * 60 * 1000): Promise<void> {
     try {
+      if (!this.queue) {
+        logger.warn('Cannot clean queue - queue not initialized');
+        return;
+      }
+      
       // Clean completed jobs older than age
       await this.queue.clean(age, 100, 'completed');
       await this.queue.clean(age, 100, 'failed');
@@ -461,7 +539,7 @@ export class EnhancedQueueAdapter {
   async healthCheck(): Promise<{ status: string; details: any }> {
     try {
       const isQueueReady = this.queue !== null;
-      const isRedisReady = this.connection.status === 'ready';
+      const isRedisReady = this.connection !== null && this.connection.status === 'ready';
       const metrics = await this.getQueueMetrics();
       
       const status = isQueueReady && isRedisReady ? 'healthy' : 'unhealthy';
@@ -470,7 +548,7 @@ export class EnhancedQueueAdapter {
         status,
         details: {
           queue: isQueueReady ? 'ready' : 'not ready',
-          redis: this.connection.status,
+          redis: this.connection ? this.connection.status : 'not connected',
           metrics,
           lastUpdate: this.lastMetricsUpdate ? new Date() : null
         }
@@ -482,7 +560,7 @@ export class EnhancedQueueAdapter {
         details: {
           error: error instanceof Error ? error.message : 'Unknown error',
           queue: 'error',
-          redis: this.connection.status
+          redis: this.connection ? this.connection.status : 'not connected'
         }
       };
     }
@@ -496,8 +574,12 @@ export class EnhancedQueueAdapter {
     }
     
     try {
-      await this.queue.close();
-      await this.connection.quit();
+      if (this.queue) {
+        await this.queue.close();
+      }
+      if (this.connection) {
+        await this.connection.quit();
+      }
     } catch (error) {
       logger.warn('Error during queue adapter close:', error);
     }
@@ -507,6 +589,8 @@ export class EnhancedQueueAdapter {
 
   async cleanup(): Promise<void> {
     try {
+      if (!this.queue) return;
+      
       // Clean old completed and failed jobs
       await this.cleanQueue();
       
@@ -530,7 +614,7 @@ export class EnhancedQueueAdapter {
   }
 
   isHealthy(): boolean {
-    return this.queue !== null && this.connection.status === 'ready';
+    return this.queue !== null && this.connection !== null && this.connection.status === 'ready';
   }
 
   async shutdown(): Promise<void> {
@@ -541,8 +625,12 @@ export class EnhancedQueueAdapter {
     }
     
     try {
-      await this.queue.close();
-      await this.connection.quit();
+      if (this.queue) {
+        await this.queue.close();
+      }
+      if (this.connection) {
+        await this.connection.quit();
+      }
     } catch (error) {
       logger.warn('Error during queue adapter shutdown:', error);
     }

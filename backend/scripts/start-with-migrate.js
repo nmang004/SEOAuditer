@@ -33,12 +33,22 @@ async function startWithMigrate() {
   if (process.env.DATABASE_URL) {
     try {
       console.log('Running database migrations...');
+      
+      // Set flag to skip schema validation during initial connection
+      process.env.SKIP_SCHEMA_VALIDATION = 'true';
+      
       await execAsync('npx prisma migrate deploy');
       console.log('Migrations completed successfully');
+      
+      // Clear the flag after migrations
+      delete process.env.SKIP_SCHEMA_VALIDATION;
     } catch (error) {
       console.error('Migration error:', error.message);
       // Don't exit on migration error - the app might still work
       console.warn('Continuing despite migration error...');
+      
+      // Clear the flag even on error
+      delete process.env.SKIP_SCHEMA_VALIDATION;
     }
   }
   
