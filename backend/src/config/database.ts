@@ -101,9 +101,16 @@ const buildConnectionString = (): string => {
   // SSL configuration for production
   if (process.env.NODE_ENV === 'production') {
     params.set('sslmode', 'require');
-    params.set('sslcert', process.env.DB_SSL_CERT || '');
-    params.set('sslkey', process.env.DB_SSL_KEY || '');
-    params.set('sslrootcert', process.env.DB_SSL_ROOT_CERT || '');
+    // Only set SSL cert parameters if they are actually provided
+    if (process.env.DB_SSL_CERT) {
+      params.set('sslcert', process.env.DB_SSL_CERT);
+    }
+    if (process.env.DB_SSL_KEY) {
+      params.set('sslkey', process.env.DB_SSL_KEY);
+    }
+    if (process.env.DB_SSL_ROOT_CERT) {
+      params.set('sslrootcert', process.env.DB_SSL_ROOT_CERT);
+    }
   }
   
   url.search = params.toString();

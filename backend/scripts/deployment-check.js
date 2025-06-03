@@ -36,7 +36,17 @@ for (const [key, value] of Object.entries(optionalVars)) {
   if (!value) {
     console.log(`⚠️  ${key}: NOT SET (optional)`);
   } else {
-    console.log(`✅ ${key}: ${value}`);
+    // Special handling for REDIS_URL to show hostname
+    if (key === 'REDIS_URL' && value) {
+      try {
+        const url = new URL(value);
+        console.log(`✅ ${key}: ${url.protocol}//${url.hostname}:${url.port} (${url.hostname})`);
+      } catch {
+        console.log(`✅ ${key}: [INVALID URL]`);
+      }
+    } else {
+      console.log(`✅ ${key}: ${value}`);
+    }
   }
 }
 
