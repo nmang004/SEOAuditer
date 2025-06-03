@@ -2,6 +2,7 @@ import { Queue, QueueOptions } from 'bullmq';
 import { CrawlerConfig } from '../types/CrawlerConfig';
 import { logger } from '../../utils/logger';
 import IORedis from 'ioredis';
+import { redisConfig } from '../../config/config';
 import { enhancedWebSocketGateway } from '../ws/EnhancedWebSocketGateway';
 
 export interface JobProgress {
@@ -62,10 +63,10 @@ export class EnhancedQueueAdapter {
 
   constructor() {
     // Enhanced Redis connection with proper error handling
-    const redisUrl = process.env.REDIS_URL;
+    const redisUrl = redisConfig.url;
     
-    // Skip Redis initialization if not provided
-    if (!redisUrl) {
+    // Skip Redis initialization if not provided or in production without Redis
+    if (!redisUrl || redisConfig.isOptional) {
       logger.warn('Redis URL not provided - queue functionality will be disabled');
       logger.info('SEO analysis will run in synchronous mode without queue');
       return;

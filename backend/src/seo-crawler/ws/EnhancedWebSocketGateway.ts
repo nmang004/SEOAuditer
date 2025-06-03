@@ -6,7 +6,7 @@ import { logger } from '../../utils/logger';
 import { jwtService } from '../../services/jwt-rs256.service';
 import { PrismaClient } from '@prisma/client';
 import { JobProgress } from '../queue/EnhancedQueueAdapter';
-import { config } from '../../config/config';
+import { redisConfig } from '../../config/config';
 
 const prisma = new PrismaClient();
 
@@ -77,10 +77,10 @@ export class EnhancedWebSocketGateway {
   private async initializeRedisClients(): Promise<void> {
     try {
       // Check if Redis URL is available and valid
-      const redisUrl = config.redis?.url || process.env.REDIS_URL;
+      const redisUrl = redisConfig.url;
       
-      if (!redisUrl) {
-        logger.warn('Redis URL not configured - skipping Redis adapter');
+      if (!redisUrl || redisConfig.isOptional) {
+        logger.warn('Redis URL not configured or Redis is optional - skipping Redis adapter');
         return;
       }
       

@@ -136,8 +136,18 @@ export const postgresConfig = {
 };
 
 export const redisConfig = {
-  url: process.env.NODE_ENV === 'production' && !process.env.REDIS_URL 
-    ? undefined 
-    : (process.env.REDIS_URL || (process.env.NODE_ENV === 'production' ? undefined : 'redis://localhost:6379')),
-  isOptional: process.env.NODE_ENV === 'production' && !process.env.REDIS_URL
+  url: (() => {
+    // In production, completely skip Redis if not explicitly configured
+    if (process.env.NODE_ENV === 'production') {
+      // Skip Redis entirely in production unless explicitly set and not a Railway internal URL
+      const redisUrl = process.env.REDIS_URL;
+      if (!redisUrl || redisUrl.includes('railway.internal')) {
+        return undefined;
+      }
+      return redisUrl;
+    }
+    // In development, use localhost Redis if available, otherwise undefined
+    return process.env.REDIS_URL || (process.env.NODE_ENV === 'development' ? 'redis://localhost:6379' : undefined);
+  })(),
+  isOptional: process.env.NODE_ENV === 'production'
 };
