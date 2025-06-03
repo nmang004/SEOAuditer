@@ -77,19 +77,44 @@ export default function RegisterPage() {
         }),
       });
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        console.error('[Register] Non-JSON response:', text);
+        data = { error: 'Invalid response from server', details: text };
+      }
+
+      console.log('[Register] Response data:', data);
+      console.log('[Register] Response status:', response.status);
 
       if (!response.ok) {
         // Handle specific error statuses
+        let errorMessage = 'Registration failed';
+        
+        if (data && typeof data === 'object') {
+          if (typeof data.error === 'string') {
+            errorMessage = data.error;
+          } else if (typeof data.error === 'object') {
+            errorMessage = data.error.message || JSON.stringify(data.error);
+          } else if (data.message) {
+            errorMessage = data.message;
+          }
+        }
+        
         if (response.status === 503) {
-          setErrorDetails(data.details || '');
-          throw new Error(data.error || 'Backend server is unavailable');
+          setErrorDetails(data?.details || '');
+          throw new Error(errorMessage || 'Backend server is unavailable');
         } else if (response.status === 409) {
-          throw new Error(data.error || 'Email already exists');
+          throw new Error(errorMessage || 'Email already exists');
         } else if (response.status === 400) {
-          throw new Error(data.error || 'Invalid request');
+          console.error('[Register] 400 error details:', data);
+          throw new Error(errorMessage || 'Invalid request');
         } else {
-          throw new Error(data.error || 'Registration failed');
+          throw new Error(errorMessage);
         }
       }
 
@@ -106,10 +131,26 @@ export default function RegisterPage() {
         throw new Error('Registration failed - no token received');
       }
     } catch (err: any) {
-      setError(err.message || 'Registration failed');
+      console.error('[Register] Caught error:', err);
+      
+      let errorMessage = 'Registration failed';
+      
+      if (err && typeof err === 'object') {
+        if (typeof err.message === 'string') {
+          errorMessage = err.message;
+        } else if (typeof err.error === 'string') {
+          errorMessage = err.error;
+        } else if (err.toString && typeof err.toString === 'function') {
+          errorMessage = err.toString();
+        }
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      }
+      
+      setError(errorMessage);
       
       // If backend is offline, check again
-      if (err.message.includes('Backend server') || err.message.includes('unavailable')) {
+      if (errorMessage.includes('Backend server') || errorMessage.includes('unavailable')) {
         checkBackendHealth();
       }
     } finally {
