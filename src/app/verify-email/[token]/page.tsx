@@ -75,7 +75,7 @@ export default function VerifyEmailPage() {
       });
 
       console.log('Response status:', response.status);
-      console.log('Response headers:', [...response.headers.entries()]);
+      console.log('Response headers:', Object.fromEntries(response.headers));
       
       const responseText = await response.text();
       console.log('Raw response text:', responseText);
