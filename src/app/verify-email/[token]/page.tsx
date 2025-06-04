@@ -1,96 +1,136 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 
 export default function VerifyEmailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-  const [status, setStatus] = useState('loading');
-  const [message, setMessage] = useState('');
+  const [token, setToken] = useState<string>('');
+  const [status, setStatus] = useState<string>('loading');
+  const [message, setMessage] = useState<string>('');
 
-  // Fix hydration issues
   useEffect(() => {
-    setMounted(true);
+    // Extract token from URL manually to avoid hydration issues
+    const pathParts = window.location.pathname.split('/');
+    const urlToken = pathParts[pathParts.length - 1];
+    console.log('Extracted token from URL:', urlToken);
+    
+    if (!urlToken || urlToken === 'verify-email') {
+      setStatus('error');
+      setMessage('No verification token found in URL');
+      return;
+    }
+    
+    setToken(urlToken);
+    verifyEmail(urlToken);
   }, []);
 
-  useEffect(() => {
-    if (!mounted || !params?.token) return;
-    
-    const token = params.token as string;
-    console.log('Starting verification for token:', token);
-    verifyEmail(token);
-  }, [mounted, params?.token]);
-
-  const verifyEmail = async (token: string) => {
+  const verifyEmail = async (tokenToVerify: string) => {
     try {
-      console.log('Verifying token:', token);
-      const response = await fetch(`https://seoauditer-production.up.railway.app/api/auth/verify-email/${token}`);
+      console.log('Verifying token:', tokenToVerify);
       
+      const response = await fetch(`https://seoauditer-production.up.railway.app/api/auth/verify-email/${tokenToVerify}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
       console.log('Response status:', response.status);
-      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+      console.log('Response ok:', response.ok);
       
-      const data = await response.json();
-      console.log('Response data:', data);
+      const responseText = await response.text();
+      console.log('Raw response:', responseText);
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Failed to parse JSON:', e);
+        setStatus('error');
+        setMessage(`Server returned invalid response: ${response.status}`);
+        return;
+      }
+
+      console.log('Parsed response data:', data);
 
       if (response.ok && data.success) {
         setStatus('success');
         setMessage(data.message || 'Email verified successfully!');
         
         setTimeout(() => {
-          router.push('/auth/login?verified=true');
+          window.location.href = '/auth/login?verified=true';
         }, 3000);
       } else {
         setStatus('error');
-        setMessage(data.error || data.message || `Server returned ${response.status}`);
+        setMessage(data.error || data.message || `Server error: ${response.status}`);
       }
     } catch (error) {
-      console.error('Verification failed:', error);
+      console.error('Verification error:', error);
       setStatus('error');
-      setMessage('Network error: ' + (error as Error).message);
+      setMessage(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
-  // Don't render until mounted to avoid hydration mismatch
-  if (!mounted) {
-    return null;
-  }
+  const goToLogin = () => {
+    window.location.href = '/auth/login';
+  };
 
-  if (!params?.token) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <div className="bg-gray-800 p-8 rounded-lg text-center text-white">
-          <h1 className="text-xl mb-4">❌ Invalid Link</h1>
-          <p>No verification token found in URL.</p>
-        </div>
-      </div>
-    );
-  }
+  const goToRegister = () => {
+    window.location.href = '/auth/register';
+  };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <div className="bg-gray-800 p-8 rounded-lg text-center text-white max-w-md w-full">
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#111827',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1rem',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
+      <div style={{
+        backgroundColor: '#1f2937',
+        padding: '2rem',
+        borderRadius: '0.5rem',
+        textAlign: 'center',
+        color: 'white',
+        maxWidth: '400px',
+        width: '100%',
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+      }}>
         {status === 'loading' && (
           <>
-            <div className="text-4xl mb-4">⏳</div>
-            <h1 className="text-xl mb-2">Verifying Email</h1>
-            <p className="text-gray-300">Please wait...</p>
-            <div className="mt-4 text-sm text-gray-400">
-              Token: {(params.token as string).substring(0, 20)}...
-            </div>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⏳</div>
+            <h1 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', margin: 0 }}>Verifying Email</h1>
+            <p style={{ color: '#d1d5db', margin: '0.5rem 0' }}>Please wait...</p>
+            {token && (
+              <div style={{ marginTop: '1rem', fontSize: '0.75rem', color: '#9ca3af' }}>
+                Token: {token.substring(0, 20)}...
+              </div>
+            )}
           </>
         )}
 
         {status === 'success' && (
           <>
-            <div className="text-4xl mb-4">✅</div>
-            <h1 className="text-xl mb-4">Email Verified!</h1>
-            <p className="mb-4 text-gray-300">{message}</p>
-            <p className="text-sm text-gray-400 mb-4">Redirecting to login...</p>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
+            <h1 style={{ fontSize: '1.25rem', marginBottom: '1rem', margin: 0 }}>Email Verified!</h1>
+            <p style={{ marginBottom: '1rem', color: '#d1d5db' }}>{message}</p>
+            <p style={{ fontSize: '0.875rem', color: '#9ca3af', marginBottom: '1rem' }}>
+              Redirecting to login...
+            </p>
             <button
-              onClick={() => router.push('/auth/login?verified=true')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded w-full"
+              onClick={goToLogin}
+              style={{
+                backgroundColor: '#2563eb',
+                color: 'white',
+                border: 'none',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.375rem',
+                cursor: 'pointer',
+                width: '100%',
+                fontSize: '0.875rem'
+              }}
             >
               Go to Login
             </button>
@@ -99,19 +139,35 @@ export default function VerifyEmailPage() {
 
         {status === 'error' && (
           <>
-            <div className="text-4xl mb-4">❌</div>
-            <h1 className="text-xl mb-4">Verification Failed</h1>
-            <p className="mb-6 text-gray-300">{message}</p>
-            <div className="space-y-2">
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>❌</div>
+            <h1 style={{ fontSize: '1.25rem', marginBottom: '1rem', margin: 0 }}>Verification Failed</h1>
+            <p style={{ marginBottom: '1.5rem', color: '#d1d5db' }}>{message}</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <button
-                onClick={() => router.push('/auth/register')}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded w-full"
+                onClick={goToRegister}
+                style={{
+                  backgroundColor: '#2563eb',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '0.375rem',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem'
+                }}
               >
                 Create New Account
               </button>
               <button
-                onClick={() => router.push('/auth/login')}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded w-full"
+                onClick={goToLogin}
+                style={{
+                  backgroundColor: '#4b5563',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '0.375rem',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem'
+                }}
               >
                 Go to Login
               </button>
