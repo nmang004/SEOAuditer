@@ -17,7 +17,7 @@ EMAIL_FROM_NAME=SEO Director
 # App Configuration
 APP_NAME=SEO Director
 APP_URL=https://seoauditer.netlify.app
-SUPPORT_EMAIL=support@seoauditer.netlify.app
+SUPPORT_EMAIL=admin@seodirector.co
 ```
 
 **Note:** Replace `your_sendgrid_api_key_here` with your actual SendGrid API key (starts with `SG.`)

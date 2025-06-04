@@ -35,7 +35,7 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'http', 'debug']).default('info'),
   
   // Email Configuration
-  EMAIL_PROVIDER: z.enum(['sendgrid', 'mock']).default('mock'),
+  EMAIL_PROVIDER: z.enum(['sendgrid', 'mock']).default('sendgrid'),
   SENDGRID_API_KEY: z.string().optional(),
   EMAIL_FROM_ADDRESS: z.string().email().optional(),
   EMAIL_FROM_NAME: z.string().default('SEO Director'),

@@ -22,6 +22,7 @@ import {
   recordLoginResult
 } from '../middleware/rate-limit.middleware';
 import { validate } from '../middleware/validation.middleware';
+import { emailService } from '../services/email/EmailService';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -548,6 +549,45 @@ router.post('/admin/cleanup',
  * Development/Testing Routes (only available in development)
  */
 if (process.env.NODE_ENV === 'development') {
+  // Email debug endpoint 
+  router.get('/email-debug', async (req, res) => {
+    try {
+      const emailHealth = await emailService.healthCheck();
+      const emailStats = emailService.getStats();
+      const providerInfo = emailService.getProviderInfo();
+      
+      // Check environment variables (without exposing sensitive data)
+      const envCheck = {
+        EMAIL_PROVIDER: process.env.EMAIL_PROVIDER,
+        SENDGRID_API_KEY_SET: !!process.env.SENDGRID_API_KEY,
+        SENDGRID_API_KEY_LENGTH: process.env.SENDGRID_API_KEY?.length || 0,
+        SENDGRID_API_KEY_PREFIX: process.env.SENDGRID_API_KEY?.substring(0, 10) + '...',
+        EMAIL_FROM_ADDRESS: process.env.EMAIL_FROM_ADDRESS,
+        EMAIL_FROM_NAME: process.env.EMAIL_FROM_NAME,
+        APP_NAME: process.env.APP_NAME,
+        APP_URL: process.env.APP_URL,
+        NODE_ENV: process.env.NODE_ENV
+      };
+
+      return res.status(200).json({
+        success: true,
+        timestamp: new Date().toISOString(),
+        emailService: {
+          health: emailHealth,
+          stats: emailStats,
+          provider: providerInfo
+        },
+        environment: envCheck
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   // Debug registration endpoint without validation
   router.post('/debug-register',
     registrationRateLimit,

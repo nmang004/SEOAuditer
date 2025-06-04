@@ -849,21 +849,30 @@ class AuthController {
    */
   private async sendEmailVerification(userId: string, email: string, name: string): Promise<void> {
     try {
+      logger.info('Starting email verification send process', { userId, email, name });
+      
       const user = await prisma.user.findUnique({
         where: { id: userId },
         select: { verificationToken: true }
       });
 
       if (!user?.verificationToken) {
+        logger.error('Verification token not found for user', { userId });
         throw new Error('Verification token not found');
       }
+
+      logger.info('Verification token found, attempting to send email', { 
+        userId, 
+        email, 
+        tokenLength: user.verificationToken.length 
+      });
 
       const emailSent = await emailService.sendWelcomeEmail(email, name, user.verificationToken);
 
       if (emailSent) {
-        logger.debug('Email verification sent', { userId, email });
+        logger.info('Email verification sent successfully', { userId, email });
       } else {
-        logger.warn('Email verification could not be sent', { userId, email });
+        logger.error('Email verification failed to send', { userId, email });
       }
     } catch (error) {
       logger.error('Failed to send email verification:', error);
