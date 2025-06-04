@@ -15,26 +15,39 @@ export default function VerifyEmailPage() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
 
+  console.log('Component rendered with:', { params, token, status });
+
   useEffect(() => {
+    console.log('VerifyEmailPage mounted with token:', token);
+    
     if (!token) {
+      console.log('No token provided');
       setStatus('error');
       setMessage('Invalid verification link');
       return;
     }
 
+    console.log('Starting email verification for token:', token);
     verifyEmail();
   }, [token]);
 
   const verifyEmail = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/verify-email/${token}`, {
+      // Use production backend URL if environment variable not set
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://seoauditer-production.up.railway.app';
+      console.log('Verifying email with backend URL:', backendUrl);
+      console.log('Token:', token);
+      
+      const response = await fetch(`${backendUrl}/api/auth/verify-email/${token}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (response.ok && data.success) {
         setStatus('success');
@@ -46,13 +59,19 @@ export default function VerifyEmailPage() {
         }, 3000);
       } else {
         setStatus('error');
-        setMessage(data.error || 'Failed to verify email. The link may be invalid or expired.');
+        setMessage(data.error || data.message || 'Failed to verify email. The link may be invalid or expired.');
       }
     } catch (error) {
+      console.error('Verification error:', error);
       setStatus('error');
       setMessage('An error occurred while verifying your email. Please try again.');
     }
   };
+
+  // Fallback render for debugging
+  if (!params) {
+    return <div className="min-h-screen bg-red-500 text-white p-8">No params found</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0F172A] via-[#1A202C] to-[#0F172A] flex items-center justify-center px-4">
