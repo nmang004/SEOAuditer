@@ -9,10 +9,8 @@ const STATIC_ASSETS = [
   '/dashboard',
   '/auth/login',
   '/manifest.json',
-  '/offline.html',
-  // Add critical CSS and JS files
-  '/_next/static/css/',
-  '/_next/static/js/',
+  '/offline.html'
+  // Note: CSS and JS files are cached dynamically when requested
 ];
 
 // API endpoints to cache
@@ -80,6 +78,11 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests and chrome-extension requests
   if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {
     return;
+  }
+
+  // Skip service worker for verification pages to avoid token parsing issues
+  if (url.pathname.includes('/verify-email/')) {
+    return; // Let the browser handle this directly
   }
 
   // Handle different types of requests
