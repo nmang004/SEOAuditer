@@ -78,8 +78,15 @@ class AuthController {
       });
 
       if (existingUser) {
+        logger.info('Found existing user during registration', { 
+          userId: existingUser.id, 
+          email, 
+          emailVerified: existingUser.emailVerified 
+        });
+        
         if (!existingUser.emailVerified) {
           // User exists but email not verified, resend verification
+          logger.info('Resending verification email for existing unverified user', { userId: existingUser.id, email });
           await this.sendEmailVerification(existingUser.id, email, name || 'User');
           res.status(200).json({
             success: true,
@@ -89,6 +96,7 @@ class AuthController {
           return;
         }
         
+        logger.warn('Registration attempted for already verified user', { userId: existingUser.id, email });
         throw new BadRequestError('An account with this email already exists');
       }
 
