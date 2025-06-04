@@ -2,43 +2,35 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
-import Link from 'next/link';
 
 export default function VerifyEmailPage() {
   const params = useParams();
   const router = useRouter();
-  const token = params.token as string;
-  
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+  const [status, setStatus] = useState('loading');
   const [message, setMessage] = useState('');
 
-  console.log('Component rendered with:', { params, token, status });
-
   useEffect(() => {
-    console.log('VerifyEmailPage mounted with token:', token);
+    const token = params.token;
+    console.log('Token from params:', token);
     
     if (!token) {
-      console.log('No token provided');
       setStatus('error');
       setMessage('Invalid verification link');
       return;
     }
 
-    console.log('Starting email verification for token:', token);
-    verifyEmail();
-  }, [token]);
+    verifyEmail(token as string);
+  }, [params]);
 
-  const verifyEmail = async () => {
+  const verifyEmail = async (token: string) => {
     try {
-      // Use production backend URL if environment variable not set
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://seoauditer-production.up.railway.app';
-      console.log('Verifying email with backend URL:', backendUrl);
-      console.log('Token:', token);
+      setStatus('loading');
+      const backendUrl = 'https://seoauditer-production.up.railway.app';
+      const url = `${backendUrl}/api/auth/verify-email/${token}`;
       
-      const response = await fetch(`${backendUrl}/api/auth/verify-email/${token}`, {
+      console.log('Making request to:', url);
+      
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -51,75 +43,143 @@ export default function VerifyEmailPage() {
 
       if (response.ok && data.success) {
         setStatus('success');
-        setMessage(data.message || 'Your email has been verified successfully!');
+        setMessage(data.message || 'Email verified successfully!');
         
-        // Redirect to login after 3 seconds
         setTimeout(() => {
-          router.push('/login?verified=true');
+          router.push('/auth/login?verified=true');
         }, 3000);
       } else {
         setStatus('error');
-        setMessage(data.error || data.message || 'Failed to verify email. The link may be invalid or expired.');
+        setMessage(data.error || data.message || 'Verification failed');
       }
     } catch (error) {
-      console.error('Verification error:', error);
+      console.error('Error:', error);
       setStatus('error');
-      setMessage('An error occurred while verifying your email. Please try again.');
+      setMessage('Network error occurred');
     }
   };
 
-  // Fallback render for debugging
-  if (!params) {
-    return <div className="min-h-screen bg-red-500 text-white p-8">No params found</div>;
+  if (status === 'loading') {
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        background: 'linear-gradient(to bottom, #0F172A, #1A202C, #0F172A)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem'
+      }}>
+        <div style={{
+          background: 'rgba(31, 41, 55, 0.8)',
+          padding: '2rem',
+          borderRadius: '1rem',
+          textAlign: 'center',
+          color: 'white',
+          maxWidth: '400px',
+          width: '100%'
+        }}>
+          <div style={{ marginBottom: '1rem' }}>⏳</div>
+          <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Verifying Email</h1>
+          <p>Please wait...</p>
+        </div>
+      </div>
+    );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0F172A] via-[#1A202C] to-[#0F172A] flex items-center justify-center px-4">
-      <Card className="max-w-md w-full p-8 bg-gray-800/50 backdrop-blur-sm border-gray-700">
-        <div className="text-center">
-          {status === 'loading' && (
-            <>
-              <Loader2 className="h-16 w-16 text-indigo-400 animate-spin mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-white mb-2">Verifying Your Email</h1>
-              <p className="text-gray-300">Please wait while we verify your email address...</p>
-            </>
-          )}
-
-          {status === 'success' && (
-            <>
-              <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-white mb-2">Email Verified!</h1>
-              <p className="text-gray-300 mb-6">{message}</p>
-              <p className="text-sm text-gray-400 mb-6">Redirecting to login in 3 seconds...</p>
-              <Link href="/login">
-                <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white">
-                  Go to Login
-                </Button>
-              </Link>
-            </>
-          )}
-
-          {status === 'error' && (
-            <>
-              <XCircle className="h-16 w-16 text-rose-400 mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-white mb-2">Verification Failed</h1>
-              <p className="text-gray-300 mb-6">{message}</p>
-              <div className="space-y-3">
-                <Link href="/register">
-                  <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white">
-                    Create New Account
-                  </Button>
-                </Link>
-                <Link href="/login">
-                  <Button variant="outline" className="w-full border-gray-600 text-gray-300 hover:bg-gray-700">
-                    Go to Login
-                  </Button>
-                </Link>
-              </div>
-            </>
-          )}
+  if (status === 'success') {
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        background: 'linear-gradient(to bottom, #0F172A, #1A202C, #0F172A)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem'
+      }}>
+        <div style={{
+          background: 'rgba(31, 41, 55, 0.8)',
+          padding: '2rem',
+          borderRadius: '1rem',
+          textAlign: 'center',
+          color: 'white',
+          maxWidth: '400px',
+          width: '100%'
+        }}>
+          <div style={{ marginBottom: '1rem', fontSize: '3rem' }}>✅</div>
+          <h1 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Email Verified!</h1>
+          <p style={{ marginBottom: '1rem' }}>{message}</p>
+          <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>Redirecting to login...</p>
+          <button
+            onClick={() => router.push('/auth/login?verified=true')}
+            style={{
+              background: 'linear-gradient(to right, #4f46e5, #7c3aed)',
+              color: 'white',
+              border: 'none',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '0.5rem',
+              marginTop: '1rem',
+              cursor: 'pointer',
+              width: '100%'
+            }}
+          >
+            Go to Login
+          </button>
         </div>
-      </Card>
+      </div>
+    );
+  }
+
+  // Error state
+  return (
+    <div style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(to bottom, #0F172A, #1A202C, #0F172A)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1rem'
+    }}>
+      <div style={{
+        background: 'rgba(31, 41, 55, 0.8)',
+        padding: '2rem',
+        borderRadius: '1rem',
+        textAlign: 'center',
+        color: 'white',
+        maxWidth: '400px',
+        width: '100%'
+      }}>
+        <div style={{ marginBottom: '1rem', fontSize: '3rem' }}>❌</div>
+        <h1 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Verification Failed</h1>
+        <p style={{ marginBottom: '1.5rem' }}>{message}</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <button
+            onClick={() => router.push('/auth/register')}
+            style={{
+              background: 'linear-gradient(to right, #4f46e5, #7c3aed)',
+              color: 'white',
+              border: 'none',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '0.5rem',
+              cursor: 'pointer'
+            }}
+          >
+            Create New Account
+          </button>
+          <button
+            onClick={() => router.push('/auth/login')}
+            style={{
+              background: 'transparent',
+              color: '#d1d5db',
+              border: '1px solid #4b5563',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '0.5rem',
+              cursor: 'pointer'
+            }}
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
