@@ -25,10 +25,12 @@ export default function LoginPage() {
   useEffect(() => {
     checkBackendHealth();
     
-    // Check for verification pending message
+    // Check for verification messages
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('verified') === 'pending') {
       setSuccessMessage('Registration successful! Please check your email to verify your account, then log in here.');
+    } else if (urlParams.get('verified') === 'true') {
+      setSuccessMessage('Email verified successfully! You can now log in with your credentials.');
     }
   }, []);
 
