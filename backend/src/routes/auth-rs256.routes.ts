@@ -81,7 +81,7 @@ router.post('/password-reset/confirm',
 // Email Verification
 router.get('/verify-email/:token',
   authRateLimit,
-  validate('verifyEmail'),
+  // validate('verifyEmail'), // Temporarily disabled for debugging
   trackActivity,
   authController.verifyEmail
 );

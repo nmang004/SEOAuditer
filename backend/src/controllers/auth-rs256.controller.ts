@@ -646,6 +646,12 @@ class AuthController {
       const { token } = req.params;
       const deviceInfo = this.extractDeviceInfo(req);
 
+      logger.info('Email verification attempt', { 
+        token, 
+        tokenLength: token?.length,
+        deviceInfo: deviceInfo.ipAddress 
+      });
+
       const user = await prisma.user.findFirst({
         where: {
           verificationToken: token,
@@ -662,6 +668,7 @@ class AuthController {
       });
 
       if (!user) {
+        logger.warn('No user found for verification token', { token });
         throw new BadRequestError('Invalid or expired verification token');
       }
 

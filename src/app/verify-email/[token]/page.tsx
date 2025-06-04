@@ -10,6 +10,11 @@ export default function VerifyEmailPage() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    if (!params) {
+      console.log('No params available');
+      return;
+    }
+    
     const token = params.token;
     console.log('Token from params:', token);
     
@@ -19,7 +24,10 @@ export default function VerifyEmailPage() {
       return;
     }
 
-    verifyEmail(token as string);
+    // Add a small delay to avoid hydration issues
+    setTimeout(() => {
+      verifyEmail(token as string);
+    }, 100);
   }, [params]);
 
   const verifyEmail = async (token: string) => {
