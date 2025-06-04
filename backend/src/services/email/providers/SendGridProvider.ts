@@ -36,11 +36,13 @@ export class SendGridProvider implements EmailProvider {
     logger.info('SendGrid send method called', { 
       to: email.to, 
       subject: email.subject,
-      configured: this.isConfigured 
+      configured: this.isConfigured,
+      apiKeyLength: process.env.SENDGRID_API_KEY?.length || 0,
+      apiKeyPrefix: process.env.SENDGRID_API_KEY?.substring(0, 10) || 'not-set'
     });
 
     if (!this.isConfigured) {
-      logger.error('SendGrid provider not configured');
+      logger.error('SendGrid provider not configured - check initialization');
       return false;
     }
 
@@ -48,7 +50,12 @@ export class SendGridProvider implements EmailProvider {
       const fromEmail = process.env.EMAIL_FROM_ADDRESS || 'noreply@yourdomain.com';
       const fromName = process.env.EMAIL_FROM_NAME || 'SEO Director';
       
-      logger.info('SendGrid send details', { fromEmail, fromName, to: email.to });
+      logger.info('SendGrid send details', { 
+        fromEmail, 
+        fromName, 
+        to: email.to,
+        environment: process.env.NODE_ENV
+      });
 
       const msg: any = {
         to: email.to,
@@ -96,7 +103,9 @@ export class SendGridProvider implements EmailProvider {
       
       logger.info('SendGrid API call completed', { 
         statusCode: response[0]?.statusCode,
-        messageId: response[0]?.headers?.['x-message-id']
+        messageId: response[0]?.headers?.['x-message-id'],
+        responseHeaders: response[0]?.headers,
+        responseBody: response[0]?.body
       });
       
       if (response && response[0] && response[0].statusCode >= 200 && response[0].statusCode < 300) {
@@ -106,23 +115,37 @@ export class SendGridProvider implements EmailProvider {
         });
         return true;
       } else {
-        logger.error('SendGrid returned non-success status:', response);
+        logger.error('SendGrid returned non-success status:', {
+          statusCode: response[0]?.statusCode,
+          headers: response[0]?.headers,
+          body: response[0]?.body,
+          fullResponse: JSON.stringify(response)
+        });
         return false;
       }
     } catch (error: any) {
       logger.error('SendGrid send error:', {
         error: error.message,
         code: error.code,
-        response: error.response?.body
+        response: error.response?.body,
+        stack: error.stack,
+        fullError: JSON.stringify(error, null, 2)
       });
 
       // Handle specific SendGrid errors
       if (error.code === 401) {
-        logger.error('SendGrid authentication failed - check API key');
+        logger.error('SendGrid authentication failed - check API key', {
+          apiKeyLength: process.env.SENDGRID_API_KEY?.length,
+          apiKeyPrefix: process.env.SENDGRID_API_KEY?.substring(0, 10)
+        });
       } else if (error.code === 403) {
-        logger.error('SendGrid forbidden - check sender verification');
+        logger.error('SendGrid forbidden - check sender verification for:', {
+          fromEmail: process.env.EMAIL_FROM_ADDRESS
+        });
       } else if (error.code === 413) {
         logger.error('SendGrid payload too large');
+      } else if (error.response?.body?.errors) {
+        logger.error('SendGrid API errors:', error.response.body.errors);
       }
 
       return false;
