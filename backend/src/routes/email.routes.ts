@@ -51,15 +51,9 @@ router.get('/health', async (req, res) => {
 });
 
 /**
- * Send test email (development only)
+ * Send test email (available in production for debugging)
  */
 router.post('/test', async (req, res) => {
-  if (process.env.NODE_ENV === 'production') {
-    return res.status(403).json({
-      success: false,
-      error: 'Test email endpoint not available in production'
-    });
-  }
 
   try {
     const { to, type = 'welcome' } = req.body;

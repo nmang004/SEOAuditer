@@ -33,6 +33,12 @@ export class SendGridProvider implements EmailProvider {
   }
 
   async send(email: EmailData): Promise<boolean> {
+    logger.info('SendGrid send method called', { 
+      to: email.to, 
+      subject: email.subject,
+      configured: this.isConfigured 
+    });
+
     if (!this.isConfigured) {
       logger.error('SendGrid provider not configured');
       return false;
@@ -41,6 +47,8 @@ export class SendGridProvider implements EmailProvider {
     try {
       const fromEmail = process.env.EMAIL_FROM_ADDRESS || 'noreply@yourdomain.com';
       const fromName = process.env.EMAIL_FROM_NAME || 'SEO Director';
+      
+      logger.info('SendGrid send details', { fromEmail, fromName, to: email.to });
 
       const msg: any = {
         to: email.to,
@@ -77,13 +85,19 @@ export class SendGridProvider implements EmailProvider {
         }));
       }
 
-      logger.debug('Sending email via SendGrid:', {
+      logger.info('About to call SendGrid API', {
         to: email.to,
         subject: email.subject,
-        from: `${fromName} <${fromEmail}>`
+        from: `${fromName} <${fromEmail}>`,
+        msgStructure: Object.keys(msg)
       });
 
       const response = await sgMail.send(msg);
+      
+      logger.info('SendGrid API call completed', { 
+        statusCode: response[0]?.statusCode,
+        messageId: response[0]?.headers?.['x-message-id']
+      });
       
       if (response && response[0] && response[0].statusCode >= 200 && response[0].statusCode < 300) {
         logger.info(`Email sent successfully via SendGrid to ${email.to}`, {

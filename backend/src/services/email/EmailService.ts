@@ -101,25 +101,34 @@ export class EmailService {
    * Send email using the configured provider
    */
   async sendEmail(emailData: EmailData): Promise<boolean> {
+    logger.info('sendEmail called', { 
+      to: emailData.to, 
+      subject: emailData.subject,
+      initialized: this.isInitialized,
+      providerName: this.provider.getProviderName()
+    });
+
     if (!this.isInitialized) {
-      logger.warn('Email service not initialized, skipping email send');
+      logger.error('Email service not initialized, skipping email send');
       this.stats.failed++;
       return false;
     }
 
     try {
-      logger.info(`Sending email to ${emailData.to} with subject: ${emailData.subject}`);
+      logger.info(`Attempting to send email via ${this.provider.getProviderName()} to ${emailData.to}`);
       
       const result = await this.provider.send(emailData);
+      
+      logger.info('Provider send result', { result, to: emailData.to });
       
       if (result) {
         this.stats.sent++;
         this.stats.lastSent = new Date();
-        logger.info(`Email sent successfully to ${emailData.to}`);
+        logger.info(`Email sent successfully to ${emailData.to} via ${this.provider.getProviderName()}`);
       } else {
         this.stats.failed++;
         this.stats.lastError = 'Email send returned false';
-        logger.error(`Failed to send email to ${emailData.to}`);
+        logger.error(`Failed to send email to ${emailData.to} - provider returned false`);
       }
       
       return result;
@@ -136,22 +145,36 @@ export class EmailService {
    */
   async sendWelcomeEmail(to: string, name: string, verificationToken: string): Promise<boolean> {
     try {
+      logger.info('sendWelcomeEmail called', { to, name, verificationToken: verificationToken.substring(0, 8) + '...' });
+      
       const { WelcomeTemplate } = require('./templates/WelcomeTemplate');
       const template = new WelcomeTemplate();
       
+      const verificationUrl = `${config.appUrl}/verify-email/${verificationToken}`;
+      logger.info('Generated verification URL', { verificationUrl });
+      
       const emailContent = template.render({
         name,
-        verificationUrl: `${config.appUrl}/verify-email/${verificationToken}`,
+        verificationUrl,
         appName: config.appName,
         appUrl: config.appUrl
       });
 
-      return this.sendEmail({
+      logger.info('Email template rendered successfully', { 
+        subject: emailContent.subject,
+        htmlLength: emailContent.html.length,
+        textLength: emailContent.text.length
+      });
+
+      const result = await this.sendEmail({
         to,
         subject: emailContent.subject,
         html: emailContent.html,
         text: emailContent.text
       });
+
+      logger.info('sendWelcomeEmail result', { result, to });
+      return result;
     } catch (error) {
       logger.error('Error sending welcome email:', error);
       return false;
