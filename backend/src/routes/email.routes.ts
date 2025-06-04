@@ -13,6 +13,19 @@ router.get('/health', async (req, res) => {
     const stats = emailService.getStats();
     const providerInfo = emailService.getProviderInfo();
 
+    // Add environment variable check (without exposing secrets)
+    const envCheck = {
+      EMAIL_PROVIDER: process.env.EMAIL_PROVIDER || 'not_set',
+      SENDGRID_API_KEY_SET: !!process.env.SENDGRID_API_KEY,
+      SENDGRID_API_KEY_STARTS_WITH_SG: process.env.SENDGRID_API_KEY?.startsWith('SG.') || false,
+      EMAIL_FROM_ADDRESS_SET: !!process.env.EMAIL_FROM_ADDRESS,
+      EMAIL_FROM_ADDRESS: process.env.EMAIL_FROM_ADDRESS || 'not_set',
+      EMAIL_FROM_NAME_SET: !!process.env.EMAIL_FROM_NAME,
+      APP_NAME_SET: !!process.env.APP_NAME,
+      APP_URL_SET: !!process.env.APP_URL,
+      NODE_ENV: process.env.NODE_ENV
+    };
+
     res.status(health.status === 'healthy' ? 200 : 503).json({
       success: health.status === 'healthy',
       timestamp: new Date().toISOString(),
@@ -20,7 +33,8 @@ router.get('/health', async (req, res) => {
         status: health.status,
         provider: providerInfo,
         stats,
-        details: health.details
+        details: health.details,
+        environment: envCheck
       }
     });
   } catch (error) {
