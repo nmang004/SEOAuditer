@@ -135,27 +135,27 @@ export default function TrendAnalysisPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
             SEO Trend Analysis
           </h1>
-          <p className="text-gray-300 mt-2 text-lg">
-            Project ID: <span className="font-mono text-indigo-400">{projectId}</span>
+          <p className="text-gray-300 mt-2 text-sm sm:text-base lg:text-lg">
+            Project ID: <span className="font-mono text-indigo-400 break-all">{projectId}</span>
           </p>
         </div>
         <button 
           onClick={() => window.history.back()}
-          className="border border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white px-4 py-2 rounded-lg font-medium transition-all"
+          className="border border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white px-4 py-2 rounded-lg font-medium transition-all w-fit"
         >
           ← Back
         </button>
       </div>
       {/* Filters and Export */}
-      <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6 mb-8">
-        <div className="flex flex-wrap gap-6 items-center">
+      <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 items-end">
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-gray-300">Start Date</label>
             <DatePicker
@@ -167,7 +167,7 @@ export default function TrendAnalysisPage() {
               maxDate={endDate || undefined}
               isClearable
               placeholderText="Select start date"
-              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full"
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -181,7 +181,7 @@ export default function TrendAnalysisPage() {
               minDate={startDate || undefined}
               isClearable
               placeholderText="Select end date"
-              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full"
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -189,7 +189,7 @@ export default function TrendAnalysisPage() {
             <select 
               value={selectedSeverity} 
               onChange={e => setSelectedSeverity(e.target.value)} 
-              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full"
             >
               <option value="">All Severities</option>
               {allSeverities.map(sev => <option key={sev} value={sev}>{sev}</option>)}
@@ -200,36 +200,36 @@ export default function TrendAnalysisPage() {
             <select 
               value={selectedType} 
               onChange={e => setSelectedType(e.target.value)} 
-              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full"
             >
               <option value="">All Types</option>
               {allTypes.map(type => <option key={type} value={type}>{type}</option>)}
             </select>
           </div>
-          <div className="flex flex-col gap-2 ml-auto">
-            <label className="text-sm font-medium text-gray-300 opacity-0">Export</label>
+          <div className="flex flex-col gap-2 sm:col-span-2 lg:col-span-1">
+            <label className="text-sm font-medium text-gray-300 sm:opacity-0">Export</label>
             <button
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 sm:px-6 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 w-full"
               onClick={() => exportToCSV(filteredData, `seo-trends-${projectId}.csv`)}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Export CSV
+              <span className="sm:inline">Export CSV</span>
             </button>
           </div>
         </div>
       </div>
       {/* Charts Grid */}
-      <div className="grid gap-8 lg:grid-cols-1">
+      <div className="grid gap-6 md:gap-8">
         {/* Overall SEO Score */}
-        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-4 sm:p-6">
           <div className="mb-4">
-            <h2 className="text-xl font-bold text-white mb-1">Overall SEO Score Over Time</h2>
-            <p className="text-gray-400 text-sm">Track your website's overall SEO performance</p>
+            <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Overall SEO Score Over Time</h2>
+            <p className="text-gray-400 text-xs sm:text-sm">Track your website's overall SEO performance</p>
           </div>
-          <div className="bg-gray-900/50 rounded-xl p-4">
-            <ResponsiveContainer width="100%" height={320}>
+          <div className="bg-gray-900/50 rounded-xl p-2 sm:p-4 overflow-hidden">
+            <ResponsiveContainer width="100%" height={280} className="sm:!h-[320px]">
               <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                 <XAxis 
@@ -269,13 +269,13 @@ export default function TrendAnalysisPage() {
         </div>
 
         {/* Category Scores */}
-        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-4 sm:p-6">
           <div className="mb-4">
-            <h2 className="text-xl font-bold text-white mb-1">Category Scores Over Time</h2>
-            <p className="text-gray-400 text-sm">Monitor performance across different SEO categories</p>
+            <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Category Scores Over Time</h2>
+            <p className="text-gray-400 text-xs sm:text-sm">Monitor performance across different SEO categories</p>
           </div>
-          <div className="bg-gray-900/50 rounded-xl p-4">
-            <ResponsiveContainer width="100%" height={320}>
+          <div className="bg-gray-900/50 rounded-xl p-2 sm:p-4 overflow-hidden">
+            <ResponsiveContainer width="100%" height={280} className="sm:!h-[320px]">
               <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                 <XAxis 
@@ -311,13 +311,13 @@ export default function TrendAnalysisPage() {
         </div>
 
         {/* Issue Count */}
-        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-4 sm:p-6">
           <div className="mb-4">
-            <h2 className="text-xl font-bold text-white mb-1">Issue Count Over Time</h2>
-            <p className="text-gray-400 text-sm">Track the total number of SEO issues identified</p>
+            <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Issue Count Over Time</h2>
+            <p className="text-gray-400 text-xs sm:text-sm">Track the total number of SEO issues identified</p>
           </div>
-          <div className="bg-gray-900/50 rounded-xl p-4">
-            <ResponsiveContainer width="100%" height={320}>
+          <div className="bg-gray-900/50 rounded-xl p-2 sm:p-4 overflow-hidden">
+            <ResponsiveContainer width="100%" height={280} className="sm:!h-[320px]">
               <AreaChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                 <defs>
                   <linearGradient id="colorIssues" x1="0" y1="0" x2="0" y2="1">
@@ -362,13 +362,13 @@ export default function TrendAnalysisPage() {
         </div>
 
         {/* Issue Breakdown by Type */}
-        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-4 sm:p-6">
           <div className="mb-4">
-            <h2 className="text-xl font-bold text-white mb-1">Issue Breakdown by Type</h2>
-            <p className="text-gray-400 text-sm">Analyze issues categorized by their type</p>
+            <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Issue Breakdown by Type</h2>
+            <p className="text-gray-400 text-xs sm:text-sm">Analyze issues categorized by their type</p>
           </div>
-          <div className="bg-gray-900/50 rounded-xl p-4">
-            <ResponsiveContainer width="100%" height={320}>
+          <div className="bg-gray-900/50 rounded-xl p-2 sm:p-4 overflow-hidden">
+            <ResponsiveContainer width="100%" height={280} className="sm:!h-[320px]">
               <BarChart data={filteredData.map(d => ({ date: d.date, ...d.issueTypeCounts }))} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                 <XAxis 
@@ -410,13 +410,13 @@ export default function TrendAnalysisPage() {
         </div>
 
         {/* Issue Breakdown by Severity */}
-        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-4 sm:p-6">
           <div className="mb-4">
-            <h2 className="text-xl font-bold text-white mb-1">Issue Breakdown by Severity</h2>
-            <p className="text-gray-400 text-sm">Prioritize fixes based on issue severity levels</p>
+            <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Issue Breakdown by Severity</h2>
+            <p className="text-gray-400 text-xs sm:text-sm">Prioritize fixes based on issue severity levels</p>
           </div>
-          <div className="bg-gray-900/50 rounded-xl p-4">
-            <ResponsiveContainer width="100%" height={320}>
+          <div className="bg-gray-900/50 rounded-xl p-2 sm:p-4 overflow-hidden">
+            <ResponsiveContainer width="100%" height={280} className="sm:!h-[320px]">
               <BarChart data={filteredData.map(d => ({ date: d.date, ...d.issueSeverityCounts }))} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                 <XAxis 
