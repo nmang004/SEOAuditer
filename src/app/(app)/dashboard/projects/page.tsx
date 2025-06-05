@@ -38,15 +38,6 @@ export default function ProjectsListPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
-  // Debug logging
-  console.log('ProjectsListPage render:', { 
-    projects: projects.length, 
-    isCreating, 
-    filteredProjects: projects.filter(project =>
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.url.toLowerCase().includes(searchTerm.toLowerCase())
-    ).length 
-  });
 
   useEffect(() => {
     fetchProjects();
@@ -54,7 +45,6 @@ export default function ProjectsListPage() {
 
   const fetchProjects = async () => {
     try {
-      console.log('Fetching projects...');
       const token = localStorage.getItem("token");
       const response = await fetch("/api/projects", {
         headers: {
@@ -62,14 +52,11 @@ export default function ProjectsListPage() {
         },
       });
       
-      console.log('Projects API response:', response.status, response.statusText);
       const result = await response.json();
-      console.log('Projects API result:', result);
       
       if (result.success && Array.isArray(result.data)) {
         setProjects(result.data);
       } else {
-        console.log('Invalid response format, setting empty array');
         setProjects([]);
       }
     } catch (err: unknown) {
@@ -130,12 +117,7 @@ export default function ProjectsListPage() {
   // Error boundary fallback
   try {
     return (
-      <div className="space-y-8 min-h-screen p-4">
-        {/* Debug info */}
-        <div className="bg-red-500 text-white p-4 rounded mb-4">
-          <p>Debug: projects={projects.length}, isCreating={isCreating ? 'true' : 'false'}, filteredProjects={filteredProjects.length}</p>
-        </div>
-        
+      <div className="space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -174,91 +156,108 @@ export default function ProjectsListPage() {
 
       {/* Create Project Form */}
       {isCreating && (
-        <div className="block opacity-100 visible bg-purple-500 p-4 rounded">
-          <div className="bg-white text-black p-4 mb-4 rounded">
-            <p>DEBUG: Form is rendering, isCreating = {isCreating.toString()}</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg text-black">
-            <h3 className="text-xl font-bold mb-4 text-black">Create New Project</h3>
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <h3 className="text-xl font-bold mb-6 text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            Create New Project
+          </h3>
+          
+          <form onSubmit={handleCreateProject} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-medium text-gray-300">
+                  Project Name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  placeholder="Enter project name"
+                  className="w-full p-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white placeholder:text-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="url" className="text-sm font-medium text-gray-300">
+                  Website URL
+                </label>
+                <input
+                  id="url"
+                  type="url"
+                  value={projectUrl}
+                  onChange={(e) => setProjectUrl(e.target.value)}
+                  placeholder="https://example.com"
+                  className="w-full p-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white placeholder:text-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors"
+                  required
+                />
+              </div>
+            </div>
             
-            <form onSubmit={handleCreateProject} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium text-black">
-                    Project Name
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                    placeholder="Enter project name"
-                    className="w-full p-2 border border-gray-300 rounded text-black bg-white"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="url" className="text-sm font-medium text-black">
-                    Website URL
-                  </label>
-                  <input
-                    id="url"
-                    type="url"
-                    value={projectUrl}
-                    onChange={(e) => setProjectUrl(e.target.value)}
-                    placeholder="https://example.com"
-                    className="w-full p-2 border border-gray-300 rounded text-black bg-white"
-                    required
-                  />
-                </div>
+            {error && (
+              <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+                {error}
               </div>
-              
-              {error && (
-                <div className="text-sm text-red-600 bg-red-100 border border-red-300 rounded-md p-3">
-                  {error}
-                </div>
-              )}
-              
-              <div className="flex gap-2">
-                <button 
-                  type="submit" 
-                  disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                >
-                  {loading ? "Creating..." : "Create Project"}
-                </button>
-                <button 
-                  type="button" 
-                  className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded"
-                  onClick={() => {
-                    setIsCreating(false);
-                    setProjectName("");
-                    setProjectUrl("");
-                    setError("");
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
+            )}
+            
+            <div className="flex gap-3 pt-2">
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Creating..." : "Create Project"}
+              </button>
+              <button 
+                type="button" 
+                className="border border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:text-white px-6 py-3 rounded-lg font-medium transition-all"
+                onClick={() => {
+                  setIsCreating(false);
+                  setProjectName("");
+                  setProjectUrl("");
+                  setError("");
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
       )}
 
       {/* Projects Grid */}
-      <div className="grid gap-6 bg-blue-500 p-4 text-white">
-        <p>DEBUG: Showing projects grid section. filteredProjects.length = {filteredProjects.length}, isCreating = {isCreating.toString()}</p>
-        
+      <div className="grid gap-6">
         {filteredProjects.length === 0 && !isCreating ? (
-          <div className="bg-green-500 p-8 text-white text-center">
-            <h3 className="text-2xl font-bold mb-4">No Projects Yet</h3>
-            <p className="mb-4">Get started by creating your first project</p>
-            <button 
-              onClick={() => setIsCreating(true)}
-              className="bg-red-500 text-white px-4 py-2 rounded"
-            >
-              Create Your First Project
-            </button>
+          <div className="flex items-center justify-center min-h-[500px] py-16">
+            <div className="relative w-full max-w-2xl">
+              {/* Animated background gradient */}
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-3xl blur-xl -z-10 animate-pulse"></div>
+              
+              <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-12 text-center">
+                {/* Icon */}
+                <div className="mb-6 flex justify-center">
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm border border-indigo-500/30">
+                    <Globe className="h-8 w-8 text-indigo-400" />
+                  </div>
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-2xl font-bold text-white mb-3 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                  No Projects Yet
+                </h3>
+                <p className="text-gray-300 mb-8 text-lg leading-relaxed">
+                  Get started by creating your first project to analyze your website's SEO performance and track improvements over time.
+                </p>
+                
+                {/* Primary Action */}
+                <button 
+                  onClick={() => setIsCreating(true)} 
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-8 rounded-lg font-medium transition-all"
+                >
+                  <Plus className="h-4 w-4 mr-2 inline" />
+                  Create Your First Project
+                </button>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -346,12 +345,6 @@ export default function ProjectsListPage() {
             ))}
           </div>
         )}
-        
-        {/* Fallback - always show something */}
-        <div className="bg-yellow-500 p-4 text-black">
-          <p>FALLBACK: This should always be visible</p>
-          <p>Current state: projects={projects.length}, isCreating={isCreating.toString()}</p>
-        </div>
       </div>
 
       {/* Stats Summary */}
