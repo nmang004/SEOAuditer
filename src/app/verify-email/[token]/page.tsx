@@ -249,11 +249,16 @@ function MinimalDiagnostic() {
             
             // Show in a new window since alert has size limits
             const logWindow = window.open('', '_blank');
-            logWindow.document.write(`
-              <pre style="font-family: monospace; white-space: pre-wrap; padding: 20px;">
-                ${logText}
-              </pre>
-            `);
+            if (logWindow && logWindow.document) {
+              logWindow.document.write(`
+                <pre style="font-family: monospace; white-space: pre-wrap; padding: 20px;">
+                  ${logText}
+                </pre>
+              `);
+            } else {
+              // Fallback to alert if window.open fails
+              alert('Logs:\n\n' + logText);
+            }
           } catch (e) {
             alert('Error reading logs: ' + e.toString());
           }
