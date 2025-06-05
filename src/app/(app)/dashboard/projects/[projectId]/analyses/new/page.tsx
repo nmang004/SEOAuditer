@@ -77,7 +77,17 @@ export default function NewAnalysisPage() {
       }
 
       const data = await res.json();
+      console.log('[New Analysis] API response:', data);
+      
       if (data.jobId) {
+        // For admin bypass, store the analysis request in localStorage
+        if (data.source === 'admin-bypass' && data.analysisRequest) {
+          console.log('[New Analysis] Storing analysis request for admin bypass');
+          const existingJobs = JSON.parse(localStorage.getItem('adminAnalysisJobs') || '[]');
+          existingJobs.push(data.analysisRequest);
+          localStorage.setItem('adminAnalysisJobs', JSON.stringify(existingJobs));
+        }
+        
         // Navigate to the results page
         router.push(`/dashboard/projects/${projectId}/analyses/${data.jobId}`);
       } else {

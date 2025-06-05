@@ -71,7 +71,26 @@ export default function AnalysisResultsPage() {
     const token = localStorage.getItem("token");
     console.log('[Analysis Results] Fetching results for job:', jobId);
     
-    fetch(`/api/crawl/results/${jobId}`, {
+    // For admin jobs, try to get the URL from stored analysis jobs
+    let analysisUrl = '';
+    const isAdminBypass = token?.includes('admin-access-token');
+    const isAdminJob = jobId.startsWith('admin-job-');
+    
+    if (isAdminBypass && isAdminJob) {
+      const storedJobs = JSON.parse(localStorage.getItem('adminAnalysisJobs') || '[]');
+      const job = storedJobs.find((j: any) => j.jobId === jobId);
+      if (job) {
+        analysisUrl = job.url;
+        console.log('[Analysis Results] Found stored URL for admin job:', analysisUrl);
+      }
+    }
+    
+    // Build API URL with query parameter for the URL to analyze
+    const apiUrl = analysisUrl 
+      ? `/api/crawl/results/${jobId}?url=${encodeURIComponent(analysisUrl)}`
+      : `/api/crawl/results/${jobId}`;
+    
+    fetch(apiUrl, {
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),

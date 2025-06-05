@@ -17,16 +17,31 @@ export async function POST(request: NextRequest) {
     console.log('[Crawl Start API] Is admin bypass:', isAdminBypass);
     
     if (isAdminBypass) {
-      // For admin bypass, return a mock successful crawl job
-      const mockJobId = 'admin-job-' + Math.random().toString(36).substr(2, 9);
-      console.log('[Crawl Start API] Creating mock job for admin bypass:', mockJobId);
+      // For admin bypass, create a real job ID and store the analysis request
+      const realJobId = 'admin-job-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+      console.log('[Crawl Start API] Creating real analysis job for admin bypass:', realJobId);
+      
+      // Store the analysis request in localStorage (client will handle this)
+      const analysisRequest = {
+        jobId: realJobId,
+        url: body.url,
+        projectId: body.projectId,
+        userId: body.userId,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        source: 'admin-bypass'
+      };
+      
+      console.log('[Crawl Start API] Analysis request created:', analysisRequest);
       
       return NextResponse.json({
         success: true,
-        jobId: mockJobId,
+        jobId: realJobId,
+        url: body.url,
         message: 'Analysis started successfully',
         estimatedTime: '30-60 seconds',
-        source: 'admin-bypass'
+        source: 'admin-bypass',
+        analysisRequest: analysisRequest
       });
     }
 
