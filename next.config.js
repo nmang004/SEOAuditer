@@ -19,9 +19,6 @@ const nextConfig = {
       transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
       skipDefaultConversion: true,
     },
-    '@tanstack/react-query': {
-      transform: '@tanstack/react-query/{{member}}',
-    },
   },
   
   sassOptions: {
@@ -144,8 +141,6 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
-    optimizePackageImports: ['lucide-react', '@tanstack/react-query'],
-    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB'],
   },
   
   // Turbopack configuration
