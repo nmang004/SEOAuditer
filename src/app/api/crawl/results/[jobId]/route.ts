@@ -12,8 +12,7 @@ async function performBasicSEOAnalysis(url: string, jobId: string) {
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; SEOAuditer/1.0; +https://seoauditer.netlify.app)'
-      },
-      timeout: 10000
+      }
     });
     
     if (!response.ok) {
