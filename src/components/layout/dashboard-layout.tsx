@@ -105,7 +105,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   }, [sidebarOpen]);
 
   return (
-    <div className={cn("flex h-screen bg-background overflow-hidden", className)}>
+    <div className={cn("flex h-screen bg-gradient-to-b from-[#0F172A] via-[#1A202C] to-[#0F172A] overflow-hidden relative", className)}>
+      {/* Decorative background blobs */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl -z-10"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-purple-500/10 to-pink-500/10 rounded-full blur-3xl -z-10"></div>
+      
       {/* Sidebar */}
       <div className={cn(
         "fixed inset-y-0 left-0 z-30 w-64 transform",
@@ -113,10 +117,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         "md:relative md:translate-x-0",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="h-full overflow-y-auto bg-card border-r">
+        <div className="h-full overflow-y-auto bg-gray-800/50 backdrop-blur-sm border-r border-gray-700">
           <div className="flex h-full flex-col">
             <div className="p-4">
-              <h2 className="text-xl font-bold">SEO Director</h2>
+              <h2 className="text-xl font-bold text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">SEO Director</h2>
             </div>
             
             {/* Main Navigation */}
@@ -130,11 +134,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'flex items-center px-4 py-3 rounded-md text-sm font-medium',
-                      'transition-colors duration-200',
+                      'flex items-center px-4 py-3 rounded-xl text-sm font-medium',
+                      'transition-all duration-200',
                       isActive 
-                        ? 'bg-accent text-accent-foreground' 
-                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white' 
+                        : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
                     )}
                   >
                     <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
@@ -145,20 +149,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </nav>
 
             {/* Bottom Section - Profile and Logout */}
-            <div className="border-t p-2 space-y-1">
+            <div className="border-t border-gray-700 p-2 space-y-1">
               <button
                 onClick={() => router.push('/profile')}
                 className={cn(
-                  'w-full flex items-center px-4 py-3 rounded-md text-sm font-medium',
-                  'transition-colors duration-200',
-                  'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  'w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium',
+                  'transition-all duration-200',
+                  'text-gray-300 hover:bg-gray-700/50 hover:text-white'
                 )}
               >
                 <User className="mr-3 h-5 w-5 flex-shrink-0" />
                 <div className="flex-1 text-left">
-                  <div className="font-medium">{userName || 'Profile'}</div>
+                  <div className="font-medium">{userName || 'Admin User'}</div>
                   {userEmail && (
-                    <div className="text-xs text-muted-foreground truncate">
+                    <div className="text-xs text-gray-400 truncate">
                       {userEmail}
                     </div>
                   )}
@@ -168,9 +172,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <button
                 onClick={handleLogout}
                 className={cn(
-                  'w-full flex items-center px-4 py-3 rounded-md text-sm font-medium',
-                  'transition-colors duration-200',
-                  'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  'w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium',
+                  'transition-all duration-200',
+                  'text-gray-300 hover:bg-red-600/20 hover:text-red-400'
                 )}
               >
                 <LogOut className="mr-3 h-5 w-5 flex-shrink-0" />
@@ -193,7 +197,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-card border-b">
+        <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 relative z-10">
           <div className="flex items-center justify-between p-4 gap-4">
             {/* Mobile menu toggle button */}
             <Button
@@ -226,11 +230,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* Main content area */}
         <main
-          className="flex-1 overflow-y-auto p-4 md:p-6 focus:outline-none"
+          className="flex-1 overflow-y-auto p-4 md:p-6 focus:outline-none relative z-10"
           tabIndex={-1}
           id="main-content"
         >
-          <div className="space-y-6">
+          <div className="space-y-6 relative">
             {children}
           </div>
         </main>

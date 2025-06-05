@@ -248,12 +248,9 @@ export default function DashboardPage() {
   const cacheStats = queryCache.getCacheStats();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0F172A] via-[#1A202C] to-[#0F172A] relative overflow-hidden">
-      {/* Decorative background blobs */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-purple-500/10 to-pink-500/10 rounded-full blur-3xl -z-10"></div>
-      
-      <div className="container mx-auto px-6 py-8 space-y-8 relative z-10">
+    <div className="relative">
+      {/* Dashboard content */}
+      <div className="space-y-8">
         {/* Header Section */}
         <m.div
           initial={{ opacity: 0, y: -20 }}
