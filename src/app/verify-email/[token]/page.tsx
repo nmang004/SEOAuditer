@@ -2,33 +2,77 @@
 
 import { useEffect, useState } from 'react';
 
+interface DiagnosticInfo {
+  step: string;
+  details: any;
+  timestamp: string;
+}
+
 export default function VerifyEmailPage() {
   const [token, setToken] = useState<string>('');
   const [status, setStatus] = useState<string>('loading');
   const [message, setMessage] = useState<string>('');
+  const [diagnostics, setDiagnostics] = useState<DiagnosticInfo[]>([]);
+
+  const addDiagnostic = (step: string, details: any) => {
+    const newDiagnostic = {
+      step,
+      details,
+      timestamp: new Date().toISOString()
+    };
+    setDiagnostics(prev => [...prev, newDiagnostic]);
+    console.log(`[DIAGNOSTIC] ${step}:`, details);
+  };
 
   useEffect(() => {
+    addDiagnostic('Page Load', {
+      pathname: window.location.pathname,
+      href: window.location.href,
+      userAgent: navigator.userAgent,
+      hasServiceWorker: 'serviceWorker' in navigator
+    });
+
     try {
-      // Extract token from URL with extra safety checks
+      // Extract token from URL with comprehensive logging
       const pathname = window.location.pathname;
-      console.log('Full pathname:', pathname);
+      addDiagnostic('URL Analysis', {
+        fullPathname: pathname,
+        segments: pathname.split('/'),
+        urlLength: pathname.length
+      });
       
       // Extract everything after /verify-email/
       const verifyEmailIndex = pathname.indexOf('/verify-email/');
       if (verifyEmailIndex === -1) {
+        addDiagnostic('Route Error', { error: 'verify-email not found in pathname' });
         setStatus('error');
         setMessage('Invalid verification URL format');
         return;
       }
       
       const tokenPart = pathname.substring(verifyEmailIndex + '/verify-email/'.length);
-      console.log('Extracted token part:', tokenPart);
+      addDiagnostic('Token Extraction', {
+        rawTokenPart: tokenPart,
+        length: tokenPart.length,
+        hasQueryParams: tokenPart.includes('?'),
+        hasHash: tokenPart.includes('#')
+      });
       
       // Clean the token - remove any URL parameters or fragments
       const cleanToken = tokenPart.split('?')[0].split('#')[0];
-      console.log('Clean token:', cleanToken);
+      addDiagnostic('Token Cleaning', {
+        cleanToken,
+        originalLength: tokenPart.length,
+        cleanLength: cleanToken.length,
+        wasModified: tokenPart !== cleanToken
+      });
       
       if (!cleanToken || cleanToken.length < 10) {
+        addDiagnostic('Token Validation Failed', { 
+          token: cleanToken, 
+          length: cleanToken.length,
+          minimumRequired: 10
+        });
         setStatus('error');
         setMessage('Invalid or missing verification token');
         return;
@@ -36,21 +80,38 @@ export default function VerifyEmailPage() {
       
       // Validate token format (should be UUID-like or alphanumeric)
       const tokenRegex = /^[a-zA-Z0-9\-_]+$/;
-      if (!tokenRegex.test(cleanToken)) {
+      const isValidFormat = tokenRegex.test(cleanToken);
+      addDiagnostic('Token Format Validation', {
+        token: cleanToken,
+        regex: tokenRegex.toString(),
+        isValid: isValidFormat,
+        invalidChars: isValidFormat ? null : cleanToken.match(/[^a-zA-Z0-9\-_]/g)
+      });
+      
+      if (!isValidFormat) {
         setStatus('error');
         setMessage('Invalid token format');
         return;
       }
       
       setToken(cleanToken);
+      addDiagnostic('Token Set Successfully', { finalToken: cleanToken });
       
-      // Add a small delay to ensure UI is ready
+      // Add a delay to ensure UI is ready and log network environment
       setTimeout(() => {
+        addDiagnostic('Pre-Verification Check', {
+          online: navigator.onLine,
+          connectionType: (navigator as any).connection?.effectiveType || 'unknown',
+          serviceWorkerState: navigator.serviceWorker?.controller?.state || 'none'
+        });
         verifyEmail(cleanToken);
-      }, 200);
+      }, 500);
       
     } catch (error) {
-      console.error('Error extracting token:', error);
+      addDiagnostic('Critical Error in Token Extraction', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : null
+      });
       setStatus('error');
       setMessage('Failed to parse verification URL');
     }
@@ -58,71 +119,178 @@ export default function VerifyEmailPage() {
 
   const verifyEmail = async (tokenToVerify: string) => {
     try {
-      console.log('Starting verification for token:', tokenToVerify);
+      addDiagnostic('Verification Start', { token: tokenToVerify });
       
       // Ensure we're not accidentally treating the token as code
       const safeToken = String(tokenToVerify).trim();
-      
       const requestUrl = `https://seoauditer-production.up.railway.app/api/auth/verify-email/${encodeURIComponent(safeToken)}`;
-      console.log('Request URL:', requestUrl);
       
+      addDiagnostic('Request Preparation', {
+        originalToken: tokenToVerify,
+        safeToken,
+        encodedToken: encodeURIComponent(safeToken),
+        requestUrl,
+        method: 'GET'
+      });
+      
+      // Check if service worker is active
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        addDiagnostic('Service Worker Active', {
+          state: navigator.serviceWorker.controller.state,
+          scriptURL: navigator.serviceWorker.controller.scriptURL
+        });
+      } else {
+        addDiagnostic('Service Worker Status', { active: false });
+      }
+      
+      addDiagnostic('Making Request', { 
+        timestamp: new Date().toISOString(),
+        url: requestUrl
+      });
+
       const response = await fetch(requestUrl, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache'
         },
       });
 
-      console.log('Response status:', response.status);
-      console.log('Response headers:', Object.fromEntries(response.headers));
+      addDiagnostic('Response Received', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        type: response.type,
+        url: response.url,
+        redirected: response.redirected
+      });
+
+      // Get headers safely
+      const headers: Record<string, string> = {};
+      try {
+        response.headers.forEach((value, key) => {
+          headers[key] = value;
+        });
+        addDiagnostic('Response Headers', headers);
+      } catch (headerError) {
+        addDiagnostic('Header Reading Error', { 
+          error: headerError instanceof Error ? headerError.message : 'Unknown' 
+        });
+      }
       
       const responseText = await response.text();
-      console.log('Raw response text:', responseText);
+      addDiagnostic('Response Text', {
+        length: responseText.length,
+        firstChars: responseText.substring(0, 100),
+        contentType: headers['content-type'] || 'unknown'
+      });
       
       if (!responseText) {
+        addDiagnostic('Empty Response Error', {});
         setStatus('error');
         setMessage('Empty response from server');
+        return;
+      }
+      
+      // Check if response looks like CSS (this is the critical check!)
+      if (responseText.trim().startsWith('.') || 
+          responseText.includes('{') && responseText.includes('}') && 
+          !responseText.trim().startsWith('{')) {
+        addDiagnostic('CSS DETECTED INSTEAD OF JSON!', {
+          responseType: 'CSS',
+          firstLine: responseText.split('\n')[0],
+          possibleCSSIndicators: {
+            startsWithDot: responseText.trim().startsWith('.'),
+            hasCSSSyntax: responseText.includes('{') && responseText.includes('}'),
+            startsWithJSON: responseText.trim().startsWith('{')
+          }
+        });
+        setStatus('error');
+        setMessage('CRITICAL: Server returned CSS instead of JSON! This indicates a routing problem.');
         return;
       }
       
       let data;
       try {
         data = JSON.parse(responseText);
-        console.log('Parsed response data:', data);
+        addDiagnostic('JSON Parse Success', { data });
       } catch (parseError) {
-        console.error('JSON parse error:', parseError);
+        addDiagnostic('JSON Parse Error', {
+          error: parseError instanceof Error ? parseError.message : 'Unknown parse error',
+          responseLength: responseText.length,
+          responseStart: responseText.substring(0, 200)
+        });
         setStatus('error');
-        setMessage(`Server returned invalid JSON. Status: ${response.status}, Response: ${responseText.substring(0, 100)}`);
+        setMessage(`Server returned invalid JSON. Status: ${response.status}, Response start: ${responseText.substring(0, 100)}`);
         return;
       }
 
       if (response.ok && data.success) {
+        addDiagnostic('Verification Success', data);
         setStatus('success');
         setMessage(data.message || 'Email verified successfully!');
         
         // Redirect after success
         setTimeout(() => {
+          addDiagnostic('Redirecting', { target: '/auth/login?verified=true' });
           window.location.href = '/auth/login?verified=true';
         }, 3000);
       } else {
+        addDiagnostic('Verification Failed', { 
+          responseOk: response.ok,
+          dataSuccess: data.success,
+          data 
+        });
         setStatus('error');
         setMessage(data.error || data.message || `Server error: HTTP ${response.status}`);
       }
     } catch (error) {
-      console.error('Verification network error:', error);
+      addDiagnostic('Network Error', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : null,
+        name: error instanceof Error ? error.name : 'UnknownError'
+      });
       setStatus('error');
       setMessage(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
   const goToLogin = () => {
+    addDiagnostic('Manual Login Redirect', {});
     window.location.href = '/auth/login';
   };
 
   const goToRegister = () => {
+    addDiagnostic('Manual Register Redirect', {});
     window.location.href = '/auth/register';
   };
+
+  // Diagnostic display component
+  const DiagnosticDisplay = () => (
+    <div style={{
+      marginTop: '20px',
+      padding: '20px',
+      backgroundColor: '#0f172a',
+      borderRadius: '8px',
+      maxHeight: '300px',
+      overflowY: 'auto',
+      fontSize: '12px',
+      fontFamily: 'monospace'
+    }}>
+      <h3 style={{ color: '#f59e0b', marginBottom: '10px' }}>Diagnostic Log:</h3>
+      {diagnostics.map((diag, index) => (
+        <div key={index} style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid #374151' }}>
+          <div style={{ color: '#10b981', fontWeight: 'bold' }}>
+            {diag.timestamp.split('T')[1].split('.')[0]} - {diag.step}
+          </div>
+          <pre style={{ margin: '5px 0', color: '#d1d5db', whiteSpace: 'pre-wrap' }}>
+            {JSON.stringify(diag.details, null, 2)}
+          </pre>
+        </div>
+      ))}
+    </div>
+  );
 
   // Simple loading state
   if (status === 'loading') {
@@ -131,6 +299,7 @@ export default function VerifyEmailPage() {
         minHeight: '100vh',
         backgroundColor: '#111827',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
@@ -142,18 +311,19 @@ export default function VerifyEmailPage() {
           borderRadius: '8px',
           textAlign: 'center',
           color: 'white',
-          maxWidth: '400px',
+          maxWidth: '800px',
           width: '100%',
           boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
         }}>
-          <div style={{ fontSize: '48px', marginBottom: '20px' }}>⏳</div>
-          <h1 style={{ fontSize: '20px', marginBottom: '10px', margin: 0 }}>Verifying Email</h1>
-          <p style={{ color: '#d1d5db', margin: '10px 0' }}>Please wait...</p>
+          <div style={{ fontSize: '48px', marginBottom: '20px' }}>🔍</div>
+          <h1 style={{ fontSize: '20px', marginBottom: '10px', margin: 0 }}>Diagnosing Email Verification</h1>
+          <p style={{ color: '#d1d5db', margin: '10px 0' }}>Analyzing request flow...</p>
           {token && (
             <div style={{ marginTop: '20px', fontSize: '12px', color: '#9ca3af', wordBreak: 'break-all' }}>
               Token: {token.substring(0, 30)}{token.length > 30 ? '...' : ''}
             </div>
           )}
+          <DiagnosticDisplay />
         </div>
       </div>
     );
@@ -166,6 +336,7 @@ export default function VerifyEmailPage() {
         minHeight: '100vh',
         backgroundColor: '#111827',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
@@ -177,7 +348,7 @@ export default function VerifyEmailPage() {
           borderRadius: '8px',
           textAlign: 'center',
           color: 'white',
-          maxWidth: '400px',
+          maxWidth: '800px',
           width: '100%',
           boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
         }}>
@@ -203,6 +374,7 @@ export default function VerifyEmailPage() {
           >
             Go to Login Now
           </button>
+          <DiagnosticDisplay />
         </div>
       </div>
     );
@@ -214,6 +386,7 @@ export default function VerifyEmailPage() {
       minHeight: '100vh',
       backgroundColor: '#111827',
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       padding: '20px',
@@ -225,7 +398,7 @@ export default function VerifyEmailPage() {
         borderRadius: '8px',
         textAlign: 'center',
         color: 'white',
-        maxWidth: '400px',
+        maxWidth: '800px',
         width: '100%',
         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
       }}>
@@ -264,6 +437,7 @@ export default function VerifyEmailPage() {
             Go to Login
           </button>
         </div>
+        <DiagnosticDisplay />
       </div>
     </div>
   );

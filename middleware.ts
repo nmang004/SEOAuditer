@@ -32,7 +32,8 @@ const publicRoutes = [
   '/help',
   '/privacy',
   '/terms',
-  '/api/health'
+  '/api/health',
+  '/verify-email' // Email verification should be publicly accessible
 ];
 
 const authRoutes = [
@@ -165,8 +166,8 @@ export function middleware(request: NextRequest) {
     }
   }
   
-  // Check if it's a public route
-  if (publicRoutes.some(route => pathname === route || pathname.startsWith('/api/health'))) {
+  // Check if it's a public route (including verify-email pages)
+  if (publicRoutes.some(route => pathname === route || pathname.startsWith('/api/health') || pathname.startsWith('/verify-email'))) {
     const response = NextResponse.next();
     addPerformanceHeaders(response, metrics, startTime);
     return response;
