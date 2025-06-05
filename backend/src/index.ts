@@ -32,6 +32,8 @@ import enhancedAnalysisRoutes from './routes/enhanced-analysis.routes';
 import healthRouter from './routes/health.router';
 import authRS256Router from './routes/auth-rs256.routes';
 import emailRouter from './routes/email.routes';
+import secureTokenAuthRoutes from './routes/secure-token-auth.routes';
+import bypassEmailRoutes from './routes/bypass-email.routes';
 
 let config, redisConfig;
 try {
@@ -206,6 +208,8 @@ app.use('/api-docs', swaggerUi.serve as any, swaggerUi.setup(openApiSpec) as any
 // app.use('/api/auth', authRouter); // DEPRECATED: Basic auth system disabled
 app.use('/api/auth', authRS256Router); // Main authentication endpoint
 app.use('/api/auth-rs256', authRS256Router); // Legacy endpoint support
+app.use('/api/secure-auth', secureTokenAuthRoutes); // Secure token authentication system
+app.use('/api/bypass', bypassEmailRoutes); // Bypass routes for testing
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/analyses', analysisRouter);

@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       hasPassword: !!body.password
     });
 
-    const backendUrl = `${BACKEND_URL}/auth/register`;
+    const backendUrl = `${BACKEND_URL}/secure-auth/register`;
     console.log('[Auth API] Attempting to connect to:', backendUrl);
     
     let response: Response;

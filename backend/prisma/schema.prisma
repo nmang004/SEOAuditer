@@ -5,34 +5,34 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id                  String         @id @default(uuid())
-  email               String         @unique
+  id                  String              @id @default(uuid())
+  email               String              @unique
   passwordHash        String
   name                String?
-  subscriptionTier    String         @default("free")
-  emailVerified       Boolean        @default(false)
+  subscriptionTier    String              @default("free")
+  emailVerified       Boolean             @default(false)
   verificationToken   String?
   verificationExpires DateTime?
   resetToken          String?
   resetTokenExpiry    DateTime?
-  accountLocked       Boolean        @default(false)
+  accountLocked       Boolean             @default(false)
   lockoutExpires      DateTime?
   lastLogin           DateTime?
-  failedLoginAttempts Int            @default(0)
+  failedLoginAttempts Int                 @default(0)
   lastFailedAttempt   DateTime?
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
   activityLogs        ActivityLog[]
   notifications       Notification[]
+  passwordHistory     PasswordHistory[]
   projects            Project[]
   refreshTokens       RefreshToken[]
-  settings            UserSettings?  @relation("UserToUserSettings")
-  passwordHistory     PasswordHistory[]
+  settings            UserSettings?       @relation("UserToUserSettings")
   verificationTokens  VerificationToken[]
 
   @@index([email], map: "idx_users_email")
@@ -58,21 +58,21 @@ model PasswordHistory {
 }
 
 model VerificationToken {
-  id                   String    @id @default(uuid())
-  hashedToken          String    @unique
-  userId               String
-  email                String
-  purpose              String    // 'email_verification' | 'password_reset'
-  sequence             Int       // Monotonically increasing per user+purpose
-  isValid              Boolean   @default(true)
-  expiresAt            DateTime
-  createdAt            DateTime  @default(now())
-  usedAt               DateTime?
-  invalidatedAt        DateTime?
-  invalidationReason   String?
-  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 String    @id @default(uuid())
+  hashedToken        String    @unique
+  userId             String
+  email              String
+  purpose            String
+  sequence           Int
+  isValid            Boolean   @default(true)
+  expiresAt          DateTime
+  createdAt          DateTime  @default(now())
+  usedAt             DateTime?
+  invalidatedAt      DateTime?
+  invalidationReason String?
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, purpose, sequence], name: "unique_user_purpose_sequence")
+  @@unique([userId, purpose, sequence], name: "unique_user_purpose_sequence", map: "unique_user_purpose_sequence")
   @@index([hashedToken], map: "idx_verification_tokens_hashed_token")
   @@index([userId], map: "idx_verification_tokens_user_id")
   @@index([purpose], map: "idx_verification_tokens_purpose")

@@ -19,8 +19,10 @@ import {
   UpdateProfileData
 } from '../schemas/auth.schemas';
 import { logger } from '../utils/logger';
+import { SecureTokenService } from '../services/SecureTokenService';
 
 const prisma = new PrismaClient();
+const secureTokenService = new SecureTokenService(prisma);
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -103,18 +105,12 @@ class AuthController {
       // Hash password with bcrypt (12 rounds)
       const passwordHash = await bcrypt.hash(password, this.BCRYPT_ROUNDS);
 
-      // Generate email verification token
-      const verificationToken = crypto.randomBytes(32).toString('hex');
-      const verificationExpires = new Date(Date.now() + this.EMAIL_VERIFICATION_EXPIRY);
-
-      // Create user
+      // Create user (without old verification fields)
       const user = await prisma.user.create({
         data: {
           email,
           passwordHash,
           name,
-          verificationToken,
-          verificationExpires,
           subscriptionTier: 'free'
         },
         select: {
@@ -127,8 +123,24 @@ class AuthController {
         }
       });
 
-      // Send verification email
-      await this.sendEmailVerification(user.id, email, name || 'User');
+      console.log('🔐 GENERATING SECURE TOKEN for user:', user.id);
+
+      // Generate secure verification token using SecureTokenService
+      const tokenResult = await secureTokenService.generateVerificationToken(
+        user.id, 
+        email, 
+        'email_verification'
+      );
+
+      console.log('✅ SECURE TOKEN GENERATED:', {
+        userId: user.id,
+        email: email,
+        tokenLength: tokenResult.token.length,
+        tokenPrefix: tokenResult.token.substring(0, 16) + '...'
+      });
+
+      // Send verification email with secure token
+      await this.sendEmailVerification(user.id, email, name || 'User', tokenResult.token);
 
       // Log security event
       await this.logSecurityEvent(user.id, email, 'user_registered', deviceInfo);
@@ -860,29 +872,36 @@ class AuthController {
   }
 
   /**
-   * Send email verification
+   * Send email verification (updated for SecureTokenService)
    */
-  private async sendEmailVerification(userId: string, email: string, name: string): Promise<void> {
+  private async sendEmailVerification(userId: string, email: string, name: string, token?: string): Promise<void> {
     try {
       logger.info('Starting email verification send process', { userId, email, name });
       
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { verificationToken: true }
-      });
+      let verificationToken = token;
+      
+      // If no token provided, fall back to user table (backwards compatibility)
+      if (!verificationToken) {
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { verificationToken: true }
+        });
 
-      if (!user?.verificationToken) {
-        logger.error('Verification token not found for user', { userId });
-        throw new Error('Verification token not found');
+        if (!user?.verificationToken) {
+          logger.error('Verification token not found for user', { userId });
+          throw new Error('Verification token not found');
+        }
+        
+        verificationToken = user.verificationToken;
       }
 
       logger.info('Verification token found, attempting to send email', { 
         userId, 
         email, 
-        tokenLength: user.verificationToken.length 
+        tokenLength: verificationToken.length 
       });
 
-      const emailSent = await emailService.sendWelcomeEmail(email, name, user.verificationToken);
+      const emailSent = await emailService.sendWelcomeEmail(email, name, verificationToken);
 
       if (emailSent) {
         logger.info('Email verification sent successfully', { userId, email });

@@ -317,8 +317,16 @@ export class SecureTokenService {
     metadata: TokenGenerationResult['metadata'],
     expiresAt: Date
   ): Promise<void> {
-    await (this.prisma as any).verificationToken.create({
-      data: {
+    console.log('=== STORING TOKEN DEBUG ===');
+    console.log('Email:', metadata.email);
+    console.log('HashedToken prefix:', hashedToken.substring(0, 16) + '...');
+    console.log('UserId:', metadata.userId);
+    console.log('Purpose:', metadata.purpose);
+    console.log('Sequence:', metadata.sequence);
+    console.log('ExpiresAt:', expiresAt.toISOString());
+    
+    try {
+      const tokenData = {
         hashedToken,
         userId: metadata.userId,
         email: metadata.email,
@@ -327,8 +335,42 @@ export class SecureTokenService {
         expiresAt,
         isValid: true,
         createdAt: metadata.generatedAt
+      };
+      
+      console.log('Creating token with data:', tokenData);
+      
+      const result = await (this.prisma as any).verificationToken.create({
+        data: tokenData
+      });
+      
+      console.log('✅ Token stored successfully:', {
+        id: result.id,
+        email: result.email,
+        hashedTokenPrefix: result.hashedToken.substring(0, 16) + '...'
+      });
+      
+      // Verify it was actually stored
+      const verification = await (this.prisma as any).verificationToken.findFirst({
+        where: { hashedToken },
+        select: { id: true, email: true, isValid: true, expiresAt: true }
+      });
+      
+      if (verification) {
+        console.log('✅ Token verified in database:', verification);
+      } else {
+        console.error('❌ Token NOT found after creation!');
+        throw new Error('Token storage verification failed');
       }
-    });
+      
+    } catch (error) {
+      console.error('❌ TOKEN STORAGE FAILED:', {
+        error: error.message,
+        stack: error.stack,
+        email: metadata.email,
+        hashedTokenPrefix: hashedToken.substring(0, 16) + '...'
+      });
+      throw new Error(`Failed to store verification token: ${error.message}`);
+    }
   }
 
   /**
