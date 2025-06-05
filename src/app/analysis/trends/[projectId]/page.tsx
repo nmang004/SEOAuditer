@@ -32,16 +32,32 @@ export default function TrendAnalysisPage() {
   useEffect(() => {
     if (!projectId) return;
     setLoading(true);
-    fetch(`/api/analysis/trends/${projectId}`)
-      .then(res => res.json())
+    
+    const token = localStorage.getItem('token');
+    console.log('[Trends Page] Fetching trends with token:', token ? 'present' : 'missing');
+    
+    fetch(`/api/analysis/trends/${projectId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    })
+      .then(res => {
+        console.log('[Trends Page] Response status:', res.status);
+        return res.json();
+      })
       .then(data => {
-        if (data && Array.isArray(data.trends)) {
+        console.log('[Trends Page] Response data:', data);
+        if (data && data.success && Array.isArray(data.trends)) {
           setTrendData(data.trends);
         } else {
           setError(data.error || 'Failed to load trend data');
         }
       })
-      .catch(err => setError(err.message || 'Failed to load trend data'))
+      .catch(err => {
+        console.error('[Trends Page] Error:', err);
+        setError(err.message || 'Failed to load trend data');
+      })
       .finally(() => setLoading(false));
   }, [projectId]);
 
@@ -59,146 +75,387 @@ export default function TrendAnalysisPage() {
   const allSeverities = Array.from(new Set(trendData.flatMap(d => d.issueSeverityCounts ? Object.keys(d.issueSeverityCounts) : [])));
   const allTypes = Array.from(new Set(trendData.flatMap(d => d.issueTypeCounts ? Object.keys(d.issueTypeCounts) : [])));
 
-  if (loading) return <div className="max-w-2xl mx-auto mt-16 text-center">Loading trend data...</div>;
-  if (error) return <div className="max-w-2xl mx-auto mt-16 text-center text-red-600">{error}</div>;
-  if (!trendData.length) return <div className="max-w-2xl mx-auto mt-16 text-center">No trend data found.</div>;
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="relative w-16 h-16 mx-auto mb-4">
+              <div className="absolute inset-0 rounded-full border-4 border-gray-700"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">Loading Trend Data</h2>
+            <p className="text-gray-300">Please wait while we analyze your SEO trends...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="w-full max-w-md">
+            <div className="rounded-2xl border border-red-500/20 bg-red-500/10 backdrop-blur-sm p-8 text-center">
+              <div className="h-12 w-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-red-400 text-xl">!</span>
+              </div>
+              <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Trends</h2>
+              <p className="text-red-300 mb-6">{error}</p>
+              <button 
+                onClick={() => window.location.reload()}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!trendData.length) {
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="w-full max-w-md">
+            <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-8 text-center">
+              <div className="h-12 w-12 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-indigo-400 text-xl">📊</span>
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">No Trend Data</h2>
+              <p className="text-gray-300 mb-6">No trend data available yet. Complete more analyses to see trends over time.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded shadow space-y-8">
-      <h1 className="text-2xl font-bold mb-2">SEO Trend Analysis</h1>
-      <div className="text-gray-600 mb-6">Project ID: <span className="font-mono">{projectId}</span></div>
-      {/* Filters and Export */}
-      <div className="flex flex-wrap gap-4 items-center mb-8">
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <span className="mr-2">Start Date:</span>
-          <DatePicker
-            selected={startDate}
-            onChange={date => setStartDate(date)}
-            selectsStart
-            startDate={startDate}
-            endDate={endDate}
-            maxDate={endDate || undefined}
-            isClearable
-            placeholderText="Start"
-            className="border rounded px-2 py-1"
-          />
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            SEO Trend Analysis
+          </h1>
+          <p className="text-gray-300 mt-2 text-lg">
+            Project ID: <span className="font-mono text-indigo-400">{projectId}</span>
+          </p>
         </div>
-        <div>
-          <span className="mr-2">End Date:</span>
-          <DatePicker
-            selected={endDate}
-            onChange={date => setEndDate(date)}
-            selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate || undefined}
-            isClearable
-            placeholderText="End"
-            className="border rounded px-2 py-1"
-          />
-        </div>
-        <div>
-          <span className="mr-2">Severity:</span>
-          <select value={selectedSeverity} onChange={e => setSelectedSeverity(e.target.value)} className="border rounded px-2 py-1">
-            <option value="">All</option>
-            {allSeverities.map(sev => <option key={sev} value={sev}>{sev}</option>)}
-          </select>
-        </div>
-        <div>
-          <span className="mr-2">Type:</span>
-          <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className="border rounded px-2 py-1">
-            <option value="">All</option>
-            {allTypes.map(type => <option key={type} value={type}>{type}</option>)}
-          </select>
-        </div>
-        <button
-          className="ml-auto px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          onClick={() => exportToCSV(filteredData, `seo-trends-${projectId}.csv`)}
+        <button 
+          onClick={() => window.history.back()}
+          className="border border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white px-4 py-2 rounded-lg font-medium transition-all"
         >
-          Export CSV
+          ← Back
         </button>
       </div>
-      {/* Overall SEO Score */}
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold mb-2">Overall SEO Score Over Time</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis domain={[0, 100]} />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="score" stroke="#2563eb" strokeWidth={2} dot={false} name="SEO Score" />
-          </LineChart>
-        </ResponsiveContainer>
+      {/* Filters and Export */}
+      <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6 mb-8">
+        <div className="flex flex-wrap gap-6 items-center">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-300">Start Date</label>
+            <DatePicker
+              selected={startDate}
+              onChange={date => setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              maxDate={endDate || undefined}
+              isClearable
+              placeholderText="Select start date"
+              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-300">End Date</label>
+            <DatePicker
+              selected={endDate}
+              onChange={date => setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate || undefined}
+              isClearable
+              placeholderText="Select end date"
+              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-300">Severity</label>
+            <select 
+              value={selectedSeverity} 
+              onChange={e => setSelectedSeverity(e.target.value)} 
+              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              <option value="">All Severities</option>
+              {allSeverities.map(sev => <option key={sev} value={sev}>{sev}</option>)}
+            </select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-300">Type</label>
+            <select 
+              value={selectedType} 
+              onChange={e => setSelectedType(e.target.value)} 
+              className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              <option value="">All Types</option>
+              {allTypes.map(type => <option key={type} value={type}>{type}</option>)}
+            </select>
+          </div>
+          <div className="flex flex-col gap-2 ml-auto">
+            <label className="text-sm font-medium text-gray-300 opacity-0">Export</label>
+            <button
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+              onClick={() => exportToCSV(filteredData, `seo-trends-${projectId}.csv`)}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export CSV
+            </button>
+          </div>
+        </div>
       </div>
-      {/* Category Scores */}
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold mb-2">Category Scores Over Time</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis domain={[0, 100]} />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="technicalScore" stroke="#0ea5e9" strokeWidth={2} dot={false} name="Technical" />
-            <Line type="monotone" dataKey="contentScore" stroke="#f59e42" strokeWidth={2} dot={false} name="Content" />
-            <Line type="monotone" dataKey="onpageScore" stroke="#22c55e" strokeWidth={2} dot={false} name="On-Page" />
-            <Line type="monotone" dataKey="uxScore" stroke="#a21caf" strokeWidth={2} dot={false} name="UX" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      {/* Issue Count */}
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold mb-2">Issue Count Over Time</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={filteredData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-            <defs>
-              <linearGradient id="colorIssues" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#dc2626" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#dc2626" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Area type="monotone" dataKey="issueCount" stroke="#dc2626" fillOpacity={1} fill="url(#colorIssues)" name="Issues" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-      {/* Issue Breakdown by Type */}
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold mb-2">Issue Breakdown by Type</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={filteredData.map(d => ({ date: d.date, ...d.issueTypeCounts }))} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Legend />
-            {allTypes.map((type, idx) => (
-              <Bar key={type} dataKey={type} stackId="a" fill={["#2563eb", "#f59e42", "#22c55e", "#a21caf", "#dc2626"][idx % 5]} name={type} />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      {/* Issue Breakdown by Severity */}
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold mb-2">Issue Breakdown by Severity</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={filteredData.map(d => ({ date: d.date, ...d.issueSeverityCounts }))} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Legend />
-            {allSeverities.map((sev, idx) => (
-              <Bar key={sev} dataKey={sev} stackId="a" fill={["#dc2626", "#f59e42", "#2563eb", "#22c55e", "#a21caf"][idx % 5]} name={sev} />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
+      {/* Charts Grid */}
+      <div className="grid gap-8 lg:grid-cols-1">
+        {/* Overall SEO Score */}
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-white mb-1">Overall SEO Score Over Time</h2>
+            <p className="text-gray-400 text-sm">Track your website's overall SEO performance</p>
+          </div>
+          <div className="bg-gray-900/50 rounded-xl p-4">
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis 
+                  domain={[0, 100]} 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB'
+                  }}
+                />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="score" 
+                  stroke="#6366F1" 
+                  strokeWidth={3} 
+                  dot={{ fill: '#6366F1', strokeWidth: 2, r: 4 }} 
+                  name="SEO Score" 
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Category Scores */}
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-white mb-1">Category Scores Over Time</h2>
+            <p className="text-gray-400 text-sm">Monitor performance across different SEO categories</p>
+          </div>
+          <div className="bg-gray-900/50 rounded-xl p-4">
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis 
+                  domain={[0, 100]} 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB'
+                  }}
+                />
+                <Legend />
+                <Line type="monotone" dataKey="technicalScore" stroke="#0EA5E9" strokeWidth={2} dot={{ fill: '#0EA5E9', r: 3 }} name="Technical" />
+                <Line type="monotone" dataKey="contentScore" stroke="#F59E0B" strokeWidth={2} dot={{ fill: '#F59E0B', r: 3 }} name="Content" />
+                <Line type="monotone" dataKey="onpageScore" stroke="#10B981" strokeWidth={2} dot={{ fill: '#10B981', r: 3 }} name="On-Page" />
+                <Line type="monotone" dataKey="uxScore" stroke="#8B5CF6" strokeWidth={2} dot={{ fill: '#8B5CF6', r: 3 }} name="UX" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Issue Count */}
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-white mb-1">Issue Count Over Time</h2>
+            <p className="text-gray-400 text-sm">Track the total number of SEO issues identified</p>
+          </div>
+          <div className="bg-gray-900/50 rounded-xl p-4">
+            <ResponsiveContainer width="100%" height={320}>
+              <AreaChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                <defs>
+                  <linearGradient id="colorIssues" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#EF4444" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#EF4444" stopOpacity={0.1}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB'
+                  }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="issueCount" 
+                  stroke="#EF4444" 
+                  strokeWidth={2}
+                  fillOpacity={1} 
+                  fill="url(#colorIssues)" 
+                  name="Issues" 
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Issue Breakdown by Type */}
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-white mb-1">Issue Breakdown by Type</h2>
+            <p className="text-gray-400 text-sm">Analyze issues categorized by their type</p>
+          </div>
+          <div className="bg-gray-900/50 rounded-xl p-4">
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={filteredData.map(d => ({ date: d.date, ...d.issueTypeCounts }))} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis 
+                  allowDecimals={false} 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB'
+                  }}
+                />
+                <Legend />
+                {allTypes.map((type, idx) => (
+                  <Bar 
+                    key={type} 
+                    dataKey={type} 
+                    stackId="a" 
+                    fill={["#6366F1", "#F59E0B", "#10B981", "#8B5CF6", "#EF4444"][idx % 5]} 
+                    name={type} 
+                    radius={[0, 0, 4, 4]}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Issue Breakdown by Severity */}
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-white mb-1">Issue Breakdown by Severity</h2>
+            <p className="text-gray-400 text-sm">Prioritize fixes based on issue severity levels</p>
+          </div>
+          <div className="bg-gray-900/50 rounded-xl p-4">
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={filteredData.map(d => ({ date: d.date, ...d.issueSeverityCounts }))} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis 
+                  allowDecimals={false} 
+                  stroke="#9CA3AF"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB'
+                  }}
+                />
+                <Legend />
+                {allSeverities.map((sev, idx) => (
+                  <Bar 
+                    key={sev} 
+                    dataKey={sev} 
+                    stackId="a" 
+                    fill={["#EF4444", "#F59E0B", "#6366F1", "#10B981", "#8B5CF6"][idx % 5]} 
+                    name={sev} 
+                    radius={[0, 0, 4, 4]}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
     </div>
   );
