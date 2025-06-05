@@ -96,11 +96,11 @@ export default function LoginPage() {
         // Store token in localStorage
         localStorage.setItem('token', data.data.token);
         
-        // Store user data in localStorage for the profile page
+        // Store user data in localStorage for the dashboard
         localStorage.setItem('userData', JSON.stringify(data.data.user));
         
-        // Redirect to profile page
-        router.push('/profile');
+        // Redirect to dashboard
+        router.push('/dashboard');
       } else {
         throw new Error('Login failed - no token received');
       }
