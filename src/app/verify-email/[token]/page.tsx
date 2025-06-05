@@ -129,7 +129,7 @@ export default function VerifyEmailPage() {
           online: navigator.onLine,
           connectionType: (navigator as any).connection?.effectiveType || 'unknown',
           serviceWorkerState: navigator.serviceWorker?.controller?.state || 'none',
-          serviceWorkerReady: navigator.serviceWorker?.ready ? 'true' : 'false'
+          hasServiceWorkerReady: navigator.serviceWorker ? 'true' : 'false'
         });
         verifyEmail(cleanToken);
       }, 2000); // Increased delay to allow SW cleanup
@@ -142,7 +142,7 @@ export default function VerifyEmailPage() {
       setStatus('error');
       setMessage('Failed to parse verification URL');
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const verifyEmail = async (tokenToVerify: string) => {
     try {
