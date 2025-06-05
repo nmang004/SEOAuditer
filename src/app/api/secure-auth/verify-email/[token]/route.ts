@@ -5,14 +5,14 @@ const BACKEND_URL = getServerBackendUrl();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   console.log('[Secure Auth API] Email verification request received');
   console.log('[Secure Auth API] Backend URL:', BACKEND_URL);
-  console.log('[Secure Auth API] Token:', params.token?.substring(0, 8) + '...');
   
   try {
-    const { token } = params;
+    const { token } = await params;
+    console.log('[Secure Auth API] Token:', token?.substring(0, 8) + '...');
 
     if (!token) {
       return NextResponse.json(
