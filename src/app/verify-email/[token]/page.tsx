@@ -32,29 +32,68 @@ export default function VerifyEmailPage() {
       hasServiceWorker: 'serviceWorker' in navigator
     });
 
-    // FORCE UNREGISTER SERVICE WORKER to test if it's causing CSS-as-JS issue
+    // AGGRESSIVELY FORCE UNREGISTER SERVICE WORKER
     if ('serviceWorker' in navigator) {
+      addDiagnostic('Starting Aggressive SW Cleanup', {
+        hasController: !!navigator.serviceWorker.controller,
+        controllerState: navigator.serviceWorker.controller?.state,
+        controllerScriptURL: navigator.serviceWorker.controller?.scriptURL
+      });
+
+      // Force unregister all service workers
       navigator.serviceWorker.getRegistrations().then(registrations => {
         addDiagnostic('Service Worker Cleanup', {
           foundRegistrations: registrations.length,
-          registrations: registrations.map(r => ({ scope: r.scope, state: r.active?.state }))
+          registrations: registrations.map(r => ({ 
+            scope: r.scope, 
+            state: r.active?.state,
+            scriptURL: r.active?.scriptURL
+          }))
         });
         
-        registrations.forEach(registration => {
-          registration.unregister().then(success => {
-            addDiagnostic('Service Worker Unregistered', { success, scope: registration.scope });
+        // Unregister all found registrations
+        const unregisterPromises = registrations.map(registration => {
+          return registration.unregister().then(success => {
+            addDiagnostic('Service Worker Unregistered', { 
+              success, 
+              scope: registration.scope,
+              scriptURL: registration.active?.scriptURL 
+            });
+            return success;
           });
         });
-        
-        // Clear all caches
+
+        return Promise.all(unregisterPromises);
+      }).then(() => {
+        // Clear all caches after unregistering
         if ('caches' in window) {
-          caches.keys().then(names => {
+          return caches.keys().then(names => {
             addDiagnostic('Clearing Caches', { cacheNames: names });
-            return Promise.all(names.map(name => caches.delete(name)));
-          }).then(() => {
-            addDiagnostic('All Caches Cleared', {});
+            return Promise.all(names.map(name => {
+              return caches.delete(name).then(success => {
+                addDiagnostic('Cache Deleted', { cacheName: name, success });
+                return success;
+              });
+            }));
           });
         }
+      }).then(() => {
+        addDiagnostic('SW Cleanup Complete', {
+          timestamp: Date.now(),
+          hasControllerAfter: !!navigator.serviceWorker.controller
+        });
+
+        // Force reload to ensure SW is completely gone
+        if (navigator.serviceWorker.controller) {
+          addDiagnostic('SW Still Active - Force Reloading Page', {});
+          setTimeout(() => window.location.reload(), 1000);
+          return;
+        }
+      }).catch(error => {
+        addDiagnostic('SW Cleanup Error', {
+          error: error.message,
+          stack: error.stack
+        });
       });
     }
 
