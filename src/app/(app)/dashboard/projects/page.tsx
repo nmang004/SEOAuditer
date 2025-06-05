@@ -130,7 +130,12 @@ export default function ProjectsListPage() {
   // Error boundary fallback
   try {
     return (
-      <div className="space-y-8">
+      <div className="space-y-8 min-h-screen p-4">
+        {/* Debug info */}
+        <div className="bg-red-500 text-white p-4 rounded mb-4">
+          <p>Debug: projects={projects.length}, isCreating={isCreating ? 'true' : 'false'}, filteredProjects={filteredProjects.length}</p>
+        </div>
+        
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -169,7 +174,7 @@ export default function ProjectsListPage() {
 
       {/* Create Project Form */}
       {isCreating && (
-        <div className="animate-in slide-in-from-top-2 duration-300">
+        <div className="block opacity-100 visible">
           <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
@@ -243,46 +248,26 @@ export default function ProjectsListPage() {
       )}
 
       {/* Projects Grid */}
-      <div className="grid gap-6">
+      <div className="grid gap-6 bg-blue-500 p-4 text-white">
+        <p>DEBUG: Showing projects grid section. filteredProjects.length = {filteredProjects.length}, isCreating = {isCreating.toString()}</p>
+        
         {filteredProjects.length === 0 && !isCreating ? (
-          <div className="flex items-center justify-center min-h-[500px] py-16">
-            <div className="relative w-full max-w-2xl">
-              {/* Animated background gradient */}
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-3xl blur-xl -z-10 animate-pulse"></div>
-              
-              <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-12 text-center">
-                {/* Icon */}
-                <div className="mb-6 flex justify-center">
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm border border-indigo-500/30">
-                    <Globe className="h-8 w-8 text-indigo-400" />
-                  </div>
-                </div>
-                
-                {/* Content */}
-                <h3 className="text-2xl font-bold text-white mb-3 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                  No Projects Yet
-                </h3>
-                <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-                  Get started by creating your first project to analyze your website's SEO performance and track improvements over time.
-                </p>
-                
-                {/* Primary Action */}
-                <Button 
-                  onClick={() => setIsCreating(true)} 
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-8"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Project
-                </Button>
-              </div>
-            </div>
+          <div className="bg-green-500 p-8 text-white text-center">
+            <h3 className="text-2xl font-bold mb-4">No Projects Yet</h3>
+            <p className="mb-4">Get started by creating your first project</p>
+            <button 
+              onClick={() => setIsCreating(true)}
+              className="bg-red-500 text-white px-4 py-2 rounded"
+            >
+              Create Your First Project
+            </button>
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredProjects.map((project) => (
               <div
                 key={project.id}
-                className="h-full animate-in fade-in-0 slide-in-from-bottom-4 duration-300"
+                className="h-full block opacity-100 visible"
               >
                 <Card className="h-full rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm hover:border-gray-600 transition-all cursor-pointer group hover:scale-105">
                   <CardContent className="p-6">
@@ -363,6 +348,12 @@ export default function ProjectsListPage() {
             ))}
           </div>
         )}
+        
+        {/* Fallback - always show something */}
+        <div className="bg-yellow-500 p-4 text-black">
+          <p>FALLBACK: This should always be visible</p>
+          <p>Current state: projects={projects.length}, isCreating={isCreating.toString()}</p>
+        </div>
       </div>
 
       {/* Stats Summary */}
