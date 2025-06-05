@@ -245,7 +245,68 @@ export const verifyEmail = async (req: Request, res: Response) => {
       
       return res.status(400).json({
         success: false,
-        error: validation.error || 'Invalid or expired verification token'
+        error: validation.error || 'Invalid or expired verification token',
+        errorCode: 'INVALID_TOKEN',
+        metadata: {
+          correlationId
+        }
+      });
+    }
+
+    // Check if user is already verified
+    const existingUser = await prisma.user.findUnique({
+      where: { id: validation.userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        emailVerified: true,
+        updatedAt: true
+      }
+    });
+
+    if (!existingUser) {
+      logger.warn('Email verification failed - user not found', {
+        correlationId,
+        userId: validation.userId,
+        tokenPrefix: token.substring(0, 8) + '...'
+      });
+      
+      return res.status(404).json({
+        success: false,
+        error: 'User not found',
+        errorCode: 'USER_NOT_FOUND',
+        metadata: {
+          correlationId
+        }
+      });
+    }
+
+    // If user is already verified, return appropriate response
+    if (existingUser.emailVerified) {
+      logger.info('Email verification attempted for already verified user', {
+        correlationId,
+        userId: existingUser.id,
+        email: existingUser.email,
+        tokenPrefix: token.substring(0, 8) + '...',
+        verifiedSince: existingUser.updatedAt
+      });
+
+      // Still invalidate the token to prevent reuse
+      await tokenService.invalidateToken(token);
+
+      return res.json({
+        success: true,
+        message: 'Email already verified',
+        alreadyVerified: true,
+        data: {
+          email: existingUser.email,
+          verified: true,
+          verifiedAt: existingUser.updatedAt.toISOString()
+        },
+        metadata: {
+          correlationId
+        }
       });
     }
 
@@ -262,7 +323,8 @@ export const verifyEmail = async (req: Request, res: Response) => {
           id: true,
           email: true,
           name: true,
-          emailVerified: true
+          emailVerified: true,
+          updatedAt: true
         }
       });
 
@@ -285,7 +347,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
       data: {
         email: result.email,
         verified: true,
-        verifiedAt: new Date().toISOString()
+        verifiedAt: result.updatedAt.toISOString()
       },
       metadata: {
         correlationId
@@ -508,6 +570,33 @@ export const resendVerification = async (req: Request, res: Response) => {
       return res.status(400).json({
         success: false,
         error: 'Email is already verified'
+      });
+    }
+
+    // Check rate limiting for resend attempts
+    const recentTokens = await prisma.verificationToken.findMany({
+      where: {
+        userId: user.id,
+        purpose: 'email_verification',
+        createdAt: {
+          gte: new Date(Date.now() - 10 * 60 * 1000) // Last 10 minutes
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    if (recentTokens.length >= 3) {
+      logger.warn('Resend verification rate limited', {
+        correlationId,
+        userId: user.id,
+        email,
+        recentAttempts: recentTokens.length
+      });
+      
+      return res.status(429).json({
+        success: false,
+        error: 'Too many verification email requests. Please wait 10 minutes before requesting another.',
+        retryAfter: 600 // 10 minutes
       });
     }
 

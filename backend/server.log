@@ -902,3 +902,196 @@ Creating token with data: {
 [32m[32minfo[32m[39m: 	[32mToken invalidated[39m {"affectedRows":1,"hashedTokenPrefix":"a238b096...","timestamp":"2025-06-05 07:12:22.075 AM"}
 [32m[32minfo[32m[39m: 	[32mEmail verification successful[39m {"correlationId":"verify_1749121942046_xjcchxx8g","email":"token-test@example.com","timestamp":"2025-06-05 07:12:22.076 AM","tokenPrefix":"3a983207...","userId":"15dd73a1-2133-44d7-93fc-a935290e9e06"}
 [0mGET /api/secure-auth/verify-email/3a983207d458477aac59ae0f3b4e2a6937542325d1ca72f8c30c2e76b247dced [32m200[0m 39.286 ms - 216[0m
+[32m[32minfo[32m[39m: 	[32mResend verification attempt[39m {"correlationId":"resend_1749122037357_l6kkcflzp","email":"nmang004@gmail.com","ip":"::1","timestamp":"2025-06-05 07:13:57.357 AM"}
+[33m[33mwarn[33m[39m: 	[33mResend verification failed - already verified[39m {"correlationId":"resend_1749122037357_l6kkcflzp","email":"nmang004@gmail.com","timestamp":"2025-06-05 07:13:57.362 AM","userId":"2e3b439a-fe9c-4070-ab79-14cb079efc80"}
+[0mPOST /api/secure-auth/resend-verification [33m400[0m 5.428 ms - 53[0m
+[32m[32minfo[32m[39m: 	[32mEmail verification attempt[39m {"correlationId":"verify_1749122046488_dhgqncmgs","ip":"::1","timestamp":"2025-06-05 07:14:06.488 AM","tokenPrefix":"90bd137b...","userAgent":"curl/8.7.1"}
+[33m[33mwarn[33m[39m: 	[33mToken validation failed - not found or expired[39m {"hashedTokenPrefix":"008c43f0...","purpose":"email_verification","timestamp":"2025-06-05 07:14:06.491 AM","validationTimeMs":3}
+[33m[33mwarn[33m[39m: 	[33mEmail verification failed - invalid token[39m {"correlationId":"verify_1749122046488_dhgqncmgs","error":"Invalid or expired verification token","timestamp":"2025-06-05 07:14:06.491 AM","tokenPrefix":"90bd137b..."}
+[0mGET /api/secure-auth/verify-email/90bd137b2886e58430f78cbc28127f003f5f366101cba6467379f473ef26481 [33m400[0m 4.138 ms - 65[0m
+[32m[32minfo[32m[39m: 	[32mEmail verification attempt[39m {"correlationId":"verify_1749122054001_52tv8dlzd","ip":"::1","timestamp":"2025-06-05 07:14:14.001 AM","tokenPrefix":"90bd137b...","userAgent":"curl/8.7.1"}
+[33m[33mwarn[33m[39m: 	[33mToken validation failed - not found or expired[39m {"hashedTokenPrefix":"008c43f0...","purpose":"email_verification","timestamp":"2025-06-05 07:14:14.003 AM","validationTimeMs":1}
+[33m[33mwarn[33m[39m: 	[33mEmail verification failed - invalid token[39m {"correlationId":"verify_1749122054001_52tv8dlzd","error":"Invalid or expired verification token","timestamp":"2025-06-05 07:14:14.003 AM","tokenPrefix":"90bd137b..."}
+[0mGET /api/secure-auth/verify-email/90bd137b2886e58430f78cbc28127f003f5f366101cba6467379f473ef26481 [33m400[0m 3.271 ms - 65[0m
+[INFO] 07:17:00 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/controllers/secure-token-auth.controller.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-05 07:17:00.765 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-05 07:17:00.772 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-05 07:17:00.774 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-05 07:17:00.777 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-05 07:17:00.894 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-05 07:17:00.895 AM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-05 07:17:00.903 AM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-05 07:17:01.906 AM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-05 07:17:01.908 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-05 07:17:01.912 AM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-05 07:17:01.913 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-05 07:17:01.927 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-05 07:17:01.927 AM"}
+[31m[31merror[31m[39m: 	[31mForceful shutdown due to timeout[39m {"timestamp":"2025-06-05 07:17:11.928 AM"}
+❌ Forceful shutdown due to timeout
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-05 07:17:11.930 AM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-05 07:17:12.757 AM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-05 07:17:13.632 AM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-05 07:17:13.634 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-05 07:17:13.634 AM"}
+[32m[32minfo[32m[39m: 	[32mSendGrid provider configured successfully[39m {"timestamp":"2025-06-05 07:17:13.653 AM"}
+[32m[32minfo[32m[39m: 	[32mEmail service initialized with SendGrid provider[39m {"timestamp":"2025-06-05 07:17:13.653 AM"}
+JWT keys not found in environment, generating new ones for development
+Generated JWT Keys (save these to environment variables):
+JWT_PRIVATE_KEY= "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCT+fhX+j5R/p09\nmT+ocRURdw4AbVSdrUst0DmhDPKI//ch/MSz+mPN+a6i1+sONOgexutp3I00nAFq\nTqeEz6rTIRL+Q2Gxbzdac2ieZOApn7GpyZz7tLMjYHLi1iNGACda+AzX5Pp0d76X\nVRVdsqIQjeCUoOvADFDRDPZ2zre+Qr1L3dLNgoA9cIJDWdQxs2U5P8vk7yitAsUR\nnWFkd7B+BOfeN5gGZA6VJLaX2ip5RwYcLFZqaIBmrr92cbpVasthAQkw9xO4QHvz\nrkUpty/rn+D+U9WJa+uiel+P3m8MUaVVXxCYn7orb8zTjzwc7a5fBpkm+PnePzNP\nxg6NS4eDAgMBAAECggEABCpbtszztybV3KI1PAke4N8l6kDUSnH9NUdwxTCnnSVT\ncBtSRYditYLLSzM3ydkXFagKKsXgxbPZ3a5kIdAfYhJtcJyLTKLcVIlTecNOL23F\njbQqsp0wvmoHIeKJm1Ktc5lFnJ2J/VWnlvv3/itlS4EAQD7Svr+6AKsplEjtEYfQ\nHE2rXgG55dxhiBBLxLmS43nU/7qqaJhOFiKlX2S9Zgwhk7EcljXZb8MNuEZggmc5\nEtSl5kcoGKagd1qJkDKKMq7HY18PaWdVXoj9CH8B5o1PgvVEIaRJ8E3xtaqk2hws\nbs56/o4O8Gyd0oG/m3Jf5O03HnCo9QNXRWceAXjKRQKBgQDN93PA06fa3yKbWv1g\n5hWzxf5ZPbtvIbBu2AX3ap6RAW74arp3CPTutl7FiPtDK0z98nzh3hJ8OdAlPSQk\nbmieaooh6fNnB2RfhtAmC+4rxh6QMbvp3zqQBHYh/3/nO/M7uMiVLA9eGTTT5XKy\ng71mAzNUPrGXQG7f11BRQYEnNQKBgQC37EE56ofWzaAQ/AsoJpZefAN4IDq2nfqo\nZ+JG7p2ZHxOSFhK543KM1Q+bEfTV2cBJDTUlvUoZkmpM4z6cQMaXFnnySdfU3l03\nzbMkEVwrLYBKCCG50HrqcNF5K/I4nNwm0l8kY8qMtgkq3mXh8SsxiUGDKyYAzwjJ\nmI2wcqZy1wKBgQDEEr7CIXvY87SpOoydk0uzsVe6MvddCzA/xSyg5YIAPuIaYNgT\n+5XYLgq4d/ficLVBx3c1OkhUtGC/Ip5mhCjaLkhDksjhGvtlqRw8K/1W9Ksh0Aa4\n1IaWlXi0Utu7EKoz/2wL/j6+8LYGxpZS9PD3zTIvD+PWPkOOmhXe1MITxQKBgQCD\ncuffM76oB8gpu2lh5co8dxenqCkuUVRPPgfbuDiMskgzdXEmx+cbvj7sDnZUzM7/\npt/gPBwUkK9Ginc6B5WncBnxz1LhQZeQBYTN91ZPSbLRtmQcQGNI4R7lIkJ4sasq\nV9pF0Mh3rrZ4nABm7g131ugqjhEYLN/T7SL/A8HwewKBgC40Q20YMmDfT44o+XpV\nJh3yJxPF5Y7GAG9vdmkDLxs0Gu1I2WkP1+MmBsXsLBUZ1fjEgrwd+JqvuJ9F8QN8\nLe9I1PDlW+2ySnpFU421MD0TeJrwxSMiWKc5GczHxiqph6me+IMesmVhb5OEMl74\nRloaJv5SxCHtf5wx70htTSja\n-----END PRIVATE KEY-----\n"
+JWT_PUBLIC_KEY= "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk/n4V/o+Uf6dPZk/qHEV\nEXcOAG1Una1LLdA5oQzyiP/3IfzEs/pjzfmuotfrDjToHsbradyNNJwBak6nhM+q\n0yES/kNhsW83WnNonmTgKZ+xqcmc+7SzI2By4tYjRgAnWvgM1+T6dHe+l1UVXbKi\nEI3glKDrwAxQ0Qz2ds63vkK9S93SzYKAPXCCQ1nUMbNlOT/L5O8orQLFEZ1hZHew\nfgTn3jeYBmQOlSS2l9oqeUcGHCxWamiAZq6/dnG6VWrLYQEJMPcTuEB7865FKbcv\n65/g/lPViWvronpfj95vDFGlVV8QmJ+6K2/M0488HO2uXwaZJvj53j8zT8YOjUuH\ngwIDAQAB\n-----END PUBLIC KEY-----\n"
+[32m[32minfo[32m[39m: 	[32mEnhanced email service initialized[39m {"configured":true,"templatesEnabled":true,"timestamp":"2025-06-05 07:17:13.742 AM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-05 07:17:13.812 AM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-05 07:17:13.812 AM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-05 07:17:13.813 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-05 07:17:13.814 AM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-05 07:17:13.816 AM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"2ms","timestamp":"2025-06-05 07:17:13.872 AM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-05 07:17:13.882 AM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-05 07:17:13.882 AM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-05 07:17:13.884 AM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-05 07:17:13.884 AM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-05 07:17:13.884 AM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-05 07:17:13.888 AM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-05 07:17:13.888 AM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-05 07:17:13.989 AM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-05 07:17:13.989 AM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-05 07:17:13.989 AM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-05 07:17:13.990 AM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-05 07:17:13.990 AM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-05 07:17:13.990 AM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-05 07:17:13.990 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-05 07:17:13.996 AM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-05 07:17:14.000 AM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-05 07:17:14.000 AM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-05 07:17:14.000 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-05 07:17:14.000 AM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-05 07:17:14.001 AM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-05 07:17:14.001 AM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-05 07:17:14.001 AM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-05 07:17:14.001 AM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-05 07:17:14.001 AM"}
+✅ Server started successfully on port 4000
+[INFO] 07:18:40 Restarting: /Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/controllers/secure-token-auth.controller.ts has been modified
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-05 07:18:40.931 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-05 07:18:40.936 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-05 07:18:40.936 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-05 07:18:40.937 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-05 07:18:40.942 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-05 07:18:40.943 AM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-05 07:18:40.947 AM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-05 07:18:41.949 AM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-05 07:18:41.949 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Queue Adapter closed[39m {"timestamp":"2025-06-05 07:18:41.951 AM"}
+[33m[33mwarn[33m[39m: 	[33mRedis connection closed - queue functionality disabled[39m {"timestamp":"2025-06-05 07:18:41.951 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-05 07:18:41.963 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System shutdown completed[39m {"timestamp":"2025-06-05 07:18:41.963 AM"}
+[31m[31merror[31m[39m: 	[31mForceful shutdown due to timeout[39m {"timestamp":"2025-06-05 07:18:51.964 AM"}
+❌ Forceful shutdown due to timeout
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-05 07:18:51.965 AM"}
+--- Backend process starting ---
+--- http imported ---
+--- express imported ---
+--- socket.io imported ---
+--- cors imported ---
+--- helmet imported ---
+--- morgan imported ---
+--- redis imported ---
+--- Loading config.ts ---
+--- Validating environment variables ---
+--- Environment variables validated successfully ---
+--- logger imported ---
+--- errorHandler imported ---
+[32m[32minfo[32m[39m: 	[32mLoaded existing RSA keys for JWT signing[39m {"timestamp":"2025-06-05 07:18:52.713 AM"}
+AuthRateLimiter using memory backend
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-05 07:18:53.441 AM"}
+[32m[32minfo[32m[39m: 	[32mStarting enhanced worker...[39m {"timestamp":"2025-06-05 07:18:53.442 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker started successfully[39m {"timestamp":"2025-06-05 07:18:53.442 AM"}
+[32m[32minfo[32m[39m: 	[32mSendGrid provider configured successfully[39m {"timestamp":"2025-06-05 07:18:53.463 AM"}
+[32m[32minfo[32m[39m: 	[32mEmail service initialized with SendGrid provider[39m {"timestamp":"2025-06-05 07:18:53.463 AM"}
+JWT keys not found in environment, generating new ones for development
+Generated JWT Keys (save these to environment variables):
+JWT_PRIVATE_KEY= "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCcQTM7Co0cn5Yk\n0Cumsbn4g67kKCrLYO1VS/4aNuiSrDQrRqAL+JCXgeXKy/r2Emc5Rw1b5Ckk9veM\nQlxQmzKvCAvxKbe/bsdTow398yOzTvTogV5ly63VCenjqWqJiFlkhl06zeKnVDCb\naSL08tP3wedYZ8nOnjdpra+yimbzMjxkXBzIgb8qUqApDAXfhlbLfX7vnC5swFki\nIE7vMpvx09jq9WtJqRelgFlLWkXAOm0LCxCVLZQXy78LyqHVj4ANVaTOnWukfuss\n6gzXJ4f5yf6r00CU5qtL3FG+EI8UocO6SM0zpMx6E5Rle6dgfUK6+LX8405J5Q+z\nTzgmxThVAgMBAAECggEABscUp/H1XLYNrekbZwoOyJk8g9FONnh1/B0J4L83jDZM\n20n60KodWA4wzVwf/sed3J29X1Ep1Nx+sKZehwNo7mZkz1uTv4mPTUNKEV5O92hH\nyLIJky/xQDVoBMhyVLkqWKAPZujd4rB6nPxDxg0UHGalfQINx5kCJpnEyaqBM0Jp\nSXNWs6xN2QN29fposKqNt8RgBbe6eFG2K3AkTvDNtN9nVjr4aPqzk+ztaPDM/9L4\ncThajX1RZUvVgnjHnTh2OBDqU3nW9Oqm08H0n3L13o9udliCWXISp0+EVsayUNKx\nENKdhmERZZ7cVbcQZtELaWH916afeI8/L2iOY4r7/QKBgQDciX5AN6dRG6MuV80k\nY+nXphsX6IijVuD8FHXCj2gzOOhkBPR0zEUYlLOUX2ZvEmCQYZUhuLODqkCh0tfV\nfjVPS/gleyqNHUBN8f1C9fTcn9OOzGAKpUVANUxVKeBGCLGffwzkMUxgb3GL9QYA\nRIMznFWl6SIiIztFkUQ/acbxrwKBgQC1YX5gfrnY9l4+RCKU/m0UlRUg8Z1CPV1O\nXGkMxaHt1u/JP5ftUlWaC34bu8eqazaU3wKbMFEMUfP+deOzKhlwqNhpnP7kJYGP\nkb6U+yiKqoWOyB2VS5cDtZV1x3B/vYM2BBJw2dGeCYDbtRjLuIq3ytmGkesC4GuS\nZPbHbkcLOwKBgQDNIN5boOhyGsDXdDeNp5l0Sj5dKJ8fPsoZ7nXyOC11p3MQxUMT\n+IQ0buvyECJZIcDLythJ+2COESf43QKAw9mWHlV7l2pmw1Ryq6kkRV4ycD75TcPv\nYvZc2LZdaIwA2ElOz4AQKIKgGEiHI6snSJK4yKspnQVwt1CETrAqQ5sWZQKBgQCn\nnV/fJlzyXcH7wpU+oNwGwDpVRlJwCys1pfpCHkSk+RKAJK9uVb7bazFvyZkbKJa4\n/ll3NjA/tWBIT4NLZ2U5Eh9jgfyesvZGyYWYQX1Wn3xq1Q1ZkRAOEnj67YJN2cDu\nYtbzyKaIZ/nXj0RJxtESRXe9fwzxjJh8IadX5tXqTwKBgENpRrAahdxjVolL4SGK\nXd+w2eNhQVAtTOyn5aKuEby541/QBZ2f+NaDk5+Cgip4nhQRCE5Dd90mSqmYfY1j\nqeLHnhuZbFGaCDbWepWaPmllShfHD8oOE+D6niUvBuZ4gUK88PeFFz01p9kM3ktF\ndXl7xPkBnmuC3+cuLLS88gJ0\n-----END PRIVATE KEY-----\n"
+JWT_PUBLIC_KEY= "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnEEzOwqNHJ+WJNArprG5\n+IOu5Cgqy2DtVUv+Gjbokqw0K0agC/iQl4Hlysv69hJnOUcNW+QpJPb3jEJcUJsy\nrwgL8Sm3v27HU6MN/fMjs0706IFeZcut1Qnp46lqiYhZZIZdOs3ip1Qwm2ki9PLT\n98HnWGfJzp43aa2vsopm8zI8ZFwcyIG/KlKgKQwF34ZWy31+75wubMBZIiBO7zKb\n8dPY6vVrSakXpYBZS1pFwDptCwsQlS2UF8u/C8qh1Y+ADVWkzp1rpH7rLOoM1yeH\n+cn+q9NAlOarS9xRvhCPFKHDukjNM6TMehOUZXunYH1Cuvi1/ONOSeUPs084JsU4\nVQIDAQAB\n-----END PUBLIC KEY-----\n"
+[32m[32minfo[32m[39m: 	[32mEnhanced email service initialized[39m {"configured":true,"templatesEnabled":true,"timestamp":"2025-06-05 07:18:53.694 AM"}
+--- Config loaded successfully ---
+--- Express app and server initialized ---
+--- Initializing Redis client ---
+--- Redis client initialized ---
+--- Initializing Database Manager ---
+--- OpenAPI spec loaded successfully ---
+--- startServer: BEGIN ---
+--- Attempting Redis connection ---
+--- After startServer() call ---
+--- Redis connected successfully ---
+[32m[32minfo[32m[39m: 	[32mConnected to Redis[39m {"timestamp":"2025-06-05 07:18:53.758 AM"}
+--- Attempting database connection via Database Manager ---
+[32m[32minfo[32m[39m: 	[32mAttempting database connection (attempt 1/5)[39m {"connectionString":"postgresql://nicholasmangubat@localhost:5432/rival_outranker","poolSize":25,"timeout":30000,"timestamp":"2025-06-05 07:18:53.758 AM"}
+Redis client connected successfully in rate-limit middleware
+Upgraded rate limiters to use Redis
+Redis client connected successfully in rate-limit middleware
+[32m[32minfo[32m[39m: 	[32mConnected to Redis for JWT service[39m {"timestamp":"2025-06-05 07:18:53.759 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-05 07:18:53.760 AM"}
+[32m[32minfo[32m[39m: 	[32mDatabase info: Starting a postgresql pool with 17 connections.[39m {"target":"quaint::pooled","timestamp":"2025-06-05 07:18:53.760 AM"}
+[32m[32minfo[32m[39m: 	[32m✅ Database connected successfully[39m {"attempt":1,"connectionPoolSize":25,"database":"rival_outranker","pgVersion":"15.13","responseTime":"1ms","timestamp":"2025-06-05 07:18:53.794 AM"}
+[32m[32minfo[32m[39m: 	[32mpg_stat_statements extension enabled for query monitoring[39m {"timestamp":"2025-06-05 07:18:53.800 AM"}
+[32m[32minfo[32m[39m: 	[32mDatabase optimized for SEO analysis workloads[39m {"effectiveCacheSize":"2GB","optimizations":13,"timestamp":"2025-06-05 07:18:53.801 AM","workMem":"256MB"}
+--- Database Manager connected successfully ---
+[32m[32minfo[32m[39m: 	[32mInitializing Enhanced Analysis System...[39m {"timestamp":"2025-06-05 07:18:53.802 AM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced queue adapter...[39m {"timestamp":"2025-06-05 07:18:53.802 AM"}
+[32m[32minfo[32m[39m: 	[32mConnecting to Redis for queue: redis://localhost:6379[39m {"timestamp":"2025-06-05 07:18:53.802 AM"}
+[32m[32minfo[32m[39m: 	[32mQueue adapter initialized and healthy[39m {"timestamp":"2025-06-05 07:18:53.806 AM"}
+[32m[32minfo[32m[39m: 	[32mInitializing WebSocket gateway...[39m {"timestamp":"2025-06-05 07:18:53.806 AM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway initialized[39m {"timestamp":"2025-06-05 07:18:53.907 AM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway initialized[39m {"timestamp":"2025-06-05 07:18:53.907 AM"}
+[32m[32minfo[32m[39m: 	[32mInitializing enhanced worker...[39m {"timestamp":"2025-06-05 07:18:53.907 AM"}
+[32m[32minfo[32m[39m: 	[32mWorker event handlers configured[39m {"timestamp":"2025-06-05 07:18:53.908 AM"}
+[32m[32minfo[32m[39m: 	[32mWorker initialized with concurrency: 5[39m {"timestamp":"2025-06-05 07:18:53.908 AM"}
+[32m[32minfo[32m[39m: 	[32mSetting up queue cleanup every 3600000ms[39m {"timestamp":"2025-06-05 07:18:53.908 AM"}
+[32m[32minfo[32m[39m: 	[32mValidating system health...[39m {"timestamp":"2025-06-05 07:18:53.908 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker is ready to process analysis jobs[39m {"timestamp":"2025-06-05 07:18:53.914 AM"}
+[32m[32minfo[32m[39m: 	[32mDatabase connectivity verified[39m {"timestamp":"2025-06-05 07:18:53.917 AM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket gateway health verified[39m {"timestamp":"2025-06-05 07:18:53.917 AM"}
+[32m[32minfo[32m[39m: 	[32mSystem health validation completed successfully[39m {"timestamp":"2025-06-05 07:18:53.917 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced Analysis System initialized successfully[39m {"timestamp":"2025-06-05 07:18:53.917 AM"}
+[32m[32minfo[32m[39m: 	[32mSystem Status:[39m {"cleanupInterval":3600000,"initialized":true,"queueMetrics":{"active":0,"averageProcessingTime":300000,"completed":0,"delayed":0,"failed":0,"paused":0,"totalProcessingTime":0,"waiting":0},"timestamp":"2025-06-05 07:18:53.918 AM","webSocketEnabled":true,"workerConcurrency":5}
+[32m[32minfo[32m[39m: 	[32mAnalysis system initialized successfully[39m {"timestamp":"2025-06-05 07:18:53.918 AM"}
+[32m[32minfo[32m[39m: 	[32mServer is running on port 4000[39m {"timestamp":"2025-06-05 07:18:53.918 AM"}
+[32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-05 07:18:53.918 AM"}
+[32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-05 07:18:53.918 AM"}
+✅ Server started successfully on port 4000
