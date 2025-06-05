@@ -3,6 +3,9 @@ import { getServerBackendUrl } from '@/lib/backend-url';
 
 const BACKEND_URL = getServerBackendUrl();
 
+// Simple in-memory cache for analysis results (in production, use Redis or database)
+const analysisCache = new Map<string, any>();
+
 // Basic SEO Analysis Function
 async function performBasicSEOAnalysis(url: string, jobId: string) {
   console.log('[SEO Analysis] Starting analysis for URL:', url);
@@ -156,15 +159,28 @@ function analyzeHTML(html: string, url: string) {
     recommendations.push('Add alt text to all images to improve accessibility and SEO');
   }
   
-  // Performance simulation (since we can't easily measure real performance in serverless)
-  const loadTime = Math.random() * 2 + 1; // 1-3 seconds
-  const mobileScore = Math.floor(Math.random() * 20 + 75); // 75-95
-  const desktopScore = Math.floor(Math.random() * 15 + 85); // 85-100
+  // Calculate deterministic performance scores based on page content
+  const htmlSize = html.length;
+  const imageCount = imgMatches.length;
+  
+  // Base performance calculation on actual page characteristics
+  let loadTime = 1.5; // Base load time
+  if (htmlSize > 100000) loadTime += 1.0; // Large HTML
+  if (imageCount > 10) loadTime += 0.5; // Many images
+  
+  let mobileScore = 85; // Base mobile score
+  if (metaDescription.length > 0) mobileScore += 5;
+  if (h1Matches.length === 1) mobileScore += 5;
+  if (imagesWithoutAlt === 0 && imgMatches.length > 0) mobileScore += 5;
+  
+  let desktopScore = 92; // Base desktop score  
+  if (title.length > 0 && title.length <= 60) desktopScore += 5;
+  if (metaDescription.length > 0 && metaDescription.length <= 160) desktopScore += 3;
   
   // Add performance-based score adjustments
   if (loadTime < 2) seoScore += 5;
-  if (mobileScore > 90) seoScore += 5;
-  if (desktopScore > 95) seoScore += 5;
+  if (mobileScore > 90) seoScore += 3;
+  if (desktopScore > 95) seoScore += 2;
   
   // Ensure score is within bounds
   seoScore = Math.max(0, Math.min(100, Math.round(seoScore)));
@@ -228,14 +244,42 @@ export async function GET(
           
           console.log('[Crawl Results API] Analyzing URL:', analysisUrl);
           
-          // For real analysis, we'll perform a basic SEO check
-          const realAnalysisResults = await performBasicSEOAnalysis(analysisUrl, jobId);
+          // For real analysis, we'll perform a basic SEO check and store results
+          let storedResults = null;
           
-          if (realAnalysisResults) {
+          // Try to get cached results first (we'll store them to avoid re-analysis)
+          try {
+            // Create a simple cache key based on URL and job ID
+            const cacheKey = `analysis_${jobId}`;
+            // In a real app, you'd use Redis or a database. For demo, we'll use a simple in-memory cache
+            storedResults = analysisCache.get(cacheKey);
+          } catch (e) {
+            console.log('[Crawl Results API] No cached results found');
+          }
+          
+          if (!storedResults) {
+            console.log('[Crawl Results API] Performing new analysis for:', analysisUrl);
+            storedResults = await performBasicSEOAnalysis(analysisUrl, jobId);
+            
+            if (storedResults) {
+              // Cache the results
+              try {
+                const cacheKey = `analysis_${jobId}`;
+                analysisCache.set(cacheKey, storedResults);
+                console.log('[Crawl Results API] Results cached for job:', jobId);
+              } catch (e) {
+                console.log('[Crawl Results API] Failed to cache results:', e);
+              }
+            }
+          } else {
+            console.log('[Crawl Results API] Using cached results for job:', jobId);
+          }
+          
+          if (storedResults) {
             console.log('[Crawl Results API] Real analysis completed successfully');
             return NextResponse.json({
               success: true,
-              data: realAnalysisResults
+              data: storedResults
             });
           }
         } catch (error) {

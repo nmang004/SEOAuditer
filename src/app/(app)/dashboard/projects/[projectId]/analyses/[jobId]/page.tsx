@@ -77,6 +77,23 @@ export default function AnalysisResultsPage() {
     const isAdminJob = jobId.startsWith('admin-job-');
     
     if (isAdminBypass && isAdminJob) {
+      // First, check if we have cached results for this job
+      const cacheKey = `analysis_results_${jobId}`;
+      const cachedResults = localStorage.getItem(cacheKey);
+      
+      if (cachedResults) {
+        console.log('[Analysis Results] Using cached results for job:', jobId);
+        try {
+          const parsedResults = JSON.parse(cachedResults);
+          setData(parsedResults);
+          setLoading(false);
+          return;
+        } catch (e) {
+          console.error('[Analysis Results] Failed to parse cached results:', e);
+        }
+      }
+      
+      // If no cached results, get the URL from stored jobs
       const storedJobs = JSON.parse(localStorage.getItem('adminAnalysisJobs') || '[]');
       const job = storedJobs.find((j: any) => j.jobId === jobId);
       if (job) {
@@ -101,6 +118,13 @@ export default function AnalysisResultsPage() {
         console.log('[Analysis Results] API response:', response);
         if (response.success && response.data) {
           setData(response.data);
+          
+          // Store results in localStorage for admin users to persist across refreshes
+          if (isAdminBypass && isAdminJob) {
+            const cacheKey = `analysis_results_${jobId}`;
+            localStorage.setItem(cacheKey, JSON.stringify(response.data));
+            console.log('[Analysis Results] Stored results in localStorage for job:', jobId);
+          }
         } else {
           setError(response.error || 'Failed to load results');
         }
