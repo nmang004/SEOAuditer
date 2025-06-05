@@ -50,7 +50,9 @@ export function getServerBackendUrl(): string {
   // For server-side, prefer non-public env var
   const url = process.env.BACKEND_URL || 
               process.env.NEXT_PUBLIC_BACKEND_URL || 
-              'http://localhost:4000/api';
+              (process.env.NODE_ENV === 'production' 
+                ? 'https://seoauditer-production.up.railway.app' 
+                : 'http://localhost:4000/api');
   
   return ensureProtocol(url);
 }
@@ -60,6 +62,9 @@ export function getServerBackendUrl(): string {
  * Only uses NEXT_PUBLIC_BACKEND_URL
  */
 export function getClientBackendUrl(): string {
-  const url = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000/api';
+  const url = process.env.NEXT_PUBLIC_BACKEND_URL || 
+              (process.env.NODE_ENV === 'production' 
+                ? 'https://seoauditer-production.up.railway.app' 
+                : 'http://localhost:4000/api');
   return ensureProtocol(url);
 }
