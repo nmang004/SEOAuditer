@@ -113,7 +113,7 @@ function MinimalDiagnostic() {
   // Test API call function
   const testAPICall = async () => {
     console.log('=== TESTING API CALL ===');
-    const logEntry = { timestamp: new Date().toISOString(), step: 'API_TEST_START' };
+    const logEntry: any = { timestamp: new Date().toISOString(), step: 'API_TEST_START' };
     
     try {
       const url = `https://seoauditer-production.up.railway.app/api/auth/verify-email/${encodeURIComponent(token)}`;
