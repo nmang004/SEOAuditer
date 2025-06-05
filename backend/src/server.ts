@@ -18,6 +18,7 @@ import projectRoutes from './routes/project.routes';
 import analysisRoutes from './routes/analysis.routes';
 import enhancedAnalysisRoutes from './routes/enhanced-analysis.routes';
 import healthRoutes from './routes/health.routes';
+import debugRoutes from './routes/debug.routes';
 
 const app = express();
 
@@ -78,6 +79,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/analysis', analysisRoutes);
 app.use('/api/enhanced-analysis', enhancedAnalysisRoutes);
+app.use('/api/debug', debugRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
