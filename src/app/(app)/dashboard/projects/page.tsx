@@ -125,22 +125,22 @@ export default function ProjectsListPage() {
       <div className="space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            Projects
-          </h1>
-          <p className="text-gray-300 mt-2 text-lg">
-            Manage and monitor your website analysis projects
-          </p>
+          <div>
+            <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Projects
+            </h1>
+            <p className="text-gray-300 mt-2 text-lg">
+              Manage and monitor your website analysis projects
+            </p>
+          </div>
+          <Button 
+            onClick={() => setIsCreating(true)} 
+            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-6 flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            New Project
+          </Button>
         </div>
-        <Button 
-          onClick={() => setIsCreating(true)} 
-          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-6 flex items-center gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          New Project
-        </Button>
-      </div>
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
@@ -228,12 +228,6 @@ export default function ProjectsListPage() {
           </form>
         </div>
       )}
-
-      {/* Debug info */}
-      <div className="bg-gray-800 p-4 rounded mb-4 text-white text-sm">
-        <p>Debug: projects.length = {projects.length}, filteredProjects.length = {filteredProjects.length}, isCreating = {isCreating.toString()}</p>
-        <p>Projects: {JSON.stringify(projects, null, 2)}</p>
-      </div>
 
       {/* Projects Grid */}
       <div className="grid gap-6">
