@@ -163,16 +163,22 @@ function MinimalDiagnostic() {
         };
         localStorage.setItem('apiTest', JSON.stringify(logEntry));
         
-        document.getElementById('result').innerHTML = 
-          '<h2 style="color: red;">CSS DETECTED INSTEAD OF JSON!</h2>' +
-          '<p>Response length: ' + responseText.length + '</p>' +
-          '<p>First 200 chars: ' + responseText.substring(0, 200) + '</p>';
+        const resultElement = document.getElementById('result');
+        if (resultElement) {
+          resultElement.innerHTML = 
+            '<h2 style="color: red;">CSS DETECTED INSTEAD OF JSON!</h2>' +
+            '<p>Response length: ' + responseText.length + '</p>' +
+            '<p>First 200 chars: ' + responseText.substring(0, 200) + '</p>';
+        }
       } else {
         console.log('Valid response received');
-        document.getElementById('result').innerHTML = 
-          '<h2 style="color: green;">Valid Response Received</h2>' +
-          '<p>Length: ' + responseText.length + '</p>' +
-          '<pre>' + responseText.substring(0, 500) + '</pre>';
+        const resultElement = document.getElementById('result');
+        if (resultElement) {
+          resultElement.innerHTML = 
+            '<h2 style="color: green;">Valid Response Received</h2>' +
+            '<p>Length: ' + responseText.length + '</p>' +
+            '<pre>' + responseText.substring(0, 500) + '</pre>';
+        }
       }
       
     } catch (error) {
@@ -181,9 +187,12 @@ function MinimalDiagnostic() {
       logEntry.error = error instanceof Error ? error.message : String(error);
       localStorage.setItem('apiTest', JSON.stringify(logEntry));
       
-      document.getElementById('result').innerHTML = 
-        '<h2 style="color: red;">API Call Failed</h2>' +
-        '<p>Error: ' + (error instanceof Error ? error.message : String(error)) + '</p>';
+      const resultElement = document.getElementById('result');
+      if (resultElement) {
+        resultElement.innerHTML = 
+          '<h2 style="color: red;">API Call Failed</h2>' +
+          '<p>Error: ' + (error instanceof Error ? error.message : String(error)) + '</p>';
+      }
     }
   };
 
