@@ -75,10 +75,9 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // TEMPORARILY DISABLE SERVICE WORKER FOR ALL REQUESTS
-  // This is to test if SW is causing the CSS-as-JavaScript issue
-  console.log('Service Worker: Letting browser handle request directly:', url.pathname);
-  return; // Let browser handle everything
+  // COMPLETELY DISABLE SERVICE WORKER - DO NOT HANDLE ANY REQUESTS
+  console.log('Service Worker: DISABLED - not handling request:', url.pathname);
+  // Do not call event.respondWith() at all - let browser handle natively
 
   // Skip non-GET requests and chrome-extension requests
   if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {

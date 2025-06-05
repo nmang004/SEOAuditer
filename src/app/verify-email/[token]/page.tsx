@@ -32,6 +32,32 @@ export default function VerifyEmailPage() {
       hasServiceWorker: 'serviceWorker' in navigator
     });
 
+    // FORCE UNREGISTER SERVICE WORKER to test if it's causing CSS-as-JS issue
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        addDiagnostic('Service Worker Cleanup', {
+          foundRegistrations: registrations.length,
+          registrations: registrations.map(r => ({ scope: r.scope, state: r.active?.state }))
+        });
+        
+        registrations.forEach(registration => {
+          registration.unregister().then(success => {
+            addDiagnostic('Service Worker Unregistered', { success, scope: registration.scope });
+          });
+        });
+        
+        // Clear all caches
+        if ('caches' in window) {
+          caches.keys().then(names => {
+            addDiagnostic('Clearing Caches', { cacheNames: names });
+            return Promise.all(names.map(name => caches.delete(name)));
+          }).then(() => {
+            addDiagnostic('All Caches Cleared', {});
+          });
+        }
+      });
+    }
+
     try {
       // Extract token from URL with comprehensive logging
       const pathname = window.location.pathname;
@@ -97,15 +123,16 @@ export default function VerifyEmailPage() {
       setToken(cleanToken);
       addDiagnostic('Token Set Successfully', { finalToken: cleanToken });
       
-      // Add a delay to ensure UI is ready and log network environment
+      // Add a longer delay to ensure Service Worker cleanup is complete
       setTimeout(() => {
         addDiagnostic('Pre-Verification Check', {
           online: navigator.onLine,
           connectionType: (navigator as any).connection?.effectiveType || 'unknown',
-          serviceWorkerState: navigator.serviceWorker?.controller?.state || 'none'
+          serviceWorkerState: navigator.serviceWorker?.controller?.state || 'none',
+          serviceWorkerReady: navigator.serviceWorker?.ready ? 'true' : 'false'
         });
         verifyEmail(cleanToken);
-      }, 500);
+      }, 2000); // Increased delay to allow SW cleanup
       
     } catch (error) {
       addDiagnostic('Critical Error in Token Extraction', {

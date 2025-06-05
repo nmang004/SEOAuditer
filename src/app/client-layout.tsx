@@ -22,22 +22,23 @@ export default function ClientLayout({
   const [showOfflineBanner, setShowOfflineBanner] = useState(false);
   const { isOnline } = useNetworkStatus();
 
-  // Service Worker registration
+  // Service Worker registration - TEMPORARILY DISABLED for email verification debugging
   useEffect(() => {
     if (mounted && 'serviceWorker' in navigator) {
-      pwa.register({
-        swUrl: '/sw.js',
-        onSuccess: () => {
-          console.log('Service Worker registered successfully');
-          setSwRegistered(true);
-        },
-        onUpdate: () => {
-          console.log('Service Worker update available');
-          setUpdateAvailable(true);
-        },
-      }).catch(error => {
-        console.error('Service Worker registration failed:', error);
+      // TEMPORARILY DISABLE SERVICE WORKER REGISTRATION
+      console.log('Service Worker registration temporarily disabled for debugging email verification');
+      
+      // Unregister any existing service workers
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        console.log('Found', registrations.length, 'service worker registrations');
+        registrations.forEach(registration => {
+          registration.unregister().then(success => {
+            console.log('Service Worker unregistered:', success);
+          });
+        });
       });
+      
+      setSwRegistered(false);
     }
   }, [mounted]);
 
