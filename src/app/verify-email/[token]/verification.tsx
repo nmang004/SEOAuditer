@@ -98,7 +98,15 @@ export default function VerificationPage({ token }: VerificationPageProps) {
         }
       } else {
         console.log('❌ Verification failed:', data);
-        setState('failed');
+        // Handle both old and new error messages from backend
+        if (data.error?.includes('validation failed') || 
+            data.error?.includes('Invalid or expired') ||
+            data.error?.includes('expired') ||
+            data.errorCode === 'INVALID_TOKEN') {
+          setState('failed');
+        } else {
+          setState('failed');
+        }
       }
     } catch (error) {
       console.error('❌ Verification failed:', error);

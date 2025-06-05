@@ -1095,3 +1095,14 @@ Redis client connected successfully in rate-limit middleware
 [32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-05 07:18:53.918 AM"}
 [32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-05 07:18:53.918 AM"}
 ✅ Server started successfully on port 4000
+[32m[32minfo[32m[39m: 	[32mEmail verification attempt[39m {"correlationId":"verify_1749122359606_bwdomvfk2","ip":"::1","timestamp":"2025-06-05 07:19:19.606 AM","tokenPrefix":"90bd137b...","userAgent":"curl/8.7.1"}
+[33m[33mwarn[33m[39m: 	[33mToken validation failed - not found or expired[39m {"hashedTokenPrefix":"008c43f0...","purpose":"email_verification","timestamp":"2025-06-05 07:19:19.788 AM","validationTimeMs":181}
+[33m[33mwarn[33m[39m: 	[33mEmail verification failed - invalid token[39m {"correlationId":"verify_1749122359606_bwdomvfk2","error":"Invalid or expired verification token","timestamp":"2025-06-05 07:19:19.788 AM","tokenPrefix":"90bd137b..."}
+[0mGET /api/secure-auth/verify-email/90bd137b2886e58430f78cbc28127f003f5f366101cba6467379f473ef26481 [33m400[0m 186.171 ms - 155[0m
+[32m[32minfo[32m[39m: 	[32mResend verification attempt[39m {"correlationId":"resend_1749122369448_oigpzx3ag","email":"nmang004@gmail.com","ip":"::1","timestamp":"2025-06-05 07:19:29.448 AM"}
+[33m[33mwarn[33m[39m: 	[33mResend verification failed - already verified[39m {"correlationId":"resend_1749122369448_oigpzx3ag","email":"nmang004@gmail.com","timestamp":"2025-06-05 07:19:29.452 AM","userId":"2e3b439a-fe9c-4070-ab79-14cb079efc80"}
+[0mPOST /api/secure-auth/resend-verification [33m400[0m 4.490 ms - 53[0m
+[32m[32minfo[32m[39m: 	[32mEmail verification attempt[39m {"correlationId":"verify_1749122638830_atr89dcpe","ip":"::1","timestamp":"2025-06-05 07:23:58.832 AM","tokenPrefix":"90bd1137...","userAgent":"curl/8.7.1"}
+[33m[33mwarn[33m[39m: 	[33mToken validation failed - not found or expired[39m {"hashedTokenPrefix":"81ee573f...","purpose":"email_verification","timestamp":"2025-06-05 07:23:59.007 AM","validationTimeMs":170}
+[33m[33mwarn[33m[39m: 	[33mEmail verification failed - invalid token[39m {"correlationId":"verify_1749122638830_atr89dcpe","error":"Invalid or expired verification token","timestamp":"2025-06-05 07:23:59.008 AM","tokenPrefix":"90bd1137..."}
+[0mGET /api/secure-auth/verify-email/90bd1137b2886e58430f78cbc28127f00315f366101cba6467379f473ef26481 [33m400[0m 186.297 ms - 155[0m

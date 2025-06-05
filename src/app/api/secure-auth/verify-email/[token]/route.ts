@@ -87,6 +87,8 @@ export async function GET(
           { 
             success: false, 
             error: data.error || 'Invalid verification token',
+            errorCode: data.errorCode || 'INVALID_TOKEN',
+            metadata: data.metadata,
             details: data.details
           },
           { status: 400 }
