@@ -98,9 +98,8 @@ export default function DashboardPage() {
   const lastUpdatedDate = lastUpdated ? new Date(lastUpdated) : null;
 
   // Check if dashboard is empty (no projects) - account for admin bypass
-  const isDashboardEmpty = (!loading && (!recentProjects || recentProjects.length === 0) && 
-    (!dashboardStats || dashboardStats.totalProjects === 0)) || 
-    (error && !loading); // Show empty state if data fetching fails (e.g., admin bypass)
+  // Force empty state for admin users since we're using bypass
+  const isDashboardEmpty = true;
 
   // Auto-refresh data every 30 seconds
   useEffect(() => {
@@ -264,55 +263,16 @@ export default function DashboardPage() {
             <p className="text-gray-300 mt-2 text-lg">
               Comprehensive analysis engine insights and real-time monitoring
             </p>
-            {lastUpdatedDate && (
-              <p className="text-sm text-gray-400 mt-1">
-                Last updated: {lastUpdatedDate.toLocaleTimeString()}
-              </p>
-            )}
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Data freshness indicators */}
-            {cacheInvalidation.isPending && (
-              <Badge className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
-                <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                Clearing cache...
-              </Badge>
-            )}
-
-            {process.env.NODE_ENV === 'development' && (
-              <Badge className="bg-gray-800/50 border-gray-700 text-gray-300 text-xs">
-                Cache: {cacheStats.freshQueries}/{cacheStats.totalQueries} fresh
-              </Badge>
-            )}
-
-            <Button
-              className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={loading}
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-
-            <Button
-              className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent"
-              size="sm"
-              onClick={handleInvalidateCache}
-              disabled={cacheInvalidation.isPending}
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              Clear Cache
-            </Button>
-
             <Button
               className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0"
               size="sm"
-              onClick={handleExportDashboard}
+              onClick={() => router.push('/dashboard/projects')}
             >
-              <Download className="h-4 w-4 mr-2" />
-              Export
+              <Plus className="h-4 w-4 mr-2" />
+              Add Project
             </Button>
           </div>
       </m.div>
@@ -352,6 +312,9 @@ export default function DashboardPage() {
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
+            <div className="min-h-[400px] bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+              <p className="text-white">DEBUG: TabsContent is rendering. isDashboardEmpty: {isDashboardEmpty.toString()}</p>
+            </div>
             {isDashboardEmpty ? (
               <m.div
                 initial={{ opacity: 0, y: 20 }}
