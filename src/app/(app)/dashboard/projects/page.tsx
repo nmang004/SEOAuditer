@@ -42,6 +42,8 @@ export default function ProjectsListPage() {
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem("token");
+      console.log('[Projects] Fetching projects with token:', token ? 'present' : 'missing');
+      
       const response = await fetch("/api/projects", {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -49,6 +51,12 @@ export default function ProjectsListPage() {
       });
       
       const result = await response.json();
+      console.log('[Projects] Fetch response:', { 
+        success: result.success, 
+        dataLength: result.data?.length || 0,
+        source: result.source || 'backend',
+        data: result.data 
+      });
       
       if (result.success && Array.isArray(result.data)) {
         setProjects(result.data);
@@ -70,6 +78,9 @@ export default function ProjectsListPage() {
     
     try {
       const token = localStorage.getItem("token");
+      console.log('[Projects] Creating project with token:', token ? 'present' : 'missing');
+      console.log('[Projects] Project data:', { name: projectName, url: projectUrl });
+      
       const response = await fetch("/api/projects", {
         method: "POST",
         headers: {
@@ -80,6 +91,12 @@ export default function ProjectsListPage() {
       });
       
       const result = await response.json();
+      console.log('[Projects] Create response:', { 
+        ok: response.ok, 
+        success: result.success, 
+        source: result.source || 'backend',
+        project: result.data 
+      });
       
       if (!response.ok || !result.success) {
         setError(result.error || "Failed to create project");
@@ -88,6 +105,7 @@ export default function ProjectsListPage() {
       
       // Add the new project to the beginning of the projects array
       const newProject = result.data;
+      console.log('[Projects] Adding new project to state:', newProject);
       setProjects(prevProjects => [newProject, ...prevProjects]);
       
       // Clear form and close it

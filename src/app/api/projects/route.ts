@@ -3,9 +3,28 @@ import { NextRequest, NextResponse } from 'next/server';
 // Use correct Railway backend URL for production deployment
 const BACKEND_URL = process.env.BACKEND_URL || 'https://seoauditer-production.up.railway.app';
 
+// In-memory storage for admin bypass projects (temporary until backend auth is fixed)
+const adminProjects: any[] = [];
+
 export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');
+    console.log('[Projects API] Auth header received:', authHeader ? 'present' : 'missing');
+    
+    // Check if this is an admin bypass token
+    const isAdminBypass = authHeader?.includes('admin-access-token');
+    console.log('[Projects API] Is admin bypass:', isAdminBypass);
+    
+    if (isAdminBypass) {
+      // For admin bypass, return stored projects
+      console.log('[Projects API] Using admin bypass - returning stored projects:', adminProjects.length);
+      return NextResponse.json({
+        success: true,
+        data: adminProjects,
+        source: 'admin-bypass'
+      });
+    }
+    
     const url = new URL(request.url);
     const searchParams = url.searchParams;
     
@@ -57,8 +76,36 @@ export async function POST(request: NextRequest) {
     console.log('[Projects API] Creating project:', { name: body.name, url: body.url });
 
     const authHeader = request.headers.get('authorization');
-    const backendUrl = `${BACKEND_URL}/api/projects`;
+    console.log('[Projects API] Auth header for create:', authHeader ? 'present' : 'missing');
     
+    // Check if this is an admin bypass token
+    const isAdminBypass = authHeader?.includes('admin-access-token');
+    console.log('[Projects API] Is admin bypass for create:', isAdminBypass);
+    
+    if (isAdminBypass) {
+      // For admin bypass, store in memory
+      const newProject = {
+        id: 'admin-' + Math.random().toString(36).substr(2, 9),
+        name: body.name,
+        url: body.url,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        analysesCount: 0,
+        status: 'Active'
+      };
+      
+      adminProjects.unshift(newProject); // Add to beginning
+      console.log('[Projects API] Admin project created and stored:', newProject);
+      console.log('[Projects API] Total admin projects:', adminProjects.length);
+      
+      return NextResponse.json({
+        success: true,
+        data: newProject,
+        source: 'admin-bypass'
+      });
+    }
+    
+    const backendUrl = `${BACKEND_URL}/api/projects`;
     console.log('[Projects API] Attempting to create at:', backendUrl);
 
     const response = await fetch(backendUrl, {
