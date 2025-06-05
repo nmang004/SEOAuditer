@@ -66,7 +66,7 @@ export default function ProjectsListPage() {
         });
         
         console.log('[Projects] Loaded admin projects from localStorage:', projectsWithCounts.length);
-        console.log('[Projects] Analysis counts updated for projects:', projectsWithCounts.map(p => ({ id: p.id, name: p.name, count: p.analysesCount })));
+        console.log('[Projects] Analysis counts updated for projects:', projectsWithCounts.map((p: Project) => ({ id: p.id, name: p.name, count: p.analysesCount })));
         setProjects(projectsWithCounts);
         return;
       }

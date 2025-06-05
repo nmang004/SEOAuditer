@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -35,11 +35,7 @@ export default function AnalysesListPage() {
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadAnalyses();
-  }, [projectId]);
-
-  const loadAnalyses = () => {
+  const loadAnalyses = useCallback(() => {
     setLoading(true);
     
     const token = localStorage.getItem('token');
@@ -79,7 +75,11 @@ export default function AnalysesListPage() {
     }
     
     setLoading(false);
-  };
+  }, [projectId]);
+
+  useEffect(() => {
+    loadAnalyses();
+  }, [projectId, loadAnalyses]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
