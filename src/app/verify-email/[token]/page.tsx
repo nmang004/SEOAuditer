@@ -35,7 +35,7 @@ export default function VerifyEmailPage() {
       // Also log to console
       console.log(`[PERSISTENT] ${message}:`, details);
     } catch (error) {
-      console.error('Failed to save persistent log:', error);
+      console.error('Failed to save persistent log:', error instanceof Error ? error.message : String(error));
     }
   };
 
@@ -52,7 +52,10 @@ export default function VerifyEmailPage() {
       // Also save persistently
       addPersistentLog(step, details);
     } catch (error) {
-      addPersistentLog('Error in addDiagnostic', { error: error.message, step });
+      addPersistentLog('Error in addDiagnostic', { 
+        error: error instanceof Error ? error.message : String(error), 
+        step 
+      });
     }
   };
 
@@ -63,7 +66,9 @@ export default function VerifyEmailPage() {
       setSavedLogs(logs);
       return logs;
     } catch (error) {
-      addPersistentLog('Error loading saved logs', { error: error.message });
+      addPersistentLog('Error loading saved logs', { 
+        error: error instanceof Error ? error.message : String(error) 
+      });
       return [];
     }
   };
@@ -143,8 +148,8 @@ export default function VerifyEmailPage() {
         }
       }).catch(error => {
         addDiagnostic('SW Cleanup Error', {
-          error: error.message,
-          stack: error.stack
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : null
         });
       });
     }
