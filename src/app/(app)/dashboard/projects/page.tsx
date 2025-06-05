@@ -49,11 +49,25 @@ export default function ProjectsListPage() {
       console.log('[Projects] Is admin bypass:', isAdminBypass);
       
       if (isAdminBypass) {
-        // For admin bypass, use localStorage
+        // For admin bypass, use localStorage and calculate analysis counts
         const adminProjectsData = localStorage.getItem('adminProjects');
         const adminProjects = adminProjectsData ? JSON.parse(adminProjectsData) : [];
-        console.log('[Projects] Loaded admin projects from localStorage:', adminProjects.length);
-        setProjects(adminProjects);
+        
+        // Load analysis jobs to calculate counts
+        const adminAnalysisJobs = JSON.parse(localStorage.getItem('adminAnalysisJobs') || '[]');
+        
+        // Update projects with current analysis counts
+        const projectsWithCounts = adminProjects.map((project: Project) => {
+          const projectAnalyses = adminAnalysisJobs.filter((job: any) => job.projectId === project.id);
+          return {
+            ...project,
+            analysesCount: projectAnalyses.length
+          };
+        });
+        
+        console.log('[Projects] Loaded admin projects from localStorage:', projectsWithCounts.length);
+        console.log('[Projects] Analysis counts updated for projects:', projectsWithCounts.map(p => ({ id: p.id, name: p.name, count: p.analysesCount })));
+        setProjects(projectsWithCounts);
         return;
       }
       

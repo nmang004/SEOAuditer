@@ -394,7 +394,7 @@ export default function ProjectDashboardPage() {
           </button>
 
           <button 
-            onClick={() => window.location.href = `/dashboard/projects/${projectId}/trends`}
+            onClick={() => window.location.href = `/analysis/trends/${projectId}`}
             className="border border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:text-white h-20 rounded-xl font-medium transition-all flex flex-col items-center justify-center gap-2"
           >
             <TrendingUp className="h-6 w-6" />
