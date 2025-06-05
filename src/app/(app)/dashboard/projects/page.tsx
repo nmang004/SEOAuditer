@@ -178,75 +178,70 @@ export default function ProjectsListPage() {
           <div className="bg-white text-black p-4 mb-4 rounded">
             <p>DEBUG: Form is rendering, isCreating = {isCreating.toString()}</p>
           </div>
-          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                Create New Project
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleCreateProject} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium text-gray-300">
-                      Project Name
-                    </label>
-                    <Input
-                      id="name"
-                      type="text"
-                      value={projectName}
-                      onChange={(e) => setProjectName(e.target.value)}
-                      placeholder="Enter project name"
-                      className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="url" className="text-sm font-medium text-gray-300">
-                      Website URL
-                    </label>
-                    <Input
-                      id="url"
-                      type="url"
-                      value={projectUrl}
-                      onChange={(e) => setProjectUrl(e.target.value)}
-                      placeholder="https://example.com"
-                      className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
-                      required
-                    />
-                  </div>
+          <div className="bg-white p-6 rounded-lg text-black">
+            <h3 className="text-xl font-bold mb-4 text-black">Create New Project</h3>
+            
+            <form onSubmit={handleCreateProject} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium text-black">
+                    Project Name
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    placeholder="Enter project name"
+                    className="w-full p-2 border border-gray-300 rounded text-black bg-white"
+                    required
+                  />
                 </div>
-                
-                {error && (
-                  <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md p-3">
-                    {error}
-                  </div>
-                )}
-                
-                <div className="flex gap-2">
-                  <Button 
-                    type="submit" 
-                    disabled={loading}
-                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0"
-                  >
-                    {loading ? "Creating..." : "Create Project"}
-                  </Button>
-                  <Button 
-                    type="button" 
-                    className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent"
-                    onClick={() => {
-                      setIsCreating(false);
-                      setProjectName("");
-                      setProjectUrl("");
-                      setError("");
-                    }}
-                  >
-                    Cancel
-                  </Button>
+                <div className="space-y-2">
+                  <label htmlFor="url" className="text-sm font-medium text-black">
+                    Website URL
+                  </label>
+                  <input
+                    id="url"
+                    type="url"
+                    value={projectUrl}
+                    onChange={(e) => setProjectUrl(e.target.value)}
+                    placeholder="https://example.com"
+                    className="w-full p-2 border border-gray-300 rounded text-black bg-white"
+                    required
+                  />
                 </div>
-              </form>
-            </CardContent>
-          </Card>
+              </div>
+              
+              {error && (
+                <div className="text-sm text-red-600 bg-red-100 border border-red-300 rounded-md p-3">
+                  {error}
+                </div>
+              )}
+              
+              <div className="flex gap-2">
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                >
+                  {loading ? "Creating..." : "Create Project"}
+                </button>
+                <button 
+                  type="button" 
+                  className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded"
+                  onClick={() => {
+                    setIsCreating(false);
+                    setProjectName("");
+                    setProjectUrl("");
+                    setError("");
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
