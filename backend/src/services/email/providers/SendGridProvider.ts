@@ -66,14 +66,30 @@ export class SendGridProvider implements EmailProvider {
         subject: email.subject,
         html: email.html,
         text: email.text || this.htmlToText(email.html),
-        // Disable click tracking to prevent URL rewriting issues with verification tokens
+        // Completely disable ALL tracking to prevent URL rewriting
         trackingSettings: {
           clickTracking: {
             enable: false,
             enableText: false
           },
           openTracking: {
-            enable: true
+            enable: false
+          },
+          ganalytics: {
+            enable: false
+          },
+          subscriptionTracking: {
+            enable: false
+          }
+        },
+        // Force disable tracking at message level
+        tracking_settings: {
+          click_tracking: {
+            enable: false,
+            enable_text: false
+          },
+          open_tracking: {
+            enable: false
           }
         },
         // Add custom headers for better deliverability
