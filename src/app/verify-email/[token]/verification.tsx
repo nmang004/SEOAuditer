@@ -28,6 +28,7 @@ export default function VerificationPage({ token }: VerificationPageProps) {
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'expired'>('loading');
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [isResending, setIsResending] = useState(false);
+  const [emailInput, setEmailInput] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -52,10 +53,12 @@ export default function VerificationPage({ token }: VerificationPageProps) {
 
       if (response.ok && data.success) {
         setStatus('success');
-        // Redirect to dashboard after 3 seconds
-        setTimeout(() => {
-          router.push('/auth/login?verified=true');
-        }, 3000);
+        // Only redirect if this was an actual verification, not a resend
+        if (!result?.message?.includes('sent')) {
+          setTimeout(() => {
+            router.push('/auth/login?verified=true');
+          }, 3000);
+        }
       } else {
         // Check if token is expired or invalid
         if (data.error?.includes('expired') || data.error?.includes('Invalid')) {
@@ -75,8 +78,13 @@ export default function VerificationPage({ token }: VerificationPageProps) {
     }
   };
 
-  const handleResendVerification = async () => {
-    if (!result?.data?.email) return;
+  const handleResendVerification = async (email?: string) => {
+    const emailToUse = email || result?.data?.email;
+    if (!emailToUse) {
+      // If no email available, redirect to register page
+      router.push('/auth/register');
+      return;
+    }
 
     try {
       setIsResending(true);
@@ -87,19 +95,35 @@ export default function VerificationPage({ token }: VerificationPageProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: result.data.email
+          email: emailToUse
         })
       });
 
       const data = await response.json();
       
       if (data.success) {
-        alert('New verification email sent! Please check your inbox.');
+        setResult({
+          success: true,
+          message: 'New verification email sent successfully!',
+          data: { email: emailToUse, verified: false, verifiedAt: '' }
+        });
+        setStatus('success');
+        // Don't auto-redirect, let user check their email
       } else {
-        alert('Failed to resend verification email: ' + (data.error || 'Unknown error'));
+        setResult({
+          success: false,
+          message: 'Failed to resend verification email',
+          error: data.error || 'Unknown error occurred'
+        });
+        setStatus('error');
       }
     } catch (error) {
-      alert('Network error while resending email');
+      setResult({
+        success: false,
+        message: 'Network error while resending email',
+        error: error instanceof Error ? error.message : 'Network error'
+      });
+      setStatus('error');
     } finally {
       setIsResending(false);
     }
@@ -124,11 +148,14 @@ export default function VerificationPage({ token }: VerificationPageProps) {
       case 'loading':
         return 'Verifying your email...';
       case 'success':
+        if (result?.message?.includes('sent')) {
+          return 'New verification email sent!';
+        }
         return result?.message || 'Email verified successfully!';
       case 'expired':
-        return 'Verification link has expired';
+        return 'Verification Link Expired';
       case 'error':
-        return result?.error || 'Verification failed';
+        return result?.message || result?.error || 'Verification failed';
       default:
         return 'Processing...';
     }
@@ -139,11 +166,14 @@ export default function VerificationPage({ token }: VerificationPageProps) {
       case 'loading':
         return 'Please wait while we verify your email address.';
       case 'success':
-        return 'Your email has been verified. You will be redirected to the login page shortly.';
+        if (result?.message?.includes('sent')) {
+          return 'Please check your email inbox and click the new verification link.';
+        }
+        return 'Your email has been verified. You can now log in to your account.';
       case 'expired':
-        return 'Your verification link has expired. Please request a new one.';
+        return 'This verification link has expired or been used. Request a new verification email to continue.';
       case 'error':
-        return 'There was an issue verifying your email. Please try again or contact support.';
+        return result?.error || 'There was an issue verifying your email. Please try again or contact support.';
       default:
         return '';
     }
@@ -165,27 +195,69 @@ export default function VerificationPage({ token }: VerificationPageProps) {
           </div>
 
           {status === 'success' && (
-            <div className="text-sm text-green-400 bg-green-900/20 p-3 rounded-lg">
-              Redirecting to login page in 3 seconds...
+            <div className="space-y-3">
+              {result?.message?.includes('sent') ? (
+                <div className="text-sm text-green-400 bg-green-900/20 p-4 rounded-lg">
+                  ✅ {result.message}
+                  <br />
+                  <span className="text-green-300">Check your email and click the new verification link.</span>
+                </div>
+              ) : (
+                <div className="text-sm text-green-400 bg-green-900/20 p-3 rounded-lg">
+                  ✅ Email verified successfully!
+                  <br />
+                  <span className="text-green-300">Redirecting to login page in 3 seconds...</span>
+                </div>
+              )}
             </div>
           )}
 
           {status === 'expired' && (
-            <div className="space-y-4">
-              <Button
-                onClick={handleResendVerification}
-                disabled={isResending || !result?.data?.email}
-                className="w-full bg-indigo-600 hover:bg-indigo-700"
-              >
-                {isResending ? (
-                  <>
-                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  'Send New Verification Email'
-                )}
-              </Button>
+            <div className="space-y-4 w-full">
+              <div className="bg-yellow-900/20 border border-yellow-500/20 p-4 rounded-lg">
+                <p className="text-yellow-400 text-sm mb-2">
+                  ⚠️ Verification links expire after 1 hour for security
+                </p>
+                <p className="text-gray-300 text-sm">
+                  Enter your email address to receive a fresh verification link
+                </p>
+              </div>
+              
+              <div className="space-y-3">
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500"
+                  disabled={isResending}
+                />
+                
+                <Button
+                  onClick={() => handleResendVerification(emailInput)}
+                  disabled={isResending || !emailInput.includes('@')}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
+                >
+                  {isResending ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Sending New Link...
+                    </>
+                  ) : (
+                    'Send New Verification Email'
+                  )}
+                </Button>
+              </div>
+              
+              <div className="text-center">
+                <Button
+                  onClick={() => router.push('/auth/register')}
+                  variant="outline"
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                >
+                  Back to Registration
+                </Button>
+              </div>
             </div>
           )}
 
