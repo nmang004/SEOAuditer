@@ -30,6 +30,8 @@ export function useMobile(): MobileDetection {
   });
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const updateDetection = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
@@ -48,9 +50,11 @@ export function useMobile(): MobileDetection {
       const isDesktop = width >= BREAKPOINTS.lg;
       
       // Check for touch support
-      const isTouchDevice = 'ontouchstart' in window || 
-                           navigator.maxTouchPoints > 0 ||
-                           (navigator as any).msMaxTouchPoints > 0;
+      const isTouchDevice = typeof navigator !== 'undefined' && (
+        'ontouchstart' in window || 
+        navigator.maxTouchPoints > 0 ||
+        (navigator as any).msMaxTouchPoints > 0
+      );
 
       // Determine orientation
       const orientation = height > width ? 'portrait' : 'landscape';
@@ -86,6 +90,8 @@ export function useBreakpoint(breakpoint: keyof typeof BREAKPOINTS): boolean {
   const [matches, setMatches] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const mediaQuery = window.matchMedia(`(min-width: ${BREAKPOINTS[breakpoint]}px)`);
     
     const updateMatches = () => setMatches(mediaQuery.matches);
@@ -147,10 +153,15 @@ export function useTouch() {
 
 // Hook for network status
 export function useNetworkStatus() {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(true); // Default to online during SSR
   const [connectionType, setConnectionType] = useState<string>('unknown');
 
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') return;
+    
+    // Set initial state
+    setIsOnline(navigator.onLine);
+    
     const updateOnlineStatus = () => setIsOnline(navigator.onLine);
     
     const updateConnectionType = () => {
@@ -197,12 +208,14 @@ export function useOrientation() {
   });
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const updateOrientation = () => {
       const screen = window.screen as any;
       const orientation = screen.orientation || screen.mozOrientation || screen.msOrientation;
       
       setOrientation({
-        angle: orientation?.angle || window.orientation || 0,
+        angle: orientation?.angle || (window as any).orientation || 0,
         type: orientation?.type || 'unknown',
       });
     };
