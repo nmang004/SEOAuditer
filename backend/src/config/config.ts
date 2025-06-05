@@ -37,6 +37,7 @@ const envSchema = z.object({
   // Email Configuration
   EMAIL_PROVIDER: z.enum(['sendgrid', 'mock']).default('sendgrid'),
   SENDGRID_API_KEY: z.string().optional(),
+  SENDGRID_EMAIL_VERIFICATION_TEMPLATE_ID: z.string().optional(),
   EMAIL_FROM_ADDRESS: z.string().email().optional(),
   EMAIL_FROM_NAME: z.string().default('SEO Director'),
   APP_NAME: z.string().default('SEO Director'),
@@ -122,7 +123,18 @@ export const config = {
   },
   // Add clientUrl for use in controllers
   clientUrl: process.env.CLIENT_URL || envVars.data.ALLOWED_ORIGINS.split(',')[0],
-  // Email Configuration
+  
+  // SendGrid Configuration
+  sendgrid: {
+    apiKey: envVars.data.SENDGRID_API_KEY,
+    fromEmail: envVars.data.EMAIL_FROM_ADDRESS || 'noreply@seoauditer.netlify.app',
+    fromName: envVars.data.EMAIL_FROM_NAME,
+    templates: {
+      emailVerification: envVars.data.SENDGRID_EMAIL_VERIFICATION_TEMPLATE_ID,
+    },
+  },
+  
+  // Email Configuration (Legacy)
   email: {
     provider: envVars.data.EMAIL_PROVIDER,
     sendgridApiKey: envVars.data.SENDGRID_API_KEY,

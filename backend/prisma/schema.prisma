@@ -33,6 +33,7 @@ model User {
   refreshTokens       RefreshToken[]
   settings            UserSettings?  @relation("UserToUserSettings")
   passwordHistory     PasswordHistory[]
+  verificationTokens  VerificationToken[]
 
   @@index([email], map: "idx_users_email")
   @@index([subscriptionTier, emailVerified], map: "idx_users_subscription_verified")
@@ -54,6 +55,36 @@ model PasswordHistory {
   @@index([userId], map: "idx_password_history_user_id")
   @@index([createdAt], map: "idx_password_history_created_at")
   @@map("password_history")
+}
+
+model VerificationToken {
+  id                   String    @id @default(uuid())
+  hashedToken          String    @unique
+  userId               String
+  email                String
+  purpose              String    // 'email_verification' | 'password_reset'
+  sequence             Int       // Monotonically increasing per user+purpose
+  isValid              Boolean   @default(true)
+  expiresAt            DateTime
+  createdAt            DateTime  @default(now())
+  usedAt               DateTime?
+  invalidatedAt        DateTime?
+  invalidationReason   String?
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, purpose, sequence], name: "unique_user_purpose_sequence")
+  @@index([hashedToken], map: "idx_verification_tokens_hashed_token")
+  @@index([userId], map: "idx_verification_tokens_user_id")
+  @@index([purpose], map: "idx_verification_tokens_purpose")
+  @@index([isValid], map: "idx_verification_tokens_is_valid")
+  @@index([expiresAt], map: "idx_verification_tokens_expires_at")
+  @@index([createdAt], map: "idx_verification_tokens_created_at")
+  @@index([userId, purpose], map: "idx_verification_tokens_user_purpose")
+  @@index([userId, purpose, isValid], map: "idx_verification_tokens_user_purpose_valid")
+  @@index([purpose, isValid, expiresAt], map: "idx_verification_tokens_active")
+  @@index([sequence], map: "idx_verification_tokens_sequence")
+  @@index([email, purpose], map: "idx_verification_tokens_email_purpose")
+  @@map("verification_tokens")
 }
 
 model RefreshToken {

@@ -20,6 +20,7 @@ import enhancedAnalysisRoutes from './routes/enhanced-analysis.routes';
 import healthRoutes from './routes/health.routes';
 import debugRoutes from './routes/debug.routes';
 import bypassEmailRoutes from './routes/bypass-email.routes';
+import secureTokenAuthRoutes from './routes/secure-token-auth.routes';
 
 const app = express();
 
@@ -82,6 +83,7 @@ app.use('/api/analysis', analysisRoutes);
 app.use('/api/enhanced-analysis', enhancedAnalysisRoutes);
 app.use('/api/debug', debugRoutes);
 app.use('/api/bypass', bypassEmailRoutes);
+app.use('/api/secure-auth', secureTokenAuthRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
