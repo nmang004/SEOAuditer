@@ -35,7 +35,6 @@ export default function ProjectsListPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
-
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -119,30 +118,26 @@ export default function ProjectsListPage() {
     });
   };
 
-  // Error boundary fallback
-  try {
-    return (
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Projects
-            </h1>
-            <p className="text-gray-300 mt-2 text-lg">
-              Manage and monitor your website analysis projects
-            </p>
-          </div>
-          <Button 
-            onClick={() => setIsCreating(true)} 
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-6 flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            New Project
-          </Button>
+  return (
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            Projects
+          </h1>
+          <p className="text-gray-300 mt-2 text-lg">
+            Manage and monitor your website analysis projects
+          </p>
         </div>
+        <Button 
+          onClick={() => setIsCreating(true)} 
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-6 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          New Project
+        </Button>
+      </div>
 
-      {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -159,7 +154,6 @@ export default function ProjectsListPage() {
         </Button>
       </div>
 
-      {/* Create Project Form */}
       {isCreating && (
         <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
           <h3 className="text-xl font-bold mb-6 text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
@@ -229,23 +223,19 @@ export default function ProjectsListPage() {
         </div>
       )}
 
-      {/* Projects Grid */}
       <div className="grid gap-6">
         {filteredProjects.length === 0 && !isCreating ? (
           <div className="flex items-center justify-center min-h-[500px] py-16">
             <div className="relative w-full max-w-2xl">
-              {/* Animated background gradient */}
               <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-3xl blur-xl -z-10 animate-pulse"></div>
               
               <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-12 text-center">
-                {/* Icon */}
                 <div className="mb-6 flex justify-center">
                   <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm border border-indigo-500/30">
                     <Globe className="h-8 w-8 text-indigo-400" />
                   </div>
                 </div>
                 
-                {/* Content */}
                 <h3 className="text-2xl font-bold text-white mb-3 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                   No Projects Yet
                 </h3>
@@ -253,7 +243,6 @@ export default function ProjectsListPage() {
                   Get started by creating your first project to analyze your website's SEO performance and track improvements over time.
                 </p>
                 
-                {/* Primary Action */}
                 <button 
                   onClick={() => setIsCreating(true)} 
                   className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-8 rounded-lg font-medium transition-all"
@@ -267,10 +256,7 @@ export default function ProjectsListPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredProjects.map((project) => (
-              <div
-                key={project.id}
-                className="h-full"
-              >
+              <div key={project.id} className="h-full">
                 <div className="h-full rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm hover:border-gray-600 transition-all cursor-pointer group hover:scale-105 p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1 min-w-0">
@@ -331,13 +317,13 @@ export default function ProjectsListPage() {
                       <ExternalLink className="h-3 w-3" />
                     </a>
                   </div>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Stats Summary */}
       {filteredProjects.length > 0 && (
         <div className="border-t border-gray-700 pt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
@@ -362,23 +348,4 @@ export default function ProjectsListPage() {
       )}
     </div>
   );
-  } catch (error) {
-    console.error('ProjectsListPage error:', error);
-    return (
-      <div className="space-y-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-white mb-4">Something went wrong</h1>
-            <p className="text-gray-300 mb-4">There was an error loading the projects page.</p>
-            <Button 
-              onClick={() => window.location.reload()} 
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0"
-            >
-              Reload Page
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-} 
+}
