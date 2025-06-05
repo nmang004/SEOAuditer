@@ -79,7 +79,7 @@ export default function ProjectDashboardPage() {
               ? projectAnalyses
                   .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
                   .createdAt
-              : null,
+              : undefined,
             status: 'Active'
           };
           
@@ -98,7 +98,7 @@ export default function ProjectDashboardPage() {
             updatedAt: new Date().toISOString(),
             status: 'Active',
             analysesCount: 0,
-            lastAnalysisDate: null
+            lastAnalysisDate: undefined
           };
           setProject(fallbackProject);
           setLoading(false);
