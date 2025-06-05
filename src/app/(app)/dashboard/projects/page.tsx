@@ -85,16 +85,24 @@ export default function ProjectsListPage() {
       
       const result = await response.json();
       
-      if (!response.ok) {
+      if (!response.ok || !result.success) {
         setError(result.error || "Failed to create project");
         return;
       }
       
-      setProjects([result.data, ...projects]);
+      // Add the new project to the beginning of the projects array
+      const newProject = result.data;
+      setProjects(prevProjects => [newProject, ...prevProjects]);
+      
+      // Clear form and close it
       setProjectName("");
       setProjectUrl("");
       setIsCreating(false);
+      setError("");
+      
+      console.log("Project created successfully:", newProject);
     } catch (err: unknown) {
+      console.error("Error creating project:", err);
       setError("Failed to create project");
     } finally {
       setLoading(false);
@@ -223,6 +231,12 @@ export default function ProjectsListPage() {
           </form>
         </div>
       )}
+
+      {/* Debug info */}
+      <div className="bg-gray-800 p-4 rounded mb-4 text-white text-sm">
+        <p>Debug: projects.length = {projects.length}, filteredProjects.length = {filteredProjects.length}, isCreating = {isCreating.toString()}</p>
+        <p>Projects: {JSON.stringify(projects, null, 2)}</p>
+      </div>
 
       {/* Projects Grid */}
       <div className="grid gap-6">
