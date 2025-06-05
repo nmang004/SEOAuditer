@@ -13,23 +13,75 @@ export default function VerifyEmailPage() {
   const [status, setStatus] = useState<string>('loading');
   const [message, setMessage] = useState<string>('');
   const [diagnostics, setDiagnostics] = useState<DiagnosticInfo[]>([]);
+  const [savedLogs, setSavedLogs] = useState<string[]>([]);
+  const [showSavedLogs, setShowSavedLogs] = useState(false);
+
+  // Persistent logging that survives crashes
+  const addPersistentLog = (message: string, details?: any) => {
+    try {
+      const timestamp = new Date().toISOString();
+      const logEntry = {
+        timestamp,
+        message,
+        details: details ? JSON.stringify(details) : null,
+        url: window.location.href
+      };
+      
+      // Save to localStorage
+      const existingLogs = JSON.parse(localStorage.getItem('emailVerifyLogs') || '[]');
+      existingLogs.push(logEntry);
+      localStorage.setItem('emailVerifyLogs', JSON.stringify(existingLogs));
+      
+      // Also log to console
+      console.log(`[PERSISTENT] ${message}:`, details);
+    } catch (error) {
+      console.error('Failed to save persistent log:', error);
+    }
+  };
 
   const addDiagnostic = (step: string, details: any) => {
-    const newDiagnostic = {
-      step,
-      details,
-      timestamp: new Date().toISOString()
-    };
-    setDiagnostics(prev => [...prev, newDiagnostic]);
-    console.log(`[DIAGNOSTIC] ${step}:`, details);
+    try {
+      const newDiagnostic = {
+        step,
+        details,
+        timestamp: new Date().toISOString()
+      };
+      setDiagnostics(prev => [...prev, newDiagnostic]);
+      console.log(`[DIAGNOSTIC] ${step}:`, details);
+      
+      // Also save persistently
+      addPersistentLog(step, details);
+    } catch (error) {
+      addPersistentLog('Error in addDiagnostic', { error: error.message, step });
+    }
+  };
+
+  // Load saved logs on component mount
+  const loadSavedLogs = () => {
+    try {
+      const logs = JSON.parse(localStorage.getItem('emailVerifyLogs') || '[]');
+      setSavedLogs(logs);
+      return logs;
+    } catch (error) {
+      addPersistentLog('Error loading saved logs', { error: error.message });
+      return [];
+    }
   };
 
   useEffect(() => {
+    // Load any previous logs first
+    const previousLogs = loadSavedLogs();
+    addPersistentLog('New session started', { 
+      previousLogCount: previousLogs.length,
+      pathname: window.location.pathname 
+    });
+
     addDiagnostic('Page Load', {
       pathname: window.location.pathname,
       href: window.location.href,
       userAgent: navigator.userAgent,
-      hasServiceWorker: 'serviceWorker' in navigator
+      hasServiceWorker: 'serviceWorker' in navigator,
+      previousLogCount: previousLogs.length
     });
 
     // AGGRESSIVELY FORCE UNREGISTER SERVICE WORKER
@@ -185,11 +237,20 @@ export default function VerifyEmailPage() {
 
   const verifyEmail = async (tokenToVerify: string) => {
     try {
+      addPersistentLog('=== VERIFICATION START ===');
       addDiagnostic('Verification Start', { token: tokenToVerify });
       
       // Ensure we're not accidentally treating the token as code
       const safeToken = String(tokenToVerify).trim();
       const requestUrl = `https://seoauditer-production.up.railway.app/api/auth/verify-email/${encodeURIComponent(safeToken)}`;
+      
+      addPersistentLog('Request prepared', {
+        originalToken: tokenToVerify,
+        safeToken,
+        encodedToken: encodeURIComponent(safeToken),
+        requestUrl,
+        method: 'GET'
+      });
       
       addDiagnostic('Request Preparation', {
         originalToken: tokenToVerify,
@@ -214,6 +275,8 @@ export default function VerifyEmailPage() {
         url: requestUrl
       });
 
+      addPersistentLog('Making fetch request...');
+      
       const response = await fetch(requestUrl, {
         method: 'GET',
         headers: {
@@ -221,6 +284,16 @@ export default function VerifyEmailPage() {
           'Accept': 'application/json',
           'Cache-Control': 'no-cache'
         },
+        redirect: 'manual' // Prevent automatic redirects that might cause issues
+      });
+
+      addPersistentLog('Fetch response received', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        type: response.type,
+        url: response.url,
+        redirected: response.redirected
       });
 
       addDiagnostic('Response Received', {
@@ -246,6 +319,14 @@ export default function VerifyEmailPage() {
       }
       
       const responseText = await response.text();
+      
+      addPersistentLog('Response text received', {
+        length: responseText.length,
+        firstChars: responseText.substring(0, 200),
+        contentType: headers['content-type'] || 'unknown',
+        fullResponse: responseText.substring(0, 1000) // First 1000 chars
+      });
+      
       addDiagnostic('Response Text', {
         length: responseText.length,
         firstChars: responseText.substring(0, 100),
@@ -260,9 +341,25 @@ export default function VerifyEmailPage() {
       }
       
       // Check if response looks like CSS (this is the critical check!)
-      if (responseText.trim().startsWith('.') || 
-          responseText.includes('{') && responseText.includes('}') && 
-          !responseText.trim().startsWith('{')) {
+      const isCSSResponse = responseText.trim().startsWith('.') || 
+          (responseText.includes('{') && responseText.includes('}') && 
+          !responseText.trim().startsWith('{'));
+          
+      if (isCSSResponse) {
+        addPersistentLog('CSS DETECTED INSTEAD OF JSON!', {
+          responseType: 'CSS',
+          firstLine: responseText.split('\n')[0],
+          fullFirstLines: responseText.split('\n').slice(0, 5),
+          possibleCSSIndicators: {
+            startsWithDot: responseText.trim().startsWith('.'),
+            hasCSSSyntax: responseText.includes('{') && responseText.includes('}'),
+            startsWithJSON: responseText.trim().startsWith('{')
+          },
+          responseLength: responseText.length,
+          statusCode: response.status,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        
         addDiagnostic('CSS DETECTED INSTEAD OF JSON!', {
           responseType: 'CSS',
           firstLine: responseText.split('\n')[0],
@@ -297,11 +394,12 @@ export default function VerifyEmailPage() {
         setStatus('success');
         setMessage(data.message || 'Email verified successfully!');
         
-        // Redirect after success
-        setTimeout(() => {
-          addDiagnostic('Redirecting', { target: '/auth/login?verified=true' });
-          window.location.href = '/auth/login?verified=true';
-        }, 3000);
+        // DO NOT auto-redirect - let user manually navigate to avoid crashes
+        addPersistentLog('Verification successful - NOT auto-redirecting to prevent crashes');
+        addDiagnostic('Verification Success - Manual Navigation Required', { 
+          target: '/auth/login?verified=true',
+          autoRedirectDisabled: true 
+        });
       } else {
         addDiagnostic('Verification Failed', { 
           responseOk: response.ok,
@@ -312,6 +410,13 @@ export default function VerifyEmailPage() {
         setMessage(data.error || data.message || `Server error: HTTP ${response.status}`);
       }
     } catch (error) {
+      addPersistentLog('CRITICAL ERROR IN VERIFICATION', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : null,
+        name: error instanceof Error ? error.name : 'UnknownError',
+        tokenUsed: tokenToVerify
+      });
+      
       addDiagnostic('Network Error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : null,
@@ -324,12 +429,26 @@ export default function VerifyEmailPage() {
 
   const goToLogin = () => {
     addDiagnostic('Manual Login Redirect', {});
+    addPersistentLog('User manually navigating to login');
     window.location.href = '/auth/login';
   };
 
   const goToRegister = () => {
     addDiagnostic('Manual Register Redirect', {});
+    addPersistentLog('User manually navigating to register');
     window.location.href = '/auth/register';
+  };
+
+  const viewSavedLogs = () => {
+    const logs = loadSavedLogs();
+    setShowSavedLogs(true);
+  };
+
+  const clearSavedLogs = () => {
+    localStorage.removeItem('emailVerifyLogs');
+    setSavedLogs([]);
+    setShowSavedLogs(false);
+    addPersistentLog('Logs cleared by user');
   };
 
   // Diagnostic display component
@@ -389,7 +508,76 @@ export default function VerifyEmailPage() {
               Token: {token.substring(0, 30)}{token.length > 30 ? '...' : ''}
             </div>
           )}
+          <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+            <button
+              onClick={viewSavedLogs}
+              style={{
+                backgroundColor: '#f59e0b',
+                color: 'white',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              View Saved Logs ({savedLogs.length})
+            </button>
+            <button
+              onClick={clearSavedLogs}
+              style={{
+                backgroundColor: '#ef4444',
+                color: 'white',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              Clear Logs
+            </button>
+          </div>
           <DiagnosticDisplay />
+          {showSavedLogs && (
+            <div style={{
+              marginTop: '20px',
+              padding: '15px',
+              backgroundColor: '#374151',
+              borderRadius: '8px',
+              maxHeight: '400px',
+              overflowY: 'auto'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <h3 style={{ color: '#f59e0b', margin: 0 }}>Persistent Logs (Survives Crashes):</h3>
+                <button
+                  onClick={() => setShowSavedLogs(false)}
+                  style={{
+                    backgroundColor: '#6b7280',
+                    color: 'white',
+                    border: 'none',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Hide
+                </button>
+              </div>
+              {savedLogs.map((log: any, index) => (
+                <div key={index} style={{ marginBottom: '8px', paddingBottom: '8px', borderBottom: '1px solid #4b5563' }}>
+                  <div style={{ color: '#10b981', fontSize: '11px' }}>
+                    {log.timestamp} - {log.message}
+                  </div>
+                  {log.details && (
+                    <pre style={{ margin: '4px 0', color: '#d1d5db', fontSize: '10px', whiteSpace: 'pre-wrap' }}>
+                      {typeof log.details === 'string' ? log.details : JSON.stringify(JSON.parse(log.details), null, 2)}
+                    </pre>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -422,7 +610,7 @@ export default function VerifyEmailPage() {
           <h1 style={{ fontSize: '20px', marginBottom: '20px', margin: 0 }}>Email Verified!</h1>
           <p style={{ marginBottom: '20px', color: '#d1d5db' }}>{message}</p>
           <p style={{ fontSize: '14px', color: '#9ca3af', marginBottom: '20px' }}>
-            Redirecting to login in 3 seconds...
+            Auto-redirect disabled. Please click to continue.
           </p>
           <button
             onClick={goToLogin}
@@ -440,7 +628,76 @@ export default function VerifyEmailPage() {
           >
             Go to Login Now
           </button>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+            <button
+              onClick={viewSavedLogs}
+              style={{
+                backgroundColor: '#f59e0b',
+                color: 'white',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              View Saved Logs ({savedLogs.length})
+            </button>
+            <button
+              onClick={clearSavedLogs}
+              style={{
+                backgroundColor: '#ef4444',
+                color: 'white',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              Clear Logs
+            </button>
+          </div>
           <DiagnosticDisplay />
+          {showSavedLogs && (
+            <div style={{
+              marginTop: '20px',
+              padding: '15px',
+              backgroundColor: '#374151',
+              borderRadius: '8px',
+              maxHeight: '400px',
+              overflowY: 'auto'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <h3 style={{ color: '#f59e0b', margin: 0 }}>Persistent Logs (Survives Crashes):</h3>
+                <button
+                  onClick={() => setShowSavedLogs(false)}
+                  style={{
+                    backgroundColor: '#6b7280',
+                    color: 'white',
+                    border: 'none',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Hide
+                </button>
+              </div>
+              {savedLogs.map((log: any, index) => (
+                <div key={index} style={{ marginBottom: '8px', paddingBottom: '8px', borderBottom: '1px solid #4b5563' }}>
+                  <div style={{ color: '#10b981', fontSize: '11px' }}>
+                    {log.timestamp} - {log.message}
+                  </div>
+                  {log.details && (
+                    <pre style={{ margin: '4px 0', color: '#d1d5db', fontSize: '10px', whiteSpace: 'pre-wrap' }}>
+                      {typeof log.details === 'string' ? log.details : JSON.stringify(JSON.parse(log.details), null, 2)}
+                    </pre>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -503,7 +760,76 @@ export default function VerifyEmailPage() {
             Go to Login
           </button>
         </div>
+        <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+          <button
+            onClick={viewSavedLogs}
+            style={{
+              backgroundColor: '#f59e0b',
+              color: 'white',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}
+          >
+            View Saved Logs ({savedLogs.length})
+          </button>
+          <button
+            onClick={clearSavedLogs}
+            style={{
+              backgroundColor: '#ef4444',
+              color: 'white',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}
+          >
+            Clear Logs
+          </button>
+        </div>
         <DiagnosticDisplay />
+        {showSavedLogs && (
+          <div style={{
+            marginTop: '20px',
+            padding: '15px',
+            backgroundColor: '#374151',
+            borderRadius: '8px',
+            maxHeight: '400px',
+            overflowY: 'auto'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <h3 style={{ color: '#f59e0b', margin: 0 }}>Persistent Logs (Survives Crashes):</h3>
+              <button
+                onClick={() => setShowSavedLogs(false)}
+                style={{
+                  backgroundColor: '#6b7280',
+                  color: 'white',
+                  border: 'none',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Hide
+              </button>
+            </div>
+            {savedLogs.map((log: any, index) => (
+              <div key={index} style={{ marginBottom: '8px', paddingBottom: '8px', borderBottom: '1px solid #4b5563' }}>
+                <div style={{ color: '#10b981', fontSize: '11px' }}>
+                  {log.timestamp} - {log.message}
+                </div>
+                {log.details && (
+                  <pre style={{ margin: '4px 0', color: '#d1d5db', fontSize: '10px', whiteSpace: 'pre-wrap' }}>
+                    {typeof log.details === 'string' ? log.details : JSON.stringify(JSON.parse(log.details), null, 2)}
+                  </pre>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
