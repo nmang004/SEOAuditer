@@ -11,6 +11,7 @@ import {
   NotFoundError
 } from '../middleware/error.middleware';
 import { sendEmail } from '../services/email.service';
+import { emailService } from '../services/email/EmailService';
 import { logger } from '../utils/logger';
 
 // Create separate instances to avoid circular dependency
@@ -91,6 +92,39 @@ export const authController = {
       });
 
       if (existingUser) {
+        // If user exists but is not verified, resend verification email
+        if (!existingUser.emailVerified) {
+          // Generate new verification token
+          const verificationToken = uuidv4();
+          const verificationExpires = new Date();
+          verificationExpires.setHours(verificationExpires.getHours() + 24); // 24 hours
+
+          // Update user with new token
+          await prisma.user.update({
+            where: { id: existingUser.id },
+            data: {
+              verificationToken,
+              verificationExpires,
+            },
+          });
+
+          // Send verification email with new token
+          const verificationUrl = `${config.clientUrl}/verify-email/${verificationToken}`;
+          
+          try {
+            await emailService.sendWelcomeEmail(email, existingUser.name, verificationToken);
+          } catch (emailError) {
+            logger.error('Failed to send verification email:', emailError);
+            // Continue - don't fail registration due to email issues
+          }
+
+          return res.status(200).json({
+            success: true,
+            message: 'Email verification sent. Please check your email to complete registration.',
+            requiresVerification: true,
+          });
+        }
+        
         throw new BadRequestError('Email already in use');
       }
 
