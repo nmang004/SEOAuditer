@@ -3,6 +3,7 @@ import { logger } from '../utils/logger';
 import { config } from '../config/config';
 import { SecureTokenService } from './SecureTokenService';
 import { TemplateManager } from './TemplateManager';
+import { WelcomeTemplate } from './email/templates/WelcomeTemplate';
 import sgMail from '@sendgrid/mail';
 
 interface EmailResult {
@@ -188,24 +189,18 @@ export class EnhancedEmailService {
         return this.mockEmailSend(emailData, correlationId);
       }
 
-      const templateId = await this.templateManager.getTemplateId('verification');
-      if (!templateId) {
-        throw new Error('Email verification template ID not configured or invalid. Please check SendGrid templates.');
-      }
-
-      // Dynamic template data - ensures fresh content for every send
-      const templateData = {
+      // Use your existing server-side template instead of dynamic templates
+      const welcomeTemplate = new WelcomeTemplate();
+      
+      const emailContent = welcomeTemplate.render({
         name: emailData.name,
+        verificationUrl: emailData.verificationUrl,
+        appName: 'SEO Director',
+        appUrl: config.appUrl || 'https://seoauditer.netlify.app',
         email: emailData.email,
-        verification_url: emailData.verificationUrl,
-        verification_token: emailData.token,
-        expires_at: emailData.expiresAt.toISOString(),
-        app_name: 'SEO Director',
-        app_url: config.appUrl,
-        support_email: config.email?.supportEmail || 'support@seoauditer.com',
-        current_year: new Date().getFullYear(),
-        correlation_id: correlationId
-      };
+        supportEmail: config.email?.supportEmail || 'support@seoauditer.com',
+        correlationId: correlationId
+      });
 
       const mailOptions = {
         to: {
@@ -216,8 +211,9 @@ export class EnhancedEmailService {
           email: config.sendgrid.fromEmail,
           name: config.sendgrid.fromName || 'SEO Director'
         },
-        templateId,
-        dynamicTemplateData: templateData,
+        subject: emailContent.subject,
+        html: emailContent.html,
+        text: emailContent.text,
         // Disable all tracking to prevent caching issues
         trackingSettings: {
           clickTracking: {
@@ -238,14 +234,16 @@ export class EnhancedEmailService {
         customArgs: {
           correlation_id: correlationId,
           token_prefix: emailData.token.substring(0, 8),
-          user_id: emailData.userId
+          user_id: emailData.userId,
+          template_type: 'server_side'
         }
       };
 
-      logger.info('Sending email via SendGrid', {
+      logger.info('Sending email via SendGrid with server-side template', {
         correlationId,
-        templateId,
+        templateType: 'server_side',
         to: emailData.email,
+        subject: emailContent.subject,
         trackingDisabled: true,
         tokenPrefix: emailData.token.substring(0, 8) + '...'
       });

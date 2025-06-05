@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - {{app_name}}</title>
+    <style>
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            background: linear-gradient(135deg, #0F172A 0%, #1A202C 50%, #0F172A 100%);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #0F172A 0%, #1A202C 50%, #0F172A 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            animation: pulse 6s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        .logo {
+            position: relative;
+            z-index: 2;
+            display: inline-block;
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+        
+        .tagline {
+            position: relative;
+            z-index: 2;
+            color: #94A3B8;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .main-content {
+            padding: 40px 20px;
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            margin: 20px;
+            border-radius: 16px;
+            position: relative;
+        }
+        
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.5) 50%, transparent 100%);
+        }
+        
+        .greeting {
+            font-size: 24px;
+            font-weight: 700;
+            color: #F8FAFC;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .message {
+            color: #CBD5E1;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .cta-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.02em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+        }
+        
+        .security-info {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 32px 0;
+        }
+        
+        .security-title {
+            color: #FCD34D;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .security-icon {
+            width: 16px;
+            height: 16px;
+            fill: #FCD34D;
+        }
+        
+        .security-text {
+            color: #94A3B8;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .backup-link {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(71, 85, 105, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+            text-align: center;
+        }
+        
+        .backup-text {
+            color: #64748B;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .backup-url {
+            color: #6366F1;
+            word-break: break-all;
+            font-size: 12px;
+            text-decoration: none;
+        }
+        
+        .footer {
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(71, 85, 105, 0.2);
+            margin-top: 40px;
+        }
+        
+        .footer-text {
+            color: #64748B;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .support-link {
+            color: #6366F1;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .support-link:hover {
+            color: #8B5CF6;
+        }
+        
+        .unsubscribe {
+            color: #475569;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                width: 100%;
+            }
+            
+            .main-content {
+                margin: 10px;
+                padding: 30px 15px;
+            }
+            
+            .cta-button {
+                padding: 14px 28px;
+                font-size: 15px;
+            }
+            
+            .greeting {
+                font-size: 22px;
+            }
+            
+            .message {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">{{app_name}}</div>
+            <div class="tagline">Professional SEO Analysis & Auditing</div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1 class="greeting">Welcome, {{name}}! 👋</h1>
+            
+            <p class="message">
+                Thank you for joining {{app_name}}! We're excited to help you optimize your website's SEO performance. 
+                To get started, please verify your email address by clicking the button below.
+            </p>
+            
+            <div class="cta-container">
+                <a href="{{verification_url}}" class="cta-button">
+                    ✅ Verify Email Address
+                </a>
+            </div>
+            
+            <!-- Security Information -->
+            <div class="security-info">
+                <div class="security-title">
+                    <svg class="security-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                    </svg>
+                    Security Notice
+                </div>
+                <div class="security-text">
+                    This verification link will expire in <strong>24 hours</strong> for your security. 
+                    If you didn't create an account with {{app_name}}, you can safely ignore this email.
+                </div>
+            </div>
+            
+            <!-- Backup Link -->
+            <div class="backup-link">
+                <div class="backup-text">Button not working? Copy and paste this link:</div>
+                <a href="{{verification_url}}" class="backup-url">{{verification_url}}</a>
+            </div>
+            
+            <p style="color: #94A3B8; font-size: 14px; text-align: center; margin-top: 32px;">
+                Once verified, you'll be able to:
+                <br>
+                🔍 Run comprehensive SEO audits
+                <br>
+                📊 Track your website's performance
+                <br>
+                📈 Get actionable optimization recommendations
+            </p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text">
+                Need help? Our support team is here for you!<br>
+                Contact us at <a href="mailto:{{support_email}}" class="support-link">{{support_email}}</a>
+            </p>
+            
+            <p class="footer-text">
+                Best regards,<br>
+                <strong>The {{app_name}} Team</strong>
+            </p>
+            
+            <p class="unsubscribe">
+                © {{current_year}} {{app_name}}. All rights reserved.
+                <br>
+                This email was sent to {{email}} because you signed up for {{app_name}}.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -2286,3 +2286,29 @@ Redis client connected successfully in rate-limit middleware
 [32m[32minfo[32m[39m: 	[32mEnvironment: development[39m {"timestamp":"2025-06-05 07:50:42.350 AM"}
 [32m[32minfo[32m[39m: 	[32mAPI Documentation: http://localhost:4000/api-docs[39m {"timestamp":"2025-06-05 07:50:42.350 AM"}
 ✅ Server started successfully on port 4000
+[31m[31merror[31m[39m: 	[31m500 - Internal Server Error - /secure-auth/login - POST - ::1[39m {"body":{},"error":"SyntaxError: Bad escaped character in JSON at position 58 (line 1 column 59)\n    at JSON.parse (<anonymous>)\n    at parse (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/body-parser/lib/types/json.js:92:19)\n    at /Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/body-parser/lib/read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at invokeCallback (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/raw-body/index.js:238:16)\n    at done (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/raw-body/index.js:227:7)\n    at IncomingMessage.onEnd (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/raw-body/index.js:287:7)\n    at IncomingMessage.emit (node:events:518:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","params":{},"query":{},"timestamp":"2025-06-05 07:52:46.416 AM"}
+[31m[31merror[31m[39m: 	[31m500 - Internal Server Error - /secure-auth/login - POST - ::1[39m {"body":{},"error":"SyntaxError: Bad escaped character in JSON at position 58 (line 1 column 59)\n    at JSON.parse (<anonymous>)\n    at parse (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/body-parser/lib/types/json.js:92:19)\n    at /Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/body-parser/lib/read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at invokeCallback (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/raw-body/index.js:238:16)\n    at done (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/raw-body/index.js:227:7)\n    at IncomingMessage.onEnd (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/node_modules/raw-body/index.js:287:7)\n    at IncomingMessage.emit (node:events:518:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at processTicksAndRejections (node:internal/process/task_queues:90:21)","params":{},"query":{},"timestamp":"2025-06-05 07:53:52.763 AM"}
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-05 07:53:59.501 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-05 07:53:59.505 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-05 07:53:59.506 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-05 07:53:59.507 AM"}
+
+--- Received SIGTERM, starting graceful shutdown ---
+[32m[32minfo[32m[39m: 	[32mReceived SIGTERM, starting graceful shutdown[39m {"timestamp":"2025-06-05 07:53:59.510 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-05 07:53:59.510 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down Enhanced Analysis System...[39m {"timestamp":"2025-06-05 07:53:59.510 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down enhanced worker...[39m {"timestamp":"2025-06-05 07:53:59.510 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-05 07:53:59.641 AM"}
+[32m[32minfo[32m[39m: 	[32mEnhanced worker shutdown complete[39m {"timestamp":"2025-06-05 07:53:59.642 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-05 07:53:59.643 AM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-05 07:53:59.664 AM"}
+[32m[32minfo[32m[39m: 	[32mShutting down WebSocket Gateway...[39m {"timestamp":"2025-06-05 07:53:59.665 AM"}
+[32m[32minfo[32m[39m: 	[32mBroadcasted system update: System Maintenance[39m {"timestamp":"2025-06-05 07:53:59.665 AM"}
+[32m[32minfo[32m[39m: 	[32mWebSocket Gateway shutdown completed[39m {"timestamp":"2025-06-05 07:54:00.666 AM"}
+[32m[32minfo[32m[39m: 	[32mClosing Enhanced Queue Adapter...[39m {"timestamp":"2025-06-05 07:54:00.670 AM"}
+[31m[31merror[31m[39m: 	[31mError shutting down Enhanced Analysis System: Cannot read properties of null (reading 'sockets')[39m {"stack":"TypeError: Cannot read properties of null (reading 'sockets')\n    at WebSocketGateway.shutdown (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/seo-crawler/ws/WebSocketGateway.ts:387:13)\n    at EnhancedAnalysisSystem.shutdown (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/seo-crawler/enhanced-analysis-system.ts:240:7)\n    at gracefulShutdown (/Users/nicholasmangubat/CascadeProjects/seodirector/backend/src/index.ts:295:11)","timestamp":"2025-06-05 07:54:00.704 AM"}
+[31m[31merror[31m[39m: 	[31mError closing HTTP server: Server is not running.[39m {"code":"ERR_SERVER_NOT_RUNNING","stack":"Error: Server is not running.\n    at Server.close (node:net:2358:12)\n    at Object.onceWrapper (node:events:632:28)\n    at Server.emit (node:events:530:35)\n    at emitCloseNT (node:net:2418:8)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)","timestamp":"2025-06-05 07:54:00.706 AM"}
+Process exiting with code: 1
+[31m[31merror[31m[39m: 	[31mProcess exiting with code: 1[39m {"timestamp":"2025-06-05 07:54:00.708 AM"}
