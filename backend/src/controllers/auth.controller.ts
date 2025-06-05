@@ -109,8 +109,6 @@ export const authController = {
           });
 
           // Send verification email with new token
-          const verificationUrl = `${config.clientUrl}/verify-email/${verificationToken}`;
-          
           try {
             await emailService.sendWelcomeEmail(email, existingUser.name, verificationToken);
           } catch (emailError) {
