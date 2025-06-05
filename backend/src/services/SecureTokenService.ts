@@ -364,12 +364,12 @@ export class SecureTokenService {
       
     } catch (error) {
       console.error('❌ TOKEN STORAGE FAILED:', {
-        error: error.message,
-        stack: error.stack,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
         email: metadata.email,
         hashedTokenPrefix: hashedToken.substring(0, 16) + '...'
       });
-      throw new Error(`Failed to store verification token: ${error.message}`);
+      throw new Error(`Failed to store verification token: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
