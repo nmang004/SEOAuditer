@@ -21,7 +21,8 @@ import {
   Download,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  Zap
 } from "lucide-react";
 
 interface ProjectData {
@@ -58,6 +59,53 @@ export default function ProjectDashboardPage() {
   const fetchProjectData = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
+      const isAdminBypass = token?.includes('admin-access-token');
+      
+      if (isAdminBypass) {
+        // For admin users, load project data from localStorage
+        console.log('[Project Detail] Loading project data for admin bypass user');
+        const storedProjects = JSON.parse(localStorage.getItem('adminProjects') || '[]');
+        const project = storedProjects.find((p: ProjectData) => p.id === projectId);
+        
+        if (project) {
+          // Calculate analyses count and last analysis date from stored analyses
+          const storedJobs = JSON.parse(localStorage.getItem('adminAnalysisJobs') || '[]');
+          const projectAnalyses = storedJobs.filter((job: any) => job.projectId === projectId);
+          
+          const projectWithStats = {
+            ...project,
+            analysesCount: projectAnalyses.length,
+            lastAnalysisDate: projectAnalyses.length > 0 
+              ? projectAnalyses
+                  .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
+                  .createdAt
+              : null,
+            status: 'Active'
+          };
+          
+          console.log('[Project Detail] Loaded project data from localStorage:', projectWithStats);
+          setProject(projectWithStats);
+          setLoading(false);
+          return;
+        } else {
+          console.log('[Project Detail] Project not found in localStorage, creating fallback');
+          // Create a fallback project if not found
+          const fallbackProject: ProjectData = {
+            id: projectId,
+            name: `Project ${projectId.slice(-8)}`,
+            url: 'https://example.com',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            status: 'Active',
+            analysesCount: 0,
+            lastAnalysisDate: null
+          };
+          setProject(fallbackProject);
+          setLoading(false);
+          return;
+        }
+      }
+      
       const response = await fetch(`/api/projects/${projectId}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -85,6 +133,34 @@ export default function ProjectDashboardPage() {
   const fetchRecentActivity = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
+      const isAdminBypass = token?.includes('admin-access-token');
+      
+      if (isAdminBypass) {
+        // For admin users, generate activity based on stored analyses
+        console.log('[Project Detail] Loading recent activity for admin bypass user');
+        const storedJobs = JSON.parse(localStorage.getItem('adminAnalysisJobs') || '[]');
+        const projectAnalyses = storedJobs.filter((job: any) => job.projectId === projectId);
+        
+        const activities: RecentActivity[] = projectAnalyses
+          .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 5)
+          .map((job: any, index: number) => ({
+            id: `activity-${job.jobId}`,
+            projectId: projectId,
+            projectName: `Project ${projectId.slice(-8)}`,
+            type: 'scan' as const,
+            title: `SEO Analysis Completed`,
+            description: `Analysis of ${job.url} completed successfully`,
+            timestamp: job.createdAt,
+            severity: 'info' as const
+          }));
+        
+        console.log('[Project Detail] Generated activities for admin user:', activities);
+        setRecentActivity(activities);
+        setActivityLoading(false);
+        return;
+      }
+      
       const response = await fetch(`/api/dashboard/recent-activity?limit=5`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -169,17 +245,16 @@ export default function ProjectDashboardPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-1/3 mb-2"></div>
-          <div className="h-4 bg-muted rounded w-1/2"></div>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="h-32 bg-muted rounded"></div>
+      <div className="space-y-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="relative w-16 h-16 mx-auto mb-4">
+              <div className="absolute inset-0 rounded-full border-4 border-gray-700"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
             </div>
-          ))}
+            <h2 className="text-2xl font-bold text-white mb-2">Loading Project</h2>
+            <p className="text-gray-300">Please wait while we load your project data...</p>
+          </div>
         </div>
       </div>
     );
@@ -187,228 +262,239 @@ export default function ProjectDashboardPage() {
 
   if (error || !project) {
     return (
-      <div className="text-center py-12">
-        <div className="text-destructive mb-4">{error}</div>
-        <Button asChild variant="outline">
-          <Link href="/dashboard/projects">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Projects
-          </Link>
-        </Button>
+      <div className="space-y-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="w-full max-w-md">
+            <div className="rounded-2xl border border-red-500/20 bg-red-500/10 backdrop-blur-sm p-8 text-center">
+              <div className="h-12 w-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="h-6 w-6 text-red-400" />
+              </div>
+              <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Project</h2>
+              <p className="text-red-300 mb-6">{error || "Failed to load project data"}</p>
+              <button 
+                onClick={() => window.location.href = '/dashboard/projects'}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 mx-auto"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Projects
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-start gap-4">
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/dashboard/projects">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => window.location.href = '/dashboard/projects'}
+            className="border border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white p-2 rounded-lg transition-all"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <Globe className="h-4 w-4 text-muted-foreground" />
+            <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              {project.name}
+            </h1>
+            <div className="flex items-center gap-2 mt-2">
+              <Globe className="h-4 w-4 text-gray-400" />
               <a 
                 href={project.url} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-300 hover:text-indigo-400 transition-colors text-lg"
               >
                 {project.url}
               </a>
-              <ExternalLink className="h-3 w-3 text-muted-foreground" />
+              <ExternalLink className="h-3 w-3 text-gray-400" />
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary">
+        <div className="flex items-center gap-3">
+          <div className="inline-flex items-center rounded-full bg-green-500/10 border border-green-500/20 px-4 py-2 text-sm font-medium text-green-400">
             {project.status || "Active"}
-          </Badge>
-          <Button variant="outline" size="sm">
-            <Settings className="h-4 w-4 mr-2" />
+          </div>
+          <button className="border border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2">
+            <Settings className="h-4 w-4" />
             Settings
-          </Button>
+          </button>
         </div>
       </div>
 
       {/* Project Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm text-muted-foreground">Total Analyses</p>
-                <p className="text-2xl font-bold">{project.analysesCount || 0}</p>
-              </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-400">Total Analyses</p>
+              <p className="text-2xl font-bold text-white">{project.analysesCount || 0}</p>
             </div>
-          </CardContent>
-        </Card>
+            <BarChart3 className="h-5 w-5 text-indigo-400" />
+          </div>
+        </div>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm text-muted-foreground">Created</p>
-                <p className="text-sm font-medium">{formatDate(project.createdAt)}</p>
-              </div>
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-400">Created</p>
+              <p className="text-sm font-medium text-gray-300">{formatDate(project.createdAt)}</p>
             </div>
-          </CardContent>
-        </Card>
+            <Calendar className="h-5 w-5 text-green-400" />
+          </div>
+        </div>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm text-muted-foreground">Last Analysis</p>
-                <p className="text-sm font-medium">
-                  {project.lastAnalysisDate ? formatDate(project.lastAnalysisDate) : "Never"}
-                </p>
-              </div>
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-400">Last Analysis</p>
+              <p className="text-sm font-medium text-gray-300">
+                {project.lastAnalysisDate ? formatDate(project.lastAnalysisDate) : "Never"}
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <TrendingUp className="h-5 w-5 text-purple-400" />
+          </div>
+        </div>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2">
-              <Globe className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm text-muted-foreground">Status</p>
-                <p className="text-sm font-medium">{project.status || "Active"}</p>
-              </div>
+        <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-400">Status</p>
+              <p className="text-sm font-medium text-green-400">{project.status || "Active"}</p>
             </div>
-          </CardContent>
-        </Card>
+            <Globe className="h-5 w-5 text-blue-400" />
+          </div>
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button asChild className="w-full h-20 flex flex-col gap-2">
-                <Link href={`/dashboard/projects/${projectId}/analyses/new`}>
-                  <Play className="h-6 w-6" />
-                  Start New Analysis
-                </Link>
-              </Button>
-            </m.div>
+      <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <Zap className="h-5 w-5 text-indigo-400" />
+          Quick Actions
+        </h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          <button 
+            onClick={() => window.location.href = `/dashboard/projects/${projectId}/analyses/new`}
+            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white h-20 rounded-xl font-medium transition-all flex flex-col items-center justify-center gap-2"
+          >
+            <Play className="h-6 w-6" />
+            Start New Analysis
+          </button>
 
-            <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button asChild variant="outline" className="w-full h-20 flex flex-col gap-2">
-                <Link href={`/dashboard/projects/${projectId}/analyses`}>
-                  <BarChart3 className="h-6 w-6" />
-                  View All Analyses
-                </Link>
-              </Button>
-            </m.div>
+          <button 
+            onClick={() => window.location.href = `/dashboard/projects/${projectId}/analyses`}
+            className="border border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:text-white h-20 rounded-xl font-medium transition-all flex flex-col items-center justify-center gap-2"
+          >
+            <BarChart3 className="h-6 w-6" />
+            View All Analyses
+          </button>
 
-            <m.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button asChild variant="outline" className="w-full h-20 flex flex-col gap-2">
-                <Link href={`/dashboard/projects/${projectId}/trends`}>
-                  <TrendingUp className="h-6 w-6" />
-                  View Trends
-                </Link>
-              </Button>
-            </m.div>
-          </div>
-        </CardContent>
-      </Card>
+          <button 
+            onClick={() => window.location.href = `/dashboard/projects/${projectId}/trends`}
+            className="border border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:text-white h-20 rounded-xl font-medium transition-all flex flex-col items-center justify-center gap-2"
+          >
+            <TrendingUp className="h-6 w-6" />
+            View Trends
+          </button>
+        </div>
+      </div>
 
       {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {activityLoading ? (
-            <div className="space-y-3">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="animate-pulse flex items-center gap-3">
-                  <div className="h-4 w-4 bg-muted rounded-full"></div>
-                  <div className="flex-1 space-y-1">
-                    <div className="h-3 bg-muted rounded w-3/4"></div>
-                    <div className="h-2 bg-muted rounded w-1/2"></div>
-                  </div>
-                  <div className="h-2 bg-muted rounded w-16"></div>
+      <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <Clock className="h-5 w-5 text-green-400" />
+          Recent Activity
+        </h2>
+        {activityLoading ? (
+          <div className="space-y-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="animate-pulse flex items-center gap-3">
+                <div className="h-4 w-4 bg-gray-600 rounded-full"></div>
+                <div className="flex-1 space-y-1">
+                  <div className="h-3 bg-gray-600 rounded w-3/4"></div>
+                  <div className="h-2 bg-gray-700 rounded w-1/2"></div>
                 </div>
-              ))}
-            </div>
-          ) : recentActivity.length > 0 ? (
-            <div className="space-y-4">
-              {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-start gap-3 py-2">
-                  <div className="mt-0.5">
-                    {getActivityIcon(activity.type, activity.severity)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium truncate">{activity.title}</p>
-                      <span className={`text-xs ${getSeverityColor(activity.severity)}`}>
-                        {formatActivityDate(activity.timestamp)}
-                      </span>
-                    </div>
-                    {activity.description && (
-                      <p className="text-sm text-muted-foreground mt-1 truncate">
-                        {activity.description}
-                      </p>
-                    )}
-                  </div>
+                <div className="h-2 bg-gray-700 rounded w-16"></div>
+              </div>
+            ))}
+          </div>
+        ) : recentActivity.length > 0 ? (
+          <div className="space-y-4">
+            {recentActivity.map((activity) => (
+              <div key={activity.id} className="flex items-start gap-3 py-3 border-b border-gray-700/50 last:border-b-0">
+                <div className="mt-0.5">
+                  {getActivityIcon(activity.type, activity.severity)}
                 </div>
-              ))}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-medium text-white truncate">{activity.title}</p>
+                    <span className="text-xs text-gray-400 flex-shrink-0">
+                      {formatActivityDate(activity.timestamp)}
+                    </span>
+                  </div>
+                  {activity.description && (
+                    <p className="text-sm text-gray-300 mt-1 truncate">
+                      {activity.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <div className="h-16 w-16 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
+              <BarChart3 className="h-8 w-8 text-indigo-400" />
             </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No recent activity</p>
-              <p className="text-sm">Start your first analysis to see activity here</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            <h3 className="text-lg font-bold text-white mb-2">No Recent Activity</h3>
+            <p className="text-gray-300 mb-4">Start your first analysis to see activity here</p>
+            <button 
+              onClick={() => window.location.href = `/dashboard/projects/${projectId}/analyses/new`}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 mx-auto"
+            >
+              <Play className="h-4 w-4" />
+              Start Analysis
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Project Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Project Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <Settings className="h-5 w-5 text-purple-400" />
+          Project Information
+        </h2>
+        <div className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="text-sm font-medium text-muted-foreground">Project ID</label>
-              <p className="font-mono text-sm bg-muted p-2 rounded mt-1">{project.id}</p>
+              <label className="text-sm font-medium text-gray-400">Project ID</label>
+              <p className="font-mono text-sm bg-gray-700/50 border border-gray-600 p-3 rounded-lg mt-2 text-gray-300">{project.id}</p>
             </div>
             <div>
-              <label className="text-sm font-medium text-muted-foreground">Last Updated</label>
-              <p className="text-sm mt-1">{formatDate(project.updatedAt)}</p>
+              <label className="text-sm font-medium text-gray-400">Last Updated</label>
+              <p className="text-sm mt-2 text-gray-300 bg-gray-700/30 p-3 rounded-lg">{formatDate(project.updatedAt)}</p>
             </div>
           </div>
           
-          <Separator />
-          
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Share className="h-4 w-4 mr-2" />
-              Share Project
-            </Button>
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Export Data
-            </Button>
+          <div className="border-t border-gray-700 pt-6">
+            <div className="flex gap-3">
+              <button className="border border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2">
+                <Share className="h-4 w-4" />
+                Share Project
+              </button>
+              <button className="border border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Export Data
+              </button>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
