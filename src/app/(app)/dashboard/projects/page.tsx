@@ -44,6 +44,19 @@ export default function ProjectsListPage() {
       const token = localStorage.getItem("token");
       console.log('[Projects] Fetching projects with token:', token ? 'present' : 'missing');
       
+      // Check if using admin bypass token
+      const isAdminBypass = token?.includes('admin-access-token');
+      console.log('[Projects] Is admin bypass:', isAdminBypass);
+      
+      if (isAdminBypass) {
+        // For admin bypass, use localStorage
+        const adminProjectsData = localStorage.getItem('adminProjects');
+        const adminProjects = adminProjectsData ? JSON.parse(adminProjectsData) : [];
+        console.log('[Projects] Loaded admin projects from localStorage:', adminProjects.length);
+        setProjects(adminProjects);
+        return;
+      }
+      
       const response = await fetch("/api/projects", {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -80,6 +93,43 @@ export default function ProjectsListPage() {
       const token = localStorage.getItem("token");
       console.log('[Projects] Creating project with token:', token ? 'present' : 'missing');
       console.log('[Projects] Project data:', { name: projectName, url: projectUrl });
+      
+      // Check if using admin bypass token
+      const isAdminBypass = token?.includes('admin-access-token');
+      console.log('[Projects] Is admin bypass for create:', isAdminBypass);
+      
+      if (isAdminBypass) {
+        // For admin bypass, create project locally
+        const newProject = {
+          id: 'admin-' + Math.random().toString(36).substr(2, 9),
+          name: projectName,
+          url: projectUrl,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          analysesCount: 0,
+          status: 'Active'
+        };
+        
+        // Save to localStorage
+        const adminProjectsData = localStorage.getItem('adminProjects');
+        const adminProjects = adminProjectsData ? JSON.parse(adminProjectsData) : [];
+        const updatedProjects = [newProject, ...adminProjects];
+        localStorage.setItem('adminProjects', JSON.stringify(updatedProjects));
+        
+        console.log('[Projects] Admin project created and saved to localStorage:', newProject);
+        console.log('[Projects] Total admin projects:', updatedProjects.length);
+        
+        // Update state
+        setProjects(updatedProjects);
+        
+        // Clear form and close it
+        setProjectName("");
+        setProjectUrl("");
+        setIsCreating(false);
+        setError("");
+        
+        return;
+      }
       
       const response = await fetch("/api/projects", {
         method: "POST",
