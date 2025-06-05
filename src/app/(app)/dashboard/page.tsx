@@ -444,25 +444,60 @@ export default function DashboardPage() {
 
         {/* Performance Tab */}
         <TabsContent value="performance" className="space-y-6">
-          {isDashboardEmpty && !trendsLoading ? (
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center min-h-[500px]"
-            >
-              <EmptyState
-                title="No Performance Data Available"
-                description="Add a project and run your first SEO analysis to see performance metrics and trends."
-                icon={<TrendingUp className="h-16 w-16 text-gray-400" />}
-                action={{
-                  label: "Add Project",
-                  onClick: () => router.push('/dashboard/projects'),
-                  icon: <Plus className="h-4 w-4" />
-                }}
-                variant="card"
-                className="w-full max-w-2xl"
-              />
-            </m.div>
+          {isDashboardEmpty ? (
+            <div className="flex items-center justify-center min-h-[600px] py-16">
+              <div className="relative w-full max-w-3xl">
+                {/* Animated background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-3xl blur-xl -z-10 animate-pulse"></div>
+                
+                <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-12 text-center">
+                  {/* Icon */}
+                  <div className="mb-6 flex justify-center">
+                    <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm border border-indigo-500/30">
+                      <TrendingUp className="h-10 w-10 text-indigo-400" />
+                    </div>
+                  </div>
+                  
+                  {/* Content */}
+                  <h3 className="text-2xl font-bold text-white mb-3 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                    No Performance Data Yet
+                  </h3>
+                  <p className="text-gray-300 mb-8 text-lg leading-relaxed max-w-2xl mx-auto">
+                    Add your first project and run an SEO analysis to see detailed performance metrics, Core Web Vitals, and trend analytics.
+                  </p>
+                  
+                  {/* Primary Action */}
+                  <Button 
+                    onClick={() => router.push('/dashboard/projects')}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-8 mb-8"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Your First Project
+                  </Button>
+                  
+                  {/* Secondary Actions */}
+                  <div className="space-y-6">
+                    <p className="text-gray-400">Performance metrics you'll track:</p>
+                    
+                    {/* Performance metrics preview */}
+                    <div className="mt-8 grid grid-cols-3 gap-6 max-w-lg mx-auto">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-green-400">95+</div>
+                        <div className="text-xs text-gray-500">Performance Score</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-blue-400">LCP</div>
+                        <div className="text-xs text-gray-500">Core Web Vitals</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-purple-400">30d</div>
+                        <div className="text-xs text-gray-500">Trend Analysis</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             <div className="grid grid-cols-1 gap-6">
               <PerformanceChart
@@ -488,25 +523,60 @@ export default function DashboardPage() {
 
         {/* Issues Tab */}
         <TabsContent value="issues" className="space-y-6">
-          {isDashboardEmpty && !issuesLoading ? (
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center min-h-[500px]"
-            >
-              <EmptyState
-                title="No Issues to Display"
-                description="Add a project and run an SEO analysis to identify and track issues across your website."
-                icon={<AlertTriangle className="h-16 w-16 text-gray-400" />}
-                action={{
-                  label: "Get Started",
-                  onClick: () => router.push('/dashboard/projects'),
-                  icon: <Plus className="h-4 w-4" />
-                }}
-                variant="card"
-                className="w-full max-w-2xl"
-              />
-            </m.div>
+          {isDashboardEmpty ? (
+            <div className="flex items-center justify-center min-h-[600px] py-16">
+              <div className="relative w-full max-w-3xl">
+                {/* Animated background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-3xl blur-xl -z-10 animate-pulse"></div>
+                
+                <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-12 text-center">
+                  {/* Icon */}
+                  <div className="mb-6 flex justify-center">
+                    <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm border border-indigo-500/30">
+                      <AlertTriangle className="h-10 w-10 text-indigo-400" />
+                    </div>
+                  </div>
+                  
+                  {/* Content */}
+                  <h3 className="text-2xl font-bold text-white mb-3 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                    No SEO Issues Detected
+                  </h3>
+                  <p className="text-gray-300 mb-8 text-lg leading-relaxed max-w-2xl mx-auto">
+                    Add your first project and run a comprehensive SEO audit to identify technical issues, content problems, and optimization opportunities.
+                  </p>
+                  
+                  {/* Primary Action */}
+                  <Button 
+                    onClick={() => router.push('/dashboard/projects')}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-8 mb-8"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Start Your First Audit
+                  </Button>
+                  
+                  {/* Secondary Actions */}
+                  <div className="space-y-6">
+                    <p className="text-gray-400">Issues we'll help you identify:</p>
+                    
+                    {/* Issue types preview */}
+                    <div className="mt-8 grid grid-cols-3 gap-6 max-w-lg mx-auto">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-red-400">Critical</div>
+                        <div className="text-xs text-gray-500">Technical Issues</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-amber-400">Medium</div>
+                        <div className="text-xs text-gray-500">Content Issues</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-blue-400">Low</div>
+                        <div className="text-xs text-gray-500">Optimization Tips</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             <div className="grid grid-cols-1 gap-6">
               <IssueTrendsChart
@@ -568,25 +638,60 @@ export default function DashboardPage() {
 
         {/* Projects Tab */}
         <TabsContent value="projects" className="space-y-6">
-          {isDashboardEmpty && !projectsLoading ? (
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center min-h-[500px]"
-            >
-              <EmptyState
-                title="No Projects Yet"
-                description="Create your first project to start monitoring your website's SEO performance."
-                icon={<Users className="h-16 w-16 text-gray-400" />}
-                action={{
-                  label: "Create Project",
-                  onClick: () => router.push('/dashboard/projects'),
-                  icon: <Plus className="h-4 w-4" />
-                }}
-                variant="card"
-                className="w-full max-w-2xl"
-              />
-            </m.div>
+          {isDashboardEmpty ? (
+            <div className="flex items-center justify-center min-h-[600px] py-16">
+              <div className="relative w-full max-w-3xl">
+                {/* Animated background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-3xl blur-xl -z-10 animate-pulse"></div>
+                
+                <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-12 text-center">
+                  {/* Icon */}
+                  <div className="mb-6 flex justify-center">
+                    <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm border border-indigo-500/30">
+                      <Users className="h-10 w-10 text-indigo-400" />
+                    </div>
+                  </div>
+                  
+                  {/* Content */}
+                  <h3 className="text-2xl font-bold text-white mb-3 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                    No Projects Created Yet
+                  </h3>
+                  <p className="text-gray-300 mb-8 text-lg leading-relaxed max-w-2xl mx-auto">
+                    Create your first project to start monitoring your website's SEO performance, track rankings, and get actionable insights.
+                  </p>
+                  
+                  {/* Primary Action */}
+                  <Button 
+                    onClick={() => router.push('/dashboard/projects')}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-8 mb-8"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Your First Project
+                  </Button>
+                  
+                  {/* Secondary Actions */}
+                  <div className="space-y-6">
+                    <p className="text-gray-400">What you can track per project:</p>
+                    
+                    {/* Project features preview */}
+                    <div className="mt-8 grid grid-cols-3 gap-6 max-w-lg mx-auto">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-indigo-400">∞</div>
+                        <div className="text-xs text-gray-500">Pages Analyzed</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-purple-400">24/7</div>
+                        <div className="text-xs text-gray-500">Monitoring</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-pink-400">Auto</div>
+                        <div className="text-xs text-gray-500">Reports</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             <RecentProjects 
               projects={transformedRecentProjects}
