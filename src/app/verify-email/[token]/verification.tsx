@@ -36,7 +36,21 @@ export default function VerificationPage({ token }: VerificationPageProps) {
   const [resendMessage, setResendMessage] = useState('');
   const [countdown, setCountdown] = useState(5);
   const [showCountdown, setShowCountdown] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  // Add basic error logging
+  useEffect(() => {
+    console.log('🔧 VerificationPage mounted with token:', token?.substring(0, 16) + '...');
+    
+    // Check if all required dependencies are available
+    if (!token) {
+      console.error('❌ No token provided to VerificationPage');
+      setError('No verification token provided');
+      setState('failed');
+      return;
+    }
+  }, [token]);
 
   useEffect(() => {
     verifyToken();
@@ -63,6 +77,10 @@ export default function VerificationPage({ token }: VerificationPageProps) {
     try {
       setState('loading');
       console.log('🔍 Verifying token:', token);
+      
+      if (!token) {
+        throw new Error('No token provided');
+      }
       
       const response = await fetch(`/api/secure-auth/verify-email/${encodeURIComponent(token)}`, {
         method: 'GET',
@@ -376,6 +394,33 @@ export default function VerificationPage({ token }: VerificationPageProps) {
         return renderLoadingState();
     }
   };
+
+  // Fallback render for errors
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <Card className="w-full max-w-md p-8 text-center bg-gray-800 border-gray-700">
+          <div className="flex flex-col items-center space-y-6">
+            <XCircle className="h-16 w-16 text-red-500" />
+            <div className="space-y-2 text-center">
+              <h1 className="text-2xl font-bold text-white">
+                Error Loading Verification Page
+              </h1>
+              <p className="text-gray-400">
+                {error}
+              </p>
+            </div>
+            <Button
+              onClick={() => window.location.href = '/auth/register'}
+              className="w-full bg-indigo-600 hover:bg-indigo-700"
+            >
+              Back to Registration
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
