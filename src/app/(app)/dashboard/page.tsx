@@ -312,90 +312,78 @@ export default function DashboardPage() {
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
-            <div className="min-h-[400px] bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-              <p className="text-white">DEBUG: TabsContent is rendering. isDashboardEmpty: {isDashboardEmpty.toString()}</p>
-            </div>
             {isDashboardEmpty ? (
-              <m.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1.0] }}
-                className="flex items-center justify-center min-h-[600px] py-16"
-              >
-                <div className="relative">
+              <div className="flex items-center justify-center min-h-[600px] py-16">
+                <div className="relative w-full max-w-3xl">
                   {/* Animated background gradient */}
                   <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-3xl blur-xl -z-10 animate-pulse"></div>
                   
-                  <EmptyState
-                    title="Welcome to Your SEO Dashboard"
-                    description="Start by adding your first project to begin tracking SEO performance, identifying issues, and optimizing your website's search visibility."
-                    icon={
-                      <m.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.2, duration: 0.5 }}
-                        className="relative"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-2xl blur-md opacity-20"></div>
-                        <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm border border-indigo-500/30">
-                          <BarChart className="h-10 w-10 text-indigo-400" />
+                  <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-12 text-center">
+                    {/* Icon */}
+                    <div className="mb-6 flex justify-center">
+                      <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm border border-indigo-500/30">
+                        <BarChart className="h-10 w-10 text-indigo-400" />
+                      </div>
+                    </div>
+                    
+                    {/* Content */}
+                    <h3 className="text-2xl font-bold text-white mb-3 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                      Welcome to Your SEO Dashboard
+                    </h3>
+                    <p className="text-gray-300 mb-8 text-lg leading-relaxed max-w-2xl mx-auto">
+                      Start by adding your first project to begin tracking SEO performance, identifying issues, and optimizing your website's search visibility.
+                    </p>
+                    
+                    {/* Primary Action */}
+                    <Button 
+                      onClick={() => router.push('/dashboard/projects')}
+                      className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 h-12 text-base px-8 mb-8"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Your First Project
+                    </Button>
+                    
+                    {/* Secondary Actions */}
+                    <div className="space-y-6">
+                      <p className="text-gray-400">Or explore these features:</p>
+                      <div className="flex gap-4 justify-center">
+                        <Button
+                          className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent"
+                          size="sm"
+                          onClick={() => router.push('/features')}
+                        >
+                          <Rocket className="h-4 w-4 mr-2" />
+                          View Features
+                        </Button>
+                        <Button
+                          className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent"
+                          size="sm"
+                          onClick={() => router.push('/how-it-works')}
+                        >
+                          <Target className="h-4 w-4 mr-2" />
+                          How It Works
+                        </Button>
+                      </div>
+                      
+                      {/* Quick stats preview */}
+                      <div className="mt-8 grid grid-cols-3 gap-6 max-w-lg mx-auto">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-indigo-400">10+</div>
+                          <div className="text-xs text-gray-500">SEO Metrics</div>
                         </div>
-                      </m.div>
-                    }
-                    action={{
-                      label: "Add Your First Project",
-                      onClick: () => router.push('/dashboard/projects'),
-                      icon: <Plus className="h-4 w-4" />
-                    }}
-                    footer={
-                      <m.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4, duration: 0.5 }}
-                        className="mt-8 flex flex-col items-center gap-6"
-                      >
-                        <p className="text-gray-400">Or explore these features:</p>
-                        <div className="flex gap-4">
-                          <Button
-                            className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent group"
-                            size="sm"
-                            onClick={() => router.push('/features')}
-                          >
-                            <Rocket className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform" />
-                            View Features
-                          </Button>
-                          <Button
-                            className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent group"
-                            size="sm"
-                            onClick={() => router.push('/how-it-works')}
-                          >
-                            <Target className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-                            How It Works
-                          </Button>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-purple-400">24/7</div>
+                          <div className="text-xs text-gray-500">Monitoring</div>
                         </div>
-                        
-                        {/* Quick stats preview */}
-                        <div className="mt-8 grid grid-cols-3 gap-6 w-full max-w-lg">
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-indigo-400">10+</div>
-                            <div className="text-xs text-gray-500">SEO Metrics</div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-purple-400">24/7</div>
-                            <div className="text-xs text-gray-500">Monitoring</div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-pink-400">99%</div>
-                            <div className="text-xs text-gray-500">Accuracy</div>
-                          </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-pink-400">99%</div>
+                          <div className="text-xs text-gray-500">Accuracy</div>
                         </div>
-                      </m.div>
-                    }
-                    variant="card"
-                    className="w-full max-w-3xl"
-                  />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </m.div>
+              </div>
           ) : (
             <>
               {/* Enhanced Stats Overview */}
