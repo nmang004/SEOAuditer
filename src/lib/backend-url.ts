@@ -23,8 +23,8 @@ export function ensureProtocol(url: string): string {
     }
   }
   
-  // Ensure /api path is included if not present
-  if (!processedUrl.endsWith('/api') && !processedUrl.includes('/api/')) {
+  // Ensure /api path is included if not present, unless it's a Railway URL
+  if (!processedUrl.includes('railway.app') && !processedUrl.endsWith('/api') && !processedUrl.includes('/api/')) {
     processedUrl = processedUrl.endsWith('/') ? `${processedUrl}api` : `${processedUrl}/api`;
   }
   

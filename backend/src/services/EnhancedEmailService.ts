@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
 import { config } from '../config/config';
 import { SecureTokenService } from './SecureTokenService';
+import { TemplateManager } from './TemplateManager';
 import sgMail from '@sendgrid/mail';
 
 interface EmailResult {
@@ -33,10 +34,12 @@ interface VerificationEmailData {
  */
 export class EnhancedEmailService {
   private tokenService: SecureTokenService;
+  private templateManager: TemplateManager;
   private isConfigured: boolean = false;
 
   constructor(prisma: PrismaClient) {
     this.tokenService = new SecureTokenService(prisma);
+    this.templateManager = new TemplateManager();
     this.initializeService();
   }
 
@@ -53,7 +56,8 @@ export class EnhancedEmailService {
       
       logger.info('Enhanced email service initialized', {
         configured: this.isConfigured,
-        templatesEnabled: !!config.sendgrid.templates?.emailVerification
+        templateManagerEnabled: true,
+        mappingSummary: this.templateManager.getMappingSummary()
       });
       
     } catch (error) {
@@ -184,9 +188,9 @@ export class EnhancedEmailService {
         return this.mockEmailSend(emailData, correlationId);
       }
 
-      const templateId = config.sendgrid?.templates?.emailVerification;
+      const templateId = await this.templateManager.getTemplateId('verification');
       if (!templateId) {
-        throw new Error('Email verification template ID not configured');
+        throw new Error('Email verification template ID not configured or invalid. Please check SendGrid templates.');
       }
 
       // Dynamic template data - ensures fresh content for every send

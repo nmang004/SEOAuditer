@@ -493,6 +493,7 @@ export const login = async (req: Request, res: Response) => {
       success: true,
       message: 'Login successful',
       data: {
+        token: tokenPair.accessToken,
         accessToken: tokenPair.accessToken,
         refreshToken: tokenPair.refreshToken,
         user: {

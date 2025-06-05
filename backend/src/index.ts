@@ -34,6 +34,7 @@ import authRS256Router from './routes/auth-rs256.routes';
 import emailRouter from './routes/email.routes';
 import secureTokenAuthRoutes from './routes/secure-token-auth.routes';
 import bypassEmailRoutes from './routes/bypass-email.routes';
+import adminRouter from './routes/admin.routes';
 
 let config, redisConfig;
 try {
@@ -217,6 +218,7 @@ app.use('/api/crawl', crawlRouter);
 app.use('/api/enhanced-analysis', enhancedAnalysisRoutes);
 app.use('/api/health', healthRouter);
 app.use('/api/email', emailRouter);
+app.use('/api/admin', adminRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
