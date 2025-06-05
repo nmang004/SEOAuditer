@@ -174,7 +174,10 @@ export default function ProjectsListPage() {
 
       {/* Create Project Form */}
       {isCreating && (
-        <div className="block opacity-100 visible">
+        <div className="block opacity-100 visible bg-purple-500 p-4 rounded">
+          <div className="bg-white text-black p-4 mb-4 rounded">
+            <p>DEBUG: Form is rendering, isCreating = {isCreating.toString()}</p>
+          </div>
           <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
