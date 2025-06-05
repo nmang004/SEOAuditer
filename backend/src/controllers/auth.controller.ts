@@ -615,8 +615,17 @@ export const authController = {
         },
       });
 
-      // Redirect to success page or return success response
-      res.redirect(`${config.clientUrl}/email-verified`);
+      // Return JSON response instead of redirect for API compatibility
+      res.status(200).json({
+        success: true,
+        message: 'Email verified successfully',
+        timestamp: new Date().toISOString(),
+        user: {
+          id: user.id,
+          email: user.email,
+          emailVerified: true
+        }
+      });
     } catch (error) {
       next(error);
     }
