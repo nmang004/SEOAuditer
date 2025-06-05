@@ -3,6 +3,18 @@ import { getServerBackendUrl } from '@/lib/backend-url';
 
 const BACKEND_URL = getServerBackendUrl();
 
+// Add runtime config for Netlify
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+// Add GET method for route discovery
+export async function GET() {
+  return NextResponse.json({ 
+    message: 'Secure Auth Login API - POST method required',
+    methods: ['POST']
+  }, { status: 405 });
+}
+
 export async function POST(request: NextRequest) {
   console.log('[Secure Auth API] Login request received');
   console.log('[Secure Auth API] Backend URL:', BACKEND_URL);
