@@ -29,7 +29,7 @@ class ErrorBoundary extends Component<
       localStorage.setItem('diagnosticError', JSON.stringify(errorData));
       console.log('Error saved to localStorage');
     } catch (e) {
-      console.log('Failed to save error to localStorage:', e);
+      console.log('Failed to save error to localStorage:', e instanceof Error ? e.message : String(e));
     }
   }
 
@@ -87,7 +87,7 @@ function MinimalDiagnostic() {
     localStorage.setItem('minimalDiagnostic', JSON.stringify(startLog));
     console.log('Start log saved to localStorage');
   } catch (e) {
-    console.log('Failed to save start log:', e);
+    console.log('Failed to save start log:', e instanceof Error ? e.message : String(e));
   }
 
   // Extract token from URL safely
@@ -106,7 +106,7 @@ function MinimalDiagnostic() {
       console.log('Extracted token:', token);
     }
   } catch (e) {
-    console.log('Token extraction failed:', e);
+    console.log('Token extraction failed:', e instanceof Error ? e.message : String(e));
     token = 'ERROR';
   }
 
@@ -260,7 +260,7 @@ function MinimalDiagnostic() {
               alert('Logs:\n\n' + logText);
             }
           } catch (e) {
-            alert('Error reading logs: ' + e.toString());
+            alert('Error reading logs: ' + (e instanceof Error ? e.message : String(e)));
           }
         }}
         style={{ 
