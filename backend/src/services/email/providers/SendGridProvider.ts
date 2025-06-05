@@ -66,10 +66,10 @@ export class SendGridProvider implements EmailProvider {
         subject: email.subject,
         html: email.html,
         text: email.text || this.htmlToText(email.html),
-        // Add tracking settings
+        // Disable click tracking to prevent URL rewriting issues with verification tokens
         trackingSettings: {
           clickTracking: {
-            enable: true,
+            enable: false,
             enableText: false
           },
           openTracking: {
