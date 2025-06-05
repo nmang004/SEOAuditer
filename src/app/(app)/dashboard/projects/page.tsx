@@ -2,11 +2,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { 
   Plus, 
   ExternalLink, 
@@ -278,83 +275,68 @@ export default function ProjectsListPage() {
             {filteredProjects.map((project) => (
               <div
                 key={project.id}
-                className="h-full block opacity-100 visible"
+                className="h-full"
               >
-                <Card className="h-full rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm hover:border-gray-600 transition-all cursor-pointer group hover:scale-105">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-lg truncate text-white group-hover:text-indigo-400 transition-colors">
-                          {project.name || "Untitled Project"}
-                        </h3>
-                        <p className="text-sm text-gray-400 flex items-center gap-1 mt-1">
-                          <Globe className="h-3 w-3" />
-                          <span className="truncate">{project.url}</span>
-                        </p>
-                      </div>
-                      <Badge className="ml-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
-                        {project.status || "Active"}
-                      </Badge>
+                <div className="h-full rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm hover:border-gray-600 transition-all cursor-pointer group hover:scale-105 p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-lg truncate text-white group-hover:text-indigo-400 transition-colors">
+                        {project.name || "Untitled Project"}
+                      </h3>
+                      <p className="text-sm text-gray-400 flex items-center gap-1 mt-1">
+                        <Globe className="h-3 w-3" />
+                        <span className="truncate">{project.url}</span>
+                      </p>
                     </div>
+                    <div className="ml-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 px-2 py-1 rounded text-xs">
+                      {project.status || "Active"}
+                    </div>
+                  </div>
 
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-400 flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          Created
-                        </span>
-                        <span className="text-gray-300">{formatDate(project.createdAt)}</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-400 flex items-center gap-1">
-                          <BarChart3 className="h-3 w-3" />
-                          Analyses
-                        </span>
-                        <span className="text-gray-300">{project.analysesCount || 0}</span>
-                      </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-400 flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        Created
+                      </span>
+                      <span className="text-gray-300">{formatDate(project.createdAt)}</span>
                     </div>
+                    
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-400 flex items-center gap-1">
+                        <BarChart3 className="h-3 w-3" />
+                        Analyses
+                      </span>
+                      <span className="text-gray-300">{project.analysesCount || 0}</span>
+                    </div>
+                  </div>
 
-                    <div className="flex gap-2 mt-6">
-                      <Button 
-                        asChild 
-                        size="sm" 
-                        className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0"
-                      >
-                        <Link href={`/dashboard/projects/${project.id}`} className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
-                          View
-                        </Link>
-                      </Button>
-                      
-                      <Button 
-                        asChild 
-                        size="sm" 
-                        className="flex-1 border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent"
-                      >
-                        <Link href={`/dashboard/projects/${project.id}/analyses/new`} className="flex items-center gap-1">
-                          <TrendingUp className="h-3 w-3" />
-                          Analyze
-                        </Link>
-                      </Button>
-                      
-                      <Button 
-                        asChild 
-                        size="sm"
-                        className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent"
-                      >
-                        <a 
-                          href={project.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1"
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                  <div className="flex gap-2 mt-6">
+                    <a 
+                      href={`/dashboard/projects/${project.id}`}
+                      className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 px-3 py-2 rounded text-sm text-center flex items-center justify-center gap-1"
+                    >
+                      <Eye className="h-3 w-3" />
+                      View
+                    </a>
+                    
+                    <a 
+                      href={`/dashboard/projects/${project.id}/analyses/new`}
+                      className="flex-1 border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent border px-3 py-2 rounded text-sm text-center flex items-center justify-center gap-1"
+                    >
+                      <TrendingUp className="h-3 w-3" />
+                      Analyze
+                    </a>
+                    
+                    <a 
+                      href={project.url}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white bg-transparent border px-3 py-2 rounded text-sm flex items-center justify-center gap-1"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
               </div>
             ))}
           </div>
