@@ -38,6 +38,7 @@ export default function VerificationPage({ token }: VerificationPageProps) {
   const verifyToken = async () => {
     try {
       setStatus('loading');
+      console.log('🔍 Verifying token:', token);
       
       // Use the secure token auth endpoint
       const response = await fetch(`/api/secure-auth/verify-email/${encodeURIComponent(token)}`, {
@@ -48,11 +49,22 @@ export default function VerificationPage({ token }: VerificationPageProps) {
         }
       });
 
-      const data: VerificationResult = await response.json();
+      console.log('📡 Response status:', response.status);
+      
+      let data: VerificationResult;
+      try {
+        data = await response.json();
+        console.log('📄 Response data:', data);
+      } catch (parseError) {
+        console.error('❌ Failed to parse response as JSON:', parseError);
+        throw new Error('Invalid response format from server');
+      }
+      
       setResult(data);
 
       if (response.ok && data.success) {
         setStatus('success');
+        console.log('✅ Verification successful!');
         // Only redirect if this was an actual verification, not a resend
         if (!result?.message?.includes('sent')) {
           setTimeout(() => {
@@ -60,15 +72,16 @@ export default function VerificationPage({ token }: VerificationPageProps) {
           }, 3000);
         }
       } else {
+        console.log('❌ Verification failed:', data);
         // Check if token is expired or invalid
-        if (data.error?.includes('expired') || data.error?.includes('Invalid')) {
+        if (data.error?.includes('expired') || data.error?.includes('Invalid') || response.status === 400) {
           setStatus('expired');
         } else {
           setStatus('error');
         }
       }
     } catch (error) {
-      console.error('Verification failed:', error);
+      console.error('❌ Verification failed:', error);
       setResult({
         success: false,
         message: 'Verification failed due to a network error',
@@ -180,7 +193,7 @@ export default function VerificationPage({ token }: VerificationPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center p-4">
+    <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-md p-8 text-center bg-gray-800 border-gray-700">
         <div className="flex flex-col items-center space-y-6">
           {getStatusIcon()}

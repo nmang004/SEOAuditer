@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { logger } from '../utils/logger';
 import { SecureTokenService } from '../services/SecureTokenService';
 import { EnhancedEmailService } from '../services/EnhancedEmailService';
 import { jwtService } from '../services/jwt.service';
+import { databaseManager } from '../config/database';
 
-const prisma = new PrismaClient();
+const prisma = databaseManager.getPrisma();
 const tokenService = new SecureTokenService(prisma);
 const emailService = new EnhancedEmailService(prisma);
 
