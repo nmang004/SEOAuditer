@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,23 +38,38 @@ export default function ProjectsListPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
+  // Debug logging
+  console.log('ProjectsListPage render:', { 
+    projects: projects.length, 
+    isCreating, 
+    filteredProjects: projects.filter(project =>
+      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.url.toLowerCase().includes(searchTerm.toLowerCase())
+    ).length 
+  });
+
   useEffect(() => {
     fetchProjects();
   }, []);
 
   const fetchProjects = async () => {
     try {
+      console.log('Fetching projects...');
       const token = localStorage.getItem("token");
       const response = await fetch("/api/projects", {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
+      
+      console.log('Projects API response:', response.status, response.statusText);
       const result = await response.json();
+      console.log('Projects API result:', result);
       
       if (result.success && Array.isArray(result.data)) {
         setProjects(result.data);
       } else {
+        console.log('Invalid response format, setting empty array');
         setProjects([]);
       }
     } catch (err: unknown) {
@@ -113,10 +127,12 @@ export default function ProjectsListPage() {
     });
   };
 
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+  // Error boundary fallback
+  try {
+    return (
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
             Projects
@@ -153,12 +169,7 @@ export default function ProjectsListPage() {
 
       {/* Create Project Form */}
       {isCreating && (
-        <m.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="overflow-hidden"
-        >
+        <div className="animate-in slide-in-from-top-2 duration-300">
           <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-white bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
@@ -228,7 +239,7 @@ export default function ProjectsListPage() {
               </form>
             </CardContent>
           </Card>
-        </m.div>
+        </div>
       )}
 
       {/* Projects Grid */}
@@ -269,13 +280,9 @@ export default function ProjectsListPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredProjects.map((project) => (
-              <m.div
+              <div
                 key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                whileHover={{ y: -2 }}
-                className="h-full"
+                className="h-full animate-in fade-in-0 slide-in-from-bottom-4 duration-300"
               >
                 <Card className="h-full rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm hover:border-gray-600 transition-all cursor-pointer group hover:scale-105">
                   <CardContent className="p-6">
@@ -352,7 +359,7 @@ export default function ProjectsListPage() {
                     </div>
                   </CardContent>
                 </Card>
-              </m.div>
+              </div>
             ))}
           </div>
         )}
@@ -383,4 +390,23 @@ export default function ProjectsListPage() {
       )}
     </div>
   );
+  } catch (error) {
+    console.error('ProjectsListPage error:', error);
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-white mb-4">Something went wrong</h1>
+            <p className="text-gray-300 mb-4">There was an error loading the projects page.</p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0"
+            >
+              Reload Page
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 } 
