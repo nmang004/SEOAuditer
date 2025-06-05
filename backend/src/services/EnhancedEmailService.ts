@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
 import { config } from '../config/config';
 import { SecureTokenService } from './SecureTokenService';
-import { TemplateManager } from './TemplateManager';
+// import { TemplateManager } from './TemplateManager'; // Not needed for server-side templates
 import { WelcomeTemplate } from './email/templates/WelcomeTemplate';
 import sgMail from '@sendgrid/mail';
 
@@ -35,12 +35,10 @@ interface VerificationEmailData {
  */
 export class EnhancedEmailService {
   private tokenService: SecureTokenService;
-  private templateManager: TemplateManager;
   private isConfigured: boolean = false;
 
   constructor(prisma: PrismaClient) {
     this.tokenService = new SecureTokenService(prisma);
-    this.templateManager = new TemplateManager();
     this.initializeService();
   }
 
@@ -57,8 +55,8 @@ export class EnhancedEmailService {
       
       logger.info('Enhanced email service initialized', {
         configured: this.isConfigured,
-        templateManagerEnabled: true,
-        mappingSummary: this.templateManager.getMappingSummary()
+        templateType: 'server-side',
+        serverSideTemplatesEnabled: true
       });
       
     } catch (error) {

@@ -57,30 +57,84 @@ export class StartupValidator {
 
   private async validateEmailTemplates(): Promise<void> {
     try {
-      const templateManager = new TemplateManager();
-      const validation = await templateManager.validateRequiredTemplates();
+      // Check if we're using server-side templates (no dynamic template ID configured)
+      const hasDynamicTemplateId = !!(
+        process.env.SENDGRID_VERIFICATION_TEMPLATE_ID || 
+        process.env.SENDGRID_EMAIL_VERIFICATION_TEMPLATE_ID ||
+        config.sendgrid?.templates?.emailVerification
+      );
       
-      if (validation.valid) {
-        this.results.push({
-          service: 'email-templates',
-          status: 'pass',
-          message: 'All required email templates are configured and valid',
-          details: {
-            mapping: templateManager.getMappingSummary()
+      if (!hasDynamicTemplateId) {
+        // Using server-side templates - validate that the template files exist
+        try {
+          const { WelcomeTemplate } = require('./email/templates/WelcomeTemplate');
+          const template = new WelcomeTemplate();
+          
+          // Test template rendering
+          const testContent = template.render({
+            name: 'Test User',
+            verificationUrl: 'https://example.com/verify/test',
+            appName: 'SEO Director',
+            appUrl: 'https://example.com',
+            email: 'test@example.com'
+          });
+          
+          if (testContent.subject && testContent.html && testContent.text) {
+            this.results.push({
+              service: 'email-templates',
+              status: 'pass',
+              message: 'Server-side email templates are working correctly',
+              details: {
+                templateType: 'server-side',
+                templateClass: 'WelcomeTemplate',
+                hasSubject: !!testContent.subject,
+                hasHtml: !!testContent.html,
+                hasText: !!testContent.text
+              }
+            });
+          } else {
+            throw new Error('Template render returned incomplete content');
           }
-        });
+        } catch (templateError) {
+          this.results.push({
+            service: 'email-templates',
+            status: 'fail',
+            message: 'Server-side email template validation failed',
+            details: {
+              templateType: 'server-side',
+              error: templateError instanceof Error ? templateError.message : 'Unknown template error'
+            }
+          });
+        }
       } else {
-        const severity = validation.missing.includes('verification') ? 'fail' : 'warn';
-        this.results.push({
-          service: 'email-templates',
-          status: severity,
-          message: `Email template validation failed: ${validation.missing.join(', ')} templates missing`,
-          details: {
-            missing: validation.missing,
-            errors: validation.errors,
-            current: templateManager.getMappingSummary()
-          }
-        });
+        // Using dynamic templates - validate SendGrid configuration
+        const templateManager = new TemplateManager();
+        const validation = await templateManager.validateRequiredTemplates();
+        
+        if (validation.valid) {
+          this.results.push({
+            service: 'email-templates',
+            status: 'pass',
+            message: 'Dynamic SendGrid templates are configured and valid',
+            details: {
+              templateType: 'dynamic',
+              mapping: templateManager.getMappingSummary()
+            }
+          });
+        } else {
+          const severity = validation.missing.includes('verification') ? 'fail' : 'warn';
+          this.results.push({
+            service: 'email-templates',
+            status: severity,
+            message: `Dynamic template validation failed: ${validation.missing.join(', ')} templates missing`,
+            details: {
+              templateType: 'dynamic',
+              missing: validation.missing,
+              errors: validation.errors,
+              current: templateManager.getMappingSummary()
+            }
+          });
+        }
       }
     } catch (error) {
       this.results.push({
