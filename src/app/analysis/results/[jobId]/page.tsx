@@ -147,7 +147,7 @@ export default function CrawlResultsPage() {
         {/* Enhanced Recommendations Tab */}
         <TabsContent value="recommendations" className="space-y-6">
           <EnhancedAnalysisDashboard
-            recommendations={mockEnhancedRecommendations}
+            recommendations={page.recommendations?.length > 0 ? page.recommendations : mockEnhancedRecommendations}
             currentScore={overallScore}
             onImplementRecommendation={handleImplementRecommendation}
             onMarkComplete={handleMarkComplete}

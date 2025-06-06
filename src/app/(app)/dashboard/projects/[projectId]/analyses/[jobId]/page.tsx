@@ -2,6 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { EnhancedAnalysisDashboard } from '@/components/analysis/enhanced-analysis-dashboard';
+import { mockEnhancedRecommendations } from '@/lib/mock-enhanced-recommendations';
+import { TechnicalAnalysis } from '@/components/analysis/technical-analysis';
+import { ContentAnalysis } from '@/components/analysis/content-analysis';
 import { 
   ArrowLeft,
   Globe,
@@ -12,15 +18,14 @@ import {
   CheckCircle2,
   AlertTriangle,
   AlertCircle,
-  Image,
-  Link2,
-  Search,
   TrendingUp,
   ExternalLink,
   Loader2,
   RefreshCw,
   Download,
-  Share
+  Share,
+  Sparkles,
+  Wrench
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -38,7 +43,7 @@ interface AnalysisData {
       impact: string;
       recommendation: string;
     }>;
-    recommendations: string[];
+    recommendations: any[];
     technicalSEO: {
       titleTag: { status: string; length: number };
       metaDescription: { status: string; length: number };
@@ -148,13 +153,19 @@ export default function AnalysisResultsPage() {
     return 'from-red-500/10 to-pink-500/10 border-red-500/20';
   };
 
-  const getImpactColor = (impact: string): string => {
-    switch (impact?.toLowerCase()) {
-      case 'high': return 'bg-red-500/10 border-red-500/20 text-red-400';
-      case 'medium': return 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400';
-      case 'low': return 'bg-blue-500/10 border-blue-500/20 text-blue-400';
-      default: return 'bg-gray-500/10 border-gray-500/20 text-gray-400';
-    }
+  const handleImplementRecommendation = (id: string) => {
+    console.log('Implementing recommendation:', id);
+    // TODO: Implement auto-fix functionality
+  };
+
+  const handleMarkComplete = (id: string) => {
+    console.log('Marking recommendation as complete:', id);
+    // TODO: Update recommendation status
+  };
+
+  const handleExportPlan = () => {
+    console.log('Exporting implementation plan');
+    // TODO: Generate and download implementation plan
   };
 
   if (loading) {
@@ -258,7 +269,7 @@ export default function AnalysisResultsPage() {
                 onClick={() => router.push(`/dashboard/projects/${projectId}/analyses/new`)}
                 className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 mx-auto"
               >
-                <Search className="h-4 w-4" />
+                <BarChart3 className="h-4 w-4" />
                 Try New Analysis
               </button>
             </div>
@@ -267,6 +278,11 @@ export default function AnalysisResultsPage() {
       </div>
     );
   }
+
+  // Transform backend data to match enhanced recommendations format if needed
+  const enhancedRecommendations = results.recommendations?.length > 0 
+    ? results.recommendations 
+    : mockEnhancedRecommendations;
 
   return (
     <div className="space-y-8">
@@ -283,7 +299,7 @@ export default function AnalysisResultsPage() {
               SEO Analysis Results
             </h1>
             <p className="text-gray-300 mt-2 text-lg">
-              Complete analysis for {data.url || 'Unknown URL'}
+              URL: <span className="font-mono text-indigo-400 break-all">{data.url || 'Unknown URL'}</span>
             </p>
           </div>
         </div>
@@ -300,7 +316,7 @@ export default function AnalysisResultsPage() {
       </div>
 
       {/* Analysis Summary */}
-      <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+      <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
@@ -335,31 +351,96 @@ export default function AnalysisResultsPage() {
             Analysis Complete
           </div>
         </div>
-      </div>
+      </Card>
 
-      {/* Main SEO Score */}
-      <div className={`rounded-2xl border bg-gradient-to-br backdrop-blur-sm p-8 text-center ${getScoreBg(results.seoScore)}`}>
-        <div className="h-16 w-16 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
-          <Target className="h-8 w-8 text-indigo-400" />
-        </div>
-        <div className={`text-6xl font-bold mb-2 ${getScoreColor(results.seoScore)}`}>
-          {results.seoScore}
-        </div>
-        <div className="text-xl font-bold text-white mb-2">Overall SEO Score</div>
-        <div className="text-gray-300 mb-6">Your website's overall SEO performance</div>
-        <div className="w-full max-w-md mx-auto bg-gray-700/50 rounded-full h-3">
-          <div 
-            className="h-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000 ease-out"
-            style={{ width: `${results.seoScore}%` }}
-          ></div>
-        </div>
-      </div>
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="recommendations" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3 bg-gray-800 border-gray-700">
+          <TabsTrigger 
+            value="recommendations" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Action Plan
+          </TabsTrigger>
+          <TabsTrigger 
+            value="analysis" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white"
+          >
+            <BarChart3 className="w-4 h-4 mr-2" />
+            Analysis Overview
+          </TabsTrigger>
+          <TabsTrigger 
+            value="technical" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white"
+          >
+            <Wrench className="w-4 h-4 mr-2" />
+            Technical Details
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* Enhanced Recommendations Tab - DEFAULT */}
+        <TabsContent value="recommendations" className="space-y-6">
+          <EnhancedAnalysisDashboard
+            recommendations={enhancedRecommendations}
+            currentScore={results.seoScore}
+            onImplementRecommendation={handleImplementRecommendation}
+            onMarkComplete={handleMarkComplete}
+            onExportPlan={handleExportPlan}
+          />
+        </TabsContent>
+
+        {/* Analysis Overview Tab */}
+        <TabsContent value="analysis" className="space-y-6">
+          {/* Main SEO Score */}
+          <Card className={`rounded-2xl border bg-gradient-to-br backdrop-blur-sm p-8 text-center ${getScoreBg(results.seoScore)}`}>
+            <div className="h-16 w-16 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
+              <Target className="h-8 w-8 text-indigo-400" />
+            </div>
+            <div className={`text-6xl font-bold mb-2 ${getScoreColor(results.seoScore)}`}>
+              {results.seoScore}
+            </div>
+            <div className="text-xl font-bold text-white mb-2">Overall SEO Score</div>
+            <div className="text-gray-300 mb-6">Your website's overall SEO performance</div>
+            <div className="w-full max-w-md mx-auto bg-gray-700/50 rounded-full h-3">
+              <div 
+                className="h-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000 ease-out"
+                style={{ width: `${results.seoScore}%` }}
+              ></div>
+            </div>
+          </Card>
+
+          {/* Performance */}
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-green-400" />
+              Performance
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gray-700/30 p-4 rounded-lg text-center">
+                <div className="text-2xl font-bold text-blue-400 mb-1">{results.performance.loadTime}s</div>
+                <div className="text-sm text-gray-400">Load Time</div>
+              </div>
+              <div className="bg-gray-700/30 p-4 rounded-lg text-center">
+                <div className={`text-2xl font-bold mb-1 ${getScoreColor(results.performance.mobileScore)}`}>
+                  {results.performance.mobileScore}
+                </div>
+                <div className="text-sm text-gray-400">Mobile Score</div>
+              </div>
+              <div className="bg-gray-700/30 p-4 rounded-lg text-center">
+                <div className={`text-2xl font-bold mb-1 ${getScoreColor(results.performance.desktopScore)}`}>
+                  {results.performance.desktopScore}
+                </div>
+                <div className="text-sm text-gray-400">Desktop Score</div>
+              </div>
+            </div>
+          </Card>
+        </TabsContent>
+
+        {/* Technical Details Tab */}
+        <TabsContent value="technical" className="space-y-6">
           {/* Technical SEO */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-indigo-400" />
               Technical SEO
@@ -391,108 +472,9 @@ export default function AnalysisResultsPage() {
                 <div className="text-xs text-gray-500">{results.technicalSEO.images.withoutAlt} without alt text</div>
               </div>
             </div>
-          </div>
-
-          {/* Performance */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
-            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-400" />
-              Performance
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-700/30 p-4 rounded-lg text-center">
-                <div className="text-2xl font-bold text-blue-400 mb-1">{results.performance.loadTime}s</div>
-                <div className="text-sm text-gray-400">Load Time</div>
-              </div>
-              <div className="bg-gray-700/30 p-4 rounded-lg text-center">
-                <div className={`text-2xl font-bold mb-1 ${getScoreColor(results.performance.mobileScore)}`}>
-                  {results.performance.mobileScore}
-                </div>
-                <div className="text-sm text-gray-400">Mobile Score</div>
-              </div>
-              <div className="bg-gray-700/30 p-4 rounded-lg text-center">
-                <div className={`text-2xl font-bold mb-1 ${getScoreColor(results.performance.desktopScore)}`}>
-                  {results.performance.desktopScore}
-                </div>
-                <div className="text-sm text-gray-400">Desktop Score</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Issues */}
-          {results.issues && results.issues.length > 0 && (
-            <div className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-400" />
-                Issues Found ({results.issues.length})
-              </h3>
-              <div className="space-y-4">
-                {results.issues.map((issue, index) => (
-                  <div key={index} className={`p-4 rounded-lg border ${getImpactColor(issue.impact)}`}>
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <h4 className="font-medium text-white">{issue.title}</h4>
-                      <div className={`text-xs px-2 py-1 rounded border ${getImpactColor(issue.impact)}`}>
-                        {issue.impact?.toUpperCase()}
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-300 mb-2">{issue.description}</p>
-                    <p className="text-sm text-gray-400 italic">{issue.recommendation}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Recommendations */}
-          {results.recommendations && results.recommendations.length > 0 && (
-            <div className="rounded-2xl border border-gray-700 bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm p-6">
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                <CheckCircle2 className="h-5 w-5 text-green-400" />
-                Recommendations
-              </h3>
-              <div className="space-y-3">
-                {results.recommendations.map((rec, index) => (
-                  <div key={index} className="p-3 bg-gray-700/30 rounded-lg border border-green-500/20">
-                    <p className="text-sm text-gray-300 leading-relaxed">{rec}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Actions */}
-          <div className="rounded-2xl border border-gray-700 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-sm p-6">
-            <div className="text-center space-y-4">
-              <div className="h-12 w-12 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto">
-                <TrendingUp className="h-6 w-6 text-indigo-400" />
-              </div>
-              <h3 className="font-bold text-white">Next Steps</h3>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                Your SEO analysis is complete! Use the insights above to improve your website's performance.
-              </p>
-              <div className="space-y-3">
-                <button 
-                  onClick={() => router.push(`/dashboard/projects/${projectId}/analyses/new`)}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
-                >
-                  <Search className="h-4 w-4" />
-                  Run New Analysis
-                </button>
-                <button 
-                  onClick={() => router.push(`/dashboard/projects/${projectId}`)}
-                  className="w-full border border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:text-white px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Project
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
