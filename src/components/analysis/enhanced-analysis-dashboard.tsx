@@ -21,7 +21,8 @@ import {
   ChevronDown,
   SlidersHorizontal,
   Download,
-  Share2
+  Share2,
+  Sparkles
 } from 'lucide-react';
 
 interface EnhancedRecommendation {
@@ -71,6 +72,13 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   onMarkComplete = () => {},
   onExportPlan = () => {},
 }) => {
+  // Debug logging
+  console.log('[EnhancedAnalysisDashboard] Props received:', {
+    recommendations: recommendations?.length || 0,
+    currentScore,
+    recommendationsData: recommendations
+  });
+
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -228,6 +236,25 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     }
   };
   
+  // Early return if no recommendations
+  if (!recommendations || recommendations.length === 0) {
+    console.log('[EnhancedAnalysisDashboard] No recommendations provided');
+    return (
+      <div className="space-y-8">
+        <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-12 text-center">
+          <div className="text-gray-400 mb-4">
+            <Sparkles className="w-12 h-12 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-white mb-2">No Recommendations Yet</h3>
+            <p>The analysis is either in progress or no recommendations were generated.</p>
+            <div className="mt-4 text-sm text-gray-500">
+              Current Score: {currentScore || 'N/A'}
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       {/* Hero Section */}
