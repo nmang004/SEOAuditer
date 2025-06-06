@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EnhancedAnalysisDashboard } from '@/components/analysis/enhanced-analysis-dashboard';
-import { SimpleRecommendations } from '@/components/analysis/simple-recommendations';
 import { mockEnhancedRecommendations } from '@/lib/mock-enhanced-recommendations';
 import { TechnicalAnalysis } from '@/components/analysis/technical-analysis';
 import { ContentAnalysis } from '@/components/analysis/content-analysis';
@@ -62,8 +61,6 @@ interface AnalysisData {
 }
 
 export default function AnalysisResultsPage() {
-  console.log('🚨🚨🚨 ANALYSIS RESULTS PAGE COMPONENT MOUNTING 🚨🚨🚨');
-  
   const params = useParams();
   const router = useRouter();
   const projectId = params?.projectId as string;
@@ -71,8 +68,6 @@ export default function AnalysisResultsPage() {
   const [data, setData] = useState<AnalysisData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
-  console.log('🚨 ANALYSIS PAGE PARAMS:', { projectId, jobId });
 
   useEffect(() => {
     if (!jobId) return;
@@ -285,42 +280,9 @@ export default function AnalysisResultsPage() {
   }
 
   // Transform backend data to match enhanced recommendations format if needed
-  console.log('[AnalysisResultsPage] ===== DATA SELECTION DEBUG =====');
-  console.log('[AnalysisResultsPage] results.recommendations exists:', !!results.recommendations);
-  console.log('[AnalysisResultsPage] results.recommendations type:', typeof results.recommendations);
-  console.log('[AnalysisResultsPage] results.recommendations length:', results.recommendations?.length);
-  console.log('[AnalysisResultsPage] results.recommendations raw:', results.recommendations);
-  console.log('[AnalysisResultsPage] mockEnhancedRecommendations length:', mockEnhancedRecommendations?.length);
-  console.log('[AnalysisResultsPage] condition (results.recommendations?.length > 0):', results.recommendations?.length > 0);
-  
-  // Force use of mock data for testing
-  const enhancedRecommendations = mockEnhancedRecommendations;
-    
-  console.log('[AnalysisResultsPage] FINAL enhancedRecommendations selected:', enhancedRecommendations);
-  console.log('[AnalysisResultsPage] FINAL enhancedRecommendations length:', enhancedRecommendations?.length);
-  console.log('[AnalysisResultsPage] ===== END DATA SELECTION DEBUG =====');
-
-  console.log('[AnalysisResultsPage] ===== PARENT DEBUG =====');
-  console.log('[AnalysisResultsPage] results.recommendations:', results.recommendations);
-  console.log('[AnalysisResultsPage] results.recommendations?.length:', results.recommendations?.length);
-  console.log('[AnalysisResultsPage] mockEnhancedRecommendations:', mockEnhancedRecommendations);
-  console.log('[AnalysisResultsPage] enhancedRecommendations:', enhancedRecommendations);
-  console.log('[AnalysisResultsPage] enhancedRecommendations length:', enhancedRecommendations?.length || 0);
-  console.log('[AnalysisResultsPage] currentScore:', results.seoScore);
-  console.log('[AnalysisResultsPage] usingMockData:', results.recommendations?.length === 0);
-  
-  // Check the structure of the first recommendation
-  if (enhancedRecommendations && enhancedRecommendations.length > 0) {
-    console.log('[AnalysisResultsPage] First recommendation structure:');
-    console.log('  - id:', enhancedRecommendations[0]?.id);
-    console.log('  - title:', enhancedRecommendations[0]?.title);
-    console.log('  - description:', enhancedRecommendations[0]?.description);
-    console.log('  - impact:', enhancedRecommendations[0]?.impact);
-    console.log('  - typeof:', typeof enhancedRecommendations[0]);
-    console.log('  - keys:', enhancedRecommendations[0] ? Object.keys(enhancedRecommendations[0]) : 'no keys');
-    console.log('  - full object:', enhancedRecommendations[0]);
-  }
-  console.log('[AnalysisResultsPage] ===== END PARENT DEBUG =====');
+  const enhancedRecommendations = results.recommendations?.length > 0 
+    ? results.recommendations 
+    : mockEnhancedRecommendations;
 
   return (
     <div className="space-y-8">
@@ -419,32 +381,13 @@ export default function AnalysisResultsPage() {
 
         {/* Enhanced Recommendations Tab - DEFAULT */}
         <TabsContent value="recommendations" className="space-y-6">
-          <div style={{ border: '5px solid red', padding: '20px', backgroundColor: '#ffeeee' }}>
-            <h1 style={{ color: 'red', fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>
-              🚨 ACTION PLAN TAB IS ACTIVE - TESTING DISPLAY
-            </h1>
-            
-            <div style={{ backgroundColor: 'yellow', padding: '10px', marginBottom: '20px', color: 'black' }}>
-              <p><strong>Tab Status:</strong> ✅ recommendations tab content is rendering</p>
-              <p><strong>Enhanced Recommendations Length:</strong> {enhancedRecommendations?.length || 'undefined'}</p>
-              <p><strong>Mock Data Length:</strong> {mockEnhancedRecommendations?.length || 'undefined'}</p>
-              <p><strong>Results SEO Score:</strong> {results.seoScore || 'undefined'}</p>
-            </div>
-            
-            {/* SIMPLE TEST COMPONENT */}
-            <SimpleRecommendations data={enhancedRecommendations} />
-            
-            {/* ORIGINAL ENHANCED COMPONENT - COMMENTED OUT FOR TESTING */}
-            {/*
-            <EnhancedAnalysisDashboard
-              recommendations={enhancedRecommendations}
-              currentScore={results.seoScore}
-              onImplementRecommendation={handleImplementRecommendation}
-              onMarkComplete={handleMarkComplete}
-              onExportPlan={handleExportPlan}
-            />
-            */}
-          </div>
+          <EnhancedAnalysisDashboard
+            recommendations={enhancedRecommendations}
+            currentScore={results.seoScore}
+            onImplementRecommendation={handleImplementRecommendation}
+            onMarkComplete={handleMarkComplete}
+            onExportPlan={handleExportPlan}
+          />
         </TabsContent>
 
         {/* Analysis Overview Tab */}

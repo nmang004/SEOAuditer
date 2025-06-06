@@ -72,12 +72,6 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   onMarkComplete = () => {},
   onExportPlan = () => {},
 }) => {
-  // Debug logging
-  console.log('[EnhancedAnalysisDashboard] Props received:', {
-    recommendations: recommendations?.length || 0,
-    currentScore,
-    recommendationsData: recommendations
-  });
 
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -243,27 +237,6 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   const topRecommendation = sortedRecommendations[0];
   const quickWins = sortedRecommendations.filter(rec => rec.quickWin).slice(0, 5);
   
-  // More detailed debugging
-  console.log('[EnhancedAnalysisDashboard] ===== DETAILED DEBUG =====');
-  console.log('[EnhancedAnalysisDashboard] sortedRecommendations array:', sortedRecommendations);
-  console.log('[EnhancedAnalysisDashboard] sortedRecommendations.length:', sortedRecommendations.length);
-  console.log('[EnhancedAnalysisDashboard] sortedRecommendations[0]:', sortedRecommendations[0]);
-  console.log('[EnhancedAnalysisDashboard] topRecommendation === sortedRecommendations[0]:', topRecommendation === sortedRecommendations[0]);
-  
-  if (sortedRecommendations.length > 0) {
-    console.log('[EnhancedAnalysisDashboard] First rec structure check:');
-    console.log('  - id:', sortedRecommendations[0]?.id);
-    console.log('  - title:', sortedRecommendations[0]?.title);
-    console.log('  - description:', sortedRecommendations[0]?.description);
-    console.log('  - impact:', sortedRecommendations[0]?.impact);
-    console.log('  - typeof:', typeof sortedRecommendations[0]);
-    console.log('  - keys:', sortedRecommendations[0] ? Object.keys(sortedRecommendations[0]) : 'no keys');
-  }
-  
-  console.log('[EnhancedAnalysisDashboard] topRecommendation object:', topRecommendation);
-  console.log('[EnhancedAnalysisDashboard] topRecommendation?.title:', topRecommendation?.title);
-  console.log('[EnhancedAnalysisDashboard] Quick wins:', quickWins.length);
-  console.log('[EnhancedAnalysisDashboard] ===== END DEBUG =====');
   
   // Calculate statistics with safety checks
   const completedIdsArray = Array.from(completedIds);
@@ -387,10 +360,6 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
 
   return (
     <div className="space-y-8">
-      {/* Debug Info - Keep temporarily */}
-      <div className="bg-red-500 text-white p-4 rounded text-sm">
-        Debug: {sortedRecommendations.length} recommendations, Top: {topRecommendation?.title || 'None'}, Priority: {topRecommendation ? calculatePriority(topRecommendation) : 'N/A'}
-      </div>
       
       {/* Hero Section */}
       {topRecommendation && (

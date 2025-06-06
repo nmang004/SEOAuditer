@@ -7,10 +7,12 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
   reactStrictMode: true,
   
-  // Performance optimizations - DISABLED FOR DEBUGGING
+  // Performance optimizations
   compiler: {
-    removeConsole: false, // Keep console logs for debugging
-    reactRemoveProperties: false, // Keep all properties for debugging
+    removeConsole: process.env.NODE_ENV === 'production',
+    reactRemoveProperties: process.env.NODE_ENV === 'production' && {
+      properties: ['^data-testid$', '^data-test$'],
+    },
   },
   modularizeImports: {
     'lucide-react': {
@@ -135,9 +137,9 @@ const nextConfig = {
   // Enable source maps only in development
   productionBrowserSourceMaps: false,
   
-  // Experimental features for performance - DISABLED FOR DEBUGGING
+  // Experimental features for performance
   experimental: {
-    optimizeCss: false, // Disable CSS optimization to prevent syntax errors
+    optimizeCss: true,
     scrollRestoration: true,
   },
   
