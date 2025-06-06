@@ -571,47 +571,369 @@ export default function AnalysisResultsPage() {
         </TabsContent>
 
         {/* Analysis Overview Tab */}
-        <TabsContent value="analysis" className="space-y-6">
-          {/* Main SEO Score */}
-          <Card className={`rounded-2xl border bg-gradient-to-br backdrop-blur-sm p-8 text-center ${getScoreBg(results.seoScore)}`}>
-            <div className="h-16 w-16 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
-              <Target className="h-8 w-8 text-indigo-400" />
+        <TabsContent value="analysis" className="space-y-8">
+          {/* Hero Score Section */}
+          <div className="relative overflow-hidden rounded-2xl border border-indigo-500/50 bg-gradient-to-br from-gray-800 to-gray-900 p-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-indigo-500/20 to-transparent rounded-full blur-3xl"></div>
+            
+            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              {/* Score Display */}
+              <div className="text-center lg:text-left space-y-6">
+                <div className="space-y-2">
+                  <div className="inline-flex items-center rounded-full bg-indigo-500/10 border border-indigo-500/20 px-4 py-1.5 text-sm font-medium text-indigo-400 mb-4">
+                    🏆 Overall Performance
+                  </div>
+                  <div className={`text-8xl font-extrabold ${getScoreColor(results.seoScore)} leading-none`}>
+                    {results.seoScore}
+                  </div>
+                  <div className="text-2xl font-bold text-white">SEO Score</div>
+                  <div className="text-lg text-gray-300">
+                    {results.seoScore >= 80 ? 'Excellent! Your site is well optimized.' :
+                     results.seoScore >= 60 ? 'Good foundation with room for improvement.' :
+                     'Significant opportunities for SEO enhancement.'}
+                  </div>
+                </div>
+                
+                {/* Progress Ring */}
+                <div className="flex justify-center lg:justify-start">
+                  <div className="relative w-32 h-32">
+                    <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 128 128">
+                      <circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        fill="none"
+                        className="text-gray-700"
+                      />
+                      <circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        fill="none"
+                        strokeDasharray={`${2 * Math.PI * 56}`}
+                        strokeDashoffset={`${2 * Math.PI * 56 * (1 - results.seoScore / 100)}`}
+                        className="text-indigo-500 transition-all duration-1000 ease-out"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className={`text-lg font-bold ${getScoreColor(results.seoScore)}`}>
+                        {results.seoScore}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Key Insights */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-bold text-white mb-4">Key Insights</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={`p-2 rounded-lg ${results.issues?.filter(i => i.type === 'error').length > 0 ? 'bg-red-500/20' : 'bg-green-500/20'}`}>
+                        {results.issues?.filter(i => i.type === 'error').length > 0 ? 
+                          <AlertCircle className="w-4 h-4 text-red-400" /> :
+                          <CheckCircle2 className="w-4 h-4 text-green-400" />
+                        }
+                      </div>
+                      <div>
+                        <div className="font-medium text-white">
+                          {results.issues?.filter(i => i.type === 'error').length || 0} Critical Issues
+                        </div>
+                        <div className="text-sm text-gray-400">
+                          {results.issues?.filter(i => i.type === 'error').length === 0 ? 
+                            'No critical issues found' : 
+                            'Need immediate attention'
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="p-2 bg-amber-500/20 rounded-lg">
+                        <AlertTriangle className="w-4 h-4 text-amber-400" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-white">
+                          {results.issues?.filter(i => i.type === 'warning').length || 0} Warnings
+                        </div>
+                        <div className="text-sm text-gray-400">Optimization opportunities</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="p-2 bg-blue-500/20 rounded-lg">
+                        <Target className="w-4 h-4 text-blue-400" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-white">
+                          {results.recommendations?.length || 0} Recommendations
+                        </div>
+                        <div className="text-sm text-gray-400">Action items to improve</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className={`text-6xl font-bold mb-2 ${getScoreColor(results.seoScore)}`}>
-              {results.seoScore}
+          </div>
+
+          {/* Performance Metrics */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-blue-500/20 rounded-lg">
+                  <Clock className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white">Load Time</h3>
+                  <p className="text-xs text-gray-400">Page loading speed</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-blue-400 mb-2">
+                    {results.performance.loadTime}s
+                  </div>
+                  <div className="text-sm text-gray-300">
+                    {results.performance.loadTime <= 2 ? 'Excellent' :
+                     results.performance.loadTime <= 3 ? 'Good' :
+                     results.performance.loadTime <= 4 ? 'Fair' : 'Needs Work'}
+                  </div>
+                </div>
+                <div className="w-full bg-gray-700/50 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-1000 ease-out ${
+                      results.performance.loadTime <= 2 ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                      results.performance.loadTime <= 3 ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :
+                      results.performance.loadTime <= 4 ? 'bg-gradient-to-r from-amber-500 to-orange-500' :
+                      'bg-gradient-to-r from-red-500 to-pink-500'
+                    }`}
+                    style={{ width: `${Math.min(100, (5 - results.performance.loadTime) * 20)}%` }}
+                  ></div>
+                </div>
+                <div className="text-xs text-gray-400 text-center">
+                  Target: Under 3 seconds
+                </div>
+              </div>
+            </Card>
+
+            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-green-500/20 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-green-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white">Mobile Score</h3>
+                  <p className="text-xs text-gray-400">Mobile optimization</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className={`text-4xl font-bold mb-2 ${getScoreColor(results.performance.mobileScore)}`}>
+                    {results.performance.mobileScore}
+                  </div>
+                  <div className="text-sm text-gray-300">
+                    {results.performance.mobileScore >= 80 ? 'Excellent' :
+                     results.performance.mobileScore >= 60 ? 'Good' : 'Needs Work'}
+                  </div>
+                </div>
+                <div className="w-full bg-gray-700/50 rounded-full h-2">
+                  <div 
+                    className="h-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-1000 ease-out"
+                    style={{ width: `${results.performance.mobileScore}%` }}
+                  ></div>
+                </div>
+                <div className="text-xs text-gray-400 text-center">
+                  Target: 80+ for optimal mobile experience
+                </div>
+              </div>
+            </Card>
+
+            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-purple-500/20 rounded-lg">
+                  <BarChart3 className="w-5 h-5 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white">Desktop Score</h3>
+                  <p className="text-xs text-gray-400">Desktop optimization</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className={`text-4xl font-bold mb-2 ${getScoreColor(results.performance.desktopScore)}`}>
+                    {results.performance.desktopScore}
+                  </div>
+                  <div className="text-sm text-gray-300">
+                    {results.performance.desktopScore >= 80 ? 'Excellent' :
+                     results.performance.desktopScore >= 60 ? 'Good' : 'Needs Work'}
+                  </div>
+                </div>
+                <div className="w-full bg-gray-700/50 rounded-full h-2">
+                  <div 
+                    className="h-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-1000 ease-out"
+                    style={{ width: `${results.performance.desktopScore}%` }}
+                  ></div>
+                </div>
+                <div className="text-xs text-gray-400 text-center">
+                  Target: 90+ for optimal desktop experience
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Issues Breakdown */}
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-500/20 rounded-lg">
+                  <AlertTriangle className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Issues Breakdown</h3>
+                  <p className="text-gray-400 text-sm">Categorized analysis findings</p>
+                </div>
+              </div>
+              <div className="text-sm text-gray-400">
+                {(results.issues?.length || 0)} total issues found
+              </div>
             </div>
-            <div className="text-xl font-bold text-white mb-2">Overall SEO Score</div>
-            <div className="text-gray-300 mb-6">Your website's overall SEO performance</div>
-            <div className="w-full max-w-md mx-auto bg-gray-700/50 rounded-full h-3">
-              <div 
-                className="h-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000 ease-out"
-                style={{ width: `${results.seoScore}%` }}
-              ></div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-center">
+                <div className="text-3xl font-bold text-red-400 mb-1">
+                  {results.issues?.filter(i => i.type === 'error').length || 0}
+                </div>
+                <div className="text-sm text-red-300 font-medium">Critical Errors</div>
+                <div className="text-xs text-gray-400 mt-1">Fix immediately</div>
+              </div>
+              
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-center">
+                <div className="text-3xl font-bold text-amber-400 mb-1">
+                  {results.issues?.filter(i => i.type === 'warning').length || 0}
+                </div>
+                <div className="text-sm text-amber-300 font-medium">Warnings</div>
+                <div className="text-xs text-gray-400 mt-1">Should address</div>
+              </div>
+              
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+                <div className="text-3xl font-bold text-blue-400 mb-1">
+                  {results.issues?.filter(i => i.impact === 'high').length || 0}
+                </div>
+                <div className="text-sm text-blue-300 font-medium">High Impact</div>
+                <div className="text-xs text-gray-400 mt-1">Priority fixes</div>
+              </div>
+              
+              <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 text-center">
+                <div className="text-3xl font-bold text-green-400 mb-1">
+                  {results.recommendations?.filter(r => r.includes && (r.includes('quick') || r.includes('easy'))).length || 0}
+                </div>
+                <div className="text-sm text-green-300 font-medium">Quick Wins</div>
+                <div className="text-xs text-gray-400 mt-1">Easy to fix</div>
+              </div>
             </div>
+
+            {/* Recent Issues List */}
+            {results.issues && results.issues.length > 0 && (
+              <div className="space-y-3">
+                <h4 className="font-medium text-white">Most Critical Issues</h4>
+                <div className="space-y-2">
+                  {results.issues
+                    .filter(issue => issue.type === 'error' || issue.impact === 'high')
+                    .slice(0, 3)
+                    .map((issue, index) => (
+                      <div key={index} className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                        <div className="flex items-start gap-3">
+                          <div className={`p-1.5 rounded-lg ${
+                            issue.type === 'error' ? 'bg-red-500/20' : 'bg-amber-500/20'
+                          }`}>
+                            {issue.type === 'error' ? 
+                              <AlertCircle className="w-4 h-4 text-red-400" /> :
+                              <AlertTriangle className="w-4 h-4 text-amber-400" />
+                            }
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h5 className="font-medium text-white text-sm">{issue.title}</h5>
+                              <div className={`px-2 py-0.5 rounded text-xs font-medium ${
+                                issue.impact === 'high' ? 'bg-red-500/10 text-red-400' :
+                                issue.impact === 'medium' ? 'bg-amber-500/10 text-amber-400' :
+                                'bg-blue-500/10 text-blue-400'
+                              }`}>
+                                {issue.impact}
+                              </div>
+                            </div>
+                            <p className="text-xs text-gray-400 mb-2">{issue.description}</p>
+                            <p className="text-xs text-gray-500">💡 {issue.recommendation}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+                {results.issues.length > 3 && (
+                  <div className="text-center">
+                    <button className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
+                      View all {results.issues.length} issues →
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </Card>
 
-          {/* Performance */}
-          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
-            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-400" />
-              Performance
-            </h3>
+          {/* Next Steps */}
+          <Card className="rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-sm p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-indigo-500/20 rounded-lg">
+                <Sparkles className="w-5 h-5 text-indigo-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Recommended Next Steps</h3>
+                <p className="text-gray-400 text-sm">Based on your analysis results</p>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-700/30 p-4 rounded-lg text-center">
-                <div className="text-2xl font-bold text-blue-400 mb-1">{results.performance.loadTime}s</div>
-                <div className="text-sm text-gray-400">Load Time</div>
-              </div>
-              <div className="bg-gray-700/30 p-4 rounded-lg text-center">
-                <div className={`text-2xl font-bold mb-1 ${getScoreColor(results.performance.mobileScore)}`}>
-                  {results.performance.mobileScore}
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="text-indigo-400 font-medium mb-2">🚀 Quick Wins</div>
+                <div className="text-sm text-gray-300 mb-3">
+                  Start with easy fixes that provide immediate SEO improvements.
                 </div>
-                <div className="text-sm text-gray-400">Mobile Score</div>
+                <button className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                  View Action Plan →
+                </button>
               </div>
-              <div className="bg-gray-700/30 p-4 rounded-lg text-center">
-                <div className={`text-2xl font-bold mb-1 ${getScoreColor(results.performance.desktopScore)}`}>
-                  {results.performance.desktopScore}
+              
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="text-green-400 font-medium mb-2">🔧 Technical Fixes</div>
+                <div className="text-sm text-gray-300 mb-3">
+                  Address critical technical issues affecting performance.
                 </div>
-                <div className="text-sm text-gray-400">Desktop Score</div>
+                <button className="text-xs text-green-400 hover:text-green-300 transition-colors">
+                  View Technical Details →
+                </button>
+              </div>
+              
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="text-purple-400 font-medium mb-2">📈 Monitor Progress</div>
+                <div className="text-sm text-gray-300 mb-3">
+                  Track improvements and run follow-up analyses.
+                </div>
+                <button className="text-xs text-purple-400 hover:text-purple-300 transition-colors">
+                  Schedule Re-analysis →
+                </button>
               </div>
             </div>
           </Card>
