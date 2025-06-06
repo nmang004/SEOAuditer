@@ -92,8 +92,17 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   
   // Calculate priority scores for sorting
   const calculatePriority = (rec: EnhancedRecommendation): number => {
-    // Add null/undefined checks
-    if (!rec || !rec.impact) return 0;
+    // Add null/undefined checks with more robust fallbacks
+    if (!rec) return 0;
+    
+    // Ensure impact exists with defaults
+    const impact = rec.impact || {
+      seoScore: 5,
+      userExperience: 5,
+      conversionPotential: 5,
+      implementationEffort: 'medium' as const,
+      timeToImplement: 30
+    };
     
     const weights = {
       seoImpact: 0.3,
@@ -104,17 +113,20 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     };
     
     const scores = {
-      seoImpact: (rec.impact.seoScore || 0) / 10,
-      implementationEase: rec.impact.implementationEffort === 'low' ? 1 : 
-                         rec.impact.implementationEffort === 'medium' ? 0.5 : 0.2,
-      userExperience: (rec.impact.userExperience || 0) / 10,
+      seoImpact: Math.max(0, Math.min(10, impact.seoScore || 5)) / 10,
+      implementationEase: impact.implementationEffort === 'low' ? 1 : 
+                         impact.implementationEffort === 'medium' ? 0.5 : 0.2,
+      userExperience: Math.max(0, Math.min(10, impact.userExperience || 5)) / 10,
       quickWin: rec.quickWin ? 1 : 0,
-      businessValue: (rec.impact.conversionPotential || 0) / 10
+      businessValue: Math.max(0, Math.min(10, impact.conversionPotential || 5)) / 10
     };
     
-    return Object.entries(weights).reduce((total, [key, weight]) => 
+    const priority = Object.entries(weights).reduce((total, [key, weight]) => 
       total + (scores[key as keyof typeof scores] * weight), 0
     ) * 100;
+    
+    console.log('[EnhancedAnalysisDashboard] Calculated priority for', rec.id, ':', priority, scores);
+    return priority;
   };
   
   // Sort and filter recommendations
@@ -134,17 +146,45 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     }
 
     const filtered = recommendations.filter(rec => {
-      // Add null/undefined safety checks
-      if (!rec || !rec.impact) {
-        console.log('[EnhancedAnalysisDashboard] Filtered out rec with missing data:', rec?.id);
+      // More lenient safety checks - just require basic structure
+      if (!rec) {
+        console.log('[EnhancedAnalysisDashboard] Filtered out null/undefined rec');
         return false;
       }
-      if (filterCategory !== 'all' && rec.category !== filterCategory) return false;
-      if (filterTime > 0 && (rec.impact.timeToImplement || 0) > filterTime) return false;
-      if (filterImpact > 0 && (rec.impact.seoScore || 0) < filterImpact) return false;
+      
+      // Ensure impact exists or create a default
+      if (!rec.impact) {
+        console.log('[EnhancedAnalysisDashboard] Rec missing impact, creating default:', rec.id);
+        rec.impact = {
+          seoScore: 5,
+          userExperience: 5,
+          conversionPotential: 5,
+          implementationEffort: 'medium' as const,
+          timeToImplement: 30
+        };
+      }
+      
+      // Apply filters only if they're actually set
+      if (filterCategory !== 'all' && rec.category && rec.category !== filterCategory) {
+        console.log('[EnhancedAnalysisDashboard] Filtered out by category:', rec.id, rec.category, 'vs', filterCategory);
+        return false;
+      }
+      if (filterTime > 0 && (rec.impact.timeToImplement || 0) > filterTime) {
+        console.log('[EnhancedAnalysisDashboard] Filtered out by time:', rec.id, rec.impact.timeToImplement, 'vs', filterTime);
+        return false;
+      }
+      if (filterImpact > 0 && (rec.impact.seoScore || 0) < filterImpact) {
+        console.log('[EnhancedAnalysisDashboard] Filtered out by impact:', rec.id, rec.impact.seoScore, 'vs', filterImpact);
+        return false;
+      }
       if (searchTerm && rec.title && rec.description && 
           !rec.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
-          !rec.description.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+          !rec.description.toLowerCase().includes(searchTerm.toLowerCase())) {
+        console.log('[EnhancedAnalysisDashboard] Filtered out by search:', rec.id, searchTerm);
+        return false;
+      }
+      
+      console.log('[EnhancedAnalysisDashboard] Rec passed filters:', rec.id, rec.title);
       return true;
     });
     
