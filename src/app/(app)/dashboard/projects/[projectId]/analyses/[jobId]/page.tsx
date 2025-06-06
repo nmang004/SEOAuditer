@@ -465,7 +465,7 @@ export default function AnalysisResultsPage() {
     : mockEnhancedRecommendations;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -534,7 +534,7 @@ export default function AnalysisResultsPage() {
       </Card>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="recommendations" className="space-y-6">
+      <Tabs defaultValue="recommendations" className="space-y-6 flex-1 min-h-0">
         <TabsList className="grid w-full grid-cols-3 bg-gray-800 border-gray-700">
           <TabsTrigger 
             value="recommendations" 
@@ -560,7 +560,7 @@ export default function AnalysisResultsPage() {
         </TabsList>
 
         {/* Enhanced Recommendations Tab - DEFAULT */}
-        <TabsContent value="recommendations" className="space-y-6">
+        <TabsContent value="recommendations" className="space-y-6 min-h-0">
           <EnhancedAnalysisDashboard
             recommendations={enhancedRecommendations}
             currentScore={results.seoScore}
@@ -571,7 +571,7 @@ export default function AnalysisResultsPage() {
         </TabsContent>
 
         {/* Analysis Overview Tab */}
-        <TabsContent value="analysis" className="space-y-8">
+        <TabsContent value="analysis" className="space-y-8 min-h-0">
           {/* Hero Score Section */}
           <div className="relative overflow-hidden rounded-2xl border border-indigo-500/50 bg-gradient-to-br from-gray-800 to-gray-900 p-8">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10"></div>
@@ -940,7 +940,7 @@ export default function AnalysisResultsPage() {
         </TabsContent>
 
         {/* Technical Details Tab */}
-        <TabsContent value="technical" className="space-y-6">
+        <TabsContent value="technical" className="space-y-6 min-h-0">
           {/* Technical SEO */}
           <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6 overflow-hidden">
             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
