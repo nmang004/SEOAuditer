@@ -125,26 +125,30 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   
   // Sort and filter recommendations
   const sortedRecommendations = useMemo(() => {
-    console.log('[EnhancedAnalysisDashboard] Processing recommendations:', {
-      total: recommendations?.length || 0,
-      filterCategory,
-      filterTime,
-      filterImpact,
-      searchTerm,
-      sampleRec: recommendations?.[0],
-      allRecTitles: recommendations?.map(r => ({ id: r?.id, title: r?.title, hasImpact: !!r?.impact }))
-    });
+    console.log('[EnhancedAnalysisDashboard] ===== PROCESSING DEBUG =====');
+    console.log('[EnhancedAnalysisDashboard] Input recommendations:', recommendations);
+    console.log('[EnhancedAnalysisDashboard] Input length:', recommendations?.length);
+    console.log('[EnhancedAnalysisDashboard] Is array:', Array.isArray(recommendations));
+    console.log('[EnhancedAnalysisDashboard] First item:', recommendations?.[0]);
 
     if (!recommendations || !Array.isArray(recommendations) || recommendations.length === 0) {
-      console.log('[EnhancedAnalysisDashboard] No valid recommendations to process');
+      console.log('[EnhancedAnalysisDashboard] ❌ FAILED INITIAL CHECK - returning empty array');
       return [];
     }
+    
+    console.log('[EnhancedAnalysisDashboard] ✅ PASSED INITIAL CHECK - proceeding with processing');
 
     // First normalize the recommendations to ensure they have required properties
-    const normalizedRecommendations = recommendations
-      .filter(rec => rec && typeof rec === 'object')
-      .map(rec => {
+    console.log('[EnhancedAnalysisDashboard] Starting normalization...');
+    
+    const filteredForNormalization = recommendations.filter(rec => rec && typeof rec === 'object');
+    console.log('[EnhancedAnalysisDashboard] After object filter:', filteredForNormalization.length);
+    
+    const normalizedRecommendations = filteredForNormalization
+      .map((rec, index) => {
         try {
+          console.log(`[EnhancedAnalysisDashboard] Normalizing rec ${index}:`, rec);
+          
           // Create a new object with defaults if impact is missing
           const normalizedRec = {
             id: rec.id || `rec-${Math.random().toString(36).substr(2, 9)}`,
@@ -179,6 +183,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
             priority: rec.priority || 'medium' as const
           };
           
+          console.log(`[EnhancedAnalysisDashboard] Normalized rec ${index}:`, normalizedRec);
           return normalizedRec;
         } catch (error) {
           console.error('[EnhancedAnalysisDashboard] Error normalizing recommendation:', rec, error);
@@ -186,29 +191,40 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
         }
       })
       .filter(rec => rec !== null) as EnhancedRecommendation[];
+      
+    console.log('[EnhancedAnalysisDashboard] After normalization:', normalizedRecommendations.length);
 
-    const filtered = normalizedRecommendations.filter(rec => {
+    console.log('[EnhancedAnalysisDashboard] Starting filtering with:', {
+      filterCategory,
+      filterTime,
+      filterImpact,
+      searchTerm
+    });
+    
+    const filtered = normalizedRecommendations.filter((rec, index) => {
+      console.log(`[EnhancedAnalysisDashboard] Filtering rec ${index}: ${rec.title}`);
+      
       // Apply filters only if they're actually set
       if (filterCategory !== 'all' && rec.category && rec.category !== filterCategory) {
-        console.log('[EnhancedAnalysisDashboard] Filtered out by category:', rec.id, rec.category, 'vs', filterCategory);
+        console.log('[EnhancedAnalysisDashboard] ❌ Filtered out by category:', rec.id, rec.category, 'vs', filterCategory);
         return false;
       }
       if (filterTime > 0 && (rec.impact.timeToImplement || 0) > filterTime) {
-        console.log('[EnhancedAnalysisDashboard] Filtered out by time:', rec.id, rec.impact.timeToImplement, 'vs', filterTime);
+        console.log('[EnhancedAnalysisDashboard] ❌ Filtered out by time:', rec.id, rec.impact.timeToImplement, 'vs', filterTime);
         return false;
       }
       if (filterImpact > 0 && (rec.impact.seoScore || 0) < filterImpact) {
-        console.log('[EnhancedAnalysisDashboard] Filtered out by impact:', rec.id, rec.impact.seoScore, 'vs', filterImpact);
+        console.log('[EnhancedAnalysisDashboard] ❌ Filtered out by impact:', rec.id, rec.impact.seoScore, 'vs', filterImpact);
         return false;
       }
       if (searchTerm && rec.title && rec.description && 
           !rec.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
           !rec.description.toLowerCase().includes(searchTerm.toLowerCase())) {
-        console.log('[EnhancedAnalysisDashboard] Filtered out by search:', rec.id, searchTerm);
+        console.log('[EnhancedAnalysisDashboard] ❌ Filtered out by search:', rec.id, searchTerm);
         return false;
       }
       
-      console.log('[EnhancedAnalysisDashboard] Rec passed filters:', rec.id, rec.title);
+      console.log('[EnhancedAnalysisDashboard] ✅ Rec passed filters:', rec.id, rec.title);
       return true;
     });
     
