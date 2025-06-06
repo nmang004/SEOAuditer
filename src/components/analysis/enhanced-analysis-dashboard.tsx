@@ -123,21 +123,26 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     return priority;
   };
   
-  // Sort and filter recommendations
+  // Sort and filter recommendations - BYPASS ALL PROCESSING FOR NOW
   const sortedRecommendations = useMemo(() => {
-    console.log('[EnhancedAnalysisDashboard] ===== PROCESSING DEBUG =====');
-    console.log('[EnhancedAnalysisDashboard] Input recommendations:', recommendations);
-    console.log('[EnhancedAnalysisDashboard] Input length:', recommendations?.length);
-    console.log('[EnhancedAnalysisDashboard] Is array:', Array.isArray(recommendations));
-    console.log('[EnhancedAnalysisDashboard] First item:', recommendations?.[0]);
+    console.error('🚨🚨🚨 ENHANCED DASHBOARD PROCESSING DEBUG 🚨🚨🚨');
+    console.error('Input recommendations:', recommendations);
+    console.error('Input length:', recommendations?.length);
+    console.error('Is array:', Array.isArray(recommendations));
+    console.error('First item:', recommendations?.[0]);
 
-    if (!recommendations || !Array.isArray(recommendations) || recommendations.length === 0) {
-      console.log('[EnhancedAnalysisDashboard] ❌ FAILED INITIAL CHECK - returning empty array');
+    // TEMPORARILY BYPASS ALL PROCESSING - JUST RETURN INPUT AS-IS
+    if (!recommendations || !Array.isArray(recommendations)) {
+      console.error('❌ No valid recommendations array - returning empty');
       return [];
     }
     
-    console.log('[EnhancedAnalysisDashboard] ✅ PASSED INITIAL CHECK - proceeding with processing');
+    console.error('✅ BYPASSING ALL PROCESSING - returning input directly');
+    console.error('Returning:', recommendations);
+    return recommendations;
+  }, [recommendations, filterCategory, filterTime, filterImpact, searchTerm]);
 
+  /* COMMENTED OUT COMPLEX PROCESSING FOR NOW
     // First normalize the recommendations to ensure they have required properties
     console.log('[EnhancedAnalysisDashboard] Starting normalization...');
     
@@ -247,7 +252,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     console.log('[EnhancedAnalysisDashboard] Sorted recommendations:', sorted.length, sorted.map(r => ({ id: r.id, title: r.title, priority: calculatePriority(r) })));
     
     return sorted;
-  }, [recommendations, filterCategory, filterTime, filterImpact, searchTerm]);
+  */
   
   // Get top recommendation and quick wins
   const topRecommendation = sortedRecommendations[0];
