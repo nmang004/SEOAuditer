@@ -534,7 +534,7 @@ export default function AnalysisResultsPage() {
       </Card>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="recommendations" className="space-y-6 flex-1 min-h-0">
+      <Tabs defaultValue="analysis" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3 bg-gray-800 border-gray-700">
           <TabsTrigger 
             value="recommendations" 
@@ -560,7 +560,7 @@ export default function AnalysisResultsPage() {
         </TabsList>
 
         {/* Enhanced Recommendations Tab - DEFAULT */}
-        <TabsContent value="recommendations" className="space-y-6 min-h-0">
+        <TabsContent value="recommendations" className="space-y-6">
           <EnhancedAnalysisDashboard
             recommendations={enhancedRecommendations}
             currentScore={results.seoScore}
@@ -571,11 +571,15 @@ export default function AnalysisResultsPage() {
         </TabsContent>
 
         {/* Analysis Overview Tab */}
-        <TabsContent value="analysis" className="space-y-8 min-h-0">
+        <TabsContent value="analysis" className="space-y-8">
+          {/* Debug visibility indicator */}
+          <div className="bg-green-500 text-white p-2 rounded text-center font-bold">
+            ✅ ANALYSIS TAB IS VISIBLE - Content should appear below
+          </div>
           {/* Hero Score Section */}
           <div className="relative overflow-hidden rounded-2xl border border-indigo-500/50 bg-gradient-to-br from-gray-800 to-gray-900 p-8">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10"></div>
-            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-indigo-500/20 to-transparent rounded-full blur-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10 -z-10"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-indigo-500/20 to-transparent rounded-full blur-3xl -z-20"></div>
             
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               {/* Score Display */}
@@ -690,7 +694,7 @@ export default function AnalysisResultsPage() {
 
           {/* Performance Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm p-6 overflow-hidden">
+            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-blue-500/20 rounded-lg">
                   <Clock className="w-5 h-5 text-blue-400" />
@@ -728,7 +732,7 @@ export default function AnalysisResultsPage() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm p-6 overflow-hidden">
+            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-green-500/20 rounded-lg">
                   <TrendingUp className="w-5 h-5 text-green-400" />
@@ -760,7 +764,7 @@ export default function AnalysisResultsPage() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm p-6 overflow-hidden">
+            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-purple-500/20 rounded-lg">
                   <BarChart3 className="w-5 h-5 text-purple-400" />
@@ -794,7 +798,7 @@ export default function AnalysisResultsPage() {
           </div>
 
           {/* Issues Breakdown */}
-          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6 overflow-hidden">
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-amber-500/20 rounded-lg">
@@ -940,9 +944,9 @@ export default function AnalysisResultsPage() {
         </TabsContent>
 
         {/* Technical Details Tab */}
-        <TabsContent value="technical" className="space-y-6 min-h-0">
+        <TabsContent value="technical" className="space-y-6">
           {/* Technical SEO */}
-          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6 overflow-hidden">
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-indigo-400" />
               Technical SEO
