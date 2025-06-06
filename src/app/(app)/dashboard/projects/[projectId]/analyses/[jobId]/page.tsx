@@ -465,7 +465,18 @@ export default function AnalysisResultsPage() {
     : mockEnhancedRecommendations;
 
   return (
-    <div className="space-y-8 pb-8">
+    <>
+      <style jsx global>{`
+        [data-state="active"] {
+          opacity: 1 !important;
+          will-change: auto !important;
+        }
+        [data-state="active"] * {
+          opacity: 1 !important;
+          will-change: auto !important;
+        }
+      `}</style>
+      <div className="space-y-8 pb-8" style={{ opacity: 1, willChange: 'auto' }}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -571,13 +582,13 @@ export default function AnalysisResultsPage() {
         </TabsContent>
 
         {/* Analysis Overview Tab */}
-        <TabsContent value="analysis" className="space-y-8">
+        <TabsContent value="analysis" className="space-y-8" style={{ opacity: 1, willChange: 'auto' }}>
           {/* Debug visibility indicator */}
-          <div className="bg-green-500 text-white p-2 rounded text-center font-bold">
+          <div className="bg-green-500 text-white p-2 rounded text-center font-bold" style={{ opacity: 1, willChange: 'auto' }}>
             ✅ ANALYSIS TAB IS VISIBLE - Content should appear below
           </div>
           {/* Hero Score Section */}
-          <div className="relative overflow-hidden rounded-2xl border border-indigo-500/50 bg-gradient-to-br from-gray-800 to-gray-900 p-8">
+          <div className="relative overflow-hidden rounded-2xl border border-indigo-500/50 bg-gradient-to-br from-gray-800 to-gray-900 p-8" style={{ opacity: 1, willChange: 'auto' }}>
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10 -z-10"></div>
             <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-indigo-500/20 to-transparent rounded-full blur-3xl -z-20"></div>
             
@@ -693,7 +704,7 @@ export default function AnalysisResultsPage() {
           </div>
 
           {/* Performance Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ opacity: 1, willChange: 'auto' }}>
             <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-blue-500/20 rounded-lg">
@@ -798,7 +809,7 @@ export default function AnalysisResultsPage() {
           </div>
 
           {/* Issues Breakdown */}
-          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6" style={{ opacity: 1, willChange: 'auto' }}>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-amber-500/20 rounded-lg">
@@ -898,7 +909,7 @@ export default function AnalysisResultsPage() {
           </Card>
 
           {/* Next Steps */}
-          <Card className="rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-sm p-6">
+          <Card className="rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-sm p-6" style={{ opacity: 1, willChange: 'auto' }}>
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-indigo-500/20 rounded-lg">
                 <Sparkles className="w-5 h-5 text-indigo-400" />
@@ -981,6 +992,7 @@ export default function AnalysisResultsPage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </>
   );
 }
