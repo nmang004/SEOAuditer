@@ -254,9 +254,9 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     return sorted;
   */
   
-  // Get top recommendation and quick wins
-  const topRecommendation = sortedRecommendations[0];
-  const quickWins = sortedRecommendations.filter(rec => rec.quickWin).slice(0, 5);
+  // Get top recommendation and quick wins with safety checks
+  const topRecommendation = sortedRecommendations?.[0];
+  const quickWins = sortedRecommendations?.filter(rec => rec?.quickWin)?.slice(0, 5) || [];
   
   
   // Calculate statistics with safety checks
@@ -265,20 +265,25 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   const safeQuickWins = quickWins || [];
   
   const stats = {
-    totalRecommendations: safeRecommendations.length,
-    completedRecommendations: completedIds.size,
-    totalTimeEstimate: safeRecommendations.reduce((sum, rec) => sum + (rec?.impact?.timeToImplement || 0), 0),
-    timeInvested: completedIdsArray.reduce((sum, id) => {
-      const rec = safeRecommendations.find(r => r?.id === id);
-      return sum + (rec?.impact?.timeToImplement || 0);
-    }, 0),
+    totalRecommendations: safeRecommendations?.length || 0,
+    completedRecommendations: completedIds?.size || 0,
+    totalTimeEstimate: safeRecommendations?.reduce((sum, rec) => {
+      const timeToImplement = rec?.impact?.timeToImplement || rec?.timeToImplement || 0;
+      return sum + timeToImplement;
+    }, 0) || 0,
+    timeInvested: completedIdsArray?.reduce((sum, id) => {
+      const rec = safeRecommendations?.find(r => r?.id === id);
+      const timeToImplement = rec?.impact?.timeToImplement || rec?.timeToImplement || 0;
+      return sum + timeToImplement;
+    }, 0) || 0,
     currentScore: currentScore || 0,
-    projectedScore: (currentScore || 0) + completedIdsArray.reduce((sum, id) => {
-      const rec = safeRecommendations.find(r => r?.id === id);
-      return sum + (rec?.impact?.seoScore || 0);
-    }, 0),
-    quickWinsCompleted: safeQuickWins.filter(qw => qw?.id && completedIds.has(qw.id)).length,
-    quickWinsTotal: safeQuickWins.length,
+    projectedScore: (currentScore || 0) + (completedIdsArray?.reduce((sum, id) => {
+      const rec = safeRecommendations?.find(r => r?.id === id);
+      const seoScore = rec?.impact?.seoScore || rec?.seoScore || 0;
+      return sum + seoScore;
+    }, 0) || 0),
+    quickWinsCompleted: safeQuickWins?.filter(qw => qw?.id && completedIds?.has(qw.id))?.length || 0,
+    quickWinsTotal: safeQuickWins?.length || 0,
   };
   
   const categories = ['all', ...Array.from(new Set(safeRecommendations.map(r => r?.category).filter(Boolean)))];
@@ -397,24 +402,28 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
       {topRecommendation && (
         <RecommendationHero
           topRecommendation={{
-            id: topRecommendation.id,
-            title: topRecommendation.title,
-            description: topRecommendation.description,
+            id: topRecommendation?.id || 'unknown',
+            title: topRecommendation?.title || 'Untitled Recommendation',
+            description: topRecommendation?.description || 'No description available',
             impact: {
-              seoScore: topRecommendation.impact.seoScore,
-              timeToImplement: topRecommendation.impact.timeToImplement,
-              implementationEffort: topRecommendation.impact.implementationEffort,
+              seoScore: topRecommendation?.impact?.seoScore || topRecommendation?.seoScore || 5,
+              timeToImplement: topRecommendation?.impact?.timeToImplement || topRecommendation?.timeToImplement || 30,
+              implementationEffort: topRecommendation?.impact?.implementationEffort || 'medium',
             },
-            businessCase: topRecommendation.businessCase,
-            quickWin: topRecommendation.quickWin,
+            businessCase: topRecommendation?.businessCase || {
+              estimatedTrafficIncrease: '5-10%',
+              competitorComparison: 'Standard optimization',
+              roi: 'Quick improvement'
+            },
+            quickWin: topRecommendation?.quickWin || false,
           }}
-          quickWins={quickWins.map(qw => ({
-            id: qw.id,
-            title: qw.title,
-            timeToImplement: qw.impact.timeToImplement,
-            impact: { seoScore: qw.impact.seoScore },
-          }))}
-          onImplementTop={() => handleImplement(topRecommendation.id)}
+          quickWins={quickWins?.map(qw => ({
+            id: qw?.id || 'unknown',
+            title: qw?.title || 'Quick Win',
+            timeToImplement: qw?.impact?.timeToImplement || qw?.timeToImplement || 5,
+            impact: { seoScore: qw?.impact?.seoScore || qw?.seoScore || 3 },
+          })) || []}
+          onImplementTop={() => handleImplement(topRecommendation?.id || '')}
           onImplementQuickWin={handleImplement}
         />
       )}
@@ -597,20 +606,50 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
         'grid grid-cols-1 lg:grid-cols-2 gap-6' : 
         'space-y-4'
       }>
-        {sortedRecommendations.map((recommendation) => {
-          console.log('[EnhancedAnalysisDashboard] Rendering recommendation:', recommendation.id, recommendation.title);
+        {sortedRecommendations?.map((recommendation, index) => {
+          console.error('[EnhancedAnalysisDashboard] Rendering recommendation:', index, recommendation);
+          
+          // Create a safe recommendation object
+          const safeRecommendation = {
+            id: recommendation?.id || `rec-${index}`,
+            title: recommendation?.title || recommendation?.recommendation || `Recommendation ${index + 1}`,
+            description: recommendation?.description || 'No description available',
+            impact: {
+              seoScore: recommendation?.impact?.seoScore || recommendation?.seoScore || 5,
+              userExperience: recommendation?.impact?.userExperience || 5,
+              conversionPotential: recommendation?.impact?.conversionPotential || 5,
+              implementationEffort: recommendation?.impact?.implementationEffort || 'medium',
+              timeToImplement: recommendation?.impact?.timeToImplement || recommendation?.timeToImplement || 30,
+            },
+            businessCase: recommendation?.businessCase || {
+              estimatedTrafficIncrease: '5-10%',
+              competitorComparison: 'Standard optimization',
+              roi: 'Quick improvement'
+            },
+            implementation: recommendation?.implementation || {
+              autoFixAvailable: false,
+              codeSnippet: { before: '', after: '', language: 'html' },
+              stepByStep: ['Manual implementation required'],
+              tools: [],
+              documentation: []
+            },
+            quickWin: recommendation?.quickWin || false,
+            category: recommendation?.category || 'general',
+            priority: recommendation?.priority || 'medium'
+          };
+          
           return (
             <RecommendationCard
-              key={recommendation.id}
-              recommendation={recommendation}
-              onImplement={() => handleImplement(recommendation.id)}
-              onMarkComplete={() => handleMarkComplete(recommendation.id)}
-              isCompleted={completedIds.has(recommendation.id)}
+              key={safeRecommendation.id}
+              recommendation={safeRecommendation}
+              onImplement={() => handleImplement(safeRecommendation.id)}
+              onMarkComplete={() => handleMarkComplete(safeRecommendation.id)}
+              isCompleted={completedIds.has(safeRecommendation.id)}
               showExpanded={viewMode === 'list'}
-              isProcessing={isProcessing.has(recommendation.id)}
+              isProcessing={isProcessing.has(safeRecommendation.id)}
             />
           );
-        })}
+        }) || []}
       </div>
       
       {sortedRecommendations.length === 0 && (
