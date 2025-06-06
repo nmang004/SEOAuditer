@@ -280,9 +280,20 @@ export default function AnalysisResultsPage() {
   }
 
   // Transform backend data to match enhanced recommendations format if needed
-  const enhancedRecommendations = results.recommendations?.length > 0 
-    ? results.recommendations 
-    : mockEnhancedRecommendations;
+  console.log('[AnalysisResultsPage] ===== DATA SELECTION DEBUG =====');
+  console.log('[AnalysisResultsPage] results.recommendations exists:', !!results.recommendations);
+  console.log('[AnalysisResultsPage] results.recommendations type:', typeof results.recommendations);
+  console.log('[AnalysisResultsPage] results.recommendations length:', results.recommendations?.length);
+  console.log('[AnalysisResultsPage] results.recommendations raw:', results.recommendations);
+  console.log('[AnalysisResultsPage] mockEnhancedRecommendations length:', mockEnhancedRecommendations?.length);
+  console.log('[AnalysisResultsPage] condition (results.recommendations?.length > 0):', results.recommendations?.length > 0);
+  
+  // Force use of mock data for testing
+  const enhancedRecommendations = mockEnhancedRecommendations;
+    
+  console.log('[AnalysisResultsPage] FINAL enhancedRecommendations selected:', enhancedRecommendations);
+  console.log('[AnalysisResultsPage] FINAL enhancedRecommendations length:', enhancedRecommendations?.length);
+  console.log('[AnalysisResultsPage] ===== END DATA SELECTION DEBUG =====');
 
   console.log('[AnalysisResultsPage] ===== PARENT DEBUG =====');
   console.log('[AnalysisResultsPage] results.recommendations:', results.recommendations);
