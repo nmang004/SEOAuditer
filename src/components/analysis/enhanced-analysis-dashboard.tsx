@@ -380,11 +380,26 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     );
   }
 
+  // Add comprehensive debugging
+  console.log('🚨 ENHANCED DASHBOARD RENDER DEBUG 🚨');
+  console.log('Props received:', { recommendations, currentScore });
+  console.log('Raw recommendations count:', recommendations?.length);
+  console.log('Sorted recommendations count:', sortedRecommendations?.length);
+  console.log('Filter states:', { filterCategory, filterTime, filterImpact, searchTerm });
+  console.log('Sample recommendation:', recommendations?.[0]);
+  console.log('Sample sorted recommendation:', sortedRecommendations?.[0]);
+
   return (
     <div className="space-y-8">
-      {/* Debug indicator */}
-      <div style={{ backgroundColor: 'green', color: 'white', padding: '10px', fontWeight: 'bold' }}>
-        ✅ ENHANCED DASHBOARD COMPONENT IS RENDERING - {sortedRecommendations?.length || 0} recommendations
+      {/* Comprehensive Debug Panel */}
+      <div style={{ backgroundColor: 'blue', color: 'white', padding: '15px', fontWeight: 'bold', fontSize: '14px' }}>
+        🔍 ENHANCED DASHBOARD DEBUG INFO:<br/>
+        • Input recommendations: {recommendations?.length || 0}<br/>
+        • After processing: {sortedRecommendations?.length || 0}<br/>
+        • Current score: {currentScore}<br/>
+        • Filters: Cat={filterCategory}, Time={filterTime}, Impact={filterImpact}, Search="{searchTerm}"<br/>
+        • Sample input: {recommendations?.[0]?.title || 'None'}<br/>
+        • Sample processed: {sortedRecommendations?.[0]?.title || 'None'}
       </div>
       
       {/* Hero Section */}
@@ -589,6 +604,22 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
         </span>
       </div>
       
+      {/* Emergency Fallback - Show Raw Recommendations if Processed is Empty */}
+      {sortedRecommendations.length === 0 && recommendations?.length > 0 && (
+        <div style={{ backgroundColor: 'orange', color: 'black', padding: '15px' }}>
+          <h3>⚠️ FALLBACK MODE - Showing Raw Recommendations</h3>
+          <p>Processed recommendations: {sortedRecommendations.length}, Raw: {recommendations.length}</p>
+          {recommendations.slice(0, 3).map((rec, i) => (
+            <div key={i} style={{ border: '2px solid red', margin: '10px', padding: '10px' }}>
+              <strong>Raw #{i + 1}: {rec?.title || 'No title'}</strong>
+              <p>ID: {rec?.id || 'No ID'}</p>
+              <p>Category: {rec?.category || 'No category'}</p>
+              <p>Impact: {JSON.stringify(rec?.impact || 'No impact')}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Recommendations Grid/List */}
       <div className={
         viewMode === 'grid' ? 
@@ -596,48 +627,65 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
         'space-y-4'
       }>
         {sortedRecommendations?.map((recommendation, index) => {
-          console.error('[EnhancedAnalysisDashboard] Rendering recommendation:', index, recommendation);
+          console.log('[EnhancedAnalysisDashboard] Rendering recommendation:', index, recommendation);
           
-          // Create a safe recommendation object
-          const safeRecommendation = {
-            id: recommendation?.id || `rec-${index}`,
-            title: recommendation?.title || `Recommendation ${index + 1}`,
-            description: recommendation?.description || 'No description available',
-            impact: {
-              seoScore: recommendation?.impact?.seoScore || 5,
-              userExperience: recommendation?.impact?.userExperience || 5,
-              conversionPotential: recommendation?.impact?.conversionPotential || 5,
-              implementationEffort: recommendation?.impact?.implementationEffort || 'medium',
-              timeToImplement: recommendation?.impact?.timeToImplement || 30,
-            },
-            businessCase: recommendation?.businessCase || {
-              estimatedTrafficIncrease: '5-10%',
-              competitorComparison: 'Standard optimization',
-              roi: 'Quick improvement'
-            },
-            implementation: recommendation?.implementation || {
-              autoFixAvailable: false,
-              codeSnippet: { before: '', after: '', language: 'html' },
-              stepByStep: ['Manual implementation required'],
-              tools: [],
-              documentation: []
-            },
-            quickWin: recommendation?.quickWin || false,
-            category: recommendation?.category || 'general',
-            priority: recommendation?.priority || 'medium'
-          };
-          
-          return (
-            <RecommendationCard
-              key={safeRecommendation.id}
-              recommendation={safeRecommendation}
-              onImplement={() => handleImplement(safeRecommendation.id)}
-              onMarkComplete={() => handleMarkComplete(safeRecommendation.id)}
-              isCompleted={completedIds.has(safeRecommendation.id)}
-              showExpanded={viewMode === 'list'}
-              isProcessing={isProcessing.has(safeRecommendation.id)}
-            />
-          );
+          // Try direct render first for debugging
+          try {
+            // Create a safe recommendation object
+            const safeRecommendation = {
+              id: recommendation?.id || `rec-${index}`,
+              title: recommendation?.title || `Recommendation ${index + 1}`,
+              description: recommendation?.description || 'No description available',
+              impact: {
+                seoScore: recommendation?.impact?.seoScore || 5,
+                userExperience: recommendation?.impact?.userExperience || 5,
+                conversionPotential: recommendation?.impact?.conversionPotential || 5,
+                implementationEffort: recommendation?.impact?.implementationEffort || 'medium',
+                timeToImplement: recommendation?.impact?.timeToImplement || 30,
+              },
+              businessCase: recommendation?.businessCase || {
+                estimatedTrafficIncrease: '5-10%',
+                competitorComparison: 'Standard optimization',
+                roi: 'Quick improvement'
+              },
+              implementation: recommendation?.implementation || {
+                autoFixAvailable: false,
+                codeSnippet: { before: '', after: '', language: 'html' },
+                stepByStep: ['Manual implementation required'],
+                tools: [],
+                documentation: []
+              },
+              quickWin: recommendation?.quickWin || false,
+              category: recommendation?.category || 'general',
+              priority: recommendation?.priority || 'medium'
+            };
+            
+            return (
+              <div key={safeRecommendation.id}>
+                {/* Debug Card */}
+                <div style={{ backgroundColor: 'yellow', color: 'black', padding: '10px', marginBottom: '10px' }}>
+                  <strong>DEBUG Card #{index + 1}:</strong> {safeRecommendation.title}
+                </div>
+                
+                {/* Actual RecommendationCard */}
+                <RecommendationCard
+                  recommendation={safeRecommendation}
+                  onImplement={() => handleImplement(safeRecommendation.id)}
+                  onMarkComplete={() => handleMarkComplete(safeRecommendation.id)}
+                  isCompleted={completedIds.has(safeRecommendation.id)}
+                  showExpanded={viewMode === 'list'}
+                  isProcessing={isProcessing.has(safeRecommendation.id)}
+                />
+              </div>
+            );
+          } catch (error) {
+            console.error('Error rendering recommendation:', error, recommendation);
+            return (
+              <div key={`error-${index}`} style={{ backgroundColor: 'red', color: 'white', padding: '10px' }}>
+                ❌ Error rendering recommendation #{index + 1}: {String(error) || 'Unknown error'}
+              </div>
+            );
+          }
         }) || []}
       </div>
       

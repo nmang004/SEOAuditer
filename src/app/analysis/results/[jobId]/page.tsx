@@ -146,8 +146,17 @@ export default function CrawlResultsPage() {
 
         {/* Enhanced Recommendations Tab */}
         <TabsContent value="recommendations" className="space-y-6">
+          {/* Debug what we're passing */}
+          <div style={{ backgroundColor: 'purple', color: 'white', padding: '10px' }}>
+            <strong>🚨 ANALYSIS PAGE DEBUG:</strong><br/>
+            • page.recommendations: {page.recommendations?.length || 0}<br/>
+            • mockEnhancedRecommendations: {mockEnhancedRecommendations?.length || 0}<br/>
+            • Will use: {page.recommendations?.length > 0 ? 'page.recommendations' : 'mockEnhancedRecommendations'}<br/>
+            • overallScore: {overallScore}
+          </div>
+          
           <EnhancedAnalysisDashboard
-            recommendations={page.recommendations?.length > 0 ? page.recommendations : mockEnhancedRecommendations}
+            recommendations={mockEnhancedRecommendations}
             currentScore={overallScore}
             onImplementRecommendation={handleImplementRecommendation}
             onMarkComplete={handleMarkComplete}
