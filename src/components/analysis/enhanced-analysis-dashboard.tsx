@@ -119,69 +119,34 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
       total + (scores[key as keyof typeof scores] * weight), 0
     ) * 100;
     
-    console.log('[EnhancedAnalysisDashboard] Calculated priority for', rec.id, ':', priority, scores);
     return priority;
   };
   
-  // Sort and filter recommendations - SIMPLIFIED FOR DEBUGGING
+  // Process and filter recommendations
   const sortedRecommendations = useMemo(() => {
-    console.log('🚨 ENHANCED DASHBOARD PROCESSING START 🚨');
-    console.log('Input recommendations:', recommendations);
-    console.log('Input type:', typeof recommendations);
-    console.log('Is array:', Array.isArray(recommendations));
-    console.log('Length:', recommendations?.length);
-    
     if (!recommendations || !Array.isArray(recommendations) || recommendations.length === 0) {
-      console.log('❌ No valid recommendations - returning empty array');
       return [];
     }
     
-    // ULTRA-SIMPLE APPROACH - Just ensure basic structure and return
-    const simpleProcessed = recommendations.map((rec, index) => {
-      console.log(`Processing rec ${index}:`, rec);
+    // Filter by search term
+    const filtered = recommendations.filter(rec => {
+      if (!rec) return false;
       
-      // Basic structure check - if it's an object, process it (mock data is well-formed)
-      if (rec && typeof rec === 'object') {
-        const processed = {
-          id: rec.id || `rec-${index}`,
-          title: rec.title || `Recommendation ${index + 1}`,
-          description: rec.description || 'No description available',
-          impact: rec.impact || {
-            seoScore: 5,
-            userExperience: 5,
-            conversionPotential: 5,
-            implementationEffort: 'medium' as const,
-            timeToImplement: 30
-          },
-          businessCase: rec.businessCase || {
-            estimatedTrafficIncrease: '5-10%',
-            competitorComparison: 'Standard optimization',
-            roi: 'Quick improvement'
-          },
-          implementation: rec.implementation || {
-            autoFixAvailable: false,
-            codeSnippet: { before: '', after: '', language: 'html' },
-            stepByStep: ['Manual implementation required'],
-            tools: [],
-            documentation: []
-          },
-          quickWin: rec.quickWin || false,
-          category: rec.category || 'general',
-          priority: rec.priority || 'medium' as const
-        };
-        console.log(`✅ Processed rec ${index}:`, processed);
-        return processed;
-      } else {
-        console.log(`❌ Skipping invalid rec ${index}:`, rec);
-        return null;
-      }
-    }).filter(Boolean);
+      const searchMatch = !searchTerm || 
+        rec.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rec.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rec.category?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const categoryMatch = filterCategory === 'all' || rec.category === filterCategory;
+      const timeMatch = filterTime === 0 || (rec.impact?.timeToImplement || 0) <= filterTime;
+      const impactMatch = filterImpact === 0 || (rec.impact?.seoScore || 0) >= filterImpact;
+      
+      return searchMatch && categoryMatch && timeMatch && impactMatch;
+    });
     
-    console.log('✅ FINAL PROCESSED COUNT:', simpleProcessed.length);
-    console.log('✅ FINAL PROCESSED ITEMS:', simpleProcessed);
-    
-    return simpleProcessed;
-  }, [recommendations]);
+    // Sort by calculated priority score
+    return filtered.sort((a, b) => calculatePriority(b) - calculatePriority(a));
+  }, [recommendations, searchTerm, filterCategory, filterTime, filterImpact]);
   
   // Get top recommendation and quick wins with safety checks
   const topRecommendation = sortedRecommendations?.[0];
@@ -294,16 +259,8 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     }
   };
   
-  // Debug early return condition
-  console.log('[EnhancedAnalysisDashboard] Early return check:', {
-    recommendations,
-    recommendationsLength: recommendations?.length,
-    hasRecommendations: !!(recommendations && recommendations.length > 0)
-  });
-  
-  // Early return if no recommendations - TEMPORARILY DISABLED
-  if (false && (!recommendations || recommendations.length === 0)) {
-    console.log('[EnhancedAnalysisDashboard] No recommendations provided');
+  // Early return if no recommendations
+  if (!recommendations || recommendations.length === 0) {
     return (
       <div className="space-y-8">
         <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-12 text-center">
@@ -320,27 +277,8 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     );
   }
 
-  // Add comprehensive debugging
-  console.log('🚨 ENHANCED DASHBOARD RENDER DEBUG 🚨');
-  console.log('Props received:', { recommendations, currentScore });
-  console.log('Raw recommendations count:', recommendations?.length);
-  console.log('Sorted recommendations count:', sortedRecommendations?.length);
-  console.log('Filter states:', { filterCategory, filterTime, filterImpact, searchTerm });
-  console.log('Sample recommendation:', recommendations?.[0]);
-  console.log('Sample sorted recommendation:', sortedRecommendations?.[0]);
-
   return (
     <div className="space-y-8">
-      {/* Comprehensive Debug Panel */}
-      <div style={{ backgroundColor: 'blue', color: 'white', padding: '15px', fontWeight: 'bold', fontSize: '14px' }}>
-        🔍 ENHANCED DASHBOARD DEBUG INFO:<br/>
-        • Input recommendations: {recommendations?.length || 0}<br/>
-        • After processing: {sortedRecommendations?.length || 0}<br/>
-        • Current score: {currentScore}<br/>
-        • Filters: Cat={filterCategory}, Time={filterTime}, Impact={filterImpact}, Search="{searchTerm}"<br/>
-        • Sample input: {recommendations?.[0]?.title || 'None'}<br/>
-        • Sample processed: {sortedRecommendations?.[0]?.title || 'None'}
-      </div>
       
       {/* Hero Section */}
       {topRecommendation && (
@@ -544,89 +482,23 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
         </span>
       </div>
       
-      {/* Emergency Fallback - Show Raw Recommendations if Processed is Empty */}
-      {sortedRecommendations.length === 0 && recommendations?.length > 0 && (
-        <div style={{ backgroundColor: 'orange', color: 'black', padding: '15px' }}>
-          <h3>⚠️ FALLBACK MODE - Showing Raw Recommendations</h3>
-          <p>Processed recommendations: {sortedRecommendations.length}, Raw: {recommendations.length}</p>
-          {recommendations.slice(0, 3).map((rec, i) => (
-            <div key={i} style={{ border: '2px solid red', margin: '10px', padding: '10px' }}>
-              <strong>Raw #{i + 1}: {rec?.title || 'No title'}</strong>
-              <p>ID: {rec?.id || 'No ID'}</p>
-              <p>Category: {rec?.category || 'No category'}</p>
-              <p>Impact: {JSON.stringify(rec?.impact || 'No impact')}</p>
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* Recommendations Grid/List */}
       <div className={
         viewMode === 'grid' ? 
         'grid grid-cols-1 lg:grid-cols-2 gap-6' : 
         'space-y-4'
       }>
-        {sortedRecommendations?.map((recommendation, index) => {
-          console.log('[EnhancedAnalysisDashboard] Rendering recommendation:', index, recommendation);
-          
-          // Try direct render first for debugging
-          try {
-            // Create a safe recommendation object
-            const safeRecommendation = {
-              id: recommendation?.id || `rec-${index}`,
-              title: recommendation?.title || `Recommendation ${index + 1}`,
-              description: recommendation?.description || 'No description available',
-              impact: {
-                seoScore: recommendation?.impact?.seoScore || 5,
-                userExperience: recommendation?.impact?.userExperience || 5,
-                conversionPotential: recommendation?.impact?.conversionPotential || 5,
-                implementationEffort: recommendation?.impact?.implementationEffort || 'medium',
-                timeToImplement: recommendation?.impact?.timeToImplement || 30,
-              },
-              businessCase: recommendation?.businessCase || {
-                estimatedTrafficIncrease: '5-10%',
-                competitorComparison: 'Standard optimization',
-                roi: 'Quick improvement'
-              },
-              implementation: recommendation?.implementation || {
-                autoFixAvailable: false,
-                codeSnippet: { before: '', after: '', language: 'html' },
-                stepByStep: ['Manual implementation required'],
-                tools: [],
-                documentation: []
-              },
-              quickWin: recommendation?.quickWin || false,
-              category: recommendation?.category || 'general',
-              priority: recommendation?.priority || 'medium'
-            };
-            
-            return (
-              <div key={safeRecommendation.id}>
-                {/* Debug Card */}
-                <div style={{ backgroundColor: 'yellow', color: 'black', padding: '10px', marginBottom: '10px' }}>
-                  <strong>DEBUG Card #{index + 1}:</strong> {safeRecommendation.title}
-                </div>
-                
-                {/* Actual RecommendationCard */}
-                <RecommendationCard
-                  recommendation={safeRecommendation}
-                  onImplement={() => handleImplement(safeRecommendation.id)}
-                  onMarkComplete={() => handleMarkComplete(safeRecommendation.id)}
-                  isCompleted={completedIds.has(safeRecommendation.id)}
-                  showExpanded={viewMode === 'list'}
-                  isProcessing={isProcessing.has(safeRecommendation.id)}
-                />
-              </div>
-            );
-          } catch (error) {
-            console.error('Error rendering recommendation:', error, recommendation);
-            return (
-              <div key={`error-${index}`} style={{ backgroundColor: 'red', color: 'white', padding: '10px' }}>
-                ❌ Error rendering recommendation #{index + 1}: {String(error) || 'Unknown error'}
-              </div>
-            );
-          }
-        }) || []}
+        {sortedRecommendations?.map((recommendation) => (
+          <RecommendationCard
+            key={recommendation.id}
+            recommendation={recommendation}
+            onImplement={() => handleImplement(recommendation.id)}
+            onMarkComplete={() => handleMarkComplete(recommendation.id)}
+            isCompleted={completedIds.has(recommendation.id)}
+            showExpanded={viewMode === 'list'}
+            isProcessing={isProcessing.has(recommendation.id)}
+          />
+        ))}
       </div>
       
       {sortedRecommendations.length === 0 && (

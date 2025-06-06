@@ -146,110 +146,41 @@ export default function CrawlResultsPage() {
 
         {/* Enhanced Recommendations Tab */}
         <TabsContent value="recommendations" className="space-y-6">
-          {/* CACHE BUSTER & DEBUG INFO */}
-          <div style={{ backgroundColor: 'red', color: 'white', padding: '15px', fontWeight: 'bold' }}>
-            🚨 CACHE BUSTER FIX v3.0 - {new Date().toISOString()}<br/>
-            ✅ HARD-CODED 3 PERFECT RECOMMENDATIONS BYPASSING ALL IMPORTS<br/>
-            ✅ NO MORE MOCK FILE DEPENDENCIES OR CACHING ISSUES<br/>
-            ✅ IMMEDIATE DEPLOYMENT VERIFICATION
-          </div>
-          
           <EnhancedAnalysisDashboard
-            recommendations={[
-              {
-                id: 'rec-1',
-                title: 'Add Missing Meta Description',
-                description: 'Your page is missing a meta description, which appears in search results and influences click-through rates.',
-                impact: {
-                  seoScore: 8,
-                  userExperience: 6,
-                  conversionPotential: 9,
-                  implementationEffort: 'low' as const,
-                  timeToImplement: 3,
-                },
-                implementation: {
-                  autoFixAvailable: true,
-                  codeSnippet: {
-                    before: '<!-- No meta description -->',
-                    after: '<meta name="description" content="Discover our premium SEO tools that help you rank higher in search results.">',
-                    language: 'html',
-                  },
-                  stepByStep: ['Add meta description tag', 'Write compelling copy', 'Keep it 150-160 characters'],
-                  tools: ['HTML Editor', 'CMS'],
-                  documentation: ['https://developers.google.com/search/docs/appearance/snippet'],
-                },
-                businessCase: {
-                  estimatedTrafficIncrease: '15-25%',
-                  competitorComparison: 'Appears in search results snippets',
-                  roi: '3 minutes work = better click-through rates',
-                },
-                quickWin: true,
-                category: 'onpage',
-                priority: 'high' as const,
-              },
-              {
-                id: 'rec-2',
-                title: 'Optimize Images with Alt Text',
-                description: '12 images are missing alt text, which hurts accessibility and SEO.',
+            recommendations={results?.recommendations?.length > 0 ? 
+              // Transform backend recommendations to enhanced format if available
+              results.recommendations.map((rec: string, index: number) => ({
+                id: `backend-rec-${index}`,
+                title: rec.length > 50 ? rec.substring(0, 50) + '...' : rec,
+                description: rec,
                 impact: {
                   seoScore: 6,
-                  userExperience: 9,
-                  conversionPotential: 5,
-                  implementationEffort: 'low' as const,
-                  timeToImplement: 8,
+                  userExperience: 5,
+                  conversionPotential: 6,
+                  implementationEffort: 'medium' as const,
+                  timeToImplement: 15,
                 },
                 implementation: {
-                  autoFixAvailable: true,
+                  autoFixAvailable: false,
                   codeSnippet: {
-                    before: '<img src="hero-image.jpg" class="banner">',
-                    after: '<img src="hero-image.jpg" alt="Professional SEO team analyzing website performance data" class="banner">',
+                    before: '<!-- Before implementation -->',
+                    after: '<!-- After implementation -->',
                     language: 'html',
                   },
-                  stepByStep: ['Identify images without alt attributes', 'Write descriptive alt text', 'Include relevant keywords'],
-                  tools: ['HTML Editor', 'Image Audit Tool'],
-                  documentation: ['https://moz.com/learn/seo/alt-text'],
+                  stepByStep: ['Review the recommendation', 'Plan implementation', 'Test changes'],
+                  tools: ['Manual Implementation'],
+                  documentation: [],
                 },
                 businessCase: {
-                  estimatedTrafficIncrease: '5-10%',
-                  competitorComparison: 'Essential for accessibility compliance',
-                  roi: '8 minutes work = improved accessibility + SEO',
+                  estimatedTrafficIncrease: '5-15%',
+                  competitorComparison: 'SEO improvement',
+                  roi: 'Standard optimization benefit',
                 },
-                quickWin: true,
-                category: 'onpage',
+                quickWin: false,
+                category: 'general',
                 priority: 'medium' as const,
-              },
-              {
-                id: 'rec-3',
-                title: 'Fix Missing H1 Tag',
-                description: 'This page is missing an H1 heading tag. H1 tags help search engines understand your page structure.',
-                impact: {
-                  seoScore: 9,
-                  userExperience: 7,
-                  conversionPotential: 8,
-                  implementationEffort: 'low' as const,
-                  timeToImplement: 2,
-                },
-                implementation: {
-                  autoFixAvailable: true,
-                  codeSnippet: {
-                    before: '<div class="hero-title">SEO Analysis Dashboard</div>',
-                    after: '<h1 class="hero-title">SEO Analysis Dashboard</h1>',
-                    language: 'html',
-                  },
-                  stepByStep: ['Identify the main heading', 'Replace with H1 tag', 'Ensure only one H1 per page'],
-                  tools: ['HTML Editor', 'SEO Checker'],
-                  documentation: ['https://moz.com/learn/seo/headings'],
-                },
-                businessCase: {
-                  estimatedTrafficIncrease: '10-20%',
-                  competitorComparison: 'Required for proper page structure',
-                  roi: '2 minutes work = major SEO improvement',
-                },
-                quickWin: true,
-                category: 'onpage',
-                priority: 'high' as const,
-              }
-            ]}
+              })) : mockEnhancedRecommendations
+            }
             currentScore={overallScore}
             onImplementRecommendation={handleImplementRecommendation}
             onMarkComplete={handleMarkComplete}
