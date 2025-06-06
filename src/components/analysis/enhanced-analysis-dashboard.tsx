@@ -279,47 +279,92 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
 
   return (
     <div className="space-y-8">
-      {/* Debug Info */}
-      <div className="p-4 bg-blue-500 text-white font-bold">
-        ✅ Enhanced Dashboard Working - {sortedRecommendations.length} recommendations found
-        <br/>• Top Rec: {topRecommendation?.title || 'None'}
-        <br/>• Quick Wins: {quickWins.length}
-      </div>
-      
-      {/* Simple Hero Test */}
-      <div className="p-6 bg-green-800 border border-green-600 rounded-lg">
-        <h2 className="text-2xl font-bold text-white mb-4">🎯 Priority Recommendation</h2>
-        {topRecommendation ? (
-          <div className="space-y-4">
-            <h3 className="text-xl text-green-200">{topRecommendation.title}</h3>
-            <p className="text-green-100">{topRecommendation.description}</p>
-            <div className="flex gap-4">
-              <span className="bg-green-700 px-3 py-1 rounded text-white">
-                +{topRecommendation.impact?.seoScore || 0} SEO Score
-              </span>
-              <span className="bg-blue-700 px-3 py-1 rounded text-white">
-                {topRecommendation.impact?.timeToImplement || 0} minutes
-              </span>
+      {/* Enhanced Hero Section */}
+      {topRecommendation && (
+        <div className="relative overflow-hidden rounded-2xl border border-indigo-500/50 bg-gradient-to-br from-gray-800 to-gray-900 p-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10"></div>
+          
+          <div className="relative space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-0 px-4 py-1.5 rounded-full text-sm font-medium">
+                ✨ Biggest Impact
+              </div>
+              {topRecommendation.quickWin && (
+                <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white border-0 px-4 py-1.5 rounded-full text-sm font-medium">
+                  ⚡ Quick Win
+                </div>
+              )}
+            </div>
+            
+            <h2 className="text-3xl font-extrabold text-white leading-tight">
+              {topRecommendation.title}
+            </h2>
+            
+            <p className="text-lg text-gray-300 leading-relaxed">
+              {topRecommendation.description}
+            </p>
+            
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="text-3xl font-bold text-indigo-400 mb-1">
+                  +{topRecommendation.impact.seoScore}
+                </div>
+                <div className="text-sm text-gray-400">SEO Score Boost</div>
+              </div>
+              
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="text-3xl font-bold text-green-400 mb-1">
+                  {topRecommendation.impact.timeToImplement}m
+                </div>
+                <div className="text-sm text-gray-400">Time to Fix</div>
+              </div>
+              
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 col-span-2 lg:col-span-1">
+                <div className="text-2xl lg:text-3xl font-bold text-purple-400 mb-1">
+                  {topRecommendation.businessCase.estimatedTrafficIncrease}
+                </div>
+                <div className="text-sm text-gray-400">Traffic Increase</div>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleImplement(topRecommendation.id)}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 px-8 py-3 rounded-lg font-semibold transition-all"
+              >
+                Fix This Now →
+              </button>
             </div>
           </div>
-        ) : (
-          <p className="text-green-200">No top recommendation found</p>
-        )}
-      </div>
+        </div>
+      )}
       
-      {/* Simple Stats Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 bg-indigo-800 border border-indigo-600 rounded-lg text-center">
-          <div className="text-3xl font-bold text-white">{stats.currentScore}</div>
-          <div className="text-indigo-200">Current SEO Score</div>
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="rounded-2xl border border-gray-700 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-sm p-6">
+          <div className="text-center space-y-4">
+            <div className="text-4xl font-bold text-indigo-400">{stats.currentScore}</div>
+            <div className="text-white font-medium">Current SEO Score</div>
+            <div className="text-sm text-gray-400">Target: {stats.projectedScore}</div>
+          </div>
         </div>
-        <div className="p-6 bg-purple-800 border border-purple-600 rounded-lg text-center">
-          <div className="text-3xl font-bold text-white">{stats.completedRecommendations}/{stats.totalRecommendations}</div>
-          <div className="text-purple-200">Completed</div>
+        
+        <div className="rounded-2xl border border-gray-700 bg-gradient-to-br from-amber-500/10 to-orange-500/10 backdrop-blur-sm p-6">
+          <div className="text-center space-y-4">
+            <div className="text-4xl font-bold text-amber-400">{stats.completedRecommendations}/{stats.totalRecommendations}</div>
+            <div className="text-white font-medium">Recommendations</div>
+            <div className="text-sm text-gray-400">
+              {((stats.completedRecommendations / stats.totalRecommendations) * 100).toFixed(0)}% complete
+            </div>
+          </div>
         </div>
-        <div className="p-6 bg-green-800 border border-green-600 rounded-lg text-center">
-          <div className="text-3xl font-bold text-white">{stats.quickWinsCompleted}/{stats.quickWinsTotal}</div>
-          <div className="text-green-200">Quick Wins</div>
+        
+        <div className="rounded-2xl border border-gray-700 bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm p-6">
+          <div className="text-center space-y-4">
+            <div className="text-4xl font-bold text-green-400">{stats.quickWinsCompleted}/{stats.quickWinsTotal}</div>
+            <div className="text-white font-medium">Quick Wins</div>
+            <div className="text-sm text-gray-400">Easy victories</div>
+          </div>
         </div>
       </div>
       
@@ -492,49 +537,129 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
         </span>
       </div>
       
-      {/* Simple Recommendations Test */}
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-white">📋 All Recommendations ({sortedRecommendations.length})</h2>
-        {sortedRecommendations?.map((recommendation, index) => (
-          <div key={recommendation.id} className="p-6 bg-gray-800 border border-gray-600 rounded-lg">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-xl font-bold text-white mb-2">{recommendation.title}</h3>
-                <p className="text-gray-300">{recommendation.description}</p>
-              </div>
-              {recommendation.quickWin && (
-                <span className="bg-yellow-600 text-yellow-100 px-3 py-1 rounded-full text-sm">
-                  ⚡ Quick Win
-                </span>
-              )}
-            </div>
-            <div className="flex gap-4 flex-wrap">
-              <span className="bg-indigo-600 text-white px-3 py-1 rounded">
-                +{recommendation.impact?.seoScore || 0} SEO Score
-              </span>
-              <span className="bg-blue-600 text-white px-3 py-1 rounded">
-                {recommendation.impact?.timeToImplement || 0} min
-              </span>
-              <span className="bg-green-600 text-white px-3 py-1 rounded">
-                {recommendation.priority} priority
-              </span>
-            </div>
-            <div className="mt-4 flex gap-2">
-              <button 
-                onClick={() => handleImplement(recommendation.id)}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-              >
-                Implement
-              </button>
-              <button 
-                onClick={() => handleMarkComplete(recommendation.id)}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
-              >
-                Mark Complete
-              </button>
-            </div>
+      {/* Enhanced Recommendations List */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-white">📋 All Recommendations ({sortedRecommendations.length})</h2>
+          <div className="text-sm text-gray-400">
+            {completedIds.size} completed • {quickWins.filter(qw => qw?.id && completedIds.has(qw.id)).length}/{quickWins.length} quick wins done
           </div>
-        ))}
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {sortedRecommendations?.map((recommendation) => (
+            <div 
+              key={recommendation.id} 
+              className={`
+                rounded-2xl border transition-all duration-300 hover:border-gray-600 relative overflow-hidden p-6
+                ${completedIds.has(recommendation.id) ? 'border-green-500/30 bg-green-500/5' : 'border-gray-700 bg-gray-800/50'}
+                ${recommendation.quickWin ? 'ring-2 ring-indigo-500/20' : ''}
+              `}
+            >
+              {/* Quick Win Badge */}
+              {recommendation.quickWin && (
+                <div className="absolute top-4 right-4">
+                  <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-0 px-3 py-1 rounded-full text-xs font-medium">
+                    ⚡ Quick Win
+                  </div>
+                </div>
+              )}
+              
+              {/* Header */}
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`px-2 py-1 rounded text-xs font-medium border ${
+                    recommendation.priority === 'critical' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                    recommendation.priority === 'high' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' :
+                    recommendation.priority === 'medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                    'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                  }`}>
+                    {recommendation.priority}
+                  </div>
+                  <div className={`px-2 py-1 rounded text-xs font-medium border ${
+                    recommendation.impact.implementationEffort === 'low' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                    recommendation.impact.implementationEffort === 'medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                    'bg-red-500/10 text-red-400 border-red-500/20'
+                  }`}>
+                    {recommendation.impact.implementationEffort} effort
+                  </div>
+                  {completedIds.has(recommendation.id) && (
+                    <div className="bg-green-500/10 text-green-400 border-green-500/20 border px-2 py-1 rounded text-xs font-medium">
+                      ✓ Complete
+                    </div>
+                  )}
+                </div>
+                
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {recommendation.title}
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  {recommendation.description}
+                </p>
+              </div>
+              
+              {/* Impact Metrics */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-gray-900/50 rounded-lg p-3 text-center">
+                  <div className={`text-2xl font-bold mb-1 ${
+                    recommendation.impact.seoScore >= 8 ? 'text-green-400' : 
+                    recommendation.impact.seoScore >= 6 ? 'text-amber-400' : 'text-gray-400'
+                  }`}>
+                    +{recommendation.impact.seoScore}
+                  </div>
+                  <div className="text-xs text-gray-400">SEO Score</div>
+                </div>
+                
+                <div className="bg-gray-900/50 rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-blue-400 mb-1">
+                    {recommendation.impact.timeToImplement}min
+                  </div>
+                  <div className="text-xs text-gray-400">Time Needed</div>
+                </div>
+              </div>
+              
+              {/* Business Impact */}
+              <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg p-4 mb-6 border border-indigo-500/20">
+                <div className="text-sm">
+                  <span className="text-gray-400">Traffic Increase:</span>
+                  <div className="text-white font-medium">{recommendation.businessCase.estimatedTrafficIncrease}</div>
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => handleImplement(recommendation.id)}
+                  disabled={completedIds.has(recommendation.id) || isProcessing.has(recommendation.id)}
+                  className={`
+                    flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-200
+                    ${recommendation.implementation?.autoFixAvailable
+                      ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white'
+                      : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
+                    }
+                    ${(completedIds.has(recommendation.id) || isProcessing.has(recommendation.id)) ? 'opacity-50 cursor-not-allowed' : ''}
+                  `}
+                >
+                  {isProcessing.has(recommendation.id) ? 'Processing...' :
+                   recommendation.implementation?.autoFixAvailable ? '⚡ Auto-Fix' : '📋 Copy Solution'}
+                </button>
+                
+                {!completedIds.has(recommendation.id) && (
+                  <button
+                    onClick={() => handleMarkComplete(recommendation.id)}
+                    disabled={isProcessing.has(recommendation.id)}
+                    className={`
+                      px-4 py-3 rounded-lg font-medium border border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all
+                      ${isProcessing.has(recommendation.id) ? 'opacity-50 cursor-not-allowed' : ''}
+                    `}
+                  >
+                    ✓ Complete
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
       
       {sortedRecommendations.length === 0 && (
