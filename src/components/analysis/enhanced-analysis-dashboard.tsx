@@ -140,7 +140,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     console.error('✅ BYPASSING ALL PROCESSING - returning input directly');
     console.error('Returning:', recommendations);
     return recommendations;
-  }, [recommendations, filterCategory, filterTime, filterImpact, searchTerm]);
+  }, [recommendations]);
 
   /* COMMENTED OUT COMPLEX PROCESSING FOR NOW
     // First normalize the recommendations to ensure they have required properties
@@ -268,18 +268,18 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     totalRecommendations: safeRecommendations?.length || 0,
     completedRecommendations: completedIds?.size || 0,
     totalTimeEstimate: safeRecommendations?.reduce((sum, rec) => {
-      const timeToImplement = rec?.impact?.timeToImplement || rec?.timeToImplement || 0;
+      const timeToImplement = rec?.impact?.timeToImplement || 0;
       return sum + timeToImplement;
     }, 0) || 0,
     timeInvested: completedIdsArray?.reduce((sum, id) => {
       const rec = safeRecommendations?.find(r => r?.id === id);
-      const timeToImplement = rec?.impact?.timeToImplement || rec?.timeToImplement || 0;
+      const timeToImplement = rec?.impact?.timeToImplement || 0;
       return sum + timeToImplement;
     }, 0) || 0,
     currentScore: currentScore || 0,
     projectedScore: (currentScore || 0) + (completedIdsArray?.reduce((sum, id) => {
       const rec = safeRecommendations?.find(r => r?.id === id);
-      const seoScore = rec?.impact?.seoScore || rec?.seoScore || 0;
+      const seoScore = rec?.impact?.seoScore || 0;
       return sum + seoScore;
     }, 0) || 0),
     quickWinsCompleted: safeQuickWins?.filter(qw => qw?.id && completedIds?.has(qw.id))?.length || 0,
@@ -406,8 +406,8 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
             title: topRecommendation?.title || 'Untitled Recommendation',
             description: topRecommendation?.description || 'No description available',
             impact: {
-              seoScore: topRecommendation?.impact?.seoScore || topRecommendation?.seoScore || 5,
-              timeToImplement: topRecommendation?.impact?.timeToImplement || topRecommendation?.timeToImplement || 30,
+              seoScore: topRecommendation?.impact?.seoScore || 5,
+              timeToImplement: topRecommendation?.impact?.timeToImplement || 30,
               implementationEffort: topRecommendation?.impact?.implementationEffort || 'medium',
             },
             businessCase: topRecommendation?.businessCase || {
@@ -420,8 +420,8 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
           quickWins={quickWins?.map(qw => ({
             id: qw?.id || 'unknown',
             title: qw?.title || 'Quick Win',
-            timeToImplement: qw?.impact?.timeToImplement || qw?.timeToImplement || 5,
-            impact: { seoScore: qw?.impact?.seoScore || qw?.seoScore || 3 },
+            timeToImplement: qw?.impact?.timeToImplement || 5,
+            impact: { seoScore: qw?.impact?.seoScore || 3 },
           })) || []}
           onImplementTop={() => handleImplement(topRecommendation?.id || '')}
           onImplementQuickWin={handleImplement}
@@ -612,14 +612,14 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
           // Create a safe recommendation object
           const safeRecommendation = {
             id: recommendation?.id || `rec-${index}`,
-            title: recommendation?.title || recommendation?.recommendation || `Recommendation ${index + 1}`,
+            title: recommendation?.title || `Recommendation ${index + 1}`,
             description: recommendation?.description || 'No description available',
             impact: {
-              seoScore: recommendation?.impact?.seoScore || recommendation?.seoScore || 5,
+              seoScore: recommendation?.impact?.seoScore || 5,
               userExperience: recommendation?.impact?.userExperience || 5,
               conversionPotential: recommendation?.impact?.conversionPotential || 5,
               implementationEffort: recommendation?.impact?.implementationEffort || 'medium',
-              timeToImplement: recommendation?.impact?.timeToImplement || recommendation?.timeToImplement || 30,
+              timeToImplement: recommendation?.impact?.timeToImplement || 30,
             },
             businessCase: recommendation?.businessCase || {
               estimatedTrafficIncrease: '5-10%',
