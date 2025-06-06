@@ -279,6 +279,10 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
 
   return (
     <div className="space-y-8">
+      {/* Visibility Test */}
+      <div className="p-4 bg-red-500 text-white font-bold">
+        🔥 ENHANCED DASHBOARD IS RENDERING - Recommendations: {sortedRecommendations.length}
+      </div>
       
       {/* Hero Section */}
       {topRecommendation && (

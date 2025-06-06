@@ -54,7 +54,7 @@ export const RecommendationHero: React.FC<RecommendationHeroProps> = ({
   return (
     <div className="space-y-6">
       {/* Hero Recommendation */}
-      <Card className="relative overflow-hidden rounded-3xl border-2 border-gradient-to-r from-indigo-500 to-purple-500 bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm">
+      <Card className="relative overflow-hidden rounded-3xl border-2 border-indigo-500/50 bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm">
         {/* Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10"></div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-indigo-500/20 to-transparent rounded-full blur-3xl"></div>
