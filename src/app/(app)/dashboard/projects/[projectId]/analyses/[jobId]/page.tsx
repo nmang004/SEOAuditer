@@ -381,13 +381,26 @@ export default function AnalysisResultsPage() {
 
         {/* Enhanced Recommendations Tab - DEFAULT */}
         <TabsContent value="recommendations" className="space-y-6">
-          <EnhancedAnalysisDashboard
-            recommendations={enhancedRecommendations}
-            currentScore={results.seoScore}
-            onImplementRecommendation={handleImplementRecommendation}
-            onMarkComplete={handleMarkComplete}
-            onExportPlan={handleExportPlan}
-          />
+          <div style={{ border: '5px solid red', padding: '20px', backgroundColor: '#ffeeee' }}>
+            <h1 style={{ color: 'red', fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>
+              🚨 DEBUGGING: Is this tab rendering at all?
+            </h1>
+            
+            <div style={{ backgroundColor: 'yellow', padding: '10px', marginBottom: '20px', color: 'black' }}>
+              <p><strong>Enhanced Recommendations:</strong> {enhancedRecommendations?.length || 'undefined'}</p>
+              <p><strong>Current Score:</strong> {results.seoScore || 'undefined'}</p>
+              <p><strong>Data exists:</strong> {!!enhancedRecommendations ? 'YES' : 'NO'}</p>
+            </div>
+            
+            {/* Try enhanced dashboard */}
+            <EnhancedAnalysisDashboard
+              recommendations={enhancedRecommendations}
+              currentScore={results.seoScore}
+              onImplementRecommendation={handleImplementRecommendation}
+              onMarkComplete={handleMarkComplete}
+              onExportPlan={handleExportPlan}
+            />
+          </div>
         </TabsContent>
 
         {/* Analysis Overview Tab */}

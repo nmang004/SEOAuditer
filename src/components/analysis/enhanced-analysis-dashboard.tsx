@@ -339,8 +339,15 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     }
   };
   
-  // Early return if no recommendations
-  if (!recommendations || recommendations.length === 0) {
+  // Debug early return condition
+  console.log('[EnhancedAnalysisDashboard] Early return check:', {
+    recommendations,
+    recommendationsLength: recommendations?.length,
+    hasRecommendations: !!(recommendations && recommendations.length > 0)
+  });
+  
+  // Early return if no recommendations - TEMPORARILY DISABLED
+  if (false && (!recommendations || recommendations.length === 0)) {
     console.log('[EnhancedAnalysisDashboard] No recommendations provided');
     return (
       <div className="space-y-8">
@@ -360,6 +367,10 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
 
   return (
     <div className="space-y-8">
+      {/* Debug indicator */}
+      <div style={{ backgroundColor: 'green', color: 'white', padding: '10px', fontWeight: 'bold' }}>
+        ✅ ENHANCED DASHBOARD COMPONENT IS RENDERING - {sortedRecommendations?.length || 0} recommendations
+      </div>
       
       {/* Hero Section */}
       {topRecommendation && (
