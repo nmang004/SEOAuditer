@@ -84,6 +84,9 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   
   // Calculate priority scores for sorting
   const calculatePriority = (rec: EnhancedRecommendation): number => {
+    // Add null/undefined checks
+    if (!rec || !rec.impact) return 0;
+    
     const weights = {
       seoImpact: 0.3,
       implementationEase: 0.25,
@@ -93,12 +96,12 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     };
     
     const scores = {
-      seoImpact: rec.impact.seoScore / 10,
+      seoImpact: (rec.impact.seoScore || 0) / 10,
       implementationEase: rec.impact.implementationEffort === 'low' ? 1 : 
                          rec.impact.implementationEffort === 'medium' ? 0.5 : 0.2,
-      userExperience: rec.impact.userExperience / 10,
+      userExperience: (rec.impact.userExperience || 0) / 10,
       quickWin: rec.quickWin ? 1 : 0,
-      businessValue: rec.impact.conversionPotential / 10
+      businessValue: (rec.impact.conversionPotential || 0) / 10
     };
     
     return Object.entries(weights).reduce((total, [key, weight]) => 
@@ -109,10 +112,13 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   // Sort and filter recommendations
   const sortedRecommendations = useMemo(() => {
     const filtered = recommendations.filter(rec => {
+      // Add null/undefined safety checks
+      if (!rec || !rec.impact) return false;
       if (filterCategory !== 'all' && rec.category !== filterCategory) return false;
-      if (filterTime > 0 && rec.impact.timeToImplement > filterTime) return false;
-      if (filterImpact > 0 && rec.impact.seoScore < filterImpact) return false;
-      if (searchTerm && !rec.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
+      if (filterTime > 0 && (rec.impact.timeToImplement || 0) > filterTime) return false;
+      if (filterImpact > 0 && (rec.impact.seoScore || 0) < filterImpact) return false;
+      if (searchTerm && rec.title && rec.description && 
+          !rec.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
           !rec.description.toLowerCase().includes(searchTerm.toLowerCase())) return false;
       return true;
     });
@@ -129,21 +135,21 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   const stats = {
     totalRecommendations: recommendations.length,
     completedRecommendations: completedIds.size,
-    totalTimeEstimate: recommendations.reduce((sum, rec) => sum + rec.impact.timeToImplement, 0),
+    totalTimeEstimate: recommendations.reduce((sum, rec) => sum + (rec?.impact?.timeToImplement || 0), 0),
     timeInvested: completedIdsArray.reduce((sum, id) => {
       const rec = recommendations.find(r => r.id === id);
-      return sum + (rec?.impact.timeToImplement || 0);
+      return sum + (rec?.impact?.timeToImplement || 0);
     }, 0),
     currentScore,
     projectedScore: currentScore + completedIdsArray.reduce((sum, id) => {
       const rec = recommendations.find(r => r.id === id);
-      return sum + (rec?.impact.seoScore || 0);
+      return sum + (rec?.impact?.seoScore || 0);
     }, 0),
     quickWinsCompleted: quickWins.filter(qw => completedIds.has(qw.id)).length,
     quickWinsTotal: quickWins.length,
   };
   
-  const categories = ['all', ...Array.from(new Set(recommendations.map(r => r.category)))];
+  const categories = ['all', ...Array.from(new Set(recommendations.map(r => r.category).filter(Boolean)))];
   
   const handleMarkComplete = async (id: string) => {
     if (isProcessing.has(id)) return;
@@ -153,7 +159,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     try {
       const recommendation = recommendations.find(r => r.id === id);
       const result = await recommendationService.markComplete(id, {
-        timeSpent: recommendation?.impact.timeToImplement || 0,
+        timeSpent: recommendation?.impact?.timeToImplement || 0,
       });
       
       if (result.success) {
@@ -182,7 +188,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     setIsProcessing(prev => new Set([...Array.from(prev), id]));
     
     try {
-      if (recommendation.implementation.autoFixAvailable) {
+      if (recommendation.implementation?.autoFixAvailable) {
         // Attempt auto-fix
         const result = await recommendationService.implementAutoFix(id);
         
@@ -193,7 +199,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
         } else {
           // Auto-fix failed, copy code instead
           const copied = await recommendationService.copyToClipboard(
-            recommendation.implementation.codeSnippet.after
+            recommendation.implementation?.codeSnippet?.after || ''
           );
           if (copied) {
             // Show success message or notification
@@ -203,7 +209,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
       } else {
         // Copy code to clipboard
         const copied = await recommendationService.copyToClipboard(
-          recommendation.implementation.codeSnippet.after
+          recommendation.implementation?.codeSnippet?.after || ''
         );
         if (copied) {
           console.log('Code copied to clipboard');
