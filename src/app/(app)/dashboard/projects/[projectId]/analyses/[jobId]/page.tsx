@@ -284,6 +284,12 @@ export default function AnalysisResultsPage() {
     ? results.recommendations 
     : mockEnhancedRecommendations;
 
+  console.log('[AnalysisResultsPage] Passing to enhanced dashboard:', {
+    enhancedRecommendations: enhancedRecommendations?.length || 0,
+    currentScore: results.seoScore,
+    usingMockData: results.recommendations?.length === 0
+  });
+
   return (
     <div className="space-y-8">
       {/* Header */}
