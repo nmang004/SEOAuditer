@@ -137,7 +137,8 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
       filterTime,
       filterImpact,
       searchTerm,
-      sampleRec: recommendations?.[0]
+      sampleRec: recommendations?.[0],
+      allRecTitles: recommendations?.map(r => ({ id: r?.id, title: r?.title, hasImpact: !!r?.impact }))
     });
 
     if (!recommendations || recommendations.length === 0) {
@@ -219,6 +220,10 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   // Get top recommendation and quick wins
   const topRecommendation = sortedRecommendations[0];
   const quickWins = sortedRecommendations.filter(rec => rec.quickWin).slice(0, 5);
+  
+  console.log('[EnhancedAnalysisDashboard] Top recommendation:', topRecommendation?.title || 'None');
+  console.log('[EnhancedAnalysisDashboard] Quick wins:', quickWins.length);
+  console.log('[EnhancedAnalysisDashboard] All sorted recs:', sortedRecommendations.map(r => ({ id: r.id, title: r.title, priority: calculatePriority(r) })));
   
   // Calculate statistics
   const completedIdsArray = Array.from(completedIds);
@@ -339,26 +344,39 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
 
   return (
     <div className="space-y-8">
-      {/* Debug Info */}
-      <div className="bg-red-500 text-white p-4 rounded">
-        Debug: {sortedRecommendations.length} recommendations, Top: {topRecommendation?.title || 'None'}
+      {/* Debug Info - Keep temporarily */}
+      <div className="bg-red-500 text-white p-4 rounded text-sm">
+        Debug: {sortedRecommendations.length} recommendations, Top: {topRecommendation?.title || 'None'}, Priority: {topRecommendation ? calculatePriority(topRecommendation) : 'N/A'}
       </div>
       
       {/* Hero Section */}
-      {topRecommendation ? (
-        <div className="bg-blue-500 text-white p-4 rounded">
-          Hero would render here for: {topRecommendation.title}
-        </div>
-      ) : (
-        <div className="bg-yellow-500 text-black p-4 rounded">
-          No top recommendation found
-        </div>
+      {topRecommendation && (
+        <RecommendationHero
+          topRecommendation={{
+            id: topRecommendation.id,
+            title: topRecommendation.title,
+            description: topRecommendation.description,
+            impact: {
+              seoScore: topRecommendation.impact.seoScore,
+              timeToImplement: topRecommendation.impact.timeToImplement,
+              implementationEffort: topRecommendation.impact.implementationEffort,
+            },
+            businessCase: topRecommendation.businessCase,
+            quickWin: topRecommendation.quickWin,
+          }}
+          quickWins={quickWins.map(qw => ({
+            id: qw.id,
+            title: qw.title,
+            timeToImplement: qw.impact.timeToImplement,
+            impact: { seoScore: qw.impact.seoScore },
+          }))}
+          onImplementTop={() => handleImplement(topRecommendation.id)}
+          onImplementQuickWin={handleImplement}
+        />
       )}
       
       {/* Action Dashboard */}
-      <div className="bg-green-500 text-white p-4 rounded">
-        Action Dashboard: {stats.totalRecommendations} total recommendations
-      </div>
+      <ActionDashboard stats={stats} />
       
       {/* Filter and Search */}
       <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm">
@@ -535,14 +553,18 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
         'grid grid-cols-1 lg:grid-cols-2 gap-6' : 
         'space-y-4'
       }>
-        {sortedRecommendations.map((recommendation, index) => {
+        {sortedRecommendations.map((recommendation) => {
           console.log('[EnhancedAnalysisDashboard] Rendering recommendation:', recommendation.id, recommendation.title);
           return (
-            <div key={recommendation.id} className="bg-purple-500 text-white p-4 rounded">
-              <h3>Test Card {index + 1}: {recommendation.title}</h3>
-              <p>Impact: {recommendation.impact?.seoScore || 'N/A'}</p>
-              <p>Category: {recommendation.category || 'N/A'}</p>
-            </div>
+            <RecommendationCard
+              key={recommendation.id}
+              recommendation={recommendation}
+              onImplement={() => handleImplement(recommendation.id)}
+              onMarkComplete={() => handleMarkComplete(recommendation.id)}
+              isCompleted={completedIds.has(recommendation.id)}
+              showExpanded={viewMode === 'list'}
+              isProcessing={isProcessing.has(recommendation.id)}
+            />
           );
         })}
       </div>
