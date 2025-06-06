@@ -235,12 +235,27 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   const topRecommendation = sortedRecommendations[0];
   const quickWins = sortedRecommendations.filter(rec => rec.quickWin).slice(0, 5);
   
-  console.log('[EnhancedAnalysisDashboard] Top recommendation full object:', topRecommendation);
-  console.log('[EnhancedAnalysisDashboard] Top recommendation title:', topRecommendation?.title || 'None');
-  console.log('[EnhancedAnalysisDashboard] sortedRecommendations array length:', sortedRecommendations.length);
-  console.log('[EnhancedAnalysisDashboard] sortedRecommendations[0] exists:', !!sortedRecommendations[0]);
+  // More detailed debugging
+  console.log('[EnhancedAnalysisDashboard] ===== DETAILED DEBUG =====');
+  console.log('[EnhancedAnalysisDashboard] sortedRecommendations array:', sortedRecommendations);
+  console.log('[EnhancedAnalysisDashboard] sortedRecommendations.length:', sortedRecommendations.length);
+  console.log('[EnhancedAnalysisDashboard] sortedRecommendations[0]:', sortedRecommendations[0]);
+  console.log('[EnhancedAnalysisDashboard] topRecommendation === sortedRecommendations[0]:', topRecommendation === sortedRecommendations[0]);
+  
+  if (sortedRecommendations.length > 0) {
+    console.log('[EnhancedAnalysisDashboard] First rec structure check:');
+    console.log('  - id:', sortedRecommendations[0]?.id);
+    console.log('  - title:', sortedRecommendations[0]?.title);
+    console.log('  - description:', sortedRecommendations[0]?.description);
+    console.log('  - impact:', sortedRecommendations[0]?.impact);
+    console.log('  - typeof:', typeof sortedRecommendations[0]);
+    console.log('  - keys:', sortedRecommendations[0] ? Object.keys(sortedRecommendations[0]) : 'no keys');
+  }
+  
+  console.log('[EnhancedAnalysisDashboard] topRecommendation object:', topRecommendation);
+  console.log('[EnhancedAnalysisDashboard] topRecommendation?.title:', topRecommendation?.title);
   console.log('[EnhancedAnalysisDashboard] Quick wins:', quickWins.length);
-  console.log('[EnhancedAnalysisDashboard] All sorted recs:', sortedRecommendations.map(r => ({ id: r.id, title: r.title, priority: calculatePriority(r) })));
+  console.log('[EnhancedAnalysisDashboard] ===== END DEBUG =====');
   
   // Calculate statistics
   const completedIdsArray = Array.from(completedIds);

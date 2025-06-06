@@ -284,11 +284,27 @@ export default function AnalysisResultsPage() {
     ? results.recommendations 
     : mockEnhancedRecommendations;
 
-  console.log('[AnalysisResultsPage] Passing to enhanced dashboard:', {
-    enhancedRecommendations: enhancedRecommendations?.length || 0,
-    currentScore: results.seoScore,
-    usingMockData: results.recommendations?.length === 0
-  });
+  console.log('[AnalysisResultsPage] ===== PARENT DEBUG =====');
+  console.log('[AnalysisResultsPage] results.recommendations:', results.recommendations);
+  console.log('[AnalysisResultsPage] results.recommendations?.length:', results.recommendations?.length);
+  console.log('[AnalysisResultsPage] mockEnhancedRecommendations:', mockEnhancedRecommendations);
+  console.log('[AnalysisResultsPage] enhancedRecommendations:', enhancedRecommendations);
+  console.log('[AnalysisResultsPage] enhancedRecommendations length:', enhancedRecommendations?.length || 0);
+  console.log('[AnalysisResultsPage] currentScore:', results.seoScore);
+  console.log('[AnalysisResultsPage] usingMockData:', results.recommendations?.length === 0);
+  
+  // Check the structure of the first recommendation
+  if (enhancedRecommendations && enhancedRecommendations.length > 0) {
+    console.log('[AnalysisResultsPage] First recommendation structure:');
+    console.log('  - id:', enhancedRecommendations[0]?.id);
+    console.log('  - title:', enhancedRecommendations[0]?.title);
+    console.log('  - description:', enhancedRecommendations[0]?.description);
+    console.log('  - impact:', enhancedRecommendations[0]?.impact);
+    console.log('  - typeof:', typeof enhancedRecommendations[0]);
+    console.log('  - keys:', enhancedRecommendations[0] ? Object.keys(enhancedRecommendations[0]) : 'no keys');
+    console.log('  - full object:', enhancedRecommendations[0]);
+  }
+  console.log('[AnalysisResultsPage] ===== END PARENT DEBUG =====');
 
   return (
     <div className="space-y-8">
