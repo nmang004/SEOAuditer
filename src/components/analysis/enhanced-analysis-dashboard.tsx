@@ -279,43 +279,49 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
 
   return (
     <div className="space-y-8">
-      {/* Visibility Test */}
-      <div className="p-4 bg-red-500 text-white font-bold">
-        🔥 ENHANCED DASHBOARD IS RENDERING - Recommendations: {sortedRecommendations.length}
+      {/* Debug Info */}
+      <div className="p-4 bg-blue-500 text-white font-bold">
+        ✅ Enhanced Dashboard Working - {sortedRecommendations.length} recommendations found
+        <br/>• Top Rec: {topRecommendation?.title || 'None'}
+        <br/>• Quick Wins: {quickWins.length}
       </div>
       
-      {/* Hero Section */}
-      {topRecommendation && (
-        <RecommendationHero
-          topRecommendation={{
-            id: topRecommendation?.id || 'unknown',
-            title: topRecommendation?.title || 'Untitled Recommendation',
-            description: topRecommendation?.description || 'No description available',
-            impact: {
-              seoScore: topRecommendation?.impact?.seoScore || 5,
-              timeToImplement: topRecommendation?.impact?.timeToImplement || 30,
-              implementationEffort: topRecommendation?.impact?.implementationEffort || 'medium',
-            },
-            businessCase: topRecommendation?.businessCase || {
-              estimatedTrafficIncrease: '5-10%',
-              competitorComparison: 'Standard optimization',
-              roi: 'Quick improvement'
-            },
-            quickWin: topRecommendation?.quickWin || false,
-          }}
-          quickWins={quickWins?.map(qw => ({
-            id: qw?.id || 'unknown',
-            title: qw?.title || 'Quick Win',
-            timeToImplement: qw?.impact?.timeToImplement || 5,
-            impact: { seoScore: qw?.impact?.seoScore || 3 },
-          })) || []}
-          onImplementTop={() => handleImplement(topRecommendation?.id || '')}
-          onImplementQuickWin={handleImplement}
-        />
-      )}
+      {/* Simple Hero Test */}
+      <div className="p-6 bg-green-800 border border-green-600 rounded-lg">
+        <h2 className="text-2xl font-bold text-white mb-4">🎯 Priority Recommendation</h2>
+        {topRecommendation ? (
+          <div className="space-y-4">
+            <h3 className="text-xl text-green-200">{topRecommendation.title}</h3>
+            <p className="text-green-100">{topRecommendation.description}</p>
+            <div className="flex gap-4">
+              <span className="bg-green-700 px-3 py-1 rounded text-white">
+                +{topRecommendation.impact?.seoScore || 0} SEO Score
+              </span>
+              <span className="bg-blue-700 px-3 py-1 rounded text-white">
+                {topRecommendation.impact?.timeToImplement || 0} minutes
+              </span>
+            </div>
+          </div>
+        ) : (
+          <p className="text-green-200">No top recommendation found</p>
+        )}
+      </div>
       
-      {/* Action Dashboard */}
-      <ActionDashboard stats={stats} />
+      {/* Simple Stats Dashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="p-6 bg-indigo-800 border border-indigo-600 rounded-lg text-center">
+          <div className="text-3xl font-bold text-white">{stats.currentScore}</div>
+          <div className="text-indigo-200">Current SEO Score</div>
+        </div>
+        <div className="p-6 bg-purple-800 border border-purple-600 rounded-lg text-center">
+          <div className="text-3xl font-bold text-white">{stats.completedRecommendations}/{stats.totalRecommendations}</div>
+          <div className="text-purple-200">Completed</div>
+        </div>
+        <div className="p-6 bg-green-800 border border-green-600 rounded-lg text-center">
+          <div className="text-3xl font-bold text-white">{stats.quickWinsCompleted}/{stats.quickWinsTotal}</div>
+          <div className="text-green-200">Quick Wins</div>
+        </div>
+      </div>
       
       {/* Filter and Search */}
       <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm">
@@ -486,22 +492,48 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
         </span>
       </div>
       
-      {/* Recommendations Grid/List */}
-      <div className={
-        viewMode === 'grid' ? 
-        'grid grid-cols-1 lg:grid-cols-2 gap-6' : 
-        'space-y-4'
-      }>
-        {sortedRecommendations?.map((recommendation) => (
-          <RecommendationCard
-            key={recommendation.id}
-            recommendation={recommendation}
-            onImplement={() => handleImplement(recommendation.id)}
-            onMarkComplete={() => handleMarkComplete(recommendation.id)}
-            isCompleted={completedIds.has(recommendation.id)}
-            showExpanded={viewMode === 'list'}
-            isProcessing={isProcessing.has(recommendation.id)}
-          />
+      {/* Simple Recommendations Test */}
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold text-white">📋 All Recommendations ({sortedRecommendations.length})</h2>
+        {sortedRecommendations?.map((recommendation, index) => (
+          <div key={recommendation.id} className="p-6 bg-gray-800 border border-gray-600 rounded-lg">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2">{recommendation.title}</h3>
+                <p className="text-gray-300">{recommendation.description}</p>
+              </div>
+              {recommendation.quickWin && (
+                <span className="bg-yellow-600 text-yellow-100 px-3 py-1 rounded-full text-sm">
+                  ⚡ Quick Win
+                </span>
+              )}
+            </div>
+            <div className="flex gap-4 flex-wrap">
+              <span className="bg-indigo-600 text-white px-3 py-1 rounded">
+                +{recommendation.impact?.seoScore || 0} SEO Score
+              </span>
+              <span className="bg-blue-600 text-white px-3 py-1 rounded">
+                {recommendation.impact?.timeToImplement || 0} min
+              </span>
+              <span className="bg-green-600 text-white px-3 py-1 rounded">
+                {recommendation.priority} priority
+              </span>
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button 
+                onClick={() => handleImplement(recommendation.id)}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+              >
+                Implement
+              </button>
+              <button 
+                onClick={() => handleMarkComplete(recommendation.id)}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
+              >
+                Mark Complete
+              </button>
+            </div>
+          </div>
         ))}
       </div>
       
