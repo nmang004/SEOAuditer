@@ -145,25 +145,46 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
       return [];
     }
 
-    const filtered = recommendations.filter(rec => {
-      // More lenient safety checks - just require basic structure
-      if (!rec) {
-        console.log('[EnhancedAnalysisDashboard] Filtered out null/undefined rec');
-        return false;
-      }
+    // First normalize the recommendations to ensure they have required properties
+    const normalizedRecommendations = recommendations.map(rec => {
+      if (!rec) return null;
       
-      // Ensure impact exists or create a default
-      if (!rec.impact) {
-        console.log('[EnhancedAnalysisDashboard] Rec missing impact, creating default:', rec.id);
-        rec.impact = {
+      // Create a new object with defaults if impact is missing
+      const normalizedRec = {
+        ...rec,
+        impact: rec.impact || {
           seoScore: 5,
           userExperience: 5,
           conversionPotential: 5,
           implementationEffort: 'medium' as const,
           timeToImplement: 30
-        };
-      }
+        },
+        // Ensure other required fields exist
+        businessCase: rec.businessCase || {
+          estimatedTrafficIncrease: '5-10%',
+          competitorComparison: 'Standard optimization',
+          roi: 'Quick improvement'
+        },
+        implementation: rec.implementation || {
+          autoFixAvailable: false,
+          codeSnippet: {
+            before: '',
+            after: '',
+            language: 'html'
+          },
+          stepByStep: ['Manual implementation required'],
+          tools: [],
+          documentation: []
+        },
+        quickWin: rec.quickWin !== undefined ? rec.quickWin : false,
+        category: rec.category || 'general',
+        priority: rec.priority || 'medium' as const
+      };
       
+      return normalizedRec;
+    }).filter(rec => rec !== null) as EnhancedRecommendation[];
+
+    const filtered = normalizedRecommendations.filter(rec => {
       // Apply filters only if they're actually set
       if (filterCategory !== 'all' && rec.category && rec.category !== filterCategory) {
         console.log('[EnhancedAnalysisDashboard] Filtered out by category:', rec.id, rec.category, 'vs', filterCategory);
