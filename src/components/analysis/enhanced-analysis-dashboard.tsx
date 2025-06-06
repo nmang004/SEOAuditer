@@ -123,26 +123,15 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     return priority;
   };
   
-  // Sort and filter recommendations - BYPASS ALL PROCESSING FOR NOW
+  // Sort and filter recommendations with proper processing
   const sortedRecommendations = useMemo(() => {
-    console.error('🚨🚨🚨 ENHANCED DASHBOARD PROCESSING DEBUG 🚨🚨🚨');
-    console.error('Input recommendations:', recommendations);
-    console.error('Input length:', recommendations?.length);
-    console.error('Is array:', Array.isArray(recommendations));
-    console.error('First item:', recommendations?.[0]);
-
-    // TEMPORARILY BYPASS ALL PROCESSING - JUST RETURN INPUT AS-IS
+    console.log('[EnhancedAnalysisDashboard] Starting processing with input:', recommendations);
+    
     if (!recommendations || !Array.isArray(recommendations)) {
-      console.error('❌ No valid recommendations array - returning empty');
+      console.log('[EnhancedAnalysisDashboard] No valid recommendations array - returning empty');
       return [];
     }
-    
-    console.error('✅ BYPASSING ALL PROCESSING - returning input directly');
-    console.error('Returning:', recommendations);
-    return recommendations;
-  }, [recommendations]);
 
-  /* COMMENTED OUT COMPLEX PROCESSING FOR NOW
     // First normalize the recommendations to ensure they have required properties
     console.log('[EnhancedAnalysisDashboard] Starting normalization...');
     
@@ -252,7 +241,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     console.log('[EnhancedAnalysisDashboard] Sorted recommendations:', sorted.length, sorted.map(r => ({ id: r.id, title: r.title, priority: calculatePriority(r) })));
     
     return sorted;
-  */
+  }, [recommendations, filterCategory, filterTime, filterImpact, searchTerm]);
   
   // Get top recommendation and quick wins with safety checks
   const topRecommendation = sortedRecommendations?.[0];
