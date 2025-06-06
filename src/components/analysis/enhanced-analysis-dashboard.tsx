@@ -141,49 +141,57 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
       allRecTitles: recommendations?.map(r => ({ id: r?.id, title: r?.title, hasImpact: !!r?.impact }))
     });
 
-    if (!recommendations || recommendations.length === 0) {
-      console.log('[EnhancedAnalysisDashboard] No recommendations to process');
+    if (!recommendations || !Array.isArray(recommendations) || recommendations.length === 0) {
+      console.log('[EnhancedAnalysisDashboard] No valid recommendations to process');
       return [];
     }
 
     // First normalize the recommendations to ensure they have required properties
-    const normalizedRecommendations = recommendations.map(rec => {
-      if (!rec) return null;
-      
-      // Create a new object with defaults if impact is missing
-      const normalizedRec = {
-        ...rec,
-        impact: rec.impact || {
-          seoScore: 5,
-          userExperience: 5,
-          conversionPotential: 5,
-          implementationEffort: 'medium' as const,
-          timeToImplement: 30
-        },
-        // Ensure other required fields exist
-        businessCase: rec.businessCase || {
-          estimatedTrafficIncrease: '5-10%',
-          competitorComparison: 'Standard optimization',
-          roi: 'Quick improvement'
-        },
-        implementation: rec.implementation || {
-          autoFixAvailable: false,
-          codeSnippet: {
-            before: '',
-            after: '',
-            language: 'html'
-          },
-          stepByStep: ['Manual implementation required'],
-          tools: [],
-          documentation: []
-        },
-        quickWin: rec.quickWin !== undefined ? rec.quickWin : false,
-        category: rec.category || 'general',
-        priority: rec.priority || 'medium' as const
-      };
-      
-      return normalizedRec;
-    }).filter(rec => rec !== null) as EnhancedRecommendation[];
+    const normalizedRecommendations = recommendations
+      .filter(rec => rec && typeof rec === 'object')
+      .map(rec => {
+        try {
+          // Create a new object with defaults if impact is missing
+          const normalizedRec = {
+            id: rec.id || `rec-${Math.random().toString(36).substr(2, 9)}`,
+            title: rec.title || 'Untitled Recommendation',
+            description: rec.description || 'No description available',
+            impact: rec.impact || {
+              seoScore: 5,
+              userExperience: 5,
+              conversionPotential: 5,
+              implementationEffort: 'medium' as const,
+              timeToImplement: 30
+            },
+            // Ensure other required fields exist
+            businessCase: rec.businessCase || {
+              estimatedTrafficIncrease: '5-10%',
+              competitorComparison: 'Standard optimization',
+              roi: 'Quick improvement'
+            },
+            implementation: rec.implementation || {
+              autoFixAvailable: false,
+              codeSnippet: {
+                before: '',
+                after: '',
+                language: 'html'
+              },
+              stepByStep: ['Manual implementation required'],
+              tools: [],
+              documentation: []
+            },
+            quickWin: rec.quickWin !== undefined ? rec.quickWin : false,
+            category: rec.category || 'general',
+            priority: rec.priority || 'medium' as const
+          };
+          
+          return normalizedRec;
+        } catch (error) {
+          console.error('[EnhancedAnalysisDashboard] Error normalizing recommendation:', rec, error);
+          return null;
+        }
+      })
+      .filter(rec => rec !== null) as EnhancedRecommendation[];
 
     const filtered = normalizedRecommendations.filter(rec => {
       // Apply filters only if they're actually set
@@ -257,26 +265,29 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   console.log('[EnhancedAnalysisDashboard] Quick wins:', quickWins.length);
   console.log('[EnhancedAnalysisDashboard] ===== END DEBUG =====');
   
-  // Calculate statistics
+  // Calculate statistics with safety checks
   const completedIdsArray = Array.from(completedIds);
+  const safeRecommendations = recommendations || [];
+  const safeQuickWins = quickWins || [];
+  
   const stats = {
-    totalRecommendations: recommendations.length,
+    totalRecommendations: safeRecommendations.length,
     completedRecommendations: completedIds.size,
-    totalTimeEstimate: recommendations.reduce((sum, rec) => sum + (rec?.impact?.timeToImplement || 0), 0),
+    totalTimeEstimate: safeRecommendations.reduce((sum, rec) => sum + (rec?.impact?.timeToImplement || 0), 0),
     timeInvested: completedIdsArray.reduce((sum, id) => {
-      const rec = recommendations.find(r => r.id === id);
+      const rec = safeRecommendations.find(r => r?.id === id);
       return sum + (rec?.impact?.timeToImplement || 0);
     }, 0),
-    currentScore,
-    projectedScore: currentScore + completedIdsArray.reduce((sum, id) => {
-      const rec = recommendations.find(r => r.id === id);
+    currentScore: currentScore || 0,
+    projectedScore: (currentScore || 0) + completedIdsArray.reduce((sum, id) => {
+      const rec = safeRecommendations.find(r => r?.id === id);
       return sum + (rec?.impact?.seoScore || 0);
     }, 0),
-    quickWinsCompleted: quickWins.filter(qw => completedIds.has(qw.id)).length,
-    quickWinsTotal: quickWins.length,
+    quickWinsCompleted: safeQuickWins.filter(qw => qw?.id && completedIds.has(qw.id)).length,
+    quickWinsTotal: safeQuickWins.length,
   };
   
-  const categories = ['all', ...Array.from(new Set(recommendations.map(r => r.category).filter(Boolean)))];
+  const categories = ['all', ...Array.from(new Set(safeRecommendations.map(r => r?.category).filter(Boolean)))];
   
   const handleMarkComplete = async (id: string) => {
     if (isProcessing.has(id)) return;
@@ -284,7 +295,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     setIsProcessing(prev => new Set([...Array.from(prev), id]));
     
     try {
-      const recommendation = recommendations.find(r => r.id === id);
+      const recommendation = safeRecommendations.find(r => r?.id === id);
       const result = await recommendationService.markComplete(id, {
         timeSpent: recommendation?.impact?.timeToImplement || 0,
       });
@@ -309,7 +320,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   const handleImplement = async (id: string) => {
     if (isProcessing.has(id)) return;
     
-    const recommendation = recommendations.find(r => r.id === id);
+    const recommendation = safeRecommendations.find(r => r?.id === id);
     if (!recommendation) return;
     
     setIsProcessing(prev => new Set([...Array.from(prev), id]));
