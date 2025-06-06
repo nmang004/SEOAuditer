@@ -20,7 +20,7 @@ try {
 export class PageAnalyzer {
   constructor(private config: CrawlerConfig) {}
 
-  private extractCodeSnippets($: cheerio.CheerioAPI, html: string): any {
+  private extractCodeSnippets($: cheerio.Root, html: string): any {
     return {
       currentMeta: {
         title: $('title').html() || '',
