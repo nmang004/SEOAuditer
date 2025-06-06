@@ -591,7 +591,7 @@ export default function AnalysisResultsPage() {
                   <div className="text-lg text-gray-300">
                     {results.seoScore >= 80 ? 'Excellent! Your site is well optimized.' :
                      results.seoScore >= 60 ? 'Good foundation with room for improvement.' :
-                     'Significant opportunities for SEO enhancement.'}
+                     'Significant SEO opportunities.'}
                   </div>
                 </div>
                 
@@ -649,7 +649,7 @@ export default function AnalysisResultsPage() {
                         <div className="text-sm text-gray-400">
                           {results.issues?.filter(i => i.type === 'error').length === 0 ? 
                             'No critical issues found' : 
-                            'Need immediate attention'
+                            'Needs attention'
                           }
                         </div>
                       </div>
@@ -665,7 +665,7 @@ export default function AnalysisResultsPage() {
                         <div className="font-medium text-white">
                           {results.issues?.filter(i => i.type === 'warning').length || 0} Warnings
                         </div>
-                        <div className="text-sm text-gray-400">Optimization opportunities</div>
+                        <div className="text-sm text-gray-400">Opportunities</div>
                       </div>
                     </div>
                   </div>
@@ -679,7 +679,7 @@ export default function AnalysisResultsPage() {
                         <div className="font-medium text-white">
                           {results.recommendations?.length || 0} Recommendations
                         </div>
-                        <div className="text-sm text-gray-400">Action items to improve</div>
+                        <div className="text-sm text-gray-400">Action items</div>
                       </div>
                     </div>
                   </div>
@@ -689,8 +689,8 @@ export default function AnalysisResultsPage() {
           </div>
 
           {/* Performance Metrics */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm p-6 overflow-hidden">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-blue-500/20 rounded-lg">
                   <Clock className="w-5 h-5 text-blue-400" />
@@ -728,7 +728,7 @@ export default function AnalysisResultsPage() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm p-6">
+            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm p-6 overflow-hidden">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-green-500/20 rounded-lg">
                   <TrendingUp className="w-5 h-5 text-green-400" />
@@ -755,12 +755,12 @@ export default function AnalysisResultsPage() {
                   ></div>
                 </div>
                 <div className="text-xs text-gray-400 text-center">
-                  Target: 80+ for optimal mobile experience
+                  Target: 80+
                 </div>
               </div>
             </Card>
 
-            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm p-6">
+            <Card className="rounded-2xl border border-gray-700 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm p-6 overflow-hidden">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-purple-500/20 rounded-lg">
                   <BarChart3 className="w-5 h-5 text-purple-400" />
@@ -787,14 +787,14 @@ export default function AnalysisResultsPage() {
                   ></div>
                 </div>
                 <div className="text-xs text-gray-400 text-center">
-                  Target: 90+ for optimal desktop experience
+                  Target: 90+
                 </div>
               </div>
             </Card>
           </div>
 
           {/* Issues Breakdown */}
-          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6 overflow-hidden">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-amber-500/20 rounded-lg">
@@ -810,7 +810,7 @@ export default function AnalysisResultsPage() {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-center">
                 <div className="text-3xl font-bold text-red-400 mb-1">
                   {results.issues?.filter(i => i.type === 'error').length || 0}
@@ -885,7 +885,7 @@ export default function AnalysisResultsPage() {
                 {results.issues.length > 3 && (
                   <div className="text-center">
                     <button className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
-                      View all {results.issues.length} issues →
+                      View all issues →
                     </button>
                   </div>
                 )}
@@ -905,11 +905,11 @@ export default function AnalysisResultsPage() {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
                 <div className="text-indigo-400 font-medium mb-2">🚀 Quick Wins</div>
                 <div className="text-sm text-gray-300 mb-3">
-                  Start with easy fixes that provide immediate SEO improvements.
+                  Easy fixes for immediate SEO gains.
                 </div>
                 <button className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
                   View Action Plan →
@@ -919,7 +919,7 @@ export default function AnalysisResultsPage() {
               <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
                 <div className="text-green-400 font-medium mb-2">🔧 Technical Fixes</div>
                 <div className="text-sm text-gray-300 mb-3">
-                  Address critical technical issues affecting performance.
+                  Fix critical technical issues.
                 </div>
                 <button className="text-xs text-green-400 hover:text-green-300 transition-colors">
                   View Technical Details →
@@ -929,7 +929,7 @@ export default function AnalysisResultsPage() {
               <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
                 <div className="text-purple-400 font-medium mb-2">📈 Monitor Progress</div>
                 <div className="text-sm text-gray-300 mb-3">
-                  Track improvements and run follow-up analyses.
+                  Track progress and re-analyze.
                 </div>
                 <button className="text-xs text-purple-400 hover:text-purple-300 transition-colors">
                   Schedule Re-analysis →
@@ -942,7 +942,7 @@ export default function AnalysisResultsPage() {
         {/* Technical Details Tab */}
         <TabsContent value="technical" className="space-y-6">
           {/* Technical SEO */}
-          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6 overflow-hidden">
             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-indigo-400" />
               Technical SEO
