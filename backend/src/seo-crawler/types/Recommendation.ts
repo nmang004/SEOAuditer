@@ -6,35 +6,38 @@ export interface Recommendation {
   priority: 'critical' | 'high' | 'medium' | 'low';
   title: string;
   description: string;
-  impact: 'high' | 'medium' | 'low';
-  effort: 'easy' | 'medium' | 'hard';
-  timeToImplement: string;
-  difficulty: number;
+  impact: {
+    seoScore: number; // 0-10 impact on overall score
+    userExperience: number; // 0-10 UX impact
+    conversionPotential: number; // 0-10 conversion impact
+    implementationEffort: 'low' | 'medium' | 'high';
+    timeToImplement: number; // minutes
+  };
   implementation: {
-    steps: string[];
-    codeExamples?: string[];
-    beforeAfter?: {
+    autoFixAvailable: boolean;
+    codeSnippet: {
       before: string;
       after: string;
-      explanation: string;
+      language: 'html' | 'css' | 'javascript' | 'json';
     };
+    stepByStep: string[];
     tools: string[];
-    resources: Array<{
-      title: string;
-      url: string;
-      type: 'guide' | 'tool' | 'documentation';
-    }>;
+    documentation: string[];
   };
-  expectedResults: {
-    seoImpact: string;
-    userImpact: string;
-    businessImpact: string;
-    timeframe: string;
+  visualization: {
+    beforeScreenshot?: string;
+    afterMockup?: string;
+    comparisonMetrics: Record<string, number>;
   };
-  relationships: {
-    affectedElements: string[];
-    relatedIssues: string[];
-    dependencies: string[];
-    conflicts: string[];
+  businessCase: {
+    estimatedTrafficIncrease: string;
+    competitorComparison: string;
+    roi: string;
   };
+  quickWin: boolean;
+  category: 'technical' | 'onpage' | 'content' | 'structured' | 'performance';
+  affectedElements: string[];
+  relatedIssues: string[];
+  dependencies: string[];
+  conflicts: string[];
 } 

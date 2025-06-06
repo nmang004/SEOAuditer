@@ -1,19 +1,61 @@
 import { PageAnalysis } from '../../types/PageAnalysis';
+import { Recommendation } from '../../types/Recommendation';
 
 export class Recommendations {
   async analyze(pageContext: any): Promise<Partial<PageAnalysis>> {
-    const { url: _url, $: _$, response: _response, pageAnalysis = {} } = pageContext;
-    const recs: any[] = [];
+    const { url, $, response, pageAnalysis = {}, codeSnippets } = pageContext;
+    const recs: Recommendation[] = [];
+
+    let recId = 1;
 
     // --- Technical SEO ---
     if (!pageAnalysis.technicalSEO?.hasHttps) {
       recs.push({
-        type: 'technical',
+        id: `rec-${recId++}`,
+        jobId: (pageContext.config as any)?.jobId || 'default',
+        pageUrl: url,
+        type: 'https',
         priority: 'high',
         title: 'Site Not Using HTTPS',
         description: 'Switch to HTTPS to improve security and SEO. Google uses HTTPS as a ranking signal.',
-        doc: 'https://developers.google.com/search/blog/2014/08/https-as-ranking-signal',
+        impact: {
+          seoScore: 7,
+          userExperience: 8,
+          conversionPotential: 6,
+          implementationEffort: 'high',
+          timeToImplement: 240, // 4 hours
+        },
+        implementation: {
+          autoFixAvailable: false,
+          codeSnippet: {
+            before: `http://${new URL(url).hostname}`,
+            after: `https://${new URL(url).hostname}`,
+            language: 'html',
+          },
+          stepByStep: [
+            'Purchase an SSL certificate from your hosting provider',
+            'Install the SSL certificate on your server',
+            'Update all internal links to use HTTPS',
+            'Set up 301 redirects from HTTP to HTTPS',
+            'Update your sitemap and submit to search engines',
+          ],
+          tools: ['SSL Certificate', 'Server Configuration', '.htaccess'],
+          documentation: ['https://developers.google.com/search/blog/2014/08/https-as-ranking-signal'],
+        },
+        visualization: {
+          comparisonMetrics: { securityScore: 100, trustSignals: 85 },
+        },
+        businessCase: {
+          estimatedTrafficIncrease: '5-10%',
+          competitorComparison: '95% of top sites use HTTPS',
+          roi: '4 hours work = improved rankings + user trust',
+        },
         quickWin: false,
+        category: 'technical',
+        affectedElements: ['entire-site'],
+        relatedIssues: ['security-headers'],
+        dependencies: ['ssl-certificate'],
+        conflicts: [],
       });
     }
     if (pageAnalysis.technicalSEO?.robotsTxtStatus === 'missing') {
@@ -60,22 +102,102 @@ export class Recommendations {
     // --- On-Page SEO ---
     if (!pageAnalysis.title) {
       recs.push({
-        type: 'onpage',
+        id: `rec-${recId++}`,
+        jobId: (pageContext.config as any)?.jobId || 'default',
+        pageUrl: url,
+        type: 'title',
         priority: 'high',
         title: 'Missing Title Tag',
         description: 'Add a descriptive <title> tag to improve SEO and click-through rates.',
-        doc: 'https://developers.google.com/search/docs/appearance/title-link',
+        impact: {
+          seoScore: 9,
+          userExperience: 7,
+          conversionPotential: 8,
+          implementationEffort: 'low',
+          timeToImplement: 2,
+        },
+        implementation: {
+          autoFixAvailable: true,
+          codeSnippet: {
+            before: codeSnippets?.currentMeta?.title || '<title></title>',
+            after: `<title>Your Page Title - Brand Name</title>`,
+            language: 'html',
+          },
+          stepByStep: [
+            'Open your HTML file or CMS editor',
+            'Locate the <head> section',
+            'Add or update the <title> tag with descriptive text',
+            'Keep it under 60 characters for optimal display',
+            'Include your target keyword naturally',
+          ],
+          tools: ['HTML Editor', 'CMS'],
+          documentation: ['https://developers.google.com/search/docs/appearance/title-link'],
+        },
+        visualization: {
+          comparisonMetrics: { clickThroughRate: 15, searchVisibility: 25 },
+        },
+        businessCase: {
+          estimatedTrafficIncrease: '10-20%',
+          competitorComparison: 'Essential for search rankings',
+          roi: '2 minutes work = major SEO improvement',
+        },
         quickWin: true,
+        category: 'onpage',
+        affectedElements: ['title-tag'],
+        relatedIssues: ['meta-description'],
+        dependencies: [],
+        conflicts: [],
       });
     }
     if (!pageAnalysis.meta?.description) {
       recs.push({
-        type: 'onpage',
+        id: `rec-${recId++}`,
+        jobId: (pageContext.config as any)?.jobId || 'default',
+        pageUrl: url,
+        type: 'meta-description',
         priority: 'high',
         title: 'Missing Meta Description',
-        description: 'Add a meta description to improve search snippet quality.',
-        doc: 'https://developers.google.com/search/docs/appearance/snippet',
+        description: 'Add a meta description to improve search snippet quality and click-through rates.',
+        impact: {
+          seoScore: 8,
+          userExperience: 6,
+          conversionPotential: 9,
+          implementationEffort: 'low',
+          timeToImplement: 3,
+        },
+        implementation: {
+          autoFixAvailable: true,
+          codeSnippet: {
+            before: codeSnippets?.currentMeta?.description ? 
+              `<meta name="description" content="${codeSnippets.currentMeta.description}">` : 
+              '<!-- No meta description -->',
+            after: `<meta name="description" content="Compelling description of your page that encourages clicks. Keep it under 160 characters.">`,
+            language: 'html',
+          },
+          stepByStep: [
+            'Open your HTML file or CMS editor',
+            'Locate the <head> section',
+            'Add the meta description tag after the title',
+            'Write compelling copy that includes your main keyword',
+            'Keep it between 150-160 characters for optimal display',
+          ],
+          tools: ['HTML Editor', 'CMS', 'Character Counter'],
+          documentation: ['https://developers.google.com/search/docs/appearance/snippet'],
+        },
+        visualization: {
+          comparisonMetrics: { clickThroughRate: 20, searchSnippetQuality: 90 },
+        },
+        businessCase: {
+          estimatedTrafficIncrease: '15-25%',
+          competitorComparison: 'Appears in search results snippets',
+          roi: '3 minutes work = better click-through rates',
+        },
         quickWin: true,
+        category: 'onpage',
+        affectedElements: ['meta-description'],
+        relatedIssues: ['title-tag'],
+        dependencies: [],
+        conflicts: [],
       });
     }
     if (pageAnalysis.hasNoH1) {

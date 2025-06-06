@@ -20,6 +20,38 @@ try {
 export class PageAnalyzer {
   constructor(private config: CrawlerConfig) {}
 
+  private extractCodeSnippets($: cheerio.CheerioAPI, html: string): any {
+    return {
+      currentMeta: {
+        title: $('title').html() || '',
+        description: $('meta[name="description"]').attr('content') || '',
+        keywords: $('meta[name="keywords"]').attr('content') || '',
+        viewport: $('meta[name="viewport"]').attr('content') || '',
+        canonical: $('link[rel="canonical"]').attr('href') || '',
+        robots: $('meta[name="robots"]').attr('content') || '',
+      },
+      currentSchema: $('script[type="application/ld+json"]').map((_, el) => $(el).html()).get(),
+      currentHeaders: {
+        h1: $('h1').map((_, el) => $(el).html()).get(),
+        h2: $('h2').map((_, el) => $(el).html()).get(),
+        h3: $('h3').map((_, el) => $(el).html()).get(),
+      },
+      resourceHints: {
+        preload: $('link[rel="preload"]').map((_, el) => $(el).attr('href')).get(),
+        prefetch: $('link[rel="prefetch"]').map((_, el) => $(el).attr('href')).get(),
+        preconnect: $('link[rel="preconnect"]').map((_, el) => $(el).attr('href')).get(),
+        dnsPrefetch: $('link[rel="dns-prefetch"]').map((_, el) => $(el).attr('href')).get(),
+      },
+      images: $('img').map((_, el) => ({
+        src: $(el).attr('src') || '',
+        alt: $(el).attr('alt') || '',
+        title: $(el).attr('title') || '',
+        loading: $(el).attr('loading') || '',
+      })).get(),
+      headSection: $('head').html() || '',
+    };
+  }
+
   async analyzePage(url: string): Promise<PageAnalysis> {
     const usePuppeteer =
       (this.config.crawlOptions.extractOptions.screenshots ||
@@ -82,7 +114,10 @@ export class PageAnalyzer {
         response = resp;
       }
       const $ = cheerio.load(html);
-      const pageContext = { url, html, $, response, config: this.config, browser, page, screenshot, lighthouseMetrics };
+      // Extract code snippets for recommendations
+      const codeSnippets = this.extractCodeSnippets($, html);
+      
+      const pageContext = { url, html, $, response, config: this.config, browser, page, screenshot, lighthouseMetrics, codeSnippets };
       // Run analysis modules
       const technicalSEO = await new TechnicalSEO().analyze(pageContext);
       const onPageSEO = await new OnPageSEO().analyze(pageContext);
