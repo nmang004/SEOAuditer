@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EnhancedAnalysisDashboard } from '@/components/analysis/enhanced-analysis-dashboard';
+import { SimpleRecommendations } from '@/components/analysis/simple-recommendations';
 import { mockEnhancedRecommendations } from '@/lib/mock-enhanced-recommendations';
 import { TechnicalAnalysis } from '@/components/analysis/technical-analysis';
 import { ContentAnalysis } from '@/components/analysis/content-analysis';
@@ -61,6 +62,8 @@ interface AnalysisData {
 }
 
 export default function AnalysisResultsPage() {
+  console.log('🚨🚨🚨 ANALYSIS RESULTS PAGE COMPONENT MOUNTING 🚨🚨🚨');
+  
   const params = useParams();
   const router = useRouter();
   const projectId = params?.projectId as string;
@@ -68,6 +71,8 @@ export default function AnalysisResultsPage() {
   const [data, setData] = useState<AnalysisData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  console.log('🚨 ANALYSIS PAGE PARAMS:', { projectId, jobId });
 
   useEffect(() => {
     if (!jobId) return;
@@ -414,13 +419,32 @@ export default function AnalysisResultsPage() {
 
         {/* Enhanced Recommendations Tab - DEFAULT */}
         <TabsContent value="recommendations" className="space-y-6">
-          <EnhancedAnalysisDashboard
-            recommendations={enhancedRecommendations}
-            currentScore={results.seoScore}
-            onImplementRecommendation={handleImplementRecommendation}
-            onMarkComplete={handleMarkComplete}
-            onExportPlan={handleExportPlan}
-          />
+          <div style={{ border: '5px solid red', padding: '20px', backgroundColor: '#ffeeee' }}>
+            <h1 style={{ color: 'red', fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>
+              🚨 ACTION PLAN TAB IS ACTIVE - TESTING DISPLAY
+            </h1>
+            
+            <div style={{ backgroundColor: 'yellow', padding: '10px', marginBottom: '20px', color: 'black' }}>
+              <p><strong>Tab Status:</strong> ✅ recommendations tab content is rendering</p>
+              <p><strong>Enhanced Recommendations Length:</strong> {enhancedRecommendations?.length || 'undefined'}</p>
+              <p><strong>Mock Data Length:</strong> {mockEnhancedRecommendations?.length || 'undefined'}</p>
+              <p><strong>Results SEO Score:</strong> {results.seoScore || 'undefined'}</p>
+            </div>
+            
+            {/* SIMPLE TEST COMPONENT */}
+            <SimpleRecommendations data={enhancedRecommendations} />
+            
+            {/* ORIGINAL ENHANCED COMPONENT - COMMENTED OUT FOR TESTING */}
+            {/*
+            <EnhancedAnalysisDashboard
+              recommendations={enhancedRecommendations}
+              currentScore={results.seoScore}
+              onImplementRecommendation={handleImplementRecommendation}
+              onMarkComplete={handleMarkComplete}
+              onExportPlan={handleExportPlan}
+            />
+            */}
+          </div>
         </TabsContent>
 
         {/* Analysis Overview Tab */}
