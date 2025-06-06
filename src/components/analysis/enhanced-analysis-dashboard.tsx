@@ -140,8 +140,8 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     const simpleProcessed = recommendations.map((rec, index) => {
       console.log(`Processing rec ${index}:`, rec);
       
-      // Basic structure check - if it has title and description, keep it
-      if (rec && (rec.title || rec.description)) {
+      // Basic structure check - if it's an object, process it (mock data is well-formed)
+      if (rec && typeof rec === 'object') {
         const processed = {
           id: rec.id || `rec-${index}`,
           title: rec.title || `Recommendation ${index + 1}`,

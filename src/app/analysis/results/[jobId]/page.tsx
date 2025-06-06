@@ -151,12 +151,22 @@ export default function CrawlResultsPage() {
             <strong>🚨 ANALYSIS PAGE DEBUG:</strong><br/>
             • page.recommendations: {page.recommendations?.length || 0}<br/>
             • mockEnhancedRecommendations: {mockEnhancedRecommendations?.length || 0}<br/>
-            • Will use: {page.recommendations?.length > 0 ? 'page.recommendations' : 'mockEnhancedRecommendations'}<br/>
+            • mockEnhancedRecommendations sample: {mockEnhancedRecommendations?.[0]?.title || 'No title'}<br/>
+            • FORCING mockEnhancedRecommendations usage<br/>
             • overallScore: {overallScore}
           </div>
           
+          {/* Show what we're about to pass */}
+          <div style={{ backgroundColor: 'green', color: 'white', padding: '10px' }}>
+            <strong>✅ PASSING TO ENHANCED DASHBOARD:</strong><br/>
+            • Length: {mockEnhancedRecommendations?.length}<br/>
+            • Sample title: {mockEnhancedRecommendations?.[0]?.title}<br/>
+            • Sample ID: {mockEnhancedRecommendations?.[0]?.id}<br/>
+            • Sample category: {mockEnhancedRecommendations?.[0]?.category}
+          </div>
+          
           <EnhancedAnalysisDashboard
-            recommendations={mockEnhancedRecommendations}
+            recommendations={mockEnhancedRecommendations || []}
             currentScore={overallScore}
             onImplementRecommendation={handleImplementRecommendation}
             onMarkComplete={handleMarkComplete}
