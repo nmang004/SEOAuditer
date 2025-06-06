@@ -119,9 +119,26 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
   
   // Sort and filter recommendations
   const sortedRecommendations = useMemo(() => {
+    console.log('[EnhancedAnalysisDashboard] Processing recommendations:', {
+      total: recommendations?.length || 0,
+      filterCategory,
+      filterTime,
+      filterImpact,
+      searchTerm,
+      sampleRec: recommendations?.[0]
+    });
+
+    if (!recommendations || recommendations.length === 0) {
+      console.log('[EnhancedAnalysisDashboard] No recommendations to process');
+      return [];
+    }
+
     const filtered = recommendations.filter(rec => {
       // Add null/undefined safety checks
-      if (!rec || !rec.impact) return false;
+      if (!rec || !rec.impact) {
+        console.log('[EnhancedAnalysisDashboard] Filtered out rec with missing data:', rec?.id);
+        return false;
+      }
       if (filterCategory !== 'all' && rec.category !== filterCategory) return false;
       if (filterTime > 0 && (rec.impact.timeToImplement || 0) > filterTime) return false;
       if (filterImpact > 0 && (rec.impact.seoScore || 0) < filterImpact) return false;
@@ -131,7 +148,11 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
       return true;
     });
     
-    return filtered.sort((a, b) => calculatePriority(b) - calculatePriority(a));
+    console.log('[EnhancedAnalysisDashboard] Filtered recommendations:', filtered.length);
+    const sorted = filtered.sort((a, b) => calculatePriority(b) - calculatePriority(a));
+    console.log('[EnhancedAnalysisDashboard] Sorted recommendations:', sorted.length);
+    
+    return sorted;
   }, [recommendations, filterCategory, filterTime, filterImpact, searchTerm]);
   
   // Get top recommendation and quick wins
@@ -461,17 +482,23 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
         'grid grid-cols-1 lg:grid-cols-2 gap-6' : 
         'space-y-4'
       }>
-        {sortedRecommendations.map((recommendation) => (
-          <RecommendationCard
-            key={recommendation.id}
-            recommendation={recommendation}
-            onImplement={() => handleImplement(recommendation.id)}
-            onMarkComplete={() => handleMarkComplete(recommendation.id)}
-            isCompleted={completedIds.has(recommendation.id)}
-            showExpanded={viewMode === 'list'}
-            isProcessing={isProcessing.has(recommendation.id)}
-          />
-        ))}
+        {(() => {
+          console.log('[EnhancedAnalysisDashboard] Rendering grid with recommendations:', sortedRecommendations.length);
+          return sortedRecommendations.map((recommendation) => {
+            console.log('[EnhancedAnalysisDashboard] Rendering recommendation:', recommendation.id, recommendation.title);
+            return (
+              <RecommendationCard
+                key={recommendation.id}
+                recommendation={recommendation}
+                onImplement={() => handleImplement(recommendation.id)}
+                onMarkComplete={() => handleMarkComplete(recommendation.id)}
+                isCompleted={completedIds.has(recommendation.id)}
+                showExpanded={viewMode === 'list'}
+                isProcessing={isProcessing.has(recommendation.id)}
+              />
+            );
+          });
+        })()}
       </div>
       
       {sortedRecommendations.length === 0 && (
