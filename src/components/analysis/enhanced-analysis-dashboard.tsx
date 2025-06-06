@@ -123,125 +123,65 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
     return priority;
   };
   
-  // Sort and filter recommendations with proper processing
+  // Sort and filter recommendations - SIMPLIFIED FOR DEBUGGING
   const sortedRecommendations = useMemo(() => {
-    console.log('[EnhancedAnalysisDashboard] Starting processing with input:', recommendations);
+    console.log('🚨 ENHANCED DASHBOARD PROCESSING START 🚨');
+    console.log('Input recommendations:', recommendations);
+    console.log('Input type:', typeof recommendations);
+    console.log('Is array:', Array.isArray(recommendations));
+    console.log('Length:', recommendations?.length);
     
-    if (!recommendations || !Array.isArray(recommendations)) {
-      console.log('[EnhancedAnalysisDashboard] No valid recommendations array - returning empty');
+    if (!recommendations || !Array.isArray(recommendations) || recommendations.length === 0) {
+      console.log('❌ No valid recommendations - returning empty array');
       return [];
     }
-
-    // First normalize the recommendations to ensure they have required properties
-    console.log('[EnhancedAnalysisDashboard] Starting normalization...');
     
-    const filteredForNormalization = recommendations.filter(rec => rec && typeof rec === 'object');
-    console.log('[EnhancedAnalysisDashboard] After object filter:', filteredForNormalization.length);
-    
-    const normalizedRecommendations = filteredForNormalization
-      .map((rec, index) => {
-        try {
-          console.log(`[EnhancedAnalysisDashboard] Normalizing rec ${index}:`, rec);
-          
-          // Create a new object with defaults if impact is missing
-          const normalizedRec = {
-            id: rec.id || `rec-${Math.random().toString(36).substr(2, 9)}`,
-            title: rec.title || 'Untitled Recommendation',
-            description: rec.description || 'No description available',
-            impact: rec.impact || {
-              seoScore: 5,
-              userExperience: 5,
-              conversionPotential: 5,
-              implementationEffort: 'medium' as const,
-              timeToImplement: 30
-            },
-            // Ensure other required fields exist
-            businessCase: rec.businessCase || {
-              estimatedTrafficIncrease: '5-10%',
-              competitorComparison: 'Standard optimization',
-              roi: 'Quick improvement'
-            },
-            implementation: rec.implementation || {
-              autoFixAvailable: false,
-              codeSnippet: {
-                before: '',
-                after: '',
-                language: 'html'
-              },
-              stepByStep: ['Manual implementation required'],
-              tools: [],
-              documentation: []
-            },
-            quickWin: rec.quickWin !== undefined ? rec.quickWin : false,
-            category: rec.category || 'general',
-            priority: rec.priority || 'medium' as const
-          };
-          
-          console.log(`[EnhancedAnalysisDashboard] Normalized rec ${index}:`, normalizedRec);
-          return normalizedRec;
-        } catch (error) {
-          console.error('[EnhancedAnalysisDashboard] Error normalizing recommendation:', rec, error);
-          return null;
-        }
-      })
-      .filter(rec => rec !== null) as EnhancedRecommendation[];
+    // ULTRA-SIMPLE APPROACH - Just ensure basic structure and return
+    const simpleProcessed = recommendations.map((rec, index) => {
+      console.log(`Processing rec ${index}:`, rec);
       
-    console.log('[EnhancedAnalysisDashboard] After normalization:', normalizedRecommendations.length);
-
-    console.log('[EnhancedAnalysisDashboard] Starting filtering with:', {
-      filterCategory,
-      filterTime,
-      filterImpact,
-      searchTerm
-    });
-    
-    const filtered = normalizedRecommendations.filter((rec, index) => {
-      console.log(`[EnhancedAnalysisDashboard] Filtering rec ${index}: ${rec.title}`);
-      
-      // Apply filters only if they're actually set
-      if (filterCategory !== 'all' && rec.category && rec.category !== filterCategory) {
-        console.log('[EnhancedAnalysisDashboard] ❌ Filtered out by category:', rec.id, rec.category, 'vs', filterCategory);
-        return false;
+      // Basic structure check - if it has title and description, keep it
+      if (rec && (rec.title || rec.description)) {
+        const processed = {
+          id: rec.id || `rec-${index}`,
+          title: rec.title || `Recommendation ${index + 1}`,
+          description: rec.description || 'No description available',
+          impact: rec.impact || {
+            seoScore: 5,
+            userExperience: 5,
+            conversionPotential: 5,
+            implementationEffort: 'medium' as const,
+            timeToImplement: 30
+          },
+          businessCase: rec.businessCase || {
+            estimatedTrafficIncrease: '5-10%',
+            competitorComparison: 'Standard optimization',
+            roi: 'Quick improvement'
+          },
+          implementation: rec.implementation || {
+            autoFixAvailable: false,
+            codeSnippet: { before: '', after: '', language: 'html' },
+            stepByStep: ['Manual implementation required'],
+            tools: [],
+            documentation: []
+          },
+          quickWin: rec.quickWin || false,
+          category: rec.category || 'general',
+          priority: rec.priority || 'medium' as const
+        };
+        console.log(`✅ Processed rec ${index}:`, processed);
+        return processed;
+      } else {
+        console.log(`❌ Skipping invalid rec ${index}:`, rec);
+        return null;
       }
-      if (filterTime > 0 && (rec.impact.timeToImplement || 0) > filterTime) {
-        console.log('[EnhancedAnalysisDashboard] ❌ Filtered out by time:', rec.id, rec.impact.timeToImplement, 'vs', filterTime);
-        return false;
-      }
-      if (filterImpact > 0 && (rec.impact.seoScore || 0) < filterImpact) {
-        console.log('[EnhancedAnalysisDashboard] ❌ Filtered out by impact:', rec.id, rec.impact.seoScore, 'vs', filterImpact);
-        return false;
-      }
-      if (searchTerm && rec.title && rec.description && 
-          !rec.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
-          !rec.description.toLowerCase().includes(searchTerm.toLowerCase())) {
-        console.log('[EnhancedAnalysisDashboard] ❌ Filtered out by search:', rec.id, searchTerm);
-        return false;
-      }
-      
-      console.log('[EnhancedAnalysisDashboard] ✅ Rec passed filters:', rec.id, rec.title);
-      return true;
-    });
+    }).filter(Boolean);
     
-    console.log('[EnhancedAnalysisDashboard] Filtered recommendations:', filtered.length);
+    console.log('✅ FINAL PROCESSED COUNT:', simpleProcessed.length);
+    console.log('✅ FINAL PROCESSED ITEMS:', simpleProcessed);
     
-    // Debug the sorting process
-    const withPriorities = filtered.map(rec => ({
-      rec,
-      priority: calculatePriority(rec)
-    }));
-    console.log('[EnhancedAnalysisDashboard] Recommendations with priorities:', withPriorities);
-    
-    const sorted = filtered.sort((a, b) => {
-      const priorityA = calculatePriority(a);
-      const priorityB = calculatePriority(b);
-      console.log(`[EnhancedAnalysisDashboard] Comparing ${a.id} (${priorityA}) vs ${b.id} (${priorityB})`);
-      return priorityB - priorityA;
-    });
-    
-    console.log('[EnhancedAnalysisDashboard] Sorted recommendations:', sorted.length, sorted.map(r => ({ id: r.id, title: r.title, priority: calculatePriority(r) })));
-    
-    return sorted;
-  }, [recommendations, filterCategory, filterTime, filterImpact, searchTerm]);
+    return simpleProcessed;
+  }, [recommendations]);
   
   // Get top recommendation and quick wins with safety checks
   const topRecommendation = sortedRecommendations?.[0];
@@ -600,7 +540,7 @@ export const EnhancedAnalysisDashboard: React.FC<EnhancedAnalysisDashboardProps>
           Showing {sortedRecommendations.length} of {recommendations.length} recommendations
         </span>
         <span>
-          {completedIds.size} completed • {quickWins.filter(qw => completedIds.has(qw.id)).length}/{quickWins.length} quick wins done
+          {completedIds.size} completed • {quickWins.filter(qw => qw?.id && completedIds.has(qw.id)).length}/{quickWins.length} quick wins done
         </span>
       </div>
       
