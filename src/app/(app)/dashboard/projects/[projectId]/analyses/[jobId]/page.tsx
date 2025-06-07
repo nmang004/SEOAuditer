@@ -95,9 +95,31 @@ export default function AnalysisResultsPage() {
         <div style={{ border: '2px solid red', padding: '10px', margin: '10px 0' }}>
           <p>Before AnalysisDebugger</p>
           <ErrorBoundary>
-            <AnalysisDebugger />
+            <div style={{ 
+              background: 'yellow', 
+              color: 'black', 
+              padding: '10px', 
+              border: '2px solid black',
+              minHeight: '100px'
+            }}>
+              <AnalysisDebugger />
+            </div>
           </ErrorBoundary>
           <p>After AnalysisDebugger</p>
+        </div>
+        
+        {/* Test with manual component content */}
+        <div style={{ 
+          background: 'orange', 
+          color: 'black', 
+          padding: '10px', 
+          border: '2px solid black',
+          margin: '10px 0'
+        }}>
+          <h3>Manual Test Component:</h3>
+          <p>Project ID: {typeof window !== 'undefined' ? window.location.pathname.split('/')[3] : 'unknown'}</p>
+          <p>Job ID: {typeof window !== 'undefined' ? window.location.pathname.split('/')[5] : 'unknown'}</p>
+          <p>This should always be visible if inline styles work</p>
         </div>
       </div>
 
