@@ -74,6 +74,7 @@ function CrawlTypeCard({
 }) {
   return (
     <Card
+      noAnimate={true}
       className={cn(
         "p-6 cursor-pointer transition-all duration-200 hover:shadow-lg",
         "border-2 min-h-[120px] opacity-100 visible relative",
@@ -93,7 +94,6 @@ function CrawlTypeCard({
           </div>
         </div>
         <div className="flex-1">
-          <div className="text-xs text-red-500 font-bold">CARD: {title}</div>
           <h4 className="font-semibold text-white mb-1">{title}</h4>
           <p className="text-sm text-gray-400 mb-3">{description}</p>
           {features && (
@@ -345,14 +345,12 @@ export function EnhancedAnalysisConfigurator({
   };
 
   return (
-    <div className="space-y-6 opacity-100 visible z-10 relative bg-gray-900 p-4 rounded-lg">
-      {/* Debug Text */}
-      <div className="text-red-500 font-bold text-xl mb-4">CONFIGURATOR LOADED</div>
+    <div className="space-y-6">
       
       {/* Crawl Type Selector */}
       <div>
         <h3 className="text-lg font-semibold text-white mb-4">Choose Analysis Type</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-red-500/20 p-4 rounded min-h-[150px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <CrawlTypeCard
             type="single"
             title="Single Page"
