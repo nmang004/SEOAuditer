@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -242,55 +243,111 @@ export function AnalysisDashboardRouter() {
     console.log('[AnalysisDashboardRouter] Window not available - SSR mode');
   }
 
-  // Test hooks after calling them
-  try {
-    console.log('[AnalysisDashboardRouter] Testing with basic hooks...');
-    console.log('[AnalysisDashboardRouter] ✅ Basic navigation hooks successful');
-    console.log('[AnalysisDashboardRouter] Params:', params);
-    console.log('[AnalysisDashboardRouter] SearchParams:', searchParams);
-    
-    const projectId = params?.projectId as string;
-    const jobId = params?.jobId as string;
-    console.log('[AnalysisDashboardRouter] ✅ Parameter extraction successful');
-    console.log('[AnalysisDashboardRouter] ProjectId:', projectId);
-    console.log('[AnalysisDashboardRouter] JobId:', jobId);
-    
+  // Step 4: Render actual dashboard components
+  console.log('[AnalysisDashboardRouter] ✅ STEP 4: Rendering dashboard components');
+  console.log('[AnalysisDashboardRouter] Analysis:', analysis);
+  console.log('[AnalysisDashboardRouter] Loading:', loading);
+  console.log('[AnalysisDashboardRouter] Error:', error);
+
+  // Show loading state
+  if (loading) {
+    console.log('[AnalysisDashboardRouter] Showing loading state');
     return (
-      <div style={{
-        padding: '20px',
-        background: '#1f2937',
-        color: 'white',
-        border: '2px solid #3b82f6',
-        borderRadius: '8px'
-      }}>
-        <div style={{
-          background: '#059669',
-          color: 'white',
-          padding: '10px',
-          borderRadius: '4px',
-          marginBottom: '10px'
-        }}>
-          ✅ HOOKS STEP 3: useEffect & useCallback added!
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading analysis...</p>
         </div>
-        <p>useParams: {params ? '✅ SUCCESS' : '❌ FAILED'}</p>
-        <p>useSearchParams: {searchParams ? '✅ SUCCESS' : '❌ FAILED'}</p>
-        <p>analysis state: {analysis ? `✅ HAS DATA (${analysis.crawlType})` : '⏳ NULL'}</p>
-        <p>loading state: {loading ? '⏳ TRUE' : '✅ FALSE'}</p>
-        <p>error state: {error ? `❌ ${error}` : '✅ NO ERROR'}</p>
-        <p>ProjectId: {projectId || 'MISSING'}</p>
-        <p>JobId: {jobId || 'MISSING'}</p>
-        <p>Next: Render actual dashboard components</p>
-        <SimpleAnalysisTest />
       </div>
     );
-  } catch (error) {
-    console.error('[AnalysisDashboardRouter] Error with hooks step 3:', error);
+  }
+
+  // Show error state
+  if (error) {
+    console.log('[AnalysisDashboardRouter] Showing error state:', error);
     return (
-      <div style={{ background: 'red', color: 'white', padding: '20px' }}>
-        HOOKS STEP 3 FAILED: {error instanceof Error ? error.message : String(error)}
-        <br />
-        Stack: {error instanceof Error ? error.stack : 'No stack trace'}
-      </div>
+      <Card className="p-6 bg-red-500/10 border-red-500/30">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-red-400 mb-2">Analysis Error</h3>
+          <p className="text-gray-300">{error}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 bg-red-600 hover:bg-red-700"
+          >
+            Retry Analysis
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
+  // Show no analysis state
+  if (!analysis) {
+    console.log('[AnalysisDashboardRouter] No analysis data available');
+    return (
+      <Card className="p-6 bg-gray-800/50 border-gray-700">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-gray-400 mb-2">No Analysis Data</h3>
+          <p className="text-gray-500">Unable to load analysis results.</p>
+        </div>
+      </Card>
+    );
+  }
+
+  // Configure dashboard based on analysis type
+  const dashboardConfig: DashboardConfig = {
+    showSiteMap: analysis.crawlType === 'domain',
+    showCrossPageInsights: analysis.crawlType !== 'single',
+    showBulkActions: analysis.crawlType !== 'single',
+    primaryMetrics: ['score', 'issues', 'recommendations'],
+    defaultView: 'overview',
+    tabs: ['overview', 'recommendations', 'technical', 'content', 'performance'],
+    features: analysis.crawlType === 'domain' 
+      ? ['site-explorer', 'architecture-analysis', 'critical-paths']
+      : analysis.crawlType === 'subfolder'
+      ? ['bulk-operations', 'cross-page-insights', 'pattern-analysis']
+      : ['detailed-recommendations', 'technical-audit', 'performance-metrics']
+  };
+
+  console.log('[AnalysisDashboardRouter] ✅ Rendering dashboard for type:', analysis.crawlType);
+  console.log('[AnalysisDashboardRouter] Dashboard config:', dashboardConfig);
+
+  // Render appropriate dashboard component
+  try {
+    switch (analysis.crawlType) {
+      case 'single':
+        console.log('[AnalysisDashboardRouter] Rendering SinglePageDashboard');
+        return <SinglePageDashboard analysis={analysis} config={dashboardConfig} />;
+      
+      case 'subfolder':
+        console.log('[AnalysisDashboardRouter] Rendering SubfolderDashboard');
+        return <SubfolderDashboard analysis={analysis} config={dashboardConfig} />;
+      
+      case 'domain':
+        console.log('[AnalysisDashboardRouter] Rendering FullDomainDashboard');
+        return <FullDomainDashboard analysis={analysis} config={dashboardConfig} />;
+      
+      default:
+        console.log('[AnalysisDashboardRouter] Unknown crawl type, defaulting to SinglePageDashboard');
+        return <SinglePageDashboard analysis={analysis} config={dashboardConfig} />;
+    }
+  } catch (renderError) {
+    console.error('[AnalysisDashboardRouter] Error rendering dashboard component:', renderError);
+    return (
+      <Card className="p-6 bg-red-500/10 border-red-500/30">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-red-400 mb-2">Dashboard Render Error</h3>
+          <p className="text-gray-300">
+            Failed to render {analysis.crawlType} dashboard: {renderError instanceof Error ? renderError.message : String(renderError)}
+          </p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 bg-red-600 hover:bg-red-700"
+          >
+            Refresh Page
+          </Button>
+        </div>
+      </Card>
     );
   }
 }
