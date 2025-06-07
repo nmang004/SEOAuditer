@@ -231,6 +231,40 @@ function getDashboardConfig(crawlType: string): DashboardConfig {
   return configs[crawlType] || configs.single;
 }
 
+// Error Boundary Component
+function ErrorBoundary({ children }: { children: React.ReactNode }) {
+  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const handleError = (error: ErrorEvent) => {
+      console.error('[ErrorBoundary] Caught error:', error);
+      setHasError(true);
+      setError(new Error(error.message));
+    };
+
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
+  if (hasError) {
+    return (
+      <div className="p-6 bg-red-500/20 border border-red-500 rounded text-red-300">
+        <h2 className="text-lg font-semibold mb-2">Something went wrong</h2>
+        <p className="text-sm">{error?.message || 'Unknown error occurred'}</p>
+        <button 
+          onClick={() => setHasError(false)}
+          className="mt-2 px-3 py-1 bg-red-600 text-white rounded text-sm"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
+
 // Main Dashboard Router Component
 export function AnalysisDashboardRouter() {
   const params = useParams();
@@ -244,6 +278,7 @@ export function AnalysisDashboardRouter() {
   const viewMode = searchParams?.get('view');
   
   // Debug params
+  console.log('[AnalysisDashboardRouter] Component mounted');
   console.log('[AnalysisDashboardRouter] All params:', params);
   console.log('[AnalysisDashboardRouter] ProjectId:', projectId);
   console.log('[AnalysisDashboardRouter] JobId:', jobId);
@@ -262,13 +297,26 @@ export function AnalysisDashboardRouter() {
       // Try to get from localStorage first (for admin bypass)
       const adminJobsString = localStorage.getItem('adminAnalysisJobs') || '[]';
       console.log('[AnalysisDashboardRouter] localStorage adminAnalysisJobs:', adminJobsString);
+      console.log('[AnalysisDashboardRouter] localStorage length:', adminJobsString.length);
       
-      const adminJobs = JSON.parse(adminJobsString);
-      console.log('[AnalysisDashboardRouter] Parsed admin jobs:', adminJobs);
+      let adminJobs = [];
+      try {
+        adminJobs = JSON.parse(adminJobsString);
+        console.log('[AnalysisDashboardRouter] Parsed admin jobs successfully:', adminJobs);
+        console.log('[AnalysisDashboardRouter] Number of admin jobs:', adminJobs.length);
+      } catch (parseError) {
+        console.error('[AnalysisDashboardRouter] Failed to parse localStorage data:', parseError);
+        adminJobs = [];
+      }
       
-      const adminJob = adminJobs.find((job: any) => 
-        job.sessionId === jobId || job.jobId === jobId
-      );
+      console.log('[AnalysisDashboardRouter] Looking for jobId:', jobId);
+      console.log('[AnalysisDashboardRouter] Job IDs in storage:', adminJobs.map((job: any) => ({ sessionId: job.sessionId, jobId: job.jobId })));
+      
+      const adminJob = adminJobs.find((job: any) => {
+        const matches = job.sessionId === jobId || job.jobId === jobId;
+        console.log('[AnalysisDashboardRouter] Checking job:', { sessionId: job.sessionId, jobId: job.jobId, matches });
+        return matches;
+      });
       console.log('[AnalysisDashboardRouter] Found admin job:', adminJob);
 
       if (adminJob) {
@@ -428,6 +476,18 @@ export function AnalysisDashboardRouter() {
 
   console.log('[AnalysisDashboardRouter] Render state - loading:', loading, 'error:', error, 'analysis:', !!analysis);
   
+  // Check for missing params after all hooks
+  if (!projectId || !jobId) {
+    console.error('[AnalysisDashboardRouter] Missing required params - projectId:', projectId, 'jobId:', jobId);
+    return (
+      <div className="p-6 bg-yellow-500/20 border border-yellow-500 rounded text-yellow-300">
+        <h2 className="text-lg font-semibold mb-2">Missing Parameters</h2>
+        <p className="text-sm">ProjectId: {projectId || 'MISSING'}</p>
+        <p className="text-sm">JobId: {jobId || 'MISSING'}</p>
+      </div>
+    );
+  }
+  
   if (loading) {
     return (
       <div className="space-y-4">
@@ -472,31 +532,37 @@ export function AnalysisDashboardRouter() {
   console.log('[AnalysisDashboardRouter] Analysis data:', analysis);
   console.log('[AnalysisDashboardRouter] Config:', config);
   
-  switch (effectiveCrawlType) {
-    case 'subfolder':
-      console.log('[AnalysisDashboardRouter] Rendering SubfolderDashboard with analysis:', analysis);
-      return (
-        <SubfolderDashboard 
-          analysis={analysis} 
-          config={config}
-        />
-      );
-    case 'domain':
-      console.log('[AnalysisDashboardRouter] Rendering FullDomainDashboard');
-      return (
-        <FullDomainDashboard 
-          analysis={analysis} 
-          config={config}
-        />
-      );
-    case 'single':
-    default:
-      console.log('[AnalysisDashboardRouter] Rendering SinglePageDashboard');
-      return (
-        <SinglePageDashboard 
-          analysis={analysis} 
-          config={config}
-        />
-      );
-  }
+  return (
+    <ErrorBoundary>
+      {(() => {
+        switch (effectiveCrawlType) {
+          case 'subfolder':
+            console.log('[AnalysisDashboardRouter] Rendering SubfolderDashboard with analysis:', analysis);
+            return (
+              <SubfolderDashboard 
+                analysis={analysis} 
+                config={config}
+              />
+            );
+          case 'domain':
+            console.log('[AnalysisDashboardRouter] Rendering FullDomainDashboard');
+            return (
+              <FullDomainDashboard 
+                analysis={analysis} 
+                config={config}
+              />
+            );
+          case 'single':
+          default:
+            console.log('[AnalysisDashboardRouter] Rendering SinglePageDashboard');
+            return (
+              <SinglePageDashboard 
+                analysis={analysis} 
+                config={config}
+              />
+            );
+        }
+      })()}
+    </ErrorBoundary>
+  );
 }
