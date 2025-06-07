@@ -98,7 +98,7 @@ danger: "bg-red-500/10 text-red-400"
 ## Commit Guidelines
 - Use clear, descriptive commit messages
 - Follow conventional commit format when possible
-- Never include automated signatures
+- Never include automated signatures in commit messages, never include "Committed with Claude" or "Created with Claude", things along that line
 - Example: `feat: implement real-time SEO analysis progress tracking`
 
 ## Environment Variables
