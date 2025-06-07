@@ -128,11 +128,23 @@ export function AnalysisDashboardRouter() {
     console.log('[AnalysisDashboardRouter] Window not available - SSR mode');
   }
 
-  // First try to render a simple test to see if hooks are the problem
+  // Test adding hooks back gradually
   try {
-    console.log('[AnalysisDashboardRouter] Testing simple render first...');
+    console.log('[AnalysisDashboardRouter] Testing with basic hooks...');
     
-    // Test if we can render without hooks
+    // STEP 1: Add basic hooks back
+    const params = useParams();
+    const searchParams = useSearchParams();
+    console.log('[AnalysisDashboardRouter] ✅ Basic navigation hooks successful');
+    console.log('[AnalysisDashboardRouter] Params:', params);
+    console.log('[AnalysisDashboardRouter] SearchParams:', searchParams);
+    
+    const projectId = params?.projectId as string;
+    const jobId = params?.jobId as string;
+    console.log('[AnalysisDashboardRouter] ✅ Parameter extraction successful');
+    console.log('[AnalysisDashboardRouter] ProjectId:', projectId);
+    console.log('[AnalysisDashboardRouter] JobId:', jobId);
+    
     return (
       <div style={{
         padding: '20px',
@@ -142,24 +154,29 @@ export function AnalysisDashboardRouter() {
         borderRadius: '8px'
       }}>
         <div style={{
-          background: '#dc2626',
+          background: '#059669',
           color: 'white',
           padding: '10px',
           borderRadius: '4px',
           marginBottom: '10px'
         }}>
-          🔥 EMERGENCY SIMPLIFIED COMPONENT - HOOKS DISABLED
+          ✅ HOOKS STEP 1: Basic navigation hooks working!
         </div>
-        <p>If you see this, the component imports are working</p>
-        <p>Next step: Add hooks back gradually</p>
+        <p>useParams: {params ? '✅ SUCCESS' : '❌ FAILED'}</p>
+        <p>useSearchParams: {searchParams ? '✅ SUCCESS' : '❌ FAILED'}</p>
+        <p>ProjectId: {projectId || 'MISSING'}</p>
+        <p>JobId: {jobId || 'MISSING'}</p>
+        <p>Next: Add useState hooks</p>
         <SimpleAnalysisTest />
       </div>
     );
   } catch (error) {
-    console.error('[AnalysisDashboardRouter] Error in simple render:', error);
+    console.error('[AnalysisDashboardRouter] Error with hooks step 1:', error);
     return (
       <div style={{ background: 'red', color: 'white', padding: '20px' }}>
-        Component failed: {error instanceof Error ? error.message : String(error)}
+        HOOKS STEP 1 FAILED: {error instanceof Error ? error.message : String(error)}
+        <br />
+        Stack: {error instanceof Error ? error.stack : 'No stack trace'}
       </div>
     );
   }
