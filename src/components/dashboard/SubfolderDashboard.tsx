@@ -442,14 +442,30 @@ export function SubfolderDashboard({ analysis, config }: SubfolderDashboardProps
   }
   
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" style={{ 
+      opacity: 1, 
+      visibility: 'visible', 
+      display: 'block',
+      position: 'relative',
+      zIndex: 1,
+      minHeight: '100vh',
+      width: '100%'
+    }}>
       {/* Debug indicator */}
-      <div className="bg-green-500/20 border border-green-500 rounded p-2 text-green-300 text-sm">
+      <div className="bg-green-500/20 border border-green-500 rounded p-2 text-green-300 text-sm" style={{ 
+        opacity: 1, 
+        visibility: 'visible', 
+        display: 'block' 
+      }}>
         DEBUG: SubfolderDashboard is rendering with {pages.length} pages (filteredPages: {filteredPages.length})
       </div>
       
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" style={{ 
+        opacity: 1, 
+        visibility: 'visible', 
+        display: 'flex' 
+      }}>
         <div>
           <div className="flex items-center gap-3 mb-2">
             <Folder className="h-6 w-6 text-indigo-400" />
@@ -467,7 +483,11 @@ export function SubfolderDashboard({ analysis, config }: SubfolderDashboardProps
       </div>
 
       {/* Subfolder Overview Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6" style={{ 
+        opacity: 1, 
+        visibility: 'visible', 
+        display: 'grid' 
+      }}>
         <BigMetric
           label="Average Score"
           value={avgScore}
