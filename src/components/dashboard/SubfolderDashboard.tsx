@@ -361,384 +361,95 @@ export function SubfolderDashboard({ analysis, config }: SubfolderDashboardProps
   console.log('[SubfolderDashboard] Component mounted with analysis:', analysis);
   console.log('[SubfolderDashboard] Config:', config);
   
-  const [selectedPages, setSelectedPages] = useState<string[]>([]);
-  const [compareMode, setCompareMode] = useState(false);
-  const [viewMode, setViewMode] = useState<'cards' | 'table' | 'tree'>('cards');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterBy, setFilterBy] = useState<'all' | 'good' | 'warning' | 'error'>('all');
-
-  // Generate mock data
-  const pages = useMemo(() => {
-    console.log('[SubfolderDashboard] Generating mock pages for analysis:', analysis);
-    const mockPages = generateMockPages(analysis);
-    console.log('[SubfolderDashboard] Generated pages:', mockPages);
-    return mockPages;
-  }, [analysis]);
-  
-  const avgScore = Math.round(pages.reduce((sum, page) => sum + page.score, 0) / pages.length);
-  const totalIssues = pages.reduce((sum, page) => sum + page.issues, 0);
-  
-  console.log('[SubfolderDashboard] Calculated metrics - avgScore:', avgScore, 'totalIssues:', totalIssues, 'pages:', pages.length);
-
-  // Filter pages based on search and filter
-  const filteredPages = useMemo(() => {
-    return pages.filter(page => {
-      const matchesSearch = page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           page.url.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesFilter = filterBy === 'all' || page.status === filterBy;
-      return matchesSearch && matchesFilter;
-    });
-  }, [pages, searchQuery, filterBy]);
-
-  const handlePageSelect = (pageId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedPages([...selectedPages, pageId]);
-    } else {
-      setSelectedPages(selectedPages.filter(id => id !== pageId));
-    }
-  };
-
-  const handleSelectAll = () => {
-    if (selectedPages.length === filteredPages.length) {
-      setSelectedPages([]);
-    } else {
-      setSelectedPages(filteredPages.map(page => page.id));
-    }
-  };
-
-  const bulkRecommendations = [
-    {
-      title: 'Optimize Images Across Section',
-      affectedPages: 6,
-      impact: 'high' as const,
-      timeToFix: '2 hours',
-      description: 'Multiple pages have unoptimized images that slow down loading times'
-    },
-    {
-      title: 'Add Missing Meta Descriptions',
-      affectedPages: 4,
-      impact: 'medium' as const,
-      timeToFix: '30 minutes',
-      description: 'Several pages are missing meta descriptions affecting search visibility'
-    },
-    {
-      title: 'Fix Heading Structure',
-      affectedPages: 3,
-      impact: 'medium' as const,
-      timeToFix: '45 minutes',
-      description: 'Some pages have improper heading hierarchy (H1, H2, H3)'
-    }
-  ];
-
-  console.log('[SubfolderDashboard] About to render component with filteredPages:', filteredPages.length);
-  
   if (!analysis) {
-    console.log('[SubfolderDashboard] No analysis data, rendering error state');
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-red-400">No analysis data available</p>
+      <div style={{
+        backgroundColor: '#dc2626',
+        color: 'white',
+        padding: '20px',
+        fontSize: '18px',
+        border: '3px solid yellow'
+      }}>
+        ❌ No analysis data available
       </div>
     );
   }
   
   return (
-    <div className="space-y-8 analysis-dashboard-content" style={{ 
-      opacity: 1, 
-      visibility: 'visible', 
-      display: 'block',
-      position: 'relative',
-      zIndex: 1,
-      minHeight: '100vh',
-      width: '100%'
+    <div style={{
+      backgroundColor: '#0f172a',
+      color: 'white',
+      padding: '20px',
+      minHeight: '50vh'
     }}>
-      {/* Debug indicator */}
-      <div className="bg-green-500/20 border border-green-500 rounded p-2 text-green-300 text-sm" style={{ 
-        opacity: 1, 
-        visibility: 'visible', 
-        display: 'block' 
+      {/* Ultra-simple test content */}
+      <div style={{
+        backgroundColor: '#16a34a',
+        color: 'white',
+        padding: '20px',
+        margin: '10px 0',
+        fontSize: '20px',
+        border: '3px solid #22c55e'
       }}>
-        DEBUG: SubfolderDashboard is rendering with {pages.length} pages (filteredPages: {filteredPages.length})
+        ✅ SubfolderDashboard is rendering! Analysis URL: {analysis.url}
       </div>
-      
-      {/* Header */}
-      <div className="flex items-center justify-between" style={{ 
-        opacity: 1, 
-        visibility: 'visible', 
-        display: 'flex' 
+
+      {/* Simple metrics */}
+      <div style={{
+        backgroundColor: '#2563eb',
+        color: 'white',
+        padding: '20px',
+        margin: '10px 0',
+        fontSize: '16px',
+        border: '2px solid #3b82f6'
       }}>
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <Folder className="h-6 w-6 text-indigo-400" />
-            <h1 className="text-2xl font-bold text-white">Subfolder Analysis</h1>
-            <Badge variant="outline" className="border-indigo-500 text-indigo-400">
-              {analysis.crawlType}
-            </Badge>
-          </div>
-          <p className="text-gray-400">{analysis.url}</p>
-          <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
-            <Calendar className="h-4 w-4" />
-            <span>Analyzed {new Date(analysis.createdAt).toLocaleDateString()}</span>
-          </div>
-        </div>
+        <h2 style={{ margin: '0 0 10px 0' }}>📊 Analysis Overview</h2>
+        <p>Crawl Type: {analysis.crawlType}</p>
+        <p>Status: {analysis.status}</p>
+        <p>Pages Analyzed: {analysis.metadata?.pagesAnalyzed || 0}</p>
+        <p>Created: {new Date(analysis.createdAt).toLocaleDateString()}</p>
       </div>
 
-      {/* Subfolder Overview Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6" style={{ 
-        opacity: 1, 
-        visibility: 'visible', 
-        display: 'grid' 
+      {/* Mock page data */}
+      <div style={{
+        backgroundColor: '#7c3aed',
+        color: 'white',
+        padding: '20px',
+        margin: '10px 0',
+        fontSize: '16px',
+        border: '2px solid #8b5cf6'
       }}>
-        <BigMetric
-          label="Average Score"
-          value={avgScore}
-          change={5.2}
-          subvalue="vs last analysis"
-        />
-        <BigMetric
-          label="Pages Analyzed"
-          value={pages.length}
-          subvalue={`of ${pages.length + 5} discovered`}
-        />
-        <BigMetric
-          label="Total Issues"
-          value={totalIssues}
-          subvalue="across all pages"
-        />
-        <BigMetric
-          label="Coverage"
-          value="87%"
-          visual={<CoverageDonut value={87} />}
-        />
-      </div>
-
-      {/* Section-Wide Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <InsightPanel
-          title="Content Patterns"
-          icon={<FileText className="h-5 w-5 text-indigo-400" />}
-          insights={[
-            {
-              type: 'warning',
-              text: '3 pages have less than 300 words',
-              action: 'View Pages'
-            },
-            {
-              type: 'success',
-              text: 'All pages have unique meta descriptions'
-            }
-          ]}
-        />
-        
-        <InsightPanel
-          title="Technical Consistency"
-          icon={<Layers className="h-5 w-5 text-indigo-400" />}
-          insights={[
-            {
-              type: 'warning',
-              text: '2 pages missing structured data',
-              action: 'Fix Now'
-            },
-            {
-              type: 'success',
-              text: 'Consistent URL structure across section'
-            }
-          ]}
-        />
-        
-        <InsightPanel
-          title="Performance Trends"
-          icon={<BarChart3 className="h-5 w-5 text-indigo-400" />}
-          insights={[
-            {
-              type: 'success',
-              text: 'Average load time: 1.8s',
-              action: 'View Details'
-            },
-            {
-              type: 'warning',
-              text: '2 pages exceed 3s load time'
-            }
-          ]}
-        />
-      </div>
-
-      {/* Page Analysis Section */}
-      <div className="space-y-6">
-        {/* Controls */}
-        <Card className="p-4 bg-gray-800/50 border-gray-700">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* View Mode Toggle */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">View:</span>
-              <div className="flex rounded-lg bg-gray-700 p-1">
-                <Button
-                  size="sm"
-                  variant={viewMode === 'cards' ? 'default' : 'ghost'}
-                  onClick={() => setViewMode('cards')}
-                  className="h-7"
-                >
-                  <Grid3X3 className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant={viewMode === 'table' ? 'default' : 'ghost'}
-                  onClick={() => setViewMode('table')}
-                  className="h-7"
-                >
-                  <Table className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant={viewMode === 'tree' ? 'default' : 'ghost'}
-                  onClick={() => setViewMode('tree')}
-                  className="h-7"
-                >
-                  <TreePine className="h-4 w-4" />
-                </Button>
-              </div>
+        <h3 style={{ margin: '0 0 10px 0' }}>📄 Sample Pages</h3>
+        <div style={{ display: 'grid', gap: '10px' }}>
+          {[1, 2, 3].map(i => (
+            <div key={i} style={{
+              backgroundColor: '#374151',
+              padding: '10px',
+              border: '1px solid #6b7280',
+              borderRadius: '4px'
+            }}>
+              <strong>Page {i}</strong> - Score: {80 + i * 5} - Issues: {i}
             </div>
-
-            {/* Search */}
-            <div className="flex-1 max-w-md">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search pages..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-gray-900/50 border-gray-700"
-                />
-              </div>
-            </div>
-
-            {/* Filter */}
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-gray-400" />
-              <select
-                value={filterBy}
-                onChange={(e) => setFilterBy(e.target.value as any)}
-                className="bg-gray-900 border border-gray-700 rounded px-3 py-1 text-sm text-white"
-              >
-                <option value="all">All Pages</option>
-                <option value="good">Good</option>
-                <option value="warning">Warning</option>
-                <option value="error">Error</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Bulk Actions */}
-          {selectedPages.length > 0 && (
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-700">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={selectedPages.length === filteredPages.length}
-                  onCheckedChange={handleSelectAll}
-                />
-                <span className="text-sm text-gray-400">
-                  {selectedPages.length} of {filteredPages.length} selected
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline" onClick={() => setCompareMode(true)}>
-                  <Compare className="h-4 w-4 mr-1" />
-                  Compare Selected
-                </Button>
-                <Button size="sm" variant="outline">
-                  <Download className="h-4 w-4 mr-1" />
-                  Export Selected
-                </Button>
-                <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">
-                  Bulk Actions
-                </Button>
-              </div>
-            </div>
-          )}
-        </Card>
-
-        {/* Page Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredPages.map((page) => (
-            <PageCard
-              key={page.id}
-              page={page}
-              selected={selectedPages.includes(page.id)}
-              onSelect={(checked) => handlePageSelect(page.id, checked)}
-              showComparison={avgScore}
-            />
           ))}
         </div>
       </div>
 
-      {/* Bulk Recommendations */}
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-xl font-semibold text-white mb-2">Section-Wide Improvements</h2>
-          <p className="text-gray-400">Issues that affect multiple pages in this section</p>
-        </div>
-        
-        <div className="space-y-4">
-          {bulkRecommendations.map((rec, index) => (
-            <BulkRecommendationCard
-              key={index}
-              title={rec.title}
-              affectedPages={rec.affectedPages}
-              impact={rec.impact}
-              timeToFix={rec.timeToFix}
-              description={rec.description}
-              onViewDetails={() => console.log('View details for:', rec.title)}
-              onFixAll={() => console.log('Fix all for:', rec.title)}
-            />
-          ))}
-        </div>
+      {/* Recommendations */}
+      <div style={{
+        backgroundColor: '#ea580c',
+        color: 'white',
+        padding: '20px',
+        margin: '10px 0',
+        fontSize: '16px',
+        border: '2px solid #f97316'
+      }}>
+        <h3 style={{ margin: '0 0 10px 0' }}>💡 Top Recommendations</h3>
+        <ul style={{ margin: 0, paddingLeft: '20px' }}>
+          <li>Optimize images across section (6 pages affected)</li>
+          <li>Add missing meta descriptions (4 pages affected)</li>
+          <li>Fix heading structure (3 pages affected)</li>
+        </ul>
       </div>
-
-      {/* Comparison Modal */}
-      {compareMode && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-4xl mx-4 p-6 bg-gray-800 border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Compare Selected Pages</h3>
-              <Button variant="ghost" onClick={() => setCompareMode(false)}>
-                ×
-              </Button>
-            </div>
-            
-            <div className="space-y-4">
-              <p className="text-gray-400">
-                Comparing {selectedPages.length} selected pages...
-              </p>
-              
-              {/* Comparison content would go here */}
-              <div className="grid grid-cols-3 gap-4 text-sm">
-                <div className="font-medium text-gray-400">Page</div>
-                <div className="font-medium text-gray-400">Score</div>
-                <div className="font-medium text-gray-400">Issues</div>
-                
-                {selectedPages.slice(0, 3).map(pageId => {
-                  const page = pages.find(p => p.id === pageId);
-                  if (!page) return null;
-                  
-                  return (
-                    <React.Fragment key={pageId}>
-                      <div className="text-white truncate">{page.title}</div>
-                      <div className="text-white">{page.score}</div>
-                      <div className="text-white">{page.issues}</div>
-                    </React.Fragment>
-                  );
-                })}
-              </div>
-            </div>
-            
-            <div className="flex justify-end mt-6">
-              <Button onClick={() => setCompareMode(false)}>
-                Close Comparison
-              </Button>
-            </div>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }
