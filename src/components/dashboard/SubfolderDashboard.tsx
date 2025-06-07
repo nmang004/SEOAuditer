@@ -100,28 +100,19 @@ function BigMetric({
   visual?: React.ReactNode;
 }) {
   return (
-    <Card 
-      className="p-6 bg-gray-800/50 border-gray-700"
-      style={{ 
-        opacity: 1, 
-        visibility: 'visible', 
-        display: 'block',
-        backgroundColor: '#374151',
-        border: '1px solid #6b7280'
-      }}
-    >
-      <div className="flex items-start justify-between" style={{ opacity: 1, visibility: 'visible', display: 'flex' }}>
-        <div className="flex-1" style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
-          <p className="text-sm text-gray-400 mb-1" style={{ color: '#9ca3af' }}>{label}</p>
-          <div className="text-3xl font-bold text-white mb-1" style={{ color: 'white', fontSize: '1.875rem', fontWeight: 'bold' }}>{value}</div>
+    <Card className="p-6 bg-gray-800/50 border-gray-700">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <p className="text-sm text-gray-400 mb-1">{label}</p>
+          <div className="text-3xl font-bold text-white mb-1">{value}</div>
           {subvalue && (
-            <p className="text-sm text-gray-500" style={{ color: '#6b7280' }}>{subvalue}</p>
+            <p className="text-sm text-gray-500">{subvalue}</p>
           )}
           {change !== undefined && (
             <div className={cn(
               "flex items-center gap-1 text-sm mt-2",
               change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-gray-400"
-            )} style={{ opacity: 1, visibility: 'visible', display: 'flex' }}>
+            )}>
               {change > 0 ? <TrendingUp className="h-4 w-4" /> : 
                change < 0 ? <TrendingDown className="h-4 w-4" /> : null}
               <span>{change > 0 ? '+' : ''}{change}%</span>
@@ -129,7 +120,7 @@ function BigMetric({
           )}
         </div>
         {visual && (
-          <div className="ml-4" style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
+          <div className="ml-4">
             {visual}
           </div>
         )}
@@ -451,17 +442,14 @@ export function SubfolderDashboard({ analysis, config }: SubfolderDashboardProps
   }
   
   return (
-    <div className="space-y-8" style={{ 
+    <div className="subfolder-dashboard-container space-y-8" style={{ 
       opacity: 1, 
       visibility: 'visible', 
       display: 'block',
       position: 'relative',
       zIndex: 1,
       minHeight: '100vh',
-      width: '100%',
-      backgroundColor: '#1f2937',
-      padding: '20px',
-      border: '2px solid #10b981'
+      width: '100%'
     }}>
       {/* Success indicator */}
       <div style={{
@@ -504,35 +492,27 @@ export function SubfolderDashboard({ analysis, config }: SubfolderDashboardProps
         visibility: 'visible', 
         display: 'grid' 
       }}>
-        <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
-          <BigMetric
-            label="Average Score"
-            value={avgScore}
-            change={5.2}
-            subvalue="vs last analysis"
-          />
-        </div>
-        <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
-          <BigMetric
-            label="Pages Analyzed"
-            value={pages.length}
-            subvalue={`of ${pages.length + 5} discovered`}
-          />
-        </div>
-        <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
-          <BigMetric
-            label="Total Issues"
-            value={totalIssues}
-            subvalue="across all pages"
-          />
-        </div>
-        <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
-          <BigMetric
-            label="Coverage"
-            value="87%"
-            visual={<CoverageDonut value={87} />}
-          />
-        </div>
+        <BigMetric
+          label="Average Score"
+          value={avgScore}
+          change={5.2}
+          subvalue="vs last analysis"
+        />
+        <BigMetric
+          label="Pages Analyzed"
+          value={pages.length}
+          subvalue={`of ${pages.length + 5} discovered`}
+        />
+        <BigMetric
+          label="Total Issues"
+          value={totalIssues}
+          subvalue="across all pages"
+        />
+        <BigMetric
+          label="Coverage"
+          value="87%"
+          visual={<CoverageDonut value={87} />}
+        />
       </div>
 
       {/* Section-Wide Insights */}

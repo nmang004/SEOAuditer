@@ -179,38 +179,22 @@
     visibility: visible !important;
   }
 
-  /* Aggressive overrides for all dashboard elements */
-  .space-y-8 > * {
+  /* Targeted fixes for subfolder dashboard */
+  .subfolder-dashboard-container {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
   }
 
-  /* Force grid layouts to be visible */
-  [class*="grid"] {
+  .subfolder-dashboard-container .space-y-8 > * {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .subfolder-dashboard-container [class*="grid"] {
     display: grid !important;
     opacity: 1 !important;
     visibility: visible !important;
-  }
-
-  /* Force flex layouts to be visible */
-  [class*="flex"] {
-    display: flex !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-
-  /* Force all cards to be visible */
-  [class*="bg-gray-800"] {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-
-  /* Override any transform or positioning issues */
-  .space-y-8 {
-    transform: none !important;
-    position: relative !important;
-    z-index: 1 !important;
   }
 }
