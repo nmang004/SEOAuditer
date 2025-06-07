@@ -66,12 +66,28 @@ export default function NewAnalysisPage() {
       if (data.success && (data.jobId || data.sessionId)) {
         const analysisId = data.jobId || data.sessionId;
         
-        // For admin bypass, store the analysis request in localStorage
-        if (data.source === 'admin-bypass' && data.analysisRequest) {
-          console.log('[New Analysis] Storing analysis request for admin bypass');
+        // Store analysis data in localStorage for all sources (admin-bypass, fallback, error-fallback)
+        if (data.analysisData) {
+          console.log('[New Analysis] Storing analysis data in localStorage:', data.analysisData);
           const existingJobs = JSON.parse(localStorage.getItem('adminAnalysisJobs') || '[]');
-          existingJobs.push(data.analysisRequest);
+          existingJobs.push(data.analysisData);
           localStorage.setItem('adminAnalysisJobs', JSON.stringify(existingJobs));
+          
+          // Also store the project data if not exists
+          const existingProjects = JSON.parse(localStorage.getItem('adminProjects') || '[]');
+          const projectExists = existingProjects.find((p: any) => p.id === projectId);
+          if (!projectExists) {
+            const projectData = {
+              id: projectId,
+              name: `Project ${projectId.slice(-8)}`,
+              url: data.analysisData.url,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+            existingProjects.push(projectData);
+            localStorage.setItem('adminProjects', JSON.stringify(existingProjects));
+            console.log('[New Analysis] Stored project data:', projectData);
+          }
         }
         
         // Navigate to the results page

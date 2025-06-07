@@ -79,7 +79,19 @@ export async function POST(request: NextRequest) {
         estimatedDuration: estimate.duration,
         estimatedCredits: estimate.credits,
         source: 'admin-bypass',
-        analysisRequest: analysisRequest
+        // Return the complete analysis data for localStorage storage
+        analysisData: {
+          sessionId: realSessionId,
+          jobId: realSessionId,
+          projectId: body.projectId,
+          url: body.config.startUrl,
+          config: body.config,
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+          source: 'admin-bypass',
+          estimatedPages: estimate.pages,
+          estimatedDuration: estimate.duration
+        }
       });
     }
 
@@ -114,7 +126,20 @@ export async function POST(request: NextRequest) {
         estimatedPages: estimate.pages,
         estimatedDuration: estimate.duration,
         estimatedCredits: estimate.credits,
-        source: 'fallback'
+        source: 'fallback',
+        // Return the complete analysis data for localStorage storage
+        analysisData: {
+          sessionId: fallbackSessionId,
+          jobId: fallbackSessionId,
+          projectId: projectId,
+          url: config.startUrl,
+          config: config,
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+          source: 'fallback',
+          estimatedPages: estimate.pages,
+          estimatedDuration: estimate.duration
+        }
       });
     }
 
@@ -145,7 +170,24 @@ export async function POST(request: NextRequest) {
       estimatedPages: defaultEstimate.pages,
       estimatedDuration: defaultEstimate.duration,
       estimatedCredits: defaultEstimate.credits,
-      source: 'error-fallback'
+      source: 'error-fallback',
+      // Return the complete analysis data for localStorage storage
+      analysisData: {
+        sessionId: errorFallbackSessionId,
+        jobId: errorFallbackSessionId,
+        projectId: 'default-project',
+        url: 'https://example.com',
+        config: {
+          crawlType: 'subfolder',
+          depth: 3,
+          maxPages: 50
+        },
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        source: 'error-fallback',
+        estimatedPages: defaultEstimate.pages,
+        estimatedDuration: defaultEstimate.duration
+      }
     });
   }
 }
