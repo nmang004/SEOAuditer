@@ -99,28 +99,9 @@ export interface DashboardConfig {
   features: string[];
 }
 
-// Simple test component to verify basic rendering
-export function SimpleAnalysisTest() {
-  return (
-    <div style={{
-      background: '#10b981',
-      color: 'white',
-      padding: '20px',
-      border: '3px solid #22c55e',
-      borderRadius: '8px',
-      margin: '20px 0',
-      textAlign: 'center'
-    }}>
-      <h2>✅ SIMPLE COMPONENT WORKING</h2>
-      <p>This proves React components can render</p>
-      <p>Timestamp: {new Date().toISOString()}</p>
-    </div>
-  );
-}
 
 // Main Dashboard Router Component
 export function AnalysisDashboardRouter() {
-  console.log('[AnalysisDashboardRouter] Component called - STARTING RENDER');
   
   // STEP 1, 2, 3: Call all hooks unconditionally first (Rules of Hooks)
   const params = useParams();
@@ -135,34 +116,27 @@ export function AnalysisDashboardRouter() {
   
   // Add the data loading logic back
   const loadAnalysis = useCallback(async () => {
-    console.log('[AnalysisDashboardRouter] ✅ useCallback loadAnalysis created');
     if (!jobId) {
-      console.log('[AnalysisDashboardRouter] No jobId provided');
       return;
     }
     
     try {
       setLoading(true);
       setError(null);
-      console.log('[AnalysisDashboardRouter] Loading analysis for jobId:', jobId);
 
       // Try to get from localStorage first (for admin bypass)
       const adminJobsString = localStorage.getItem('adminAnalysisJobs') || '[]';
-      console.log('[AnalysisDashboardRouter] localStorage data length:', adminJobsString.length);
       
       let adminJobs = [];
       try {
         adminJobs = JSON.parse(adminJobsString);
-        console.log('[AnalysisDashboardRouter] Parsed admin jobs:', adminJobs.length);
       } catch (parseError) {
-        console.error('[AnalysisDashboardRouter] Failed to parse localStorage:', parseError);
         adminJobs = [];
       }
       
       const adminJob = adminJobs.find((job: any) => {
         return job.sessionId === jobId || job.jobId === jobId;
       });
-      console.log('[AnalysisDashboardRouter] Found admin job:', !!adminJob);
 
       if (adminJob) {
         // Create mock analysis from admin job
@@ -190,7 +164,6 @@ export function AnalysisDashboardRouter() {
           }
         };
         
-        console.log('[AnalysisDashboardRouter] ✅ Created mock analysis');
         setAnalysis(mockAnalysis);
         setLoading(false);
         return;
@@ -198,7 +171,6 @@ export function AnalysisDashboardRouter() {
 
       // Fallback for admin-multi jobs
       if (jobId.startsWith('admin-multi-')) {
-        console.log('[AnalysisDashboardRouter] Creating fallback mock data');
         const mockAnalysis: Analysis = {
           id: jobId,
           crawlType: 'subfolder',
@@ -224,7 +196,6 @@ export function AnalysisDashboardRouter() {
       }
 
     } catch (err) {
-      console.error('[AnalysisDashboardRouter] Error loading analysis:', err);
       setError('Failed to load analysis');
     } finally {
       setLoading(false);
@@ -232,26 +203,13 @@ export function AnalysisDashboardRouter() {
   }, [jobId, projectId]);
 
   useEffect(() => {
-    console.log('[AnalysisDashboardRouter] ✅ useEffect triggered');
     loadAnalysis();
   }, [loadAnalysis]);
   
-  // Immediate visibility test for this component
-  if (typeof window !== 'undefined') {
-    console.log('[AnalysisDashboardRouter] Window is available, component should render');
-  } else {
-    console.log('[AnalysisDashboardRouter] Window not available - SSR mode');
-  }
-
-  // Step 4: Render actual dashboard components
-  console.log('[AnalysisDashboardRouter] ✅ STEP 4: Rendering dashboard components');
-  console.log('[AnalysisDashboardRouter] Analysis:', analysis);
-  console.log('[AnalysisDashboardRouter] Loading:', loading);
-  console.log('[AnalysisDashboardRouter] Error:', error);
+  // Render dashboard components based on state
 
   // Show loading state
   if (loading) {
-    console.log('[AnalysisDashboardRouter] Showing loading state');
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
@@ -264,7 +222,6 @@ export function AnalysisDashboardRouter() {
 
   // Show error state
   if (error) {
-    console.log('[AnalysisDashboardRouter] Showing error state:', error);
     return (
       <Card className="p-6 bg-red-500/10 border-red-500/30">
         <div className="text-center">
@@ -283,7 +240,6 @@ export function AnalysisDashboardRouter() {
 
   // Show no analysis state
   if (!analysis) {
-    console.log('[AnalysisDashboardRouter] No analysis data available');
     return (
       <Card className="p-6 bg-gray-800/50 border-gray-700">
         <div className="text-center">
@@ -309,30 +265,22 @@ export function AnalysisDashboardRouter() {
       : ['detailed-recommendations', 'technical-audit', 'performance-metrics']
   };
 
-  console.log('[AnalysisDashboardRouter] ✅ Rendering dashboard for type:', analysis.crawlType);
-  console.log('[AnalysisDashboardRouter] Dashboard config:', dashboardConfig);
-
   // Render appropriate dashboard component
   try {
     switch (analysis.crawlType) {
       case 'single':
-        console.log('[AnalysisDashboardRouter] Rendering SinglePageDashboard');
         return <SinglePageDashboard analysis={analysis} config={dashboardConfig} />;
       
       case 'subfolder':
-        console.log('[AnalysisDashboardRouter] Rendering SubfolderDashboard');
         return <SubfolderDashboard analysis={analysis} config={dashboardConfig} />;
       
       case 'domain':
-        console.log('[AnalysisDashboardRouter] Rendering FullDomainDashboard');
         return <FullDomainDashboard analysis={analysis} config={dashboardConfig} />;
       
       default:
-        console.log('[AnalysisDashboardRouter] Unknown crawl type, defaulting to SinglePageDashboard');
         return <SinglePageDashboard analysis={analysis} config={dashboardConfig} />;
     }
   } catch (renderError) {
-    console.error('[AnalysisDashboardRouter] Error rendering dashboard component:', renderError);
     return (
       <Card className="p-6 bg-red-500/10 border-red-500/30">
         <div className="text-center">

@@ -319,17 +319,14 @@ export function SinglePageDashboard({ analysis, config }: SinglePageDashboardPro
 
   const handleReanalyze = () => {
     // TODO: Implement reanalyze functionality
-    console.log('Reanalyzing:', analysis.url);
   };
 
   const handleExport = () => {
     // TODO: Implement export functionality
-    console.log('Exporting analysis:', analysis.id);
   };
 
   const handleMonitor = () => {
     // TODO: Implement monitoring functionality
-    console.log('Setting up monitoring for:', analysis.url);
   };
 
   return (
