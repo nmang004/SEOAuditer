@@ -462,7 +462,7 @@ export function SinglePageDashboard({ analysis, config }: SinglePageDashboardPro
               {analysis.data?.issues && analysis.data.issues.length > 0 ? (
                 <div className="space-y-2">
                   {['critical', 'high', 'medium', 'low'].map(severity => {
-                    const count = analysis.data?.issues.filter(i => i.severity === severity).length || 0;
+                    const count = analysis.data?.issues.filter((i: any) => i.severity === severity).length || 0;
                     if (count === 0) return null;
                     
                     return (
@@ -488,7 +488,7 @@ export function SinglePageDashboard({ analysis, config }: SinglePageDashboardPro
             <h3 className="font-semibold text-white mb-4">Action Plan</h3>
             {analysis.data?.recommendations && analysis.data.recommendations.length > 0 ? (
               <div className="space-y-4">
-                {analysis.data.recommendations.map((rec, index) => (
+                {analysis.data.recommendations.map((rec: any, index: number) => (
                   <Card key={index} className="p-4 bg-gray-700/30 border-gray-600">
                     <div className="flex items-start justify-between mb-2">
                       <h4 className="font-medium text-white">{rec.title}</h4>
@@ -525,7 +525,7 @@ export function SinglePageDashboard({ analysis, config }: SinglePageDashboardPro
           <Card className="p-6 bg-gray-800/50 border-gray-700">
             <h3 className="font-semibold text-white mb-4">Technical Analysis</h3>
             {analysis.data?.issues ? (
-              <IssuesList issues={analysis.data.issues.filter(i => i.type === 'technical' || i.type === 'meta')} />
+              <IssuesList issues={analysis.data.issues.filter((i: any) => i.type === 'technical' || i.type === 'meta')} />
             ) : (
               <p className="text-gray-400">No technical issues detected.</p>
             )}
@@ -557,7 +557,7 @@ export function SinglePageDashboard({ analysis, config }: SinglePageDashboardPro
               <div>
                 <h4 className="font-medium text-white mb-3">Key Topics</h4>
                 <div className="flex flex-wrap gap-2">
-                  {analysis.data?.content.keywords?.map((keyword, index) => (
+                  {analysis.data?.content.keywords?.map((keyword: any, index: number) => (
                     <Badge key={index} variant="secondary" className="bg-gray-700 text-gray-300">
                       {keyword}
                     </Badge>
