@@ -121,9 +121,12 @@ export function SimpleAnalysisTest() {
 export function AnalysisDashboardRouter() {
   console.log('[AnalysisDashboardRouter] Component called - STARTING RENDER');
   
-  // STEP 1: Call all hooks unconditionally first (Rules of Hooks)
+  // STEP 1 & 2: Call all hooks unconditionally first (Rules of Hooks)
   const params = useParams();
   const searchParams = useSearchParams();
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Immediate visibility test for this component
   if (typeof window !== 'undefined') {
@@ -160,21 +163,24 @@ export function AnalysisDashboardRouter() {
           borderRadius: '4px',
           marginBottom: '10px'
         }}>
-          ✅ HOOKS STEP 1: Basic navigation hooks working!
+          ✅ HOOKS STEP 2: useState hooks added!
         </div>
         <p>useParams: {params ? '✅ SUCCESS' : '❌ FAILED'}</p>
         <p>useSearchParams: {searchParams ? '✅ SUCCESS' : '❌ FAILED'}</p>
+        <p>analysis state: {analysis ? '✅ HAS DATA' : '⏳ NULL'}</p>
+        <p>loading state: {loading ? '⏳ TRUE' : '✅ FALSE'}</p>
+        <p>error state: {error ? '❌ HAS ERROR' : '✅ NO ERROR'}</p>
         <p>ProjectId: {projectId || 'MISSING'}</p>
         <p>JobId: {jobId || 'MISSING'}</p>
-        <p>Next: Add useState hooks</p>
+        <p>Next: Add useEffect and useCallback hooks</p>
         <SimpleAnalysisTest />
       </div>
     );
   } catch (error) {
-    console.error('[AnalysisDashboardRouter] Error with hooks step 1:', error);
+    console.error('[AnalysisDashboardRouter] Error with hooks step 2:', error);
     return (
       <div style={{ background: 'red', color: 'white', padding: '20px' }}>
-        HOOKS STEP 1 FAILED: {error instanceof Error ? error.message : String(error)}
+        HOOKS STEP 2 FAILED: {error instanceof Error ? error.message : String(error)}
         <br />
         Stack: {error instanceof Error ? error.stack : 'No stack trace'}
       </div>
