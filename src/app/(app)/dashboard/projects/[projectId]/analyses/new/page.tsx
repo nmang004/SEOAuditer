@@ -63,7 +63,7 @@ export default function NewAnalysisPage() {
       const data = await res.json();
       console.log('[New Analysis] API response:', data);
       
-      if (data.jobId || data.sessionId) {
+      if (data.success && (data.jobId || data.sessionId)) {
         const analysisId = data.jobId || data.sessionId;
         
         // For admin bypass, store the analysis request in localStorage
@@ -76,8 +76,12 @@ export default function NewAnalysisPage() {
         
         // Navigate to the results page
         router.push(`/dashboard/projects/${projectId}/analyses/${analysisId}`);
+      } else if (data.success) {
+        // Handle cases where response is successful but no explicit ID
+        const analysisId = data.sessionId || data.jobId || `temp-${Date.now()}`;
+        router.push(`/dashboard/projects/${projectId}/analyses/${analysisId}`);
       } else {
-        throw new Error('No job ID or session ID returned');
+        throw new Error(data.error || 'No job ID or session ID returned');
       }
     } catch (err) {
       console.error('Analysis start error:', err);
