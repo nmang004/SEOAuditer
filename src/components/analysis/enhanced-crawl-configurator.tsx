@@ -344,7 +344,10 @@ export function EnhancedAnalysisConfigurator({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 opacity-100 visible z-10 relative bg-gray-900 p-4 rounded-lg">
+      {/* Debug Text */}
+      <div className="text-red-500 font-bold text-xl mb-4">CONFIGURATOR LOADED</div>
+      
       {/* Crawl Type Selector */}
       <div>
         <h3 className="text-lg font-semibold text-white mb-4">Choose Analysis Type</h3>
@@ -379,7 +382,7 @@ export function EnhancedAnalysisConfigurator({
       </div>
 
       {/* URL Input */}
-      <Card className="p-6 border-gray-700 bg-gray-800/50">
+      <Card className="p-6 border border-gray-700 bg-gray-800/50 rounded-lg opacity-100 visible">
         <Label htmlFor="url" className="text-white mb-2 block">
           {config.crawlType === 'single' ? 'Page URL' : 'Starting URL'}
         </Label>
