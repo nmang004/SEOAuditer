@@ -35,8 +35,8 @@ export default function AnalysisResultsPage() {
         border: '3px solid #ffffff'
       }}>
         <h2>Testing component imports:</h2>
-        <p>AnalysisDebugger: {AnalysisDebugger ? 'IMPORTED' : 'FAILED'}</p>
-        <p>AnalysisDashboardRouter: {AnalysisDashboardRouter ? 'IMPORTED' : 'FAILED'}</p>
+        <p>AnalysisDebugger: {typeof AnalysisDebugger === 'function' ? 'IMPORTED' : 'FAILED'}</p>
+        <p>AnalysisDashboardRouter: {typeof AnalysisDashboardRouter === 'function' ? 'IMPORTED' : 'FAILED'}</p>
       </div>
 
       {/* Try to render components */}
