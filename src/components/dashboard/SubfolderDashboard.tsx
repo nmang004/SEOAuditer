@@ -358,6 +358,9 @@ function BulkRecommendationCard({
 
 // Main Subfolder Dashboard Component
 export function SubfolderDashboard({ analysis, config }: SubfolderDashboardProps) {
+  console.log('[SubfolderDashboard] Component mounted with analysis:', analysis);
+  console.log('[SubfolderDashboard] Config:', config);
+  
   const [selectedPages, setSelectedPages] = useState<string[]>([]);
   const [compareMode, setCompareMode] = useState(false);
   const [viewMode, setViewMode] = useState<'cards' | 'table' | 'tree'>('cards');
@@ -365,9 +368,17 @@ export function SubfolderDashboard({ analysis, config }: SubfolderDashboardProps
   const [filterBy, setFilterBy] = useState<'all' | 'good' | 'warning' | 'error'>('all');
 
   // Generate mock data
-  const pages = useMemo(() => generateMockPages(analysis), [analysis]);
+  const pages = useMemo(() => {
+    console.log('[SubfolderDashboard] Generating mock pages for analysis:', analysis);
+    const mockPages = generateMockPages(analysis);
+    console.log('[SubfolderDashboard] Generated pages:', mockPages);
+    return mockPages;
+  }, [analysis]);
+  
   const avgScore = Math.round(pages.reduce((sum, page) => sum + page.score, 0) / pages.length);
   const totalIssues = pages.reduce((sum, page) => sum + page.issues, 0);
+  
+  console.log('[SubfolderDashboard] Calculated metrics - avgScore:', avgScore, 'totalIssues:', totalIssues, 'pages:', pages.length);
 
   // Filter pages based on search and filter
   const filteredPages = useMemo(() => {
@@ -419,8 +430,24 @@ export function SubfolderDashboard({ analysis, config }: SubfolderDashboardProps
     }
   ];
 
+  console.log('[SubfolderDashboard] About to render component with filteredPages:', filteredPages.length);
+  
+  if (!analysis) {
+    console.log('[SubfolderDashboard] No analysis data, rendering error state');
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-red-400">No analysis data available</p>
+      </div>
+    );
+  }
+  
   return (
     <div className="space-y-8">
+      {/* Debug indicator */}
+      <div className="bg-green-500/20 border border-green-500 rounded p-2 text-green-300 text-sm">
+        DEBUG: SubfolderDashboard is rendering with {pages.length} pages (filteredPages: {filteredPages.length})
+      </div>
+      
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

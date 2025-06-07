@@ -242,6 +242,12 @@ export function AnalysisDashboardRouter() {
   const projectId = params?.projectId as string;
   const jobId = params?.jobId as string;
   const viewMode = searchParams?.get('view');
+  
+  // Debug params
+  console.log('[AnalysisDashboardRouter] All params:', params);
+  console.log('[AnalysisDashboardRouter] ProjectId:', projectId);
+  console.log('[AnalysisDashboardRouter] JobId:', jobId);
+  console.log('[AnalysisDashboardRouter] ViewMode:', viewMode);
 
   useEffect(() => {
     loadAnalysis();
@@ -254,13 +260,24 @@ export function AnalysisDashboardRouter() {
       setLoading(true);
       setError(null);
 
+      console.log('[AnalysisDashboardRouter] Loading analysis for jobId:', jobId);
+      console.log('[AnalysisDashboardRouter] ProjectId:', projectId);
+
       // Try to get from localStorage first (for admin bypass)
-      const adminJobs = JSON.parse(localStorage.getItem('adminAnalysisJobs') || '[]');
+      const adminJobsString = localStorage.getItem('adminAnalysisJobs') || '[]';
+      console.log('[AnalysisDashboardRouter] localStorage adminAnalysisJobs:', adminJobsString);
+      
+      const adminJobs = JSON.parse(adminJobsString);
+      console.log('[AnalysisDashboardRouter] Parsed admin jobs:', adminJobs);
+      
       const adminJob = adminJobs.find((job: any) => 
         job.sessionId === jobId || job.jobId === jobId
       );
+      console.log('[AnalysisDashboardRouter] Found admin job:', adminJob);
 
       if (adminJob) {
+        console.log('[AnalysisDashboardRouter] Creating analysis from admin job:', adminJob);
+        
         // Create mock analysis from admin job
         const mockAnalysis: Analysis = {
           id: jobId,
@@ -279,6 +296,34 @@ export function AnalysisDashboardRouter() {
           data: generateMockAnalysisData(adminJob.config?.crawlType || 'single')
         };
         
+        console.log('[AnalysisDashboardRouter] Created mock analysis:', mockAnalysis);
+        setAnalysis(mockAnalysis);
+        setLoading(false);
+        return;
+      }
+
+      // If this looks like an admin-multi job but we didn't find it in localStorage, create mock data
+      if (jobId.startsWith('admin-multi-')) {
+        console.log('[AnalysisDashboardRouter] Admin-multi job not found in localStorage, creating mock data');
+        
+        const mockAnalysis: Analysis = {
+          id: jobId,
+          crawlType: 'subfolder',
+          status: 'completed',
+          url: 'https://github.com/admin',
+          projectId: projectId,
+          createdAt: new Date().toISOString(),
+          completedAt: new Date().toISOString(),
+          metadata: {
+            pagesAnalyzed: 8,
+            totalPages: 10,
+            depth: 3,
+            estimatedDuration: '15 minutes'
+          },
+          data: generateMockAnalysisData('subfolder')
+        };
+        
+        console.log('[AnalysisDashboardRouter] Created mock subfolder analysis:', mockAnalysis);
         setAnalysis(mockAnalysis);
         setLoading(false);
         return;
@@ -381,18 +426,32 @@ export function AnalysisDashboardRouter() {
     };
   };
 
+  console.log('[AnalysisDashboardRouter] Render state - loading:', loading, 'error:', error, 'analysis:', !!analysis);
+  
   if (loading) {
-    return <DashboardSkeleton />;
+    return (
+      <div className="space-y-4">
+        <div className="bg-blue-500/20 border border-blue-500 rounded p-2 text-blue-300 text-sm">
+          DEBUG: Loading analysis {jobId}...
+        </div>
+        <DashboardSkeleton />
+      </div>
+    );
   }
 
   if (error || !analysis) {
     return (
-      <Card className="p-8 bg-gray-800/50 border-gray-700 text-center">
-        <h2 className="text-xl font-semibold text-white mb-4">Analysis Not Found</h2>
-        <p className="text-gray-400">
-          {error || 'The requested analysis could not be found.'}
-        </p>
-      </Card>
+      <div className="space-y-4">
+        <div className="bg-red-500/20 border border-red-500 rounded p-2 text-red-300 text-sm">
+          DEBUG: Error or no analysis - error: {error}, analysis: {!!analysis}, jobId: {jobId}
+        </div>
+        <Card className="p-8 bg-gray-800/50 border-gray-700 text-center">
+          <h2 className="text-xl font-semibold text-white mb-4">Analysis Not Found</h2>
+          <p className="text-gray-400">
+            {error || 'The requested analysis could not be found.'}
+          </p>
+        </Card>
+      </div>
     );
   }
 
@@ -409,8 +468,13 @@ export function AnalysisDashboardRouter() {
   const effectiveCrawlType = viewMode || analysis.crawlType;
 
   // Route to appropriate dashboard
+  console.log('[AnalysisDashboardRouter] Routing to dashboard type:', effectiveCrawlType);
+  console.log('[AnalysisDashboardRouter] Analysis data:', analysis);
+  console.log('[AnalysisDashboardRouter] Config:', config);
+  
   switch (effectiveCrawlType) {
     case 'subfolder':
+      console.log('[AnalysisDashboardRouter] Rendering SubfolderDashboard with analysis:', analysis);
       return (
         <SubfolderDashboard 
           analysis={analysis} 
@@ -418,6 +482,7 @@ export function AnalysisDashboardRouter() {
         />
       );
     case 'domain':
+      console.log('[AnalysisDashboardRouter] Rendering FullDomainDashboard');
       return (
         <FullDomainDashboard 
           analysis={analysis} 
@@ -426,6 +491,7 @@ export function AnalysisDashboardRouter() {
       );
     case 'single':
     default:
+      console.log('[AnalysisDashboardRouter] Rendering SinglePageDashboard');
       return (
         <SinglePageDashboard 
           analysis={analysis} 
