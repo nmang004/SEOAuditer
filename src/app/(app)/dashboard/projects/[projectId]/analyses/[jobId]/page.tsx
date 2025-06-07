@@ -548,18 +548,18 @@ export default function AnalysisResultsPage() {
       <Tabs defaultValue="analysis" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3 bg-gray-800 border-gray-700">
           <TabsTrigger 
-            value="recommendations" 
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white"
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            Action Plan
-          </TabsTrigger>
-          <TabsTrigger 
             value="analysis" 
             className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white"
           >
             <BarChart3 className="w-4 h-4 mr-2" />
             Analysis Overview
+          </TabsTrigger>
+          <TabsTrigger 
+            value="recommendations" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Action Plan
           </TabsTrigger>
           <TabsTrigger 
             value="technical" 
@@ -956,37 +956,524 @@ export default function AnalysisResultsPage() {
 
         {/* Technical Details Tab */}
         <TabsContent value="technical" className="space-y-6">
-          {/* Technical SEO */}
+          {/* HTML Structure Analysis */}
           <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
-            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-indigo-400" />
-              Technical SEO
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-700/30 p-4 rounded-lg">
-                <div className="text-sm text-gray-400 mb-1">Title Tag</div>
-                <div className={`font-medium ${results.technicalSEO.titleTag.status === 'good' ? 'text-green-400' : 'text-yellow-400'}`}>
-                  {results.technicalSEO.titleTag.status === 'good' ? 'Good' : 'Needs Work'}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-500/20 rounded-lg">
+                  <FileText className="h-5 w-5 text-blue-400" />
                 </div>
-                <div className="text-xs text-gray-500">{results.technicalSEO.titleTag.length} characters</div>
-              </div>
-              <div className="bg-gray-700/30 p-4 rounded-lg">
-                <div className="text-sm text-gray-400 mb-1">Meta Description</div>
-                <div className={`font-medium ${results.technicalSEO.metaDescription.status === 'good' ? 'text-green-400' : 'text-red-400'}`}>
-                  {results.technicalSEO.metaDescription.status === 'missing' ? 'Missing' : 'Good'}
-                </div>
-                <div className="text-xs text-gray-500">{results.technicalSEO.metaDescription.length} characters</div>
-              </div>
-              <div className="bg-gray-700/30 p-4 rounded-lg">
-                <div className="text-sm text-gray-400 mb-1">H1 Tags</div>
-                <div className={`font-medium ${results.technicalSEO.headings.h1 === 0 ? 'text-red-400' : 'text-green-400'}`}>
-                  {results.technicalSEO.headings.h1} found
+                <div>
+                  <h3 className="text-xl font-bold text-white">HTML Structure & Meta Tags</h3>
+                  <p className="text-gray-400 text-sm">Page structure and metadata analysis</p>
                 </div>
               </div>
-              <div className="bg-gray-700/30 p-4 rounded-lg">
-                <div className="text-sm text-gray-400 mb-1">Images</div>
-                <div className="font-medium text-gray-300">{results.technicalSEO.images.total} total</div>
-                <div className="text-xs text-gray-500">{results.technicalSEO.images.withoutAlt} without alt text</div>
+              <div className="text-sm text-gray-400">
+                {results.technicalSEO.titleTag.status === 'good' && results.technicalSEO.metaDescription.status !== 'missing' ? 
+                  '✅ Structure OK' : '⚠️ Issues Found'}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Title Tag Analysis */}
+              <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-white">Title Tag</h4>
+                  <div className={`px-2 py-1 rounded text-xs font-medium ${
+                    results.technicalSEO.titleTag.status === 'good' ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'
+                  }`}>
+                    {results.technicalSEO.titleTag.status === 'good' ? 'Good' : 'Needs Work'}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Length:</span>
+                    <span className={`font-medium ${
+                      results.technicalSEO.titleTag.length >= 30 && results.technicalSEO.titleTag.length <= 60 ? 'text-green-400' :
+                      results.technicalSEO.titleTag.length <= 70 ? 'text-yellow-400' : 'text-red-400'
+                    }`}>
+                      {results.technicalSEO.titleTag.length} characters
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${
+                        results.technicalSEO.titleTag.length >= 30 && results.technicalSEO.titleTag.length <= 60 ? 'bg-green-500' :
+                        results.technicalSEO.titleTag.length <= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}
+                      style={{ width: `${Math.min(100, (results.technicalSEO.titleTag.length / 70) * 100)}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Optimal: 30-60 characters | Max: 70 characters
+                  </div>
+                </div>
+              </div>
+
+              {/* Meta Description Analysis */}
+              <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-white">Meta Description</h4>
+                  <div className={`px-2 py-1 rounded text-xs font-medium ${
+                    results.technicalSEO.metaDescription.status === 'missing' ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'
+                  }`}>
+                    {results.technicalSEO.metaDescription.status === 'missing' ? 'Missing' : 'Present'}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Length:</span>
+                    <span className={`font-medium ${
+                      results.technicalSEO.metaDescription.length === 0 ? 'text-red-400' :
+                      results.technicalSEO.metaDescription.length >= 120 && results.technicalSEO.metaDescription.length <= 160 ? 'text-green-400' :
+                      results.technicalSEO.metaDescription.length <= 170 ? 'text-yellow-400' : 'text-red-400'
+                    }`}>
+                      {results.technicalSEO.metaDescription.length} characters
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${
+                        results.technicalSEO.metaDescription.length === 0 ? 'bg-red-500' :
+                        results.technicalSEO.metaDescription.length >= 120 && results.technicalSEO.metaDescription.length <= 160 ? 'bg-green-500' :
+                        results.technicalSEO.metaDescription.length <= 170 ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}
+                      style={{ width: `${Math.min(100, (results.technicalSEO.metaDescription.length / 170) * 100)}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Optimal: 120-160 characters | Max: 170 characters
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Heading Structure */}
+            <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5">
+              <h4 className="font-medium text-white mb-4 flex items-center gap-2">
+                <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
+                Heading Structure
+              </h4>
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="text-center">
+                  <div className={`text-2xl font-bold mb-1 ${
+                    results.technicalSEO.headings.h1 === 1 ? 'text-green-400' : 
+                    results.technicalSEO.headings.h1 === 0 ? 'text-red-400' : 'text-yellow-400'
+                  }`}>
+                    {results.technicalSEO.headings.h1}
+                  </div>
+                  <div className="text-sm text-gray-400">H1 Tags</div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {results.technicalSEO.headings.h1 === 1 ? 'Perfect' : 
+                     results.technicalSEO.headings.h1 === 0 ? 'Missing' : 'Too Many'}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-400 mb-1">
+                    {results.technicalSEO.headings.h2 || 0}
+                  </div>
+                  <div className="text-sm text-gray-400">H2 Tags</div>
+                  <div className="text-xs text-gray-500 mt-1">Subheadings</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-400 mb-1">
+                    {results.technicalSEO.headings.h3 || 0}
+                  </div>
+                  <div className="text-sm text-gray-400">H3 Tags</div>
+                  <div className="text-xs text-gray-500 mt-1">Sub-sections</div>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500 bg-gray-800/50 rounded-lg p-3">
+                <strong>Best Practice:</strong> Use exactly one H1 tag per page, followed by hierarchical H2-H6 tags to structure content logically.
+              </div>
+            </div>
+          </Card>
+
+          {/* Image Optimization Analysis */}
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-500/20 rounded-lg">
+                  <Globe className="h-5 w-5 text-green-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Image Optimization</h3>
+                  <p className="text-gray-400 text-sm">Alt text, file sizes, and accessibility</p>
+                </div>
+              </div>
+              <div className="text-sm text-gray-400">
+                {results.technicalSEO.images.total} images analyzed
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5 text-center">
+                <div className="text-3xl font-bold text-blue-400 mb-2">
+                  {results.technicalSEO.images.total}
+                </div>
+                <div className="text-sm font-medium text-white mb-1">Total Images</div>
+                <div className="text-xs text-gray-400">Found on page</div>
+              </div>
+              
+              <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5 text-center">
+                <div className="text-3xl font-bold text-green-400 mb-2">
+                  {results.technicalSEO.images.withAlt}
+                </div>
+                <div className="text-sm font-medium text-white mb-1">With Alt Text</div>
+                <div className="text-xs text-gray-400">
+                  {results.technicalSEO.images.total > 0 ? 
+                    Math.round((results.technicalSEO.images.withAlt / results.technicalSEO.images.total) * 100) : 0}% optimized
+                </div>
+              </div>
+              
+              <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5 text-center">
+                <div className="text-3xl font-bold text-red-400 mb-2">
+                  {results.technicalSEO.images.withoutAlt}
+                </div>
+                <div className="text-sm font-medium text-white mb-1">Missing Alt Text</div>
+                <div className="text-xs text-gray-400">
+                  {results.technicalSEO.images.withoutAlt > 0 ? 'Need attention' : 'All optimized'}
+                </div>
+              </div>
+            </div>
+
+            {/* Alt Text Optimization Progress */}
+            <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-medium text-white">Alt Text Coverage</h4>
+                <span className="text-sm text-gray-400">
+                  {results.technicalSEO.images.total > 0 ? 
+                    Math.round((results.technicalSEO.images.withAlt / results.technicalSEO.images.total) * 100) : 0}%
+                </span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-3 mb-2">
+                <div 
+                  className="h-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-500"
+                  style={{ 
+                    width: `${results.technicalSEO.images.total > 0 ? 
+                      (results.technicalSEO.images.withAlt / results.technicalSEO.images.total) * 100 : 0}%` 
+                  }}
+                ></div>
+              </div>
+              <div className="text-xs text-gray-500">
+                <strong>Impact:</strong> Missing alt text affects both SEO rankings and accessibility for screen readers.
+                {results.technicalSEO.images.withoutAlt > 0 && (
+                  <span className="text-yellow-400 ml-2">
+                    ⚠️ {results.technicalSEO.images.withoutAlt} images need alt text
+                  </span>
+                )}
+              </div>
+            </div>
+          </Card>
+
+          {/* Core Web Vitals & Performance */}
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-500/20 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Core Web Vitals & Performance</h3>
+                  <p className="text-gray-400 text-sm">Google's core performance metrics</p>
+                </div>
+              </div>
+              <div className="text-sm text-gray-400">
+                Page Speed Insights
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              {/* Load Time */}
+              <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-white">Load Time (LCP)</h4>
+                  <div className={`w-3 h-3 rounded-full ${
+                    results.performance.loadTime <= 2.5 ? 'bg-green-500' :
+                    results.performance.loadTime <= 4 ? 'bg-yellow-500' : 'bg-red-500'
+                  }`}></div>
+                </div>
+                <div className="text-center mb-3">
+                  <div className={`text-3xl font-bold mb-1 ${
+                    results.performance.loadTime <= 2.5 ? 'text-green-400' :
+                    results.performance.loadTime <= 4 ? 'text-yellow-400' : 'text-red-400'
+                  }`}>
+                    {results.performance.loadTime}s
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    {results.performance.loadTime <= 2.5 ? 'Excellent' :
+                     results.performance.loadTime <= 4 ? 'Needs Improvement' : 'Poor'}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${
+                        results.performance.loadTime <= 2.5 ? 'bg-green-500' :
+                        results.performance.loadTime <= 4 ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}
+                      style={{ width: `${Math.min(100, Math.max(0, (5 - results.performance.loadTime) * 20))}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Target: ≤2.5s | Poor: >4s
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Performance */}
+              <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-white">Mobile Score</h4>
+                  <div className={`w-3 h-3 rounded-full ${
+                    results.performance.mobileScore >= 90 ? 'bg-green-500' :
+                    results.performance.mobileScore >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                  }`}></div>
+                </div>
+                <div className="text-center mb-3">
+                  <div className={`text-3xl font-bold mb-1 ${
+                    results.performance.mobileScore >= 90 ? 'text-green-400' :
+                    results.performance.mobileScore >= 50 ? 'text-yellow-400' : 'text-red-400'
+                  }`}>
+                    {results.performance.mobileScore}
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    {results.performance.mobileScore >= 90 ? 'Excellent' :
+                     results.performance.mobileScore >= 50 ? 'Average' : 'Poor'}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${
+                        results.performance.mobileScore >= 90 ? 'bg-green-500' :
+                        results.performance.mobileScore >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}
+                      style={{ width: `${results.performance.mobileScore}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Target: 90+ | Good: 50-89 | Poor: 0-49
+                  </div>
+                </div>
+              </div>
+
+              {/* Desktop Performance */}
+              <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-white">Desktop Score</h4>
+                  <div className={`w-3 h-3 rounded-full ${
+                    results.performance.desktopScore >= 90 ? 'bg-green-500' :
+                    results.performance.desktopScore >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                  }`}></div>
+                </div>
+                <div className="text-center mb-3">
+                  <div className={`text-3xl font-bold mb-1 ${
+                    results.performance.desktopScore >= 90 ? 'text-green-400' :
+                    results.performance.desktopScore >= 50 ? 'text-yellow-400' : 'text-red-400'
+                  }`}>
+                    {results.performance.desktopScore}
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    {results.performance.desktopScore >= 90 ? 'Excellent' :
+                     results.performance.desktopScore >= 50 ? 'Average' : 'Poor'}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${
+                        results.performance.desktopScore >= 90 ? 'bg-green-500' :
+                        results.performance.desktopScore >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}
+                      style={{ width: `${results.performance.desktopScore}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Target: 90+ | Good: 50-89 | Poor: 0-49
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Performance Insights */}
+            <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-5">
+              <h4 className="font-medium text-white mb-4">Performance Impact</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">SEO Ranking Factor:</span>
+                    <span className={`font-medium ${
+                      results.performance.loadTime <= 2.5 && results.performance.mobileScore >= 90 ? 'text-green-400' : 'text-yellow-400'
+                    }`}>
+                      {results.performance.loadTime <= 2.5 && results.performance.mobileScore >= 90 ? 'Positive' : 'Neutral/Negative'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">User Experience:</span>
+                    <span className={`font-medium ${
+                      results.performance.loadTime <= 3 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {results.performance.loadTime <= 3 ? 'Good' : 'Poor'}
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Mobile-First Index:</span>
+                    <span className={`font-medium ${
+                      results.performance.mobileScore >= 50 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {results.performance.mobileScore >= 50 ? 'Ready' : 'Needs Work'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Conversion Impact:</span>
+                    <span className={`font-medium ${
+                      results.performance.loadTime <= 3 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {results.performance.loadTime <= 3 ? 'Positive' : 'Negative'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Technical SEO Checklist */}
+          <Card className="rounded-2xl border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-indigo-500/20 rounded-lg">
+                <CheckCircle2 className="h-5 w-5 text-indigo-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Technical SEO Checklist</h3>
+                <p className="text-gray-400 text-sm">Essential technical optimizations</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* On-Page Elements */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-white border-b border-gray-700 pb-2">On-Page Elements</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
+                    <span className="text-sm text-gray-300">Title Tag</span>
+                    <div className={`px-2 py-1 rounded text-xs ${
+                      results.technicalSEO.titleTag.status === 'good' ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'
+                    }`}>
+                      {results.technicalSEO.titleTag.status === 'good' ? '✓ Optimized' : '⚠ Needs Work'}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
+                    <span className="text-sm text-gray-300">Meta Description</span>
+                    <div className={`px-2 py-1 rounded text-xs ${
+                      results.technicalSEO.metaDescription.status !== 'missing' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
+                    }`}>
+                      {results.technicalSEO.metaDescription.status !== 'missing' ? '✓ Present' : '✗ Missing'}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
+                    <span className="text-sm text-gray-300">H1 Tag</span>
+                    <div className={`px-2 py-1 rounded text-xs ${
+                      results.technicalSEO.headings.h1 === 1 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
+                    }`}>
+                      {results.technicalSEO.headings.h1 === 1 ? '✓ Perfect' : results.technicalSEO.headings.h1 === 0 ? '✗ Missing' : '⚠ Multiple'}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
+                    <span className="text-sm text-gray-300">Image Alt Text</span>
+                    <div className={`px-2 py-1 rounded text-xs ${
+                      results.technicalSEO.images.withoutAlt === 0 ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'
+                    }`}>
+                      {results.technicalSEO.images.withoutAlt === 0 ? '✓ All Optimized' : `⚠ ${results.technicalSEO.images.withoutAlt} Missing`}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Performance & Technical */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-white border-b border-gray-700 pb-2">Performance & Technical</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
+                    <span className="text-sm text-gray-300">Page Load Speed</span>
+                    <div className={`px-2 py-1 rounded text-xs ${
+                      results.performance.loadTime <= 3 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
+                    }`}>
+                      {results.performance.loadTime <= 3 ? '✓ Fast' : '✗ Slow'}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
+                    <span className="text-sm text-gray-300">Mobile Performance</span>
+                    <div className={`px-2 py-1 rounded text-xs ${
+                      results.performance.mobileScore >= 90 ? 'bg-green-500/10 text-green-400' : 
+                      results.performance.mobileScore >= 50 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400'
+                    }`}>
+                      {results.performance.mobileScore >= 90 ? '✓ Excellent' : 
+                       results.performance.mobileScore >= 50 ? '⚠ Average' : '✗ Poor'}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
+                    <span className="text-sm text-gray-300">Desktop Performance</span>
+                    <div className={`px-2 py-1 rounded text-xs ${
+                      results.performance.desktopScore >= 90 ? 'bg-green-500/10 text-green-400' : 
+                      results.performance.desktopScore >= 50 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400'
+                    }`}>
+                      {results.performance.desktopScore >= 90 ? '✓ Excellent' : 
+                       results.performance.desktopScore >= 50 ? '⚠ Average' : '✗ Poor'}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-900/50 rounded-lg">
+                    <span className="text-sm text-gray-300">HTTPS Security</span>
+                    <div className="px-2 py-1 rounded text-xs bg-green-500/10 text-green-400">
+                      ✓ Secure
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Technical Recommendations */}
+            <div className="mt-6 bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-5">
+              <h4 className="font-medium text-indigo-400 mb-3 flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                Key Technical Recommendations
+              </h4>
+              <div className="space-y-2 text-sm">
+                {results.technicalSEO.metaDescription.status === 'missing' && (
+                  <div className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 bg-red-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-300">
+                      <strong className="text-red-400">Critical:</strong> Add a meta description (120-160 characters) to improve click-through rates
+                    </span>
+                  </div>
+                )}
+                {results.technicalSEO.headings.h1 !== 1 && (
+                  <div className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-300">
+                      <strong className="text-yellow-400">Important:</strong> 
+                      {results.technicalSEO.headings.h1 === 0 ? ' Add an H1 tag' : ' Use only one H1 tag'} for proper content hierarchy
+                    </span>
+                  </div>
+                )}
+                {results.technicalSEO.images.withoutAlt > 0 && (
+                  <div className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-300">
+                      <strong className="text-blue-400">Optimize:</strong> Add alt text to {results.technicalSEO.images.withoutAlt} images for better accessibility and SEO
+                    </span>
+                  </div>
+                )}
+                {results.performance.loadTime > 3 && (
+                  <div className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-300">
+                      <strong className="text-purple-400">Performance:</strong> Optimize page speed to under 3 seconds for better user experience and SEO
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </Card>
