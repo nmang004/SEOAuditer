@@ -121,6 +121,10 @@ export function SimpleAnalysisTest() {
 export function AnalysisDashboardRouter() {
   console.log('[AnalysisDashboardRouter] Component called - STARTING RENDER');
   
+  // STEP 1: Call all hooks unconditionally first (Rules of Hooks)
+  const params = useParams();
+  const searchParams = useSearchParams();
+  
   // Immediate visibility test for this component
   if (typeof window !== 'undefined') {
     console.log('[AnalysisDashboardRouter] Window is available, component should render');
@@ -128,13 +132,9 @@ export function AnalysisDashboardRouter() {
     console.log('[AnalysisDashboardRouter] Window not available - SSR mode');
   }
 
-  // Test adding hooks back gradually
+  // Test hooks after calling them
   try {
     console.log('[AnalysisDashboardRouter] Testing with basic hooks...');
-    
-    // STEP 1: Add basic hooks back
-    const params = useParams();
-    const searchParams = useSearchParams();
     console.log('[AnalysisDashboardRouter] ✅ Basic navigation hooks successful');
     console.log('[AnalysisDashboardRouter] Params:', params);
     console.log('[AnalysisDashboardRouter] SearchParams:', searchParams);
