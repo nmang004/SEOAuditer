@@ -6,7 +6,7 @@ import { AnalysisDebugger } from '@/components/debug/AnalysisDebugger';
 
 export default function AnalysisResultsPage() {
   return (
-    <div className="space-y-6" style={{ 
+    <div className="space-y-6 analysis-dashboard-content" style={{ 
       opacity: 1, 
       visibility: 'visible', 
       display: 'block',
@@ -14,12 +14,12 @@ export default function AnalysisResultsPage() {
       zIndex: 1 
     }}>
       {/* Add debug component for troubleshooting */}
-      <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
+      <div className="analysis-dashboard-content" style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
         <AnalysisDebugger />
       </div>
       
       {/* Main dashboard */}
-      <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
+      <div className="analysis-dashboard-content" style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
         <AnalysisDashboardRouter />
       </div>
     </div>

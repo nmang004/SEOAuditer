@@ -150,3 +150,32 @@
     text-wrap: balance;
   }
 }
+
+/* Fix Radix UI TabsContent visibility issues */
+@layer base {
+  /* Force TabsContent to be visible - debugging aid */
+  [data-radix-tabs-content] {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Ensure tab content containers have proper layout */
+  [data-radix-tabs-content] > * {
+    display: block !important;
+  }
+
+  /* Force all analysis dashboard content to be visible */
+  .analysis-dashboard-content {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Override any hiding mechanisms */
+  [data-state="inactive"] {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}

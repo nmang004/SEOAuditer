@@ -442,7 +442,7 @@ export function SubfolderDashboard({ analysis, config }: SubfolderDashboardProps
   }
   
   return (
-    <div className="space-y-8" style={{ 
+    <div className="space-y-8 analysis-dashboard-content" style={{ 
       opacity: 1, 
       visibility: 'visible', 
       display: 'block',
