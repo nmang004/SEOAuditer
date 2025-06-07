@@ -6,58 +6,34 @@ import { AnalysisDebugger } from '@/components/debug/AnalysisDebugger';
 
 export default function AnalysisResultsPage() {
   return (
-    <div style={{ 
-      padding: '20px',
-      backgroundColor: '#1f2937',
-      minHeight: '100vh',
-      color: 'white'
+    <div className="space-y-6" style={{ 
+      opacity: 1, 
+      visibility: 'visible', 
+      display: 'block',
+      position: 'relative',
+      zIndex: 1 
     }}>
-      {/* Ultra-simple test content */}
+      {/* Success indicator - can be removed later */}
       <div style={{
-        backgroundColor: '#dc2626',
+        backgroundColor: '#16a34a',
         color: 'white',
-        padding: '20px',
-        margin: '20px 0',
-        fontSize: '24px',
+        padding: '10px',
+        fontSize: '14px',
         fontWeight: 'bold',
-        border: '3px solid yellow'
+        border: '2px solid #22c55e',
+        borderRadius: '8px',
+        textAlign: 'center'
       }}>
-        🚀 TEST: If you can see this red box, the page is rendering!
+        ✅ Page Rendering Successfully - Analysis Dashboard Active
       </div>
 
-      {/* Simple data display */}
-      <div style={{
-        backgroundColor: '#059669',
-        color: 'white',
-        padding: '20px',
-        margin: '20px 0',
-        fontSize: '18px',
-        border: '2px solid #10b981'
-      }}>
-        <h2 style={{ margin: '0 0 10px 0' }}>Analysis Data Check:</h2>
-        <p>localStorage adminAnalysisJobs: {typeof window !== 'undefined' ? localStorage.getItem('adminAnalysisJobs')?.length || 0 : 'Loading...'} characters</p>
-        <p>Page URL: {typeof window !== 'undefined' ? window.location.href : 'Loading...'}</p>
-      </div>
-
-      {/* Debug component with forced styling */}
-      <div style={{
-        backgroundColor: '#1e40af',
-        padding: '20px',
-        margin: '20px 0',
-        border: '2px solid #3b82f6'
-      }}>
-        <h3 style={{ color: 'white', margin: '0 0 10px 0' }}>Debug Component:</h3>
+      {/* Add debug component for troubleshooting */}
+      <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
         <AnalysisDebugger />
       </div>
-
-      {/* Dashboard with forced styling */}
-      <div style={{
-        backgroundColor: '#7c2d12',
-        padding: '20px',
-        margin: '20px 0',
-        border: '2px solid #ea580c'
-      }}>
-        <h3 style={{ color: 'white', margin: '0 0 10px 0' }}>Dashboard Component:</h3>
+      
+      {/* Main dashboard */}
+      <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
         <AnalysisDashboardRouter />
       </div>
     </div>
