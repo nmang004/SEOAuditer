@@ -149,8 +149,12 @@ export class EnhancedAnalysisController {
       await this.prisma.crawlSession.create({
         data: {
           id: jobId,
+          sessionId: `crawl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           projectId,
-          url: project.url,
+          userId: req.user.id,
+          startUrl: project.url,
+          crawlType: 'single',
+          config: {},
           status: 'queued',
         },
       });
@@ -277,8 +281,12 @@ export class EnhancedAnalysisController {
           await this.prisma.crawlSession.create({
             data: {
               id: jobId,
+              sessionId: `crawl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
               projectId: project.id,
-              url: project.url,
+              userId: req.user.id,
+              startUrl: project.url,
+              crawlType: 'single',
+              config: {},
               status: 'queued',
             },
           });
@@ -377,7 +385,7 @@ export class EnhancedAnalysisController {
         attemptsMade: jobStatus.attemptsMade,
         estimatedTimeRemaining: estimatedTimeRemaining ? Math.round(estimatedTimeRemaining / 1000) : null,
         projectId: crawlSession.projectId,
-        url: crawlSession.url,
+        url: crawlSession.startUrl,
       });
 
     } catch (error) {
@@ -569,7 +577,7 @@ export class EnhancedAnalysisController {
           id: analysis.id,
           projectId: analysis.projectId,
           projectName: analysis.project.name,
-          url: analysis.url,
+          url: analysis.startUrl,
           status: analysis.status,
           overallScore: analysis.analysis?.overallScore,
           createdAt: analysis.createdAt,

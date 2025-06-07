@@ -201,8 +201,12 @@ export class EnhancedWorker {
         },
         create: {
           id: jobId,
+          sessionId: `crawl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           projectId,
-          url: project.url,
+          userId: '', // TODO: Get from job context
+          startUrl: project.url,
+          crawlType: 'single',
+          config: {},
           status: 'running',
           startedAt: new Date(),
         },

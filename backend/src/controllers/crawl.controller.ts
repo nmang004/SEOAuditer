@@ -25,11 +25,15 @@ async function saveCrawlToDatabase(jobId: string, projectId: string, userId: str
     const crawlSession = await prisma.crawlSession.create({
       data: {
         id: jobId,
+        sessionId: `crawl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         projectId: projectId,
+        userId: '', // TODO: Get user ID from context
+        startUrl: results.url,
+        crawlType: 'single',
+        config: {},
         status: 'completed',
         startedAt: status.startedAt,
         completedAt: status.completedAt || new Date(),
-        url: results.url
       }
     });
 
@@ -164,13 +168,13 @@ export const CrawlController = {
           // Reconstruct results format from database data
           const analysis = crawlSession.analysis;
           results = {
-            url: crawlSession.url,
+            url: crawlSession.startUrl,
             crawledAt: crawlSession.completedAt?.toISOString() || crawlSession.startedAt?.toISOString(),
             pages: [{
               status: 200,
               title: 'Analysis Results',
               description: '',
-              url: crawlSession.url,
+              url: crawlSession.startUrl,
               statusCode: 200,
               metadata: {
                 title: 'Analysis Results',

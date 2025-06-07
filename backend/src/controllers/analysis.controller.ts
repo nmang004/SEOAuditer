@@ -106,7 +106,11 @@ export class AnalysisController {
       const crawlSession = await prisma.crawlSession.create({
         data: {
           projectId,
-          url: project.url,
+          userId: req.user.id,
+          startUrl: project.url,
+          sessionId: `crawl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          crawlType: 'single',
+          config: {},
           status: 'pending',
           startedAt: new Date(),
         },

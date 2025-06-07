@@ -149,6 +149,8 @@ enum CrawlStatus {
   completed
   failed
   queued
+  in_progress
+  cancelled
 }
 
 enum PageStatus {

@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
-import { Logger } from '../../utils/logger';
+import { logger } from '../../utils/logger';
 import { MultiPageCrawler, CrawlProgress } from '../engine/MultiPageCrawler';
-import { DatabaseService } from '../../services/DatabaseService';
+import { PrismaClient } from '@prisma/client';
 
 interface CrawlProgressSubscription {
   socket: Socket;
@@ -12,8 +12,7 @@ interface CrawlProgressSubscription {
 export class CrawlProgressWebSocketGateway {
   private subscriptions: Map<string, CrawlProgressSubscription[]> = new Map();
   private activeCrawlers: Map<string, MultiPageCrawler> = new Map();
-  private logger = Logger.getInstance();
-  private db = DatabaseService.getInstance();
+  private prisma = new PrismaClient();
 
   constructor(private io: Server) {
     this.setupEventHandlers();
@@ -21,14 +20,14 @@ export class CrawlProgressWebSocketGateway {
 
   private setupEventHandlers(): void {
     this.io.on('connection', (socket: Socket) => {
-      this.logger.debug(`Client connected: ${socket.id}`);
+      logger.debug(`Client connected: ${socket.id}`);
 
       // Subscribe to crawl progress
       socket.on('subscribe-crawl', async (data: { sessionId: string; userId: string }) => {
         try {
           await this.handleSubscribeCrawl(socket, data);
         } catch (error) {
-          this.logger.error('Error subscribing to crawl progress:', error);
+          logger.error('Error subscribing to crawl progress:', error);
           socket.emit('error', { message: 'Failed to subscribe to crawl progress' });
         }
       });
@@ -43,7 +42,7 @@ export class CrawlProgressWebSocketGateway {
         try {
           await this.handlePauseCrawl(data.sessionId, data.userId);
         } catch (error) {
-          this.logger.error('Error pausing crawl:', error);
+          logger.error('Error pausing crawl:', error);
           socket.emit('error', { message: 'Failed to pause crawl' });
         }
       });
@@ -53,7 +52,7 @@ export class CrawlProgressWebSocketGateway {
         try {
           await this.handleResumeCrawl(data.sessionId, data.userId);
         } catch (error) {
-          this.logger.error('Error resuming crawl:', error);
+          logger.error('Error resuming crawl:', error);
           socket.emit('error', { message: 'Failed to resume crawl' });
         }
       });
@@ -63,14 +62,14 @@ export class CrawlProgressWebSocketGateway {
         try {
           await this.handleStopCrawl(data.sessionId, data.userId);
         } catch (error) {
-          this.logger.error('Error stopping crawl:', error);
+          logger.error('Error stopping crawl:', error);
           socket.emit('error', { message: 'Failed to stop crawl' });
         }
       });
 
       // Handle disconnection
       socket.on('disconnect', () => {
-        this.logger.debug(`Client disconnected: ${socket.id}`);
+        logger.debug(`Client disconnected: ${socket.id}`);
         this.handleClientDisconnect(socket);
       });
     });
@@ -83,7 +82,7 @@ export class CrawlProgressWebSocketGateway {
     const { sessionId, userId } = data;
 
     // Verify user has access to this crawl session
-    const session = await this.db.crawlSession.findFirst({
+    const session = await this.prisma.crawlSession.findFirst({
       where: {
         sessionId,
         userId
@@ -113,7 +112,7 @@ export class CrawlProgressWebSocketGateway {
     const status = await this.getCrawlStatus(sessionId);
     socket.emit('crawl-status', status);
 
-    this.logger.debug(`Client ${socket.id} subscribed to crawl ${sessionId}`);
+    logger.debug(`Client ${socket.id} subscribed to crawl ${sessionId}`);
   }
 
   private handleUnsubscribeCrawl(socket: Socket, sessionId: string): void {
@@ -146,7 +145,7 @@ export class CrawlProgressWebSocketGateway {
 
   private async handlePauseCrawl(sessionId: string, userId: string): Promise<void> {
     // Verify ownership
-    const session = await this.db.crawlSession.findFirst({
+    const session = await this.prisma.crawlSession.findFirst({
       where: { sessionId, userId }
     });
 
@@ -159,7 +158,7 @@ export class CrawlProgressWebSocketGateway {
       crawler.pause();
       
       // Update database
-      await this.db.crawlSession.update({
+      await this.prisma.crawlSession.update({
         where: { sessionId },
         data: { status: 'paused' }
       });
@@ -168,7 +167,7 @@ export class CrawlProgressWebSocketGateway {
 
   private async handleResumeCrawl(sessionId: string, userId: string): Promise<void> {
     // Verify ownership
-    const session = await this.db.crawlSession.findFirst({
+    const session = await this.prisma.crawlSession.findFirst({
       where: { sessionId, userId }
     });
 
@@ -181,7 +180,7 @@ export class CrawlProgressWebSocketGateway {
       crawler.resume();
       
       // Update database
-      await this.db.crawlSession.update({
+      await this.prisma.crawlSession.update({
         where: { sessionId },
         data: { status: 'running' }
       });
@@ -190,7 +189,7 @@ export class CrawlProgressWebSocketGateway {
 
   private async handleStopCrawl(sessionId: string, userId: string): Promise<void> {
     // Verify ownership
-    const session = await this.db.crawlSession.findFirst({
+    const session = await this.prisma.crawlSession.findFirst({
       where: { sessionId, userId }
     });
 
@@ -204,7 +203,7 @@ export class CrawlProgressWebSocketGateway {
       this.activeCrawlers.delete(sessionId);
       
       // Update database
-      await this.db.crawlSession.update({
+      await this.prisma.crawlSession.update({
         where: { sessionId },
         data: { 
           status: 'completed',
@@ -215,7 +214,7 @@ export class CrawlProgressWebSocketGateway {
   }
 
   private async getCrawlStatus(sessionId: string): Promise<any> {
-    const session = await this.db.crawlSession.findUnique({
+    const session = await this.prisma.crawlSession.findUnique({
       where: { sessionId },
       include: {
         crawlPages: {
@@ -273,9 +272,9 @@ export class CrawlProgressWebSocketGateway {
         timestamp: new Date()
       });
       
-      this.logger.debug(`Emitted progress for crawl ${sessionId}: ${progress.crawled}/${progress.total} pages`);
+      logger.debug(`Emitted progress for crawl ${sessionId}: ${progress.crawled}/${progress.total} pages`);
     } catch (error) {
-      this.logger.error(`Error emitting crawl progress for ${sessionId}:`, error);
+      logger.error(`Error emitting crawl progress for ${sessionId}:`, error);
     }
   }
 
@@ -291,9 +290,9 @@ export class CrawlProgressWebSocketGateway {
         timestamp: new Date()
       });
       
-      this.logger.error(`Emitted error for crawl ${sessionId}:`, error);
+      logger.error(`Emitted error for crawl ${sessionId}:`, error);
     } catch (err) {
-      this.logger.error(`Error emitting crawl error for ${sessionId}:`, err);
+      logger.error(`Error emitting crawl error for ${sessionId}:`, err);
     }
   }
 
@@ -312,9 +311,9 @@ export class CrawlProgressWebSocketGateway {
       // Clean up
       this.activeCrawlers.delete(sessionId);
       
-      this.logger.info(`Emitted completion for crawl ${sessionId}`);
+      logger.info(`Emitted completion for crawl ${sessionId}`);
     } catch (error) {
-      this.logger.error(`Error emitting crawl completion for ${sessionId}:`, error);
+      logger.error(`Error emitting crawl completion for ${sessionId}:`, error);
     }
   }
 
@@ -345,7 +344,7 @@ export class CrawlProgressWebSocketGateway {
     sessionId: string,
     progress: CrawlProgress
   ): Promise<void> {
-    await this.db.crawlSession.update({
+    await this.prisma.crawlSession.update({
       where: { sessionId },
       data: {
         pagesCrawled: progress.crawled,

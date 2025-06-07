@@ -469,7 +469,7 @@ export class CoreWebVitalsAnalyzer {
         where: {
           analysis: {
             crawlSession: {
-              url,
+              startUrl: url,
               projectId
             }
           }

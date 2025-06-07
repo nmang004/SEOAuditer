@@ -19,8 +19,12 @@ export class StorageAdapter {
       },
       create: {
         id: jobId,
+        sessionId: `crawl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         projectId,
-        url: pages?.[0]?.url || '',
+        userId: '', // TODO: Get from job context
+        startUrl: pages?.[0]?.url || '',
+        crawlType: 'single',
+        config: {},
         status: 'completed',
         startedAt: startedAt ? new Date(startedAt) : new Date(),
         completedAt: completedAt ? new Date(completedAt) : new Date(),

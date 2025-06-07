@@ -1,10 +1,8 @@
 import { EventEmitter } from 'events';
 import { URL } from 'url';
 import * as cheerio from 'cheerio';
-import { Logger } from '../../utils/logger';
+import { logger } from '../../utils/logger';
 import { PageAnalyzer } from './PageAnalyzer';
-import { CrawlJob } from '../types/CrawlJob';
-import { CrawlResult } from '../types/CrawlResult';
 import { PageAnalysis } from '../types/PageAnalysis';
 
 export interface CrawlConfiguration {
@@ -214,7 +212,6 @@ export class MultiPageCrawler extends EventEmitter {
   private isRunning = false;
   private isPaused = false;
   private pageAnalyzer: PageAnalyzer;
-  private logger = Logger.getInstance();
   private startTime: Date;
   private activeWorkers = 0;
 
@@ -224,7 +221,38 @@ export class MultiPageCrawler extends EventEmitter {
   ) {
     super();
     this.queue = new CrawlQueue();
-    this.pageAnalyzer = new PageAnalyzer();
+    // Convert CrawlConfiguration to CrawlerConfig
+    const crawlerConfig = {
+      url: config.startUrl,
+      projectId: '', // TODO: Add projectId to CrawlConfiguration
+      userId: '', // TODO: Add userId to CrawlConfiguration  
+      crawlOptions: {
+        maxPages: config.maxPages,
+        crawlDepth: config.depth,
+        respectRobots: config.filters.respectRobotsTxt,
+        crawlDelay: config.performance.delayBetweenRequests,
+        userAgent: 'SEO Director Bot',
+        timeout: config.performance.timeout,
+        retryAttempts: 3,
+        viewport: { width: 1920, height: 1080, deviceType: 'desktop' as const },
+        extractOptions: {
+          screenshots: false,
+          performanceMetrics: true,
+          accessibilityCheck: true,
+          structuredData: true,
+          socialMetaTags: true,
+          technicalSEO: true,
+          contentAnalysis: true,
+          linkAnalysis: true,
+          imageAnalysis: true,
+          mobileOptimization: true,
+        },
+        blockResources: [] as string[],
+        allowedDomains: [] as string[],
+        excludePatterns: config.filters.excludePatterns,
+      }
+    };
+    this.pageAnalyzer = new PageAnalyzer(crawlerConfig);
     this.startTime = new Date();
     
     this.progress = {
@@ -242,7 +270,7 @@ export class MultiPageCrawler extends EventEmitter {
   }
 
   async crawl(): Promise<CrawlResults> {
-    this.logger.info(`Starting multi-page crawl for session ${this.sessionId}`);
+    logger.info(`Starting multi-page crawl for session ${this.sessionId}`);
     this.isRunning = true;
     
     try {
@@ -278,7 +306,7 @@ export class MultiPageCrawler extends EventEmitter {
         errors: this.errors
       };
       
-      this.logger.info(`Crawl completed for session ${this.sessionId}. Analyzed ${this.results.size} pages.`);
+      logger.info(`Crawl completed for session ${this.sessionId}. Analyzed ${this.results.size} pages.`);
       return results;
       
     } catch (error) {
@@ -322,7 +350,7 @@ export class MultiPageCrawler extends EventEmitter {
   private async processPage(urlItem: PrioritizedUrl): Promise<void> {
     const { url, depth } = urlItem;
     
-    this.logger.debug(`Processing page: ${url} (depth: ${depth})`);
+    logger.debug(`Processing page: ${url} (depth: ${depth})`);
     this.progress.currentUrl = url;
     this.updateProgress();
     
@@ -364,7 +392,6 @@ export class MultiPageCrawler extends EventEmitter {
   private async extractUrls(html: string, baseUrl: string): Promise<PrioritizedUrl[]> {
     const $ = cheerio.load(html);
     const urls: PrioritizedUrl[] = [];
-    const baseUrlObj = new URL(baseUrl);
     
     // Extract from navigation
     $('nav a, header a, .navigation a').each((_, el) => {
@@ -410,7 +437,7 @@ export class MultiPageCrawler extends EventEmitter {
           source: 'sitemap'
         })));
       } catch (error) {
-        this.logger.warn(`Failed to fetch sitemap: ${sitemapLink}`);
+        logger.warn(`Failed to fetch sitemap: ${sitemapLink}`);
       }
     }
     
@@ -577,7 +604,7 @@ export class MultiPageCrawler extends EventEmitter {
   }
 
   private handleCrawlError(url: string, error: Error): void {
-    this.logger.error(`Error crawling ${url}: ${error.message}`);
+    logger.error(`Error crawling ${url}: ${error.message}`);
     
     const crawlError: CrawlError = {
       url,
@@ -629,7 +656,7 @@ export class MultiPageCrawler extends EventEmitter {
     const pagesByDepth: Record<number, number> = {};
     let maxDepth = 0;
     
-    for (const [url, analysis] of this.results) {
+    for (const [, ] of this.results) {
       // This would need to track depth during crawling
       const depth = 0; // Placeholder
       pagesByDepth[depth] = (pagesByDepth[depth] || 0) + 1;
@@ -658,11 +685,11 @@ export class MultiPageCrawler extends EventEmitter {
     let criticalIssues = 0;
     let totalScore = 0;
     
-    for (const [url, analysis] of this.results) {
+    for (const [, analysis] of this.results) {
       totalScore += analysis.seoScore;
       if (analysis.issues) {
         totalIssues += analysis.issues.length;
-        criticalIssues += analysis.issues.filter(issue => issue.severity === 'high').length;
+        criticalIssues += analysis.issues.filter((issue: any) => issue.severity === 'high').length;
       }
     }
     
