@@ -476,7 +476,7 @@ export default function AnalysisResultsPage() {
           will-change: auto !important;
         }
       `}</style>
-      <div className="space-y-8 pb-8" style={{ opacity: 1, willChange: 'auto' }}>
+      <div className="space-y-6 pb-6" style={{ opacity: 1, willChange: 'auto' }}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -545,7 +545,7 @@ export default function AnalysisResultsPage() {
       </Card>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="analysis" className="space-y-6">
+      <Tabs defaultValue="analysis" className="space-y-4">
         <TabsList className="grid w-full grid-cols-3 bg-gray-800 border-gray-700">
           <TabsTrigger 
             value="analysis" 
@@ -582,11 +582,7 @@ export default function AnalysisResultsPage() {
         </TabsContent>
 
         {/* Analysis Overview Tab */}
-        <TabsContent value="analysis" className="space-y-8" style={{ opacity: 1, willChange: 'auto' }}>
-          {/* Debug visibility indicator */}
-          <div className="bg-green-500 text-white p-2 rounded text-center font-bold" style={{ opacity: 1, willChange: 'auto' }}>
-            ✅ ANALYSIS TAB IS VISIBLE - Content should appear below
-          </div>
+        <TabsContent value="analysis" className="space-y-6" style={{ opacity: 1, willChange: 'auto' }}>
           {/* Hero Score Section */}
           <div className="relative overflow-hidden rounded-2xl border border-indigo-500/50 bg-gradient-to-br from-gray-800 to-gray-900 p-8" style={{ opacity: 1, willChange: 'auto' }}>
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10 -z-10"></div>
