@@ -1216,7 +1216,7 @@ export default function AnalysisResultsPage() {
                     ></div>
                   </div>
                   <div className="text-xs text-gray-500">
-                    Target: ≤2.5s | Poor: >4s
+                    Target: ≤2.5s | Poor: &gt;4s
                   </div>
                 </div>
               </div>
