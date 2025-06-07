@@ -69,7 +69,7 @@ export function AnalysisDebugger() {
     console.log('[AnalysisDebugger] Created test data:', testJob);
     
     // Refresh debug info
-    setDebugInfo(prev => ({
+    setDebugInfo((prev: any) => ({
       ...prev,
       localStorage: {
         ...prev.localStorage,
@@ -82,7 +82,7 @@ export function AnalysisDebugger() {
 
   const clearData = () => {
     localStorage.removeItem('adminAnalysisJobs');
-    setDebugInfo(prev => ({
+    setDebugInfo((prev: any) => ({
       ...prev,
       localStorage: {
         raw: '[]',

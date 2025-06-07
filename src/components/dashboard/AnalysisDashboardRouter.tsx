@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -249,11 +249,7 @@ export function AnalysisDashboardRouter() {
   console.log('[AnalysisDashboardRouter] JobId:', jobId);
   console.log('[AnalysisDashboardRouter] ViewMode:', viewMode);
 
-  useEffect(() => {
-    loadAnalysis();
-  }, [jobId]);
-
-  const loadAnalysis = async () => {
+  const loadAnalysis = useCallback(async () => {
     if (!jobId) return;
     
     try {
@@ -362,7 +358,11 @@ export function AnalysisDashboardRouter() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [jobId, projectId]);
+
+  useEffect(() => {
+    loadAnalysis();
+  }, [loadAnalysis]);
 
   const generateMockAnalysisData = (crawlType: string): AnalysisData => {
     return {

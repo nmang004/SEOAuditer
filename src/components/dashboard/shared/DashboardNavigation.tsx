@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -53,11 +53,7 @@ export function AnalysisTypeSwitcher({
   const [relatedAnalyses, setRelatedAnalyses] = useState<RelatedAnalysis[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadRelatedAnalyses();
-  }, [currentAnalysis.url, projectId]);
-
-  const loadRelatedAnalyses = async () => {
+  const loadRelatedAnalyses = useCallback(async () => {
     setLoading(true);
     try {
       // Mock related analyses for now
@@ -97,7 +93,11 @@ export function AnalysisTypeSwitcher({
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentAnalysis.url, currentAnalysis.id, currentAnalysis.crawlType]);
+
+  useEffect(() => {
+    loadRelatedAnalyses();
+  }, [loadRelatedAnalyses]);
 
   const navigateToAnalysis = (analysisId: string) => {
     router.push(`/dashboard/projects/${projectId}/analyses/${analysisId}`);
