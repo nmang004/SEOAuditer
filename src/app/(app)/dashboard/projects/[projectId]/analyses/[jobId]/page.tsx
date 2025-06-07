@@ -5,35 +5,60 @@ import { AnalysisDashboardRouter } from '@/components/dashboard/AnalysisDashboar
 import { AnalysisDebugger } from '@/components/debug/AnalysisDebugger';
 
 export default function AnalysisResultsPage() {
+  console.log('[AnalysisResultsPage] Component rendering');
+  
   return (
     <div className="space-y-6" style={{ 
-      opacity: 1, 
-      visibility: 'visible', 
-      display: 'block',
-      position: 'relative',
-      zIndex: 1 
+      minHeight: '100vh',
+      background: 'linear-gradient(45deg, #ff0000, #00ff00, #0000ff)',
+      padding: '20px'
     }}>
-      {/* Success indicator - can be removed later */}
+      {/* Bright test box to confirm page is rendering */}
       <div style={{
-        backgroundColor: '#16a34a',
+        backgroundColor: '#ff0000',
         color: 'white',
-        padding: '10px',
-        fontSize: '14px',
+        padding: '20px',
+        fontSize: '20px',
         fontWeight: 'bold',
-        border: '2px solid #22c55e',
-        borderRadius: '8px',
+        border: '5px solid #ffff00',
         textAlign: 'center'
       }}>
-        ✅ Page Rendering Successfully - Analysis Dashboard Active
+        🚨 ANALYSIS RESULTS PAGE IS RENDERING - IF YOU SEE THIS, THE PAGE COMPONENT WORKS
       </div>
 
-      {/* Add debug component for troubleshooting */}
-      <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
+      {/* Test if components can load */}
+      <div style={{
+        backgroundColor: '#0000ff',
+        color: 'white',
+        padding: '20px',
+        fontSize: '16px',
+        border: '3px solid #ffffff'
+      }}>
+        <h2>Testing component imports:</h2>
+        <p>AnalysisDebugger: {AnalysisDebugger ? 'IMPORTED' : 'FAILED'}</p>
+        <p>AnalysisDashboardRouter: {AnalysisDashboardRouter ? 'IMPORTED' : 'FAILED'}</p>
+      </div>
+
+      {/* Try to render components */}
+      <div style={{
+        backgroundColor: '#00ff00',
+        color: 'black',
+        padding: '20px',
+        fontSize: '16px',
+        border: '3px solid #000000'
+      }}>
+        <h2>Attempting to render AnalysisDebugger:</h2>
         <AnalysisDebugger />
       </div>
-      
-      {/* Main dashboard */}
-      <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
+
+      <div style={{
+        backgroundColor: '#ff00ff',
+        color: 'white',
+        padding: '20px',
+        fontSize: '16px',
+        border: '3px solid #000000'
+      }}>
+        <h2>Attempting to render AnalysisDashboardRouter:</h2>
         <AnalysisDashboardRouter />
       </div>
     </div>
