@@ -121,12 +121,119 @@ export function SimpleAnalysisTest() {
 export function AnalysisDashboardRouter() {
   console.log('[AnalysisDashboardRouter] Component called - STARTING RENDER');
   
-  // STEP 1 & 2: Call all hooks unconditionally first (Rules of Hooks)
+  // STEP 1, 2, 3: Call all hooks unconditionally first (Rules of Hooks)
   const params = useParams();
   const searchParams = useSearchParams();
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const projectId = params?.projectId as string;
+  const jobId = params?.jobId as string;
+  const viewMode = searchParams?.get('view');
+  
+  // Add the data loading logic back
+  const loadAnalysis = useCallback(async () => {
+    console.log('[AnalysisDashboardRouter] ✅ useCallback loadAnalysis created');
+    if (!jobId) {
+      console.log('[AnalysisDashboardRouter] No jobId provided');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('[AnalysisDashboardRouter] Loading analysis for jobId:', jobId);
+
+      // Try to get from localStorage first (for admin bypass)
+      const adminJobsString = localStorage.getItem('adminAnalysisJobs') || '[]';
+      console.log('[AnalysisDashboardRouter] localStorage data length:', adminJobsString.length);
+      
+      let adminJobs = [];
+      try {
+        adminJobs = JSON.parse(adminJobsString);
+        console.log('[AnalysisDashboardRouter] Parsed admin jobs:', adminJobs.length);
+      } catch (parseError) {
+        console.error('[AnalysisDashboardRouter] Failed to parse localStorage:', parseError);
+        adminJobs = [];
+      }
+      
+      const adminJob = adminJobs.find((job: any) => {
+        return job.sessionId === jobId || job.jobId === jobId;
+      });
+      console.log('[AnalysisDashboardRouter] Found admin job:', !!adminJob);
+
+      if (adminJob) {
+        // Create mock analysis from admin job
+        const mockAnalysis: Analysis = {
+          id: jobId,
+          crawlType: adminJob.config?.crawlType || 'subfolder',
+          status: 'completed',
+          url: adminJob.config?.startUrl || adminJob.url || 'https://github.com/admin',
+          projectId: adminJob.projectId || projectId,
+          createdAt: adminJob.createdAt || new Date().toISOString(),
+          completedAt: new Date().toISOString(),
+          metadata: {
+            pagesAnalyzed: adminJob.estimatedPages || 8,
+            totalPages: adminJob.estimatedPages || 8,
+            depth: adminJob.config?.depth || 3,
+            estimatedDuration: adminJob.estimatedDuration ? `${adminJob.estimatedDuration} minutes` : '15 minutes'
+          },
+          data: {
+            score: Math.floor(Math.random() * 40) + 60,
+            issues: [],
+            recommendations: [],
+            performance: { lcp: 2.1, fid: 45, cls: 0.05, loadTime: 1.8, pageSize: 2.1 },
+            technical: { metaTags: {}, headings: {}, images: {}, links: {} },
+            content: { wordCount: 850, readability: 8.2, keywords: ['SEO', 'optimization', 'website'] }
+          }
+        };
+        
+        console.log('[AnalysisDashboardRouter] ✅ Created mock analysis');
+        setAnalysis(mockAnalysis);
+        setLoading(false);
+        return;
+      }
+
+      // Fallback for admin-multi jobs
+      if (jobId.startsWith('admin-multi-')) {
+        console.log('[AnalysisDashboardRouter] Creating fallback mock data');
+        const mockAnalysis: Analysis = {
+          id: jobId,
+          crawlType: 'subfolder',
+          status: 'completed',
+          url: 'https://github.com/admin',
+          projectId: projectId,
+          createdAt: new Date().toISOString(),
+          completedAt: new Date().toISOString(),
+          metadata: { pagesAnalyzed: 8, totalPages: 10, depth: 3, estimatedDuration: '15 minutes' },
+          data: {
+            score: 85,
+            issues: [],
+            recommendations: [],
+            performance: { lcp: 2.1, fid: 45, cls: 0.05, loadTime: 1.8, pageSize: 2.1 },
+            technical: { metaTags: {}, headings: {}, images: {}, links: {} },
+            content: { wordCount: 850, readability: 8.2, keywords: ['SEO', 'optimization', 'website'] }
+          }
+        };
+        
+        setAnalysis(mockAnalysis);
+        setLoading(false);
+        return;
+      }
+
+    } catch (err) {
+      console.error('[AnalysisDashboardRouter] Error loading analysis:', err);
+      setError('Failed to load analysis');
+    } finally {
+      setLoading(false);
+    }
+  }, [jobId, projectId]);
+
+  useEffect(() => {
+    console.log('[AnalysisDashboardRouter] ✅ useEffect triggered');
+    loadAnalysis();
+  }, [loadAnalysis]);
   
   // Immediate visibility test for this component
   if (typeof window !== 'undefined') {
@@ -163,24 +270,24 @@ export function AnalysisDashboardRouter() {
           borderRadius: '4px',
           marginBottom: '10px'
         }}>
-          ✅ HOOKS STEP 2: useState hooks added!
+          ✅ HOOKS STEP 3: useEffect & useCallback added!
         </div>
         <p>useParams: {params ? '✅ SUCCESS' : '❌ FAILED'}</p>
         <p>useSearchParams: {searchParams ? '✅ SUCCESS' : '❌ FAILED'}</p>
-        <p>analysis state: {analysis ? '✅ HAS DATA' : '⏳ NULL'}</p>
+        <p>analysis state: {analysis ? `✅ HAS DATA (${analysis.crawlType})` : '⏳ NULL'}</p>
         <p>loading state: {loading ? '⏳ TRUE' : '✅ FALSE'}</p>
-        <p>error state: {error ? '❌ HAS ERROR' : '✅ NO ERROR'}</p>
+        <p>error state: {error ? `❌ ${error}` : '✅ NO ERROR'}</p>
         <p>ProjectId: {projectId || 'MISSING'}</p>
         <p>JobId: {jobId || 'MISSING'}</p>
-        <p>Next: Add useEffect and useCallback hooks</p>
+        <p>Next: Render actual dashboard components</p>
         <SimpleAnalysisTest />
       </div>
     );
   } catch (error) {
-    console.error('[AnalysisDashboardRouter] Error with hooks step 2:', error);
+    console.error('[AnalysisDashboardRouter] Error with hooks step 3:', error);
     return (
       <div style={{ background: 'red', color: 'white', padding: '20px' }}>
-        HOOKS STEP 2 FAILED: {error instanceof Error ? error.message : String(error)}
+        HOOKS STEP 3 FAILED: {error instanceof Error ? error.message : String(error)}
         <br />
         Stack: {error instanceof Error ? error.stack : 'No stack trace'}
       </div>
