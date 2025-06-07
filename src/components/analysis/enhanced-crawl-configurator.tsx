@@ -209,7 +209,7 @@ function CrawlEstimation({ config }: { config: CrawlConfiguration }) {
   }, [config]);
   
   return (
-    <Card className="bg-indigo-500/10 border border-indigo-500/20 p-4">
+    <Card noAnimate={true} className="bg-indigo-500/10 border border-indigo-500/20 p-4">
       <h4 className="font-medium text-indigo-400 mb-3 flex items-center gap-2">
         <Sparkles className="h-4 w-4" />
         Crawl Estimation
@@ -381,7 +381,7 @@ export function EnhancedAnalysisConfigurator({
       </div>
 
       {/* URL Input */}
-      <Card className="p-6 border border-gray-700 bg-gray-800/50 rounded-lg opacity-100 visible">
+      <Card noAnimate={true} className="p-6 border border-gray-700 bg-gray-800/50 rounded-lg">
         <Label htmlFor="url" className="text-white mb-2 block">
           {config.crawlType === 'single' ? 'Page URL' : 'Starting URL'}
         </Label>
@@ -405,7 +405,7 @@ export function EnhancedAnalysisConfigurator({
 
       {/* Advanced Filters */}
       {config.crawlType !== 'single' && (
-        <Card className="border-gray-700 bg-gray-800/50 overflow-hidden">
+        <Card noAnimate={true} className="border-gray-700 bg-gray-800/50 overflow-hidden">
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
             className="w-full p-6 flex items-center justify-between text-left hover:bg-gray-700/30 transition-colors"
