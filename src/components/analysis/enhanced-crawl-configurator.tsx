@@ -76,7 +76,7 @@ function CrawlTypeCard({
     <Card
       className={cn(
         "p-6 cursor-pointer transition-all duration-200 hover:shadow-lg",
-        "border-2",
+        "border-2 min-h-[120px] opacity-100 visible relative",
         selected 
           ? "border-indigo-500 bg-indigo-500/5" 
           : "border-gray-700 hover:border-gray-600 bg-gray-800/50"
@@ -93,6 +93,7 @@ function CrawlTypeCard({
           </div>
         </div>
         <div className="flex-1">
+          <div className="text-xs text-red-500 font-bold">CARD: {title}</div>
           <h4 className="font-semibold text-white mb-1">{title}</h4>
           <p className="text-sm text-gray-400 mb-3">{description}</p>
           {features && (
@@ -351,7 +352,7 @@ export function EnhancedAnalysisConfigurator({
       {/* Crawl Type Selector */}
       <div>
         <h3 className="text-lg font-semibold text-white mb-4">Choose Analysis Type</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-red-500/20 p-4 rounded min-h-[150px]">
           <CrawlTypeCard
             type="single"
             title="Single Page"
