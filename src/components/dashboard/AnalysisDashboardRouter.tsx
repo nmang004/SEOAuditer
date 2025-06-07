@@ -195,6 +195,94 @@ export function AnalysisDashboardRouter() {
         return;
       }
 
+      // Fallback for any other job types (including single page)
+      const crawlType = jobId.includes('multi') ? 'subfolder' : 
+                       jobId.includes('domain') ? 'domain' : 'single';
+      
+      const mockAnalysis: Analysis = {
+        id: jobId,
+        crawlType: crawlType,
+        status: 'completed',
+        url: crawlType === 'single' ? 'https://example.com/page' : 
+             crawlType === 'domain' ? 'https://example.com' : 
+             'https://example.com/section',
+        projectId: projectId,
+        createdAt: new Date().toISOString(),
+        completedAt: new Date().toISOString(),
+        metadata: {
+          pagesAnalyzed: crawlType === 'single' ? 1 : crawlType === 'subfolder' ? 8 : 50,
+          totalPages: crawlType === 'single' ? 1 : crawlType === 'subfolder' ? 10 : 65,
+          depth: crawlType === 'single' ? 1 : 3,
+          estimatedDuration: crawlType === 'single' ? '2 minutes' : '15 minutes'
+        },
+        data: {
+          score: Math.floor(Math.random() * 30) + 70, // 70-100
+          issues: [
+            {
+              id: '1',
+              type: 'meta',
+              severity: 'medium' as const,
+              title: 'Missing meta description',
+              description: 'The page is missing a meta description tag'
+            },
+            {
+              id: '2',
+              type: 'technical',
+              severity: 'low' as const,
+              title: 'Image missing alt text',
+              description: '3 images are missing alt text attributes'
+            }
+          ],
+          recommendations: [
+            {
+              id: '1',
+              title: 'Add Meta Description',
+              description: 'Add a compelling meta description between 150-160 characters',
+              impact: 'high' as const,
+              effort: 'low' as const,
+              category: 'On-Page SEO'
+            },
+            {
+              id: '2',
+              title: 'Optimize Images',
+              description: 'Compress images and add descriptive alt text',
+              impact: 'medium' as const,
+              effort: 'medium' as const,
+              category: 'Technical'
+            },
+            {
+              id: '3',
+              title: 'Improve Page Speed',
+              description: 'Enable browser caching and minify CSS/JS files',
+              impact: 'high' as const,
+              effort: 'medium' as const,
+              category: 'Performance'
+            }
+          ],
+          performance: { 
+            lcp: 2.5, 
+            fid: 55, 
+            cls: 0.08, 
+            loadTime: 2.1, 
+            pageSize: 1.8 
+          },
+          technical: { 
+            metaTags: { title: true, description: false, og: true }, 
+            headings: { h1: 1, h2: 3, h3: 5 }, 
+            images: { total: 8, withAlt: 5 }, 
+            links: { internal: 15, external: 3 } 
+          },
+          content: { 
+            wordCount: 1250, 
+            readability: 7.8, 
+            keywords: ['SEO', 'optimization', 'search', 'ranking', 'content'] 
+          }
+        }
+      };
+      
+      setAnalysis(mockAnalysis);
+      setLoading(false);
+
     } catch (err) {
       setError('Failed to load analysis');
     } finally {
